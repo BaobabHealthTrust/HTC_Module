@@ -1,23 +1,23 @@
 production:
   adapter: mysql2
   username: user
-  database: bart2_db
+  database: openmrs_1_9
   password: your_password
   host: localhost
   pool: 500
 
 development:
   adapter: mysql2
-  username: root
-  database: bart2_db
+  username: username
+  database: openmrs_1_9
   password: your_password
   host: localhost
   pool: 500
 
 test: &TEST
   adapter: mysql
-  database: root
-  username: bart2_db
+  database: username
+  username: openmrs_1_9
   password: your_password
   host: localhost
 
