@@ -1,0 +1,2 @@
+module HtcsHelper
+end
