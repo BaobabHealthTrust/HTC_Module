@@ -37,6 +37,18 @@ class ClientsController < ApplicationController
     @client.destroy
   end
 
+	def search
+
+	end
+	
+	def search_results
+		 @clients = Client.all(:limit=>20)
+	end
+	
+	def unallocated_clients
+		 @clients = Client.all(:limit=>20)
+	end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client

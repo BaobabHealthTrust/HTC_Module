@@ -3,7 +3,16 @@ HTCModule::Application.routes.draw do
 	get "/login" => "sessions#attempt_login"
 	post "/login" => "sessions#login", as: :log_in
 	get "/logout" => "sessions#logout", as: :log_out
-  
+
+	get "search" => "clients#search"
+	post "search" => "clients#search"
+	
+	get "unallocated_clients" => "clients#unallocated_clients"
+	#post "unallocated_clients" => "clients#unallocated_clients"
+	
+	post "search_results" => "clients#search_results"
+	get "search_results" => "clients#search_results"
+
   resources :locations
 
   resources :rooms

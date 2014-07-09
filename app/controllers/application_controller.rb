@@ -8,15 +8,20 @@ class ApplicationController < ActionController::Base
 	def current_user
 		@current_user ||= User.find(session[:user_id]) if session[:user_id]
 	end
+	
+	def current_room
+		@current_room ||= Room.find(session[:room_id]) if session[:room_id]
+	end
 
 	helper_method :current_user
+	helper_method :current_room
 
 	protected 
 	
 	def authenticate_user
-		#raise params.to_yaml
 		if session[:user_id]
-		  current_user 
+		  current_user
+		  current_room 
 		  return true	
 		else
 		  redirect_to('/login')

@@ -6,6 +6,7 @@ class RoomsController < ApplicationController
   end
 
   def show
+		@clients = Client.all(:limit=>20)
   end
 
   def new
