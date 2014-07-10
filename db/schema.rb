@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140709023208) do
+ActiveRecord::Schema.define(version: 20140710140831) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -456,6 +456,22 @@ ActiveRecord::Schema.define(version: 20140709023208) do
   add_index "concept_word", ["concept_name_id"], name: "word_for_name", using: :btree
   add_index "concept_word", ["weight"], name: "concept_word_weight_index", using: :btree
   add_index "concept_word", ["word"], name: "word_in_concept_name", using: :btree
+
+  create_table "district", primary_key: "district_id", force: true do |t|
+    t.string   "name",          default: "",    null: false
+    t.integer  "region_id",     default: 0,     null: false
+    t.integer  "creator",       default: 0,     null: false
+    t.datetime "date_created",                  null: false
+    t.boolean  "retired",       default: false, null: false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
+  end
+
+  add_index "district", ["creator"], name: "user_who_created_district", using: :btree
+  add_index "district", ["region_id"], name: "region_for_district", using: :btree
+  add_index "district", ["retired"], name: "retired_status", using: :btree
+  add_index "district", ["retired_by"], name: "user_who_retired_district", using: :btree
 
   create_table "drug", primary_key: "drug_id", force: true do |t|
     t.integer  "concept_id",                    default: 0,     null: false
@@ -1410,6 +1426,11 @@ ActiveRecord::Schema.define(version: 20140709023208) do
   add_index "patientflags_tag_role", ["role"], name: "role", using: :btree
   add_index "patientflags_tag_role", ["tag_id"], name: "tag_id", using: :btree
 
+  create_table "people", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "person", primary_key: "person_id", force: true do |t|
     t.string   "gender",              limit: 50, default: ""
     t.date     "birthdate"
@@ -1704,6 +1725,20 @@ ActiveRecord::Schema.define(version: 20140709023208) do
   add_index "provider_attribute_type", ["retired_by"], name: "provider_attribute_type_retired_by_fk", using: :btree
   add_index "provider_attribute_type", ["uuid"], name: "uuid", unique: true, using: :btree
 
+  create_table "region", primary_key: "region_id", force: true do |t|
+    t.string   "name",          default: "",    null: false
+    t.integer  "creator",       default: 0,     null: false
+    t.datetime "date_created",                  null: false
+    t.boolean  "retired",       default: false, null: false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
+  end
+
+  add_index "region", ["creator"], name: "user_who_created_region", using: :btree
+  add_index "region", ["retired"], name: "retired_status", using: :btree
+  add_index "region", ["retired_by"], name: "user_who_retired_region", using: :btree
+
   create_table "relationship", primary_key: "relationship_id", force: true do |t|
     t.integer  "person_a",                                null: false
     t.integer  "relationship",            default: 0,     null: false
@@ -1852,6 +1887,22 @@ ActiveRecord::Schema.define(version: 20140709023208) do
   add_index "serialized_object", ["retired_by"], name: "serialized_object_retired_by", using: :btree
   add_index "serialized_object", ["uuid"], name: "serialized_object_uuid_index", unique: true, using: :btree
 
+  create_table "traditional_authority", primary_key: "traditional_authority_id", force: true do |t|
+    t.string   "name",          default: "",    null: false
+    t.integer  "district_id",   default: 0,     null: false
+    t.integer  "creator",       default: 0,     null: false
+    t.datetime "date_created",                  null: false
+    t.boolean  "retired",       default: false, null: false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
+  end
+
+  add_index "traditional_authority", ["creator"], name: "user_who_created_traditional_authority", using: :btree
+  add_index "traditional_authority", ["district_id"], name: "district_for_ta", using: :btree
+  add_index "traditional_authority", ["retired"], name: "retired_status", using: :btree
+  add_index "traditional_authority", ["retired_by"], name: "user_who_retired_traditional_authority", using: :btree
+
   create_table "tribe", primary_key: "tribe_id", force: true do |t|
     t.boolean "retired",            default: false, null: false
     t.string  "name",    limit: 50, default: "",    null: false
@@ -1893,6 +1944,22 @@ ActiveRecord::Schema.define(version: 20140709023208) do
   add_index "users", ["creator"], name: "user_creator", using: :btree
   add_index "users", ["person_id"], name: "person_id_for_user", using: :btree
   add_index "users", ["retired_by"], name: "user_who_retired_this_user", using: :btree
+
+  create_table "village", primary_key: "village_id", force: true do |t|
+    t.string   "name",                     default: "",    null: false
+    t.integer  "traditional_authority_id", default: 0,     null: false
+    t.integer  "creator",                  default: 0,     null: false
+    t.datetime "date_created",                             null: false
+    t.boolean  "retired",                  default: false, null: false
+    t.integer  "retired_by"
+    t.datetime "date_retired"
+    t.string   "retire_reason"
+  end
+
+  add_index "village", ["creator"], name: "user_who_created_village", using: :btree
+  add_index "village", ["retired"], name: "retired_status", using: :btree
+  add_index "village", ["retired_by"], name: "user_who_retired_village", using: :btree
+  add_index "village", ["traditional_authority_id"], name: "ta_for_village", using: :btree
 
   create_table "visit", primary_key: "visit_id", force: true do |t|
     t.integer  "patient_id",                                       null: false
