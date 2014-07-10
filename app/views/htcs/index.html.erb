@@ -4,7 +4,7 @@ HTC
 <br />
 Facility:
 <br />
-Location: <%= " #{@current_room.name}" %>
+Location: <%= " #{@current_location.name}" %>
 <br />
 Date:
 <br />
@@ -22,8 +22,8 @@ User:
 
 
 <%= link_to 'Logout', log_out_path %>
-<% if @current_room %>
-	<%= link_to 'Room Clients', @current_room %>	
+<% if @show_counselling_room %>
+	<%= link_to 'Room Clients', @current_location %>	
 <% end %>
 <%= link_to 'Un-Allocated Clients', unallocated_clients_path %>,
 <%= link_to 'Swap Desk', '' %>,
