@@ -10,11 +10,31 @@ class ClientsController < ApplicationController
 
   def new
 		if ! params[:gender].blank? and ! params[:dob].blank?
+			current_number = 1
+			current_year = session[:datetime].to_date.year.to_s rescue Date.today.year.to_s
+			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+			type = ClientIdentifier.find(:last, 
+																	 :conditions => ["identifier_type LIKE ?
+																		AND voided = 0", '%#{current_year}'])
+			type = type.identifier.split(" ")[0] rescue 0
+			identifier = current_number + type
+
 			@person = Person.create(gender: params[:gender], birthdate: params[:dob])
     	@client = Client.create(patient_id: @person.person_id) if @person
-			@address = PersonAddress.create(person_id: @person.person_id, address1: params[:residence]) if @person
+			@address = PersonAddress.create(person_id: @person.person_id, 
+															address1: params[:residence]) if @person
+
+			patient_identifier = ClientIdentifier.new
+      patient_identifier.identifier_type = identifier_type
+      patient_identifier.identifier =  "#{identifier} #{current_year}"
+      patient_identifier.patient_id = @client.id
+      patient_identifier.save!
+			#@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
+			#												patient_id: @client.id, 
+			#												identifier: "#{identifier} #{current_year}")
+
 		end
-		redirect_to action: 'search_results'
+		redirect_to action: 'search_results', residence: @address.address1, gender: @person.gender, date_of_birth: @person.birthdate
   end
 
   def edit
@@ -51,8 +71,8 @@ class ClientsController < ApplicationController
 											INNER JOIN person pe ON pe.person_id = p.patient_id 
 											INNER JOIN person_address pn ON pn.person_id = pe.person_id
 											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
-											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0 AND pn.voided = 0 
-											LIMIT 20")
+											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0 AND
+											pn.voided = 0 LIMIT 20") rescue []
 	end
 	
 	def unallocated_clients
