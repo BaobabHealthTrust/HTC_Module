@@ -1,0 +1,12 @@
+<h1>Un-Allocated Client List</h1>
+
+<ul>
+<% @clients.each do |client| %>
+		<li> <%= link_to "Client/#{client.id}" , client %> </li>
+<%end%>
+</ul>
+
+<%= link_to "Cancel" , htcs_path %>
+<%= link_to "Select", '' %>
+
+
