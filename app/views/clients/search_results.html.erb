@@ -2,11 +2,11 @@
 
 <ul>
 <% @clients.each do |client| %>
-		<li> <%= link_to "Patient: #{client.id}" , client %> </li>
+		<li> <%= link_to "#{client.gender}, DOB: #{client.birthdate.strftime('%d/%m/%Y')} , #{client.address1}, Accession Number: ?" , client %> </li>
 <%end%>
 </ul>
-
 <%= link_to "Cancel" , htcs_path %>
+<%= link_to "New" , new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>
 <%= link_to "Select", '' %>
 
 

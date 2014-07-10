@@ -9,7 +9,12 @@ class ClientsController < ApplicationController
   end
 
   def new
-    @client = Client.new
+		if ! params[:gender].blank? and ! params[:dob].blank?
+			@person = Person.create(gender: params[:gender], birthdate: params[:dob])
+    	@client = Client.create(patient_id: @person.person_id) if @person
+			@address = PersonAddress.create(person_id: @person.person_id, address1: params[:residence]) if @person
+		end
+		redirect_to action: 'search_results'
   end
 
   def edit
@@ -42,7 +47,12 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
-		 @clients = Client.all(:limit=>20)
+		 @clients = Client.find_by_sql("SELECT * FROM patient p
+											INNER JOIN person pe ON pe.person_id = p.patient_id 
+											INNER JOIN person_address pn ON pn.person_id = pe.person_id
+											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
+											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0 AND pn.voided = 0 
+											LIMIT 20")
 	end
 	
 	def unallocated_clients
