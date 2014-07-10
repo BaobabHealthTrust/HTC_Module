@@ -4,14 +4,14 @@ class SessionsController < ApplicationController
   end
 
   def login
-  	@room = Room.find_by_name(params[:location]) rescue nil
-		@user = User.authenticate(params[:username], params[:password]) if @room
+  	@location = Location.find_by_name(params[:location]) rescue nil
+		@user = User.authenticate(params[:username], params[:password]) if @location
 		
-		if @room
+		if @location
 			if @user
 				flash[:notice] = "You've been logged in."
 				session[:user_id] = @user.id
-				session[:room_id] = @room.id
+				session[:location_id] = @location.id				
 				redirect_to "/"
 			else
 				flash[:alert] = "Wrong username or password"
