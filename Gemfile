@@ -35,6 +35,9 @@ end
 # Use bcrypt-ruby as a password hashing function
 gem 'bcrypt-ruby', '~> 3.0.0', require: "bcrypt"
 
+# Used to hundle composite keys 'self.primary_keys'
+gem 'composite_primary_keys'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

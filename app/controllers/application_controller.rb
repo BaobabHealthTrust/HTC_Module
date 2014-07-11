@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 		
 		htc_room_tag_id = LocationTag.find_by_name('HTC Counselling Room').id
 		location_tags = LocationTagMap.where("location_id=#{@current_location.id}")
-																	.map(&:location_tag_id)
+																	.map(&:location_tag_id) rescue []
 
 		if location_tags.include?(htc_room_tag_id) && is_counselor
 			@show_counselling_room = true
