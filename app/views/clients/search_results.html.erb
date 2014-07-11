@@ -1,12 +1,24 @@
 <h1>search Results</h1>
 
 <ul>
-<% @clients.each do |client| %>
-		<li> <%= link_to "#{client.gender}, DOB: #{client.birthdate.strftime('%d/%m/%Y')} , #{client.address1}, Accession Number: #{client.identifier}" , client %> </li>
-<%end%>
+<% if ! @scanned.blank? %>
+		<li> 
+					<%= link_to "#{@scanned.person.gender}, DOB: #{@scanned.person.birthdate.strftime('%d/%m/%Y')} ,
+ 					#{@residence}, Accession Number: #{@accession.identifier}" , @scanned %> 
+		</li>
+<% else
+ @clients.each do |client| %>
+		<li> 
+				<%= link_to "#{client.gender}, DOB: #{client.birthdate.strftime('%d/%m/%Y')} , #{client.address1}, Accession 					Number: #{client.identifier}" , client %> 
+		</li>
+	<%end
+end%>
 </ul>
+
 <%= link_to "Cancel" , htcs_path %>
+<% if @show_counselling_room != true %>
 <%= link_to "New" , new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>
+<% end %>
 <%= link_to "Select", '' %>
 
 

@@ -31,21 +31,22 @@ class ClientsController < ApplicationController
 
 		elsif ! params[:gender].blank? and ! params[:dob].blank?
 			current_number = 1
-			current_year = session[:datetime].to_date.year.to_s rescue Date.today.year.to_s
+			current = session[:datetime].to_date rescue Date.today
 			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 			type = ClientIdentifier.find(:last, 
 																	 :conditions => ["identifier_type = ? AND identifier LIKE ?",
-																	  identifier_type, "%#{current_year}"])
+																	  identifier_type, "%#{current.year.to_s}"])
 			type = type.identifier.split(" ")[0].to_i rescue 0
 			identifier = current_number + type
-
-			@person = Person.create(gender: params[:gender], birthdate: params[:dob])
-    	@client = Client.create(patient_id: @person.person_id) if @person
+			
+			@person = Person.create(gender: params[:gender], birthdate: params[:dob], creator: current_user.id)
+    	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
-															address1: params[:residence]) if @person
+															address1: params[:residence], creator: current_user.id) if @person
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
-															identifier: "#{identifier} #{current_year}")
+															identifier: "#{identifier} #{current.year}", creator: current_user.id)
+			write_encounter("UNALLOCATED", @person, current)
 
 		end
 		redirect_to action: 'search_results', residence: @address.address1, 
@@ -99,12 +100,22 @@ class ClientsController < ApplicationController
   end
 
 	def search
-
+			 
 	end
 	
 	def search_results
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
-		 @clients = Client.find_by_sql("SELECT * FROM patient p
+		 if ! params[:accession_number].blank?
+			  @accession = ClientIdentifier.where("identifier = '#{params[:accession_number]}' 
+											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
+				if @accession.blank?
+					flash[:notice] = "Invalid accession number...."
+					redirect_to "/search" and return
+				end
+				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
+				@scanned = Client.find(@accession.patient_id)
+		 else
+		 		@clients = Client.find_by_sql("SELECT * FROM patient p
 											INNER JOIN person pe ON pe.person_id = p.patient_id 
 											INNER JOIN person_address pn ON pn.person_id = pe.person_id
 											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
@@ -112,10 +123,19 @@ class ClientsController < ApplicationController
 											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+     end
 	end
 	
 	def unallocated_clients
 		 @clients = Client.all(:limit=>20)
+	end
+
+	def write_encounter(encounter_type, person, current = Date.today)
+			
+			type = EncounterType.find_by_name(encounter_type).id
+			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
+									encounter_datetime: current, creator: current_user.id)
+			
 	end
 
   private

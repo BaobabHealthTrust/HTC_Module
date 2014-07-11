@@ -4,6 +4,7 @@ class Person < ActiveRecord::Base
 
 		before_save :before_create
 		has_one :client, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
+		has_one :provider, :foreign_key => :provider_id
 
 	def age(current_date = Date.today)
 			age = current_date.year - birthdate.year
