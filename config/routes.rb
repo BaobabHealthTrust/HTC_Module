@@ -15,6 +15,8 @@ HTCModule::Application.routes.draw do
 
   resources :locations
 
+	resources :location_tags
+	
   resources :rooms
 
 	root 'sessions#attempt_login'
