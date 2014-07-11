@@ -15,6 +15,12 @@ HTCModule::Application.routes.draw do
 
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
+
+	get "client_previous_visit" => "clients#previous_visit"
+	post "client_previous_visit" => "clients#previous_visit"
+
+	get "client_current_visit" => "clients#current_visit"
+	post "client_current_visit" => "clients#current_visit"
 	
 	get "unallocated_clients" => "clients#unallocated_clients"
 	#post "unallocated_clients" => "clients#unallocated_clients"
