@@ -129,6 +129,10 @@ class ClientsController < ApplicationController
 	def unallocated_clients
 		 @clients = Client.all(:limit=>20)
 	end
+  
+  def add_to_unallocated
+    #raise params.to_yaml 
+  end
 
 	def write_encounter(encounter_type, person, current = Date.today)
 			
