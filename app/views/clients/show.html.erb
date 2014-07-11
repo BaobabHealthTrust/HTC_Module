@@ -1,5 +1,34 @@
-<p id="notice"><%= notice %></p>
-<%= @client.to_json %>
-<br />
-<%#= link_to 'Edit', edit_client_path(@client) %>
-<%= link_to 'Back', search_results_path %>
+<html>
+	<head>
+	</head>
+<body>
+	<div id='content'>
+		<div id='description'>
+				<form id='dashboard'>
+					<h1 id='project_name'>
+              <span style="font-size: 55px;">HTC</span>
+          </h1>
+					<span id='accession_number'> <%= @accession_number %> </span><br>
+					<span id='patient_residence'> <%= @residence %></span><br>
+					<span id='patient_age'> <%= @age %></span><br>
+					<span id='workflow_status'> <%= @status %></span><br> 
+
+					<!-- select id="links" -->
+                <a href='/client_demographics?client_id=<%= @client.id -%>' label="Edit Demographics">
+											Edit Demographics</a>
+								<a href='/client_counseling?client_id=<%= @client.id -%>' label="Counseling Protocol">
+											Counseling Protocol</a>
+								<a href='/client_testing?client_id=<%= @client.id -%>' label="HIV Testing Protocol">
+											HIV Testing Protocol</a>
+           <!--/select--><br>
+					 
+					 <!--select id="tabs" -->
+              <a href='/client_current_visit?client_id=<%= @client.id %>'>Current Visit</a>
+              <a href='/client_previous_visits?client_id=<%= @client.id %>'>Previous Visits</a>
+            <!--/select --><br>
+					<a href='/htcs'>Cancel</a>
+          <a href='/htcs'>Finish</a>
+				</form>
+		</div>
+	</div>
+</body

@@ -6,18 +6,53 @@ class ClientsController < ApplicationController
   end
 
   def show
+			current_date = session[:datetime].to_date rescue Date.today
+		  identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+			@accession_number = ClientIdentifier.find(:last, 
+																	 :conditions => ["identifier_type = ? AND patient_id = ?", 
+																		identifier_type, @client.id]).identifier rescue ""
+			@residence = PersonAddress.find_by_person_id(@client.id).address1
+			person = Person.find(@client.id)
+			@age = person.age(current_date)
   end
 
   def new
 		if ! params[:gender].blank? and ! params[:dob].blank?
+			current_number = 1
+			current_year = session[:datetime].to_date.year.to_s rescue Date.today.year.to_s
+			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+			type = ClientIdentifier.find(:last, 
+																	 :conditions => ["identifier_type = ? AND identifier LIKE ?",
+																	  identifier_type, "%#{current_year}"])
+			type = type.identifier.split(" ")[0].to_i rescue 0
+			identifier = current_number + type
+
 			@person = Person.create(gender: params[:gender], birthdate: params[:dob])
     	@client = Client.create(patient_id: @person.person_id) if @person
-			@address = PersonAddress.create(person_id: @person.person_id, address1: params[:residence]) if @person
+			@address = PersonAddress.create(person_id: @person.person_id, 
+															address1: params[:residence]) if @person
+			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
+															patient_id: @client.id, 
+															identifier: "#{identifier} #{current_year}")
+
 		end
-		redirect_to action: 'search_results'
+		redirect_to action: 'search_results', residence: @address.address1, 
+											gender: @person.gender, date_of_birth: @person.birthdate
   end
 
   def edit
+  end
+
+	def demographics
+			
+	end
+
+	def counseling
+				
+	end
+
+	def testing
+  		
   end
 
   def create
@@ -47,12 +82,15 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
+		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 		 @clients = Client.find_by_sql("SELECT * FROM patient p
 											INNER JOIN person pe ON pe.person_id = p.patient_id 
 											INNER JOIN person_address pn ON pn.person_id = pe.person_id
+											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
 											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
-											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0 AND pn.voided = 0 
-											LIMIT 20")
+											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0
+											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
 	end
 	
 	def unallocated_clients
