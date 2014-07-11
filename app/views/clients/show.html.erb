@@ -16,15 +16,15 @@
 					<!-- select id="links" -->
                 <a href='/client_demographics?client_id=<%= @client.id -%>' label="Edit Demographics">
 											Edit Demographics</a>
-								<a href='/client_counseling_protocol?client_id=<%= @client.id -%>' label="Counseling Protocol">
+								<a href='/client_counseling?client_id=<%= @client.id -%>' label="Counseling Protocol">
 											Counseling Protocol</a>
-								<a href='/client_testing_protocol?client_id=<%= @client.id -%>' label="HIV Testing Protocol">
+								<a href='/client_testing?client_id=<%= @client.id -%>' label="HIV Testing Protocol">
 											HIV Testing Protocol</a>
            <!--/select--><br>
 					 
 					 <!--select id="tabs" -->
-              <a href='/client/client_visit?client_id=<%= @client.id %>'>Current Visit</a>
-              <a href='/client/previous_visits?client_id=<%= @client.id %>'>Previous Visits</a>
+              <a href='/client_current_visit?client_id=<%= @client.id %>'>Current Visit</a>
+              <a href='/client_previous_visits?client_id=<%= @client.id %>'>Previous Visits</a>
             <!--/select --><br>
 					<a href='/htcs'>Cancel</a>
           <a href='/htcs'>Finish</a>

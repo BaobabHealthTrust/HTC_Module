@@ -47,11 +47,11 @@ class ClientsController < ApplicationController
 			
 	end
 
-	def couseling_protocol
+	def counseling
 				
 	end
 
-	def testing_protocol
+	def testing
   		
   end
 
