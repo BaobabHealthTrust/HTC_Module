@@ -11,6 +11,7 @@ class SessionsController < ApplicationController
 			if @user
 				flash[:notice] = "You've been logged in."
 				session[:user_id] = @user.id
+        User.current_user_id = session[:user_id]
 				session[:location_id] = @location.id				
 				redirect_to "/"
 			else
@@ -26,6 +27,7 @@ class SessionsController < ApplicationController
   def logout
   
 		session[:user_id] = nil
+    User.current_user_id = nil
 		session[:room_id] = nil
 		flash[:notice] = "You've been logged out successfully."
 		redirect_to "/login"
