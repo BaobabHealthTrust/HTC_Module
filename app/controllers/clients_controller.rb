@@ -12,12 +12,24 @@ class ClientsController < ApplicationController
 																	 :conditions => ["identifier_type = ? AND patient_id = ?", 
 																		identifier_type, @client.id]).identifier rescue ""
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
+			@names = PersonName.find_by_person_id(@client.id)
 			person = Person.find(@client.id)
 			@age = person.age(current_date)
   end
 
   def new
-		if ! params[:gender].blank? and ! params[:dob].blank?
+		if ! params[:name_id].blank?
+				@names = PersonName.where("person_id = #{params[:name_id]} AND voided = 0")				
+				@names.each do |name|
+					 name.voided = 1
+					 name.save! 					
+				end
+
+				@new_name = PersonName.create(preferred: '0', person_id: params[:name_id], 
+															given_name: params[:first_name], family_name: params[:surname])
+				redirect_to "/clients/#{params[:name_id]}" and return
+
+		elsif ! params[:gender].blank? and ! params[:dob].blank?
 			current_number = 1
 			current_year = session[:datetime].to_date.year.to_s rescue Date.today.year.to_s
 			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
@@ -44,7 +56,8 @@ class ClientsController < ApplicationController
   end
 
 	def demographics
-			
+		 		@client = Client.find(params[:client_id])
+		 		@residence = PersonAddress.find_by_person_id(@client.id).address1
 	end
 
 	def counseling
@@ -54,6 +67,14 @@ class ClientsController < ApplicationController
 	def testing
   		
   end
+
+	def current_visit
+	
+	end
+	
+  def previous_visit
+
+	end
 
   def create
     @client = Client.new(client_params)

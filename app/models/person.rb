@@ -3,6 +3,7 @@ class Person < ActiveRecord::Base
 		include Openmrs
 
 		before_save :before_create
+		has_one :client, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
 
 	def age(current_date = Date.today)
 			age = current_date.year - birthdate.year

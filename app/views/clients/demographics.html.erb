@@ -1,0 +1,25 @@
+
+<h1>Update Demographics</h1>
+
+<%= form_tag({:action => "new"}, {:method => "get"}) do %>
+	<input type='hidden' name='name_id' value=<%= @client.id %>>
+	<br />
+	<%= label_tag :first_name %>
+	<%= text_field_tag :first_name %>
+	<br />
+	<%= label_tag :surname_name %>
+	<%= text_field_tag :surname %>
+	<br />
+	<%= label_tag :gender %>
+	<%= text_field_tag :gender, @client.person.gender, disabled: true %>
+	<br />
+	<%= label_tag :date_of_birth %>
+	<%= date_field_tag :date_of_birth, @client.person.birthdate, disabled: true %>
+	<br />
+	<%= label_tag :residence %>
+	<%= text_field_tag :residence, @residence, disabled: true %>
+	<br />
+	<%= link_to "Cancel" , '' %>
+	<%= submit_tag "Finish" %>
+
+<%end%>
