@@ -2,7 +2,9 @@ class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy]
 
   def index
-    @locations = Location.where("description LIKE '%HTC%'")
+    htc_tags = LocationTag.where("name LIKE '%HTC%'").map(&:location_tag_id)
+    @locations = Location.joins(:location_tag_maps)
+                          .where(:location_tag_map => {:location_tag_id => htc_tags})
   end
 
   def show
