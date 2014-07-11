@@ -2,7 +2,7 @@
 
 <ul>
 <% @clients.each do |client| %>
-		<li> <%= link_to "#{client.gender}, DOB: #{client.birthdate.strftime('%d/%m/%Y')} , #{client.address1}, Accession Number: ?" , client %> </li>
+		<li> <%= link_to "#{client.gender}, DOB: #{client.birthdate.strftime('%d/%m/%Y')} , #{client.address1}, Accession Number: #{client.identifier}" , client %> </li>
 <%end%>
 </ul>
 <%= link_to "Cancel" , htcs_path %>
