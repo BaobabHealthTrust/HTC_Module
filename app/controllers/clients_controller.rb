@@ -31,21 +31,22 @@ class ClientsController < ApplicationController
 
 		elsif ! params[:gender].blank? and ! params[:dob].blank?
 			current_number = 1
-			current_year = session[:datetime].to_date.year.to_s rescue Date.today.year.to_s
+			current = session[:datetime].to_date rescue Date.today
 			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 			type = ClientIdentifier.find(:last, 
 																	 :conditions => ["identifier_type = ? AND identifier LIKE ?",
-																	  identifier_type, "%#{current_year}"])
+																	  identifier_type, "%#{current.year.to_s}"])
 			type = type.identifier.split(" ")[0].to_i rescue 0
 			identifier = current_number + type
-
-			@person = Person.create(gender: params[:gender], birthdate: params[:dob])
-    	@client = Client.create(patient_id: @person.person_id) if @person
+			
+			@person = Person.create(gender: params[:gender], birthdate: params[:dob], creator: current_user.id)
+    	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
-															address1: params[:residence]) if @person
+															address1: params[:residence], creator: current_user.id) if @person
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
-															identifier: "#{identifier} #{current_year}")
+															identifier: "#{identifier} #{current.year}", creator: current_user.id)
+			write_encounter("UNALLOCATED", @person, current)
 
 		end
 		redirect_to action: 'search_results', residence: @address.address1, 
@@ -127,6 +128,14 @@ class ClientsController < ApplicationController
 	
 	def unallocated_clients
 		 @clients = Client.all(:limit=>20)
+	end
+
+	def write_encounter(encounter_type, person, current = Date.today)
+			
+			type = EncounterType.find_by_name(encounter_type).id
+			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
+									encounter_datetime: current, creator: current_user.id)
+			
 	end
 
   private
