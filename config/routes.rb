@@ -6,6 +6,15 @@ HTCModule::Application.routes.draw do
 
 	get "search" => "clients#search"
 	post "search" => "clients#search"
+
+	get "client_demographics" => "clients#demographics"
+	post "client_demographics" => "clients#demographics"
+
+	get "client_counseling" => "clients#counseling"
+	post "client_counseling" => "clients#counseling"
+
+	get "client_testing" => "clients#testing"
+	post "client_testing" => "clients#testing"
 	
 	get "unallocated_clients" => "clients#unallocated_clients"
 	#post "unallocated_clients" => "clients#unallocated_clients"
