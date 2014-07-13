@@ -4,4 +4,5 @@ class Encounter < ActiveRecord::Base
   include Openmrs
 	
 	before_save :before_create
+	belongs_to :client, -> { where retired: 0}, foreign_key: "patient_id" 
 end

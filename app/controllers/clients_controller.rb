@@ -1,5 +1,6 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy]
+  before_action :set_client, only: [:show, :edit, :update, :destroy,
+                                    :add_to_unallocated]
 
   def index
     @clients = Client.all
@@ -127,11 +128,16 @@ class ClientsController < ApplicationController
 	end
 	
 	def unallocated_clients
-		 @clients = Client.all(:limit=>20)
+     encounter_type_id = EncounterType.find_by_name('Unallocated').id
+		 @clients = Client.joins(:encounters)
+                      .where("encounter_type = #{encounter_type_id} AND
+                              DATE(encounter_datetime) = '#{Date.today}'")
 	end
   
   def add_to_unallocated
-    #raise params.to_yaml 
+    write_encounter('Unallocated', @client)
+
+    redirect_to unallocated_clients_path 
   end
 
 	def write_encounter(encounter_type, person, current = Date.today)
