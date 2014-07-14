@@ -9,6 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
+		#raise params.to_yaml
     @encounter = Encounter.new
   end
 

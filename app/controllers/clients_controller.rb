@@ -64,7 +64,7 @@ class ClientsController < ApplicationController
 	end
 
 	def counseling
-				
+			@protocols = CounselingQuestion.where("retired = 0")	
 	end
 
 	def testing
