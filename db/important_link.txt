@@ -1,0 +1,2 @@
+horizontal align: http://stackoverflow.com/questions/18865692/align-multiple-divs-horizontally
+buttons:					http://www.w3schools.com/tags/att_button_formaction.asp

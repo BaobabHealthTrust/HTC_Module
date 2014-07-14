@@ -6,7 +6,7 @@ CREATE TABLE `counseling_question` (
   `date_created` datetime DEFAULT NULL,
   `date_updated` datetime DEFAULT NULL,
 	`retired` int(11) NOT NULL  DEFAULT '0',
-  `creator` int(11) NOT NULL,
+  `creator` int(11) NOT NULL  REFERENCES users (user_id),
    PRIMARY KEY (`question_id`)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE `counseling_answer` (
 	`value_coded` int(11) NOT NULL,
   `date_created` datetime DEFAULT NULL,
   `date_updated` datetime DEFAULT NULL,
-  `creator` int(11) DEFAULT NULL,
+  `creator` int(11) DEFAULT NULL  REFERENCES users (user_id),
   `voided` tinyint(1) NOT NULL  DEFAULT '0',
   `voided_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`answer_id`)
