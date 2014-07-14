@@ -26,7 +26,8 @@ class ClientsController < ApplicationController
 				end
 
 				@new_name = PersonName.create(preferred: '0', person_id: params[:name_id], 
-															given_name: params[:first_name], family_name: params[:surname])
+															given_name: params[:first_name], family_name: params[:surname], 
+															creator: current_user.id)
 				redirect_to "/clients/#{params[:name_id]}" and return
 
 		elsif ! params[:gender].blank? and ! params[:dob].blank?
@@ -130,12 +131,10 @@ class ClientsController < ApplicationController
 		 @clients = Client.all(:limit=>20)
 	end
 
-	def write_encounter(encounter_type, person, current = Date.today)
-			
+	def write_encounter(encounter_type, person, current = Date.today)		
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
-									encounter_datetime: current, creator: current_user.id)
-			
+									encounter_datetime: current, creator: current_user.id)		
 	end
 
   private

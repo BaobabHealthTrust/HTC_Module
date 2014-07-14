@@ -8,7 +8,7 @@
 					<h1 id='project_name'>
               <span style="font-size: 55px;">HTC</span>
           </h1>
-					<span id='patient_name'> <%= @names.given_name rescue "" + " " + @names.family_name rescue "" %> - 
+					<span id='patient_name'> <%= @names.given_name rescue "" %> <%= @names.family_name rescue "" %> - 
 						<%= @client.person.gender %> </span><br>
 					<span id='accession_number'> <%= @accession_number %> </span><br>
 					<span id='patient_residence'> <%= @residence %></span><br>
