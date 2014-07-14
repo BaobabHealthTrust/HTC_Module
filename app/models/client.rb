@@ -3,5 +3,6 @@ class Client < ActiveRecord::Base
 	include Openmrs
 
 	before_save :before_create
-	has_one :person, :foreign_key => :person_id, :conditions => {:voided => 0}
+	has_one :person, -> {where voided: 0}, foreign_key: "person_id"
+	has_many :encounters, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
 end

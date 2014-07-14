@@ -1,4 +1,4 @@
-<h1>List of locations</h1>
+<h1>Locations</h1>
 
 <p id="notice"><%= notice %></p>                                                
 <p id="alert"><%= alert %></p> 
@@ -14,8 +14,12 @@
   <tbody>
     <% @locations.each do |location| %>
       <tr>
-        <td><%= link_to "Edit #{location.name}", edit_location_path(location) %></td>
-        <td><%= link_to 'Destroy', location, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to "Edit #{location.name}",
+                 edit_location_path(location) %>
+        </td>
+        <td><%= link_to 'Destroy', location, method: :delete,
+                 data: { confirm: 'Are you sure?' } %>
+        </td>
       </tr>
     <% end %>
   </tbody>

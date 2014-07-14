@@ -8,7 +8,13 @@ HTCModule::Application.routes.draw do
 	post "search" => "clients#search"
 
 	get "client_demographics" => "clients#demographics"
-	post "client_demographics" => "clients#demographics"
+	post "client_demographics" => "clients#demographics"  
+
+	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
+  get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
+  #post "assign_to_unlocated" => "clients#assign_to_unlocated"
+
+  #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
 
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"

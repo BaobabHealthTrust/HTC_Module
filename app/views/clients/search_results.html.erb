@@ -3,14 +3,22 @@
 <ul>
 <% if ! @scanned.blank? %>
 		<li> 
-					<%= link_to "#{@scanned.person.gender}, DOB: #{@scanned.person.birthdate.strftime('%d/%m/%Y')} ,
- 					#{@residence}, Accession Number: #{@accession.identifier}" , @scanned %> 
+      <%= link_to "#{@scanned.person.gender},
+                  DOB: #{@scanned.person.birthdate.strftime('%d/%m/%Y')} ,
+ 					        #{@residence}, Accession Number: #{@accession.identifier}",
+                  @scanned
+      %> 
 		</li>
 <% else
  @clients.each do |client| %>
 		<li> 
-				<%= link_to "#{client.gender}, DOB: #{client.birthdate.strftime('%d/%m/%Y')} , #{client.address1}, Accession 					Number: #{client.identifier}" , client %> 
-		</li>
+      <%= link_to "#{client.gender},
+                  DOB: #{client.birthdate.strftime('%d/%m/%Y')} ,
+                  #{client.address1},
+                  Accession Number: #{client.identifier}" , client
+      %> 
+     <%= link_to "Add to Un-allocated list", add_to_unallocated_path(client) %>
+    </li>
 	<%end
 end%>
 </ul>
