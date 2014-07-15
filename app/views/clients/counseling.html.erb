@@ -19,7 +19,8 @@
 </html>
 <body>	
 	<form action='/encounters/new/<%= params[:client_id] %>' method='post'>
-	
+	<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+	<input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
 	<div id='table'>
 	 <div id='table_row'>
 			<div id='table_cell'>
@@ -32,11 +33,11 @@
 							<%= protocol.name %>
 					</div>
 					<div id="table_cell">
-							<input type="radio" name="<%= protocol.id %>" id="<%= protocol.id %>" value="value">
+							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" value="<%= protocol.id %>">
 							<label for="<%= protocol.id %>">Yes</label>
 					</div>
 					<div id="table_cell">
-							<input type="radio" name="<%= protocol.id %>" id="<%= protocol.id %>" value="value">
+							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" value="<%= protocol.id %>">
 							<label for="<%= protocol.id %>">No</label>
 					</div>
 		</div>

@@ -116,6 +116,7 @@ class ClientsController < ApplicationController
 				end
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
+				redirect_to "/clients/#{@scanned.patient_id}" and return
 		 else
 		 		@clients = Client.find_by_sql("SELECT * FROM patient p
 											INNER JOIN person pe ON pe.person_id = p.patient_id 
