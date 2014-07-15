@@ -1,6 +1,6 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy,
-                                    :add_to_unallocated]
+                                    :add_to_unallocated, :remove_from_unallocated]
 
   def index
     @clients = Client.all
@@ -136,16 +136,28 @@ class ClientsController < ApplicationController
   
   def add_to_unallocated
     write_encounter('Unallocated', @client)
-
-    redirect_to unallocated_clients_path 
+    redirect_to unallocated_clients_path
+  end
+  
+  def remove_from_unallocated
+  	encounter_type_id = EncounterType.find_by_name('Unallocated').id
+		@client.encounters.where("encounter_type = #{encounter_type_id} AND
+															DATE(encounter_datetime) = '#{Date.today}'")
+											.each {|e| e.void(reason = "cancelled HTC encounter")}
+		redirect_to unallocated_clients_path
+  end
+  
+  def assign_to_counseling_room
+    write_encounter('IN WAITING', @client)
+    
+    redirect_to assign_to_counselling_room_path(current_location)
   end
 
 	def write_encounter(encounter_type, person, current = Date.today)
-			
 			type = EncounterType.find_by_name(encounter_type).id
-			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
-									encounter_datetime: current, creator: current_user.id)
-			
+			encounter = Encounter.create(encounter_type: type, patient_id: person.id,
+									location_id: current_location.id, encounter_datetime: current,
+									creator: current_user.id)
 	end
 
   private

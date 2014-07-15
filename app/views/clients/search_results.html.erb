@@ -16,8 +16,22 @@
                   DOB: #{client.birthdate.strftime('%d/%m/%Y')} ,
                   #{client.address1},
                   Accession Number: #{client.identifier}" , client
-      %> 
-     <%= link_to "Add to Un-allocated list", add_to_unallocated_path(client) %>
+      %>
+      
+     <% current_state = client.current_state rescue "" %>
+     
+     <% if current_state.empty? %>
+     
+	     <%= link_to "Add to Un-allocated list", add_to_unallocated_path(client) %>
+     
+     <% elsif current_state == "Unallocated" %>
+			
+			<%= link_to "Remove for Un-allocated",
+									 remove_from_unallocated_path(client)%>
+     
+     <% else %>
+     	<%= "Status: #{current_state} "%>
+		 <% end %>
     </li>
 	<%end
 end%>
