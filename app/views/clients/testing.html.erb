@@ -1,0 +1,193 @@
+<style>
+#table {
+		display: table;
+}
+.outertable {
+		border:solid 1px black;
+    width:960px;
+    margin-left:auto;
+    margin-right:auto;
+}
+.innertable {
+  -moz-border-radius: 3px;
+ 		border-radius: 3px;
+    border:solid 1px black;
+}
+#table_row {
+		display: table-row;
+}
+#table_cell {
+		display: table-cell;
+}
+#stwa {
+  -moz-border-radius: 15px;
+ 		border-radius: 15px;
+    border:solid 1px black;
+		height: 150px;
+		width: 150px;
+		font-size: 25px;
+    padding:5px;
+}
+#gold {
+  -moz-border-radius: 15px;
+ 		border-radius: 15px;
+                border:solid 1px black;
+		height: 150px;
+		width: 150px;
+		font-size: 25px;
+                padding:5px;
+}
+
+</style>
+<html>
+	<head>
+<script language="Javascript" type="text/javascript">
+//window.onload = function()
+//{
+//  stopwatch('Start');
+//}
+
+<!--
+var sec = 0;
+var min = 0;
+var hour = 0;
+function stopwatch(text) {
+   sec++;
+  if (sec == 60) {
+   sec = 0;
+   min = min + 1; }
+  else {
+   min = min; }
+  if (min == 60) {
+   min = 0; 
+   hour += 1; }
+
+if (sec<=9) { sec = "0" + sec; }
+   document.clock.stwa.value = ((hour<=9) ? "0"+hour : hour) + " : " + ((min<=9) ? "0" + min : min) + " : " + sec;
+
+  if (text == "Start") { 
+			 document.clock.start.value = "Stop ";
+                         window.clearTimeout(window.setTimeout("goldstopwatch();", 1000))
+			 document.clock.start.setAttribute('onclick', 'resetIt()');
+	}
+
+  if (text == "Stop ") {
+			 document.clock.start.value = "Start"; 
+			 document.clock.start.setAttribute('onclick', 'stopwatch("Start")');
+	}
+
+  if (document.clock.start.value == "Start") {
+   		window.clearTimeout(SD);
+   		return true; 
+	}
+	SD=window.setTimeout("stopwatch();", 1000);
+}
+
+function goldstopwatch(text) {
+   sec++;
+  if (sec == 60) {
+   sec = 0;
+   min = min + 1; }
+  else {
+   min = min; }
+  if (min == 60) {
+   min = 0;
+   hour += 1; }
+
+if (sec<=9) { sec = "0" + sec; }
+   document.clock.gold.value = ((hour<=9) ? "0"+hour : hour) + " : " + ((min<=9) ? "0" + min : min) + " : " + sec;
+
+  if (text == "Start") {
+			 document.clock.goldstart.value = "Stop ";
+                         window.clearTimeout(window.setTimeout("stopwatch();", 1000))
+			 document.clock.goldstart.setAttribute('onclick', 'goldresetIt()');
+	}
+
+  if (text == "Stop ") {
+			 document.clock.goldstart.value = "Start";
+			 document.clock.goldstart.setAttribute('onclick', 'goldstopwatch("Start")');
+	}
+
+  if (document.clock.goldstart.value == "Start") {
+   		window.clearTimeout(SD);
+   		return true;
+	}
+	SD=window.setTimeout("goldstopwatch();", 1000);
+}
+
+function resetIt() {
+  sec = -1;
+  min = 0;
+  hour = 0;
+  if (document.clock.start.value == "Stop ") {
+  document.clock.start.value = "Start"; }
+  window.clearTimeout(SD);
+  document.clock.start.setAttribute('onclick', 'stopwatch("Start")');
+ }
+
+ function goldresetIt() {
+  sec = -1;
+  min = 0;
+  hour = 0;
+  if (document.clock.goldstart.value == "Stop ") {
+  document.clock.goldstart.value = "Start"; }
+  window.clearTimeout(SD);
+  document.clock.goldstart.setAttribute('onclick', 'goldstopwatch("Start")');
+ }
+ 
+// -->
+</script>
+
+	</head>
+</html>
+<body>	
+	<form action='/encounters/new/<%= params[:client_id] %>' method='post' NAME="clock">
+	
+	<div id='table' class='outertable'>
+	 <div id='table_row'>
+			<div id='table_cell'>
+				<h1> HIV Testing Protocol</h1>
+			</div>
+		</div>
+		<div id="table_row">
+					<div id="table_cell"  class='innertable'>
+							
+							<div id="table">
+								<div id="table_row">
+									<div id="table_cell" style="margin:1px 1px 1px 1px;font-weight:bold;font-size:1.5em;">
+										Rapid Test Timer
+									</div>
+								</div>
+								<div id="table_row">
+									<div id="table_cell" style='float:right;width:50%;right:0%;'>
+											 <input type="text" id="stwa" name="stwa"><br>
+											 <input type="button" name='start' value="Start" onclick="stopwatch('Start')"> 
+									</div>
+								</div>
+							</div>
+					</div>
+					<div id="table_cell"  class='innertable'>
+							<div id="table">
+								<div id="table_row">
+									<div id="table_cell" style="margin:1px 1px 1px 1px;font-weight:bold;font-size:1.5em;">
+										Gold Test Timer
+									</div>
+								</div>
+								<div id="table_row">
+									<div id="table_cell" style='float:right;width:50%;right:0%;'>
+											 <input type="text" id="gold" name="gold"><br>
+											 <input type="button" name='goldstart' value="Start" onclick="goldstopwatch('Start')">
+									</div>
+								</div>
+							</div>
+					</div>
+		</div>
+	<div id='table_row'>
+			<div id='table_cell' >
+			</div>
+			<div id='table_cell'>
+			</div>
+	</div>
+	</div>
+	</form>
+</body>

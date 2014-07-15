@@ -27,7 +27,8 @@ class ClientsController < ApplicationController
 				end
 
 				@new_name = PersonName.create(preferred: '0', person_id: params[:name_id], 
-															given_name: params[:first_name], family_name: params[:surname])
+															given_name: params[:first_name], family_name: params[:surname], 
+															creator: current_user.id)
 				redirect_to "/clients/#{params[:name_id]}" and return
 
 		elsif ! params[:gender].blank? and ! params[:dob].blank?
@@ -63,7 +64,7 @@ class ClientsController < ApplicationController
 	end
 
 	def counseling
-				
+			@protocols = CounselingQuestion.where("retired = 0")	
 	end
 
 	def testing
@@ -115,6 +116,7 @@ class ClientsController < ApplicationController
 				end
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
+				redirect_to "/clients/#{@scanned.patient_id}" and return
 		 else
 		 		@clients = Client.find_by_sql("SELECT * FROM patient p
 											INNER JOIN person pe ON pe.person_id = p.patient_id 
@@ -152,6 +154,7 @@ class ClientsController < ApplicationController
     
     redirect_to assign_to_counselling_room_path(current_location)
   end
+
 
 	def write_encounter(encounter_type, person, current = Date.today)
 			type = EncounterType.find_by_name(encounter_type).id
