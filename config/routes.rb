@@ -12,6 +12,7 @@ HTCModule::Application.routes.draw do
 
 	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
+	post "encounters/new/:id" => "encounters#new", as: :new
   #post "assign_to_unlocated" => "clients#assign_to_unlocated"
 
   #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
