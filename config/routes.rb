@@ -25,6 +25,12 @@ HTCModule::Application.routes.draw do
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
 
+	get "protocols" => "admins#protocols"
+	get "edit_protocols" => "admins#edit_protocols"
+	post "edit_protocols" => "admins#edit_protocols"
+	get "new_protocol" => "admins#new_protocol"
+	post "new_protocol" => "admins#new_protocol"
+
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
 
