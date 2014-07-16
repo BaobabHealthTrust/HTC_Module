@@ -38,7 +38,7 @@ class ClientsController < ApplicationController
 			type = ClientIdentifier.find(:last, 
 																	 :conditions => ["identifier_type = ? AND identifier LIKE ?",
 																	  identifier_type, "%#{current.year.to_s}"])
-			type = type.identifier.split(" ")[0].to_i rescue 0
+			type = type.identifier.split("-")[0].to_i rescue 0
 			identifier = current_number + type
 			
 			@person = Person.create(gender: params[:gender], birthdate: params[:dob], creator: current_user.id)
@@ -47,7 +47,7 @@ class ClientsController < ApplicationController
 															address1: params[:residence], creator: current_user.id) if @person
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
-															identifier: "#{identifier} #{current.year}", creator: current_user.id)
+															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
 			write_encounter("UNALLOCATED", @person, current)
 
 		end
