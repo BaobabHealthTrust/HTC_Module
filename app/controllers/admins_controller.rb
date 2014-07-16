@@ -14,7 +14,7 @@ class AdminsController < ApplicationController
   end 
 	
 	def protocols
-		@protocols = CounselingQuestion.where("retired = 0")	
+		@protocols = CounselingQuestion.all	
 	end
 	
 	def edit_protocols

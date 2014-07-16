@@ -32,6 +32,7 @@
 					</div>
 					<div id="table_cell">
 							<%= link_to "Edit", edit_protocols_path(:protocol_id => protocol.id) %>
+							<%= link_to "Retire", edit_protocols_path(:protocol_id => protocol.id, :retire => true) %>
 					</div>
 		</div>
 		<% end %>
