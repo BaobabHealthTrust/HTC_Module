@@ -1,0 +1,49 @@
+<style>
+#table {
+		display: table;
+    width:960px;
+    margin-left:auto;
+    margin-right:auto;
+}
+#table_row {
+		display: table-row;
+}
+#table_cell {
+		display: table-cell;
+}
+
+</style>
+<html>
+	<head>
+	</head>
+</html>
+<body>
+	<form action='/admins/show' method='get'>	
+	<div id='table'>
+	 <div id='table_row'>
+			<div id='table_cell'>
+				<h2> Counseling Protocols</h2>
+			</div>
+		</div>
+		<% @protocols.each do |protocol| %>
+		<div id="table_row">
+					<div id="table_cell">
+							<%= protocol.name %>
+					</div>
+					<div id="table_cell">
+							<%= link_to "Edit", edit_protocols_path(:protocol_id => protocol.id) %>
+					</div>
+		</div>
+		<% end %>
+	<div id='table_row'>
+			<div id='table_cell' >
+				<button type='submit'  formaction="show">Cancel </button>
+			</div>
+			<div id='table_cell'>
+			<%= link_to "New", new_protocol_path %>
+			<button type='submit'>Finish </button>
+			</div>
+	</div>
+	</div>
+</form>
+</body>

@@ -1,0 +1,15 @@
+<h1>Add Protocol</h1>
+
+<%= form_tag({:action => "new_protocol"}, {:method => "post"}) do %>
+	<br />
+	<%= label_tag :name %>
+	<%= text_field_tag :name %>
+	<br />
+	<%= label_tag :description %>
+	<%= text_field_tag :description %>
+	<br />
+
+	<%= link_to "Cancel" , protocols_path %>
+	<%= submit_tag "Finish" %>
+
+<%end%>

@@ -11,8 +11,32 @@ class AdminsController < ApplicationController
 
   def new
 
-  end
-
+  end 
+	
+	def protocols
+		@protocols = CounselingQuestion.where("retired = 0")	
+	end
+	
+	def edit_protocols
+		@protocol = CounselingQuestion.find(params[:protocol_id])
+		if request.post?
+			@protocol.name = params[:name]
+			@protocol.retired = params[:retired]
+			@protocol.description = params[:description]
+			if @protocol.save
+				redirect_to protocols_path
+			end
+		end
+	end
+  
+	def new_protocol
+			if request.post?
+				@protocol = CounselingQuestion.create(name: params[:name],
+										description: params[:description], retired: 0, 
+										creator: current_user.id)
+				redirect_to protocols_path
+			end
+	end
 
   def edit
   end
