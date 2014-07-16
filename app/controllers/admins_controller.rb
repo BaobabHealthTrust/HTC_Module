@@ -14,19 +14,26 @@ class AdminsController < ApplicationController
   end 
 	
 	def protocols
-		@protocols = CounselingQuestion.all	
+		@protocols = CounselingQuestion.all
 	end
 	
 	def edit_protocols
+
 		@protocol = CounselingQuestion.find(params[:protocol_id])
 		if request.post?
 			@protocol.name = params[:name]
-			@protocol.retired = params[:retired]
+			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
 			if @protocol.save
 				redirect_to protocols_path
 			end
+		elsif ! params[:retire].blank?
+			@protocol.retired = params[:retire].to_i
+			if @protocol.save
+				redirect_to protocols_path
+			end
 		end
+
 	end
   
 	def new_protocol
