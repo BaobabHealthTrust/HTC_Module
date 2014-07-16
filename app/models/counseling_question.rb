@@ -1,7 +1,7 @@
 class CounselingQuestion < ActiveRecord::Base
   self.table_name = 'counseling_question'
   self.primary_key = 'question_id'
-  include Openmrs
-	
-	before_save :before_create
+	self.default_scope -> {  where("retired = ? OR retired = ?", 0, 1)  }
+	scope :active_list, lambda { where("retired = ?", 0) }  
+
 end

@@ -20,9 +20,20 @@
 <body>
 	<form action='/admins/show' method='get'>	
 	<div id='table'>
-	 <div id='table_row'>
+		<div id='table_row'>
 			<div id='table_cell'>
 				<h2> Counseling Protocols</h2>
+			</div>
+		</div>
+		<div id='table_row' style="font-weight:bold;font-size:1.5em;">
+			<div id='table_cell'>
+					Protocol
+			</div>
+			<div id='table_cell'>
+				  Status
+			</div>
+			<div id='table_cell'>
+					&nbsp;
 			</div>
 		</div>
 		<% @protocols.each do |protocol| %>
@@ -30,9 +41,20 @@
 					<div id="table_cell">
 							<%= protocol.name %>
 					</div>
+					<div id='table_cell'>
+						<% if protocol.retired.to_i == 1 %>
+							 Inactive
+						<% else %>
+							 Active
+						<% end %>
+					</div>
 					<div id="table_cell">
-							<%= link_to "Edit", edit_protocols_path(:protocol_id => protocol.id) %>
-							<%= link_to "Retire", edit_protocols_path(:protocol_id => protocol.id, :retire => true) %>
+						<%= link_to "Edit", edit_protocols_path(:protocol_id => protocol.id) %>
+							<% if protocol.retired.to_i == 1 %>
+							 <%= link_to "Activate", edit_protocols_path(:protocol_id => protocol.id, :retire => "0") %>
+						<% else %>
+							 <%= link_to "Retire", edit_protocols_path(:protocol_id => protocol.id, :retire => "1") %>
+						<% end %>
 					</div>
 		</div>
 		<% end %>
