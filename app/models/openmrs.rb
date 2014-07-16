@@ -2,8 +2,8 @@ module Openmrs
   module ClassMethods
     def assign_scopes
       col_names = self.columns.map(&:name)
-      self.default_scope :conditions => "#{self.table_name}.voided = 0" if col_names.include?("voided")
-      self.default_scope :conditions => "#{self.table_name}.retired = 0" if col_names.include?("retired")
+      self.default_scope -> { where "#{self.table_name}.voided = 0"  } if col_names.include?("voided")
+      self.default_scope -> { where "#{self.table_name}.retired = 0" } if col_names.include?("retired")
     end
     
     # We needed a way to break out of the default scope, so we introduce inactive
