@@ -2,7 +2,13 @@
 
 <ul>
 <% @clients.each do |client| %>
-		<li> <%= link_to "Client/#{client.id}" , client %> </li>
+		<li> <%= link_to "Client/#{client.id}" , client %> |
+				 <%= link_to "Remove from Un-allocated",
+											remove_from_unallocated_path(client)%>|
+				 <%= link_to "Allocated to Counseling Room",
+											assign_to_counseling_room_path(client)%>
+		</li>
+
 <%end%>
 </ul>
 
