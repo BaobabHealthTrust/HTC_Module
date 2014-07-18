@@ -19,7 +19,7 @@
 	<%= label_tag :residence %>
 	<%= text_field_tag :residence, @residence, disabled: true %>
 	<br />
-	<%= link_to "Cancel" , '' %>
+	<%= link_to "Cancel" , "/clients/#{params[:client_id]}" %>
 	<%= submit_tag "Finish" %>
 
 <%end%>

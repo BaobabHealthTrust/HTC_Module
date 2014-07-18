@@ -70,13 +70,23 @@ class ClientsController < ApplicationController
 	def testing
   		
   end
+	
+	def referral_consent
+			@location = Location.all.limit(20)
+	end
 
 	def current_visit
-	
+		current_date = session[:datetime].to_day rescue Date.today
+		@encounter = Encounter.select("encounter_id, encounter_datetime").where("patient_id = ? 
+								AND encounter_datetime >= ? AND encounter_datetime <= ?", params[:client_id], 
+								current_date.strftime('%Y-%m-%d 00:00:00'), current_date.strftime('%Y-%m-%d 23:59:59'))
 	end
 	
   def previous_visit
-
+			current_date = session[:datetime].to_day rescue Date.today
+		  @encounter = Encounter.select("encounter_id, encounter_datetime").where("patient_id = ? 
+								AND encounter_datetime >= ? AND encounter_datetime <= ?", params[:client_id], 
+								current_date.strftime('%Y-%m-%d 00:00:00'), current_date.strftime('%Y-%m-%d 23:59:59'))
 	end
 
   def create
