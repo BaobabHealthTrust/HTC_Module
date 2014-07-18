@@ -1,6 +1,7 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy,
-                                    :add_to_unallocated, :remove_from_unallocated]
+                                    :add_to_unallocated, :remove_from_unallocated,
+                                    :assign_to_counseling_room]
 
   def index
     @clients = Client.all
@@ -150,9 +151,9 @@ class ClientsController < ApplicationController
   end
   
   def assign_to_counseling_room
-    write_encounter('IN WAITING', @client)
+    write_encounter('IN SESSION', @client)
     
-    redirect_to assign_to_counselling_room_path(current_location)
+    redirect_to client_path(@client)
   end
 
 
