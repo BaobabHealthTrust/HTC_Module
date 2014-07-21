@@ -40,6 +40,9 @@ HTCModule::Application.routes.draw do
 
 	get "client_current_visit" => "clients#current_visit"
 	post "client_current_visit" => "clients#current_visit"
+
+	get "encounters/observations/:id" => "encounters#observations"
+	get "encounters/void/:id" => "encounters#void"
 	
 	get "unallocated_clients" => "clients#unallocated_clients"
 	#post "unallocated_clients" => "clients#unallocated_clients"
