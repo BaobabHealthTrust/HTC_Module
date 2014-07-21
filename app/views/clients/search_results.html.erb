@@ -22,13 +22,12 @@
      
      <% if current_state.empty? %>
      
-	     <%= link_to "Add to Un-allocated list", add_to_unallocated_path(client) %>
+	     <%= link_to "Add to waiting list", add_to_unallocated_path(client) %>
      
      <% elsif current_state == "Unallocated" %>
 			
 			<%= link_to "Remove for Un-allocated",
 									 remove_from_unallocated_path(client)%>
-     
      <% else %>
      	<%= "Status: #{current_state} "%>
 		 <% end %>
