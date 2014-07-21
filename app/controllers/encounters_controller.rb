@@ -9,7 +9,6 @@ class EncountersController < ApplicationController
   end
 
   def new
-		raise params[:observations][0].to_yaml
 		current = session[:datetime].to_date rescue Date.today
 		person = Person.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person, current)
@@ -23,40 +22,41 @@ class EncountersController < ApplicationController
 				end
 		end
 		
-		if params["ENCOUNTER"].upcase == "REFERRAL CONSENT CONFIRMATION"
-			      (params[:observations] || []).each do |observation|
+    (params[:observations] || []).each do |observation|
 
-                      next if observation[:concept_name].blank?
+              next if observation[:concept_name].blank?
 
-                      # Check to see if any values are part of this observation
-                      # This keeps us from saving empty observations
-                      values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
-                        observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
-                      }.compact
+              # Check to see if any values are part of this observation
+              # This keeps us from saving empty observations
+              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
+                observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
+              }.compact
 
-                      next if values.length == 0
+              next if values.length == 0
 
-                      observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
-                      observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
-
-                      observation[:encounter_id] = encounter.id
-                      # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
-                      observation[:person_id] ||= encounter.client_id
-                      
-                      # Handle multiple select
-                      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
-                        observation[:value_coded_or_text_multiple].compact!
-                        observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
-                      end
-                      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
-                        values = observation.delete(:value_coded_or_text_multiple)
-                        values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
-                      else
-                        observation.delete(:value_coded_or_text_multiple)
-                        Observation.create(observation)
-                      end
-                    end
-		end
+              observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
+              observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
+							
+							observation[:obs_datetime] = current
+							observation[:creator] = current_user.id
+              observation[:encounter_id] = encounter.id
+              # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
+              observation[:person_id] ||= encounter.patient_id
+              
+              # Handle multiple select
+              if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+                observation[:value_coded_or_text_multiple].compact!
+                observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
+              end
+              if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
+                values = observation.delete(:value_coded_or_text_multiple)
+                values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
+              else
+								#raise observation.to_yaml
+                observation.delete(:value_coded_or_text_multiple)
+                Observation.create(observation) rescue []
+              end
+            end
 
 		redirect_to "/clients/#{params[:id]}" and return
   end
@@ -89,7 +89,7 @@ class EncountersController < ApplicationController
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
 									encounter_datetime: current, creator: current_user.id)
-			return encounter.encounter_id		
+			return encounter		
 	end
 
   private
