@@ -114,7 +114,13 @@ class EncountersController < ApplicationController
 		render :layout => false
 	end
 
+	def void
+		@encounter = Encounter.find(params[:id])
 
+		@encounter.void
+  
+		head :ok
+	end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_encounter
