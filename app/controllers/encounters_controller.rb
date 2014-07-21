@@ -11,7 +11,7 @@ class EncountersController < ApplicationController
   def new
 		current = session[:datetime].to_date rescue Date.today
 		person = Person.find(params[:id])
-		encounter = write_encounter(params["ENCOUNTER"], person, current)
+		encounter = write_encounter(params["ENCOUNTER"], person)
 		
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  params[:obs].each do |key, value|
@@ -85,12 +85,35 @@ class EncountersController < ApplicationController
     @encounter.destroy
   end
 
-	def write_encounter(encounter_type, person, current = Date.today)		
+	def write_encounter(encounter_type, person, current = Time.now)		
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
 									encounter_datetime: current, creator: current_user.id)
 			return encounter		
 	end
+
+	def observations
+		# We could eventually include more here, maybe using a scope with includes
+		encounter = Encounter.find(params[:id], :include => [:observations])
+		@child_obs = {}
+		@observations = []
+		encounter.observations.map do |obs|
+			next if !obs.obs_group_id.blank?
+			if ConceptName.find_by_concept_id(obs.concept_id).name.match(/location/)
+				obs.value_numeric = ""
+				@observations << obs
+			else
+				@observations << obs
+			end
+			child_obs = Observation.where("obs_group_id = ?", obs.obs_id)
+			if child_obs
+				@child_obs[obs.obs_id] = child_obs
+			end
+		end
+
+		render :layout => false
+	end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

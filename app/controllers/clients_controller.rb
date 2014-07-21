@@ -78,14 +78,20 @@ class ClientsController < ApplicationController
 
 	def current_visit
 		current_date = session[:datetime].to_day rescue Date.today
-		@encounters = Encounter.select("encounter_id, encounter_type, encounter_datetime").where("patient_id = ? 
+		@encounters = Encounter.all.where("patient_id = ? 
 								AND encounter_datetime >= ? AND encounter_datetime <= ?", params[:client_id], 
 								current_date.strftime('%Y-%m-%d 00:00:00'), current_date.strftime('%Y-%m-%d 23:59:59'))
+				@creator_name = {}
+    @encounters.each do |encounter|
+      id = encounter.creator
+      user_name = User.find(id).person.names.first
+      @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
+    end
 	end
 	
   def previous_visit
 			current_date = session[:datetime].to_day rescue Date.today
-		  @encounters = Encounter.select("encounter_id, encounter_datetime, creator").where("patient_id = ? 
+		  @encounters = Encounter.all.where("patient_id = ? 
 								AND encounter_datetime >= ? AND encounter_datetime <= ?", params[:client_id], 
 								current_date.strftime('%Y-%m-%d 00:00:00'), current_date.strftime('%Y-%m-%d 23:59:59'))
 		
@@ -93,20 +99,7 @@ class ClientsController < ApplicationController
     @encounters.each do |encounter|
       id = encounter.creator
       user_name = User.find(id).person.names.first
-      #@creator_name[id] = '(' + user_name.given_name.first + '. ' + user_name.family_name + ')'
-      if user_name.given_name.blank?
-        given_name = ""
-      else
-        given_name = user_name.given_name.first
-      end
-
-      if user_name.family_name.blank?
-        family_name = ""
-      else
-        family_name = user_name.family_name
-      end
-
-      @creator_name[id] = '(' + given_name.to_s + '. ' + family_name.to_s + ')'
+      @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
     end
 	end
 
