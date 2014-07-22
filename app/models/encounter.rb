@@ -86,6 +86,5 @@ EOF
       return rows.inject({}) {|result, row| result[encounter_types_hash[row['encounter_type']]] = row['number']; result }
     end     
   end
-	
->>>>>>> e6438ab8fe046627c0095c33a150868afcc40488
+
 end
