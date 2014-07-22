@@ -1,3 +1,10 @@
+<style>
+	#tdb tr td {
+		border: 1px solid black;
+		padding 5px;
+	}
+</style>
+
 Scan Client Barcode:
 <br />
 HTC
@@ -20,12 +27,41 @@ User:
 <br />
 <br />
 
+<table id = "tdb">
+	<tr>
+		<td> Rooms </td>
+		<td> Maximum <br /> capacities</td>
+		<td> Seen</td>
+		<td> Waiting</td>
+		<td> Available <br /> Space</td>
+		<td> Total Attendance	</td>
+	</tr>
+	
+	<% @rooms_info.each do |name,data| %>
+	<tr>
+		<td> <%= name.humanize %> </td>
+		<td> <%= data[:max_capacity] %> </td>
+		<td> <%= data[:seen] %> </td>
+		<td> <%= data[:waiting] %> </td>
+		<td> <%= data[:available_space] %> </td>
+		<td> <%= data[:total_attendance] %> </td>
+	</tr>
+	<% end %>
+	<tr>
+		<td> Totals </td>
+		<td> </td>
+		<td> </td>
+		<td> </td>
+		<td> </td>
+		<td> </td>
+	</tr>
+</table>
 
 <%= link_to 'Logout', log_out_path %>
 <% if @show_counselling_room %>
 	<%= link_to 'Room Clients', @current_location %>	
 <% end %>
-<%= link_to 'Un-Allocated Clients', unallocated_clients_path %>,
+<%= link_to 'Waiting list', unallocated_clients_path %>,
 <%= link_to 'Swap Desk', '' %>,
 <%= link_to 'Find or Register Client', search_path %>
 

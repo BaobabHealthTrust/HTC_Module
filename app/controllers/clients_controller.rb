@@ -16,6 +16,7 @@ class ClientsController < ApplicationController
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
 			@names = PersonName.find_by_person_id(@client.id)
 			person = Person.find(@client.id)
+			@status  = @client.current_state rescue "NaN"
 			@age = person.age(current_date)
   end
 
