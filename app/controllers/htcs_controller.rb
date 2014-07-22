@@ -4,9 +4,9 @@ class HtcsController < ApplicationController
   def index
   	tag_id = LocationTag.find_by_name('HTC Counselling Room').id
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id)
-		
+
 		@rooms_info = {}
-		
+
 		@rooms.each do |r|
 			@rooms_info[r.name] = {}
 			@rooms_info[r.name][:max_capacity] = Random.rand(100)
@@ -15,9 +15,8 @@ class HtcsController < ApplicationController
 			@rooms_info[r.name][:available_space] = 'NaN'
 			@rooms_info[r.name][:total_attendance] = 'NaN'
 		end
-		
   end
-  
+
   def  client_seen_in_room(room, date=Date.today)
 		   encounter_type_id = EncounterType.find_by_name('IN SESSION').id
 			 Client.joins(:encounters)

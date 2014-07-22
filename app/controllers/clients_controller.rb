@@ -4,7 +4,7 @@ class ClientsController < ApplicationController
                                     :assign_to_counseling_room]
 
   def index
-    @clients = Client.all
+    #@clients = Client.all
   end
 
   def show
