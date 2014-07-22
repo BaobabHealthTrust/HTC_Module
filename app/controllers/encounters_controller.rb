@@ -9,10 +9,9 @@ class EncountersController < ApplicationController
   end
 
   def new
-		raise params[:observations][0].to_yaml
 		current = session[:datetime].to_date rescue Date.today
 		person = Person.find(params[:id])
-		encounter = write_encounter(params["ENCOUNTER"], person, current)
+		encounter = write_encounter(params["ENCOUNTER"], person)
 		
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  params[:obs].each do |key, value|
@@ -23,40 +22,41 @@ class EncountersController < ApplicationController
 				end
 		end
 		
-		if params["ENCOUNTER"].upcase == "REFERRAL CONSENT CONFIRMATION"
-			      (params[:observations] || []).each do |observation|
+    (params[:observations] || []).each do |observation|
 
-                      next if observation[:concept_name].blank?
+              next if observation[:concept_name].blank?
 
-                      # Check to see if any values are part of this observation
-                      # This keeps us from saving empty observations
-                      values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
-                        observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
-                      }.compact
+              # Check to see if any values are part of this observation
+              # This keeps us from saving empty observations
+              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
+                observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
+              }.compact
 
-                      next if values.length == 0
+              next if values.length == 0
 
-                      observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
-                      observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
-
-                      observation[:encounter_id] = encounter.id
-                      # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
-                      observation[:person_id] ||= encounter.client_id
-                      
-                      # Handle multiple select
-                      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
-                        observation[:value_coded_or_text_multiple].compact!
-                        observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
-                      end
-                      if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
-                        values = observation.delete(:value_coded_or_text_multiple)
-                        values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
-                      else
-                        observation.delete(:value_coded_or_text_multiple)
-                        Observation.create(observation)
-                      end
-                    end
-		end
+              observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
+              observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
+							
+							observation[:obs_datetime] = current
+							observation[:creator] = current_user.id
+              observation[:encounter_id] = encounter.id
+              # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
+              observation[:person_id] ||= encounter.patient_id
+              
+              # Handle multiple select
+              if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+                observation[:value_coded_or_text_multiple].compact!
+                observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
+              end
+              if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
+                values = observation.delete(:value_coded_or_text_multiple)
+                values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation) }
+              else
+								#raise observation.to_yaml
+                observation.delete(:value_coded_or_text_multiple)
+                Observation.create(observation) rescue []
+              end
+            end
 
 		redirect_to "/clients/#{params[:id]}" and return
   end
@@ -85,13 +85,42 @@ class EncountersController < ApplicationController
     @encounter.destroy
   end
 
-	def write_encounter(encounter_type, person, current = Date.today)		
+	def write_encounter(encounter_type, person, current = Time.now)		
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
 									encounter_datetime: current, creator: current_user.id)
-			return encounter.encounter_id		
+			return encounter		
 	end
 
+	def observations
+		# We could eventually include more here, maybe using a scope with includes
+		encounter = Encounter.find(params[:id], :include => [:observations])
+		@child_obs = {}
+		@observations = []
+		encounter.observations.map do |obs|
+			next if !obs.obs_group_id.blank?
+			if ConceptName.find_by_concept_id(obs.concept_id).name.match(/location/)
+				obs.value_numeric = ""
+				@observations << obs
+			else
+				@observations << obs
+			end
+			child_obs = Observation.where("obs_group_id = ?", obs.obs_id)
+			if child_obs
+				@child_obs[obs.obs_id] = child_obs
+			end
+		end
+
+		render :layout => false
+	end
+
+	def void
+		@encounter = Encounter.find(params[:id])
+
+		@encounter.void
+  
+		head :ok
+	end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_encounter

@@ -9,6 +9,12 @@
 	<%= label_tag :description %>
 	<%= text_field_tag :description, @protocol.description %>
 	<br />
+        <%= label_tag :data_type %>
+	<%=select_tag "data_type", options_for_select(["","Datetime","Time", "Boolean", "Number", "Text"]) %>
+	<br />
+        <%= label_tag :answers %>
+	<%=select_tag "answers", options_from_collection_for_select(@location, "name", "name")%>
+	<br />
 
 	<%= link_to "Cancel" , protocols_path %>
 	<%= submit_tag "Finish" %>

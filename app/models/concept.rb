@@ -1,5 +1,7 @@
 class Concept < ActiveRecord::Base
 	self.table_name = "concept"
+	self.primary_key = "concept_id"
+
 	include Openmrs
 
   belongs_to :concept_class, -> { where retired: 0}
@@ -16,5 +18,23 @@ class Concept < ActiveRecord::Base
       }.compact
     end
   end
-  has_many :concept_members, :class_name => 'ConceptSet', :foreign_key => :concept_set
+  has_many :concept_members, class_name: 'ConceptSet', foreign_key: :concept_set
+
+  has_many :drugs, -> {where retired: 0}
+
+  def self.find_by_name(concept_name)
+    Concept.find(:first, :joins => 'INNER JOIN concept_name on concept_name.concept_id = concept.concept_id', :conditions => ["concept.retired = 0 AND concept_name.voided = 0 AND concept_name.name =?", "#{concept_name}"])
+  end
+
+  def shortname
+	name = self.concept_names.typed('SHORT').first.name rescue nil
+	return name unless name.blank?
+    return self.concept_names.first.name rescue nil
+  end
+
+  def fullname
+	name = self.concept_names.typed('FULLY_SPECIFIED').first.name rescue nil
+	return name unless name.blank?
+    return self.concept_names.first.name rescue nil
+  end
 end

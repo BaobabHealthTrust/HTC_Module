@@ -36,9 +36,10 @@
 											<label for="observations__value_coded_or_text_yes">Yes</label>
 											<%= radio_button_tag("observations[][value_coded_or_text]", "no") %>
 											<label for="observations__value_coded_or_text_no">No</label>
-											<%= hidden_field_tag("observations[][concept_name]",        "Refer to clinic") %>
-    									<%= hidden_field_tag("observations[][client_id]",         params[:id]) %>
+											<%= hidden_field_tag("observations[][concept_name]",        "Refer to hospital or specialist clinic") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
     									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_datetime]",       "") %>
 						</div>
 				</div>
 				<div id="table_row">
@@ -49,8 +50,9 @@
 											<!-- set the test type concept name and value -->
 											<%=select_tag "observations[][value_coded_or_text]", options_from_collection_for_select(@location, "name", "name") %>
     									<%= hidden_field_tag("observations[][concept_name]",        "Which clinic") %>
-    									<%= hidden_field_tag("observations[][client_id]",         params[:id]) %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
     									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_datetime]",       "") %>
 						</div>
 				</div>
 				<div id="table_row">
@@ -60,7 +62,7 @@
 							<div id="table_cell">
 											<%= date_field_tag "observations[][value_datetime]" %>
 											<%= hidden_field_tag("observations[][concept_name]",        "Preferred Clinic Day") %>
-    									<%= hidden_field_tag("observations[][client_id]",         params[:id]) %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
     									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 							</div>
 				</div>

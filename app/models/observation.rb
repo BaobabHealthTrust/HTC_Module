@@ -40,8 +40,6 @@ class Observation < ActiveRecord::Base
   
   def concept_name=(concept_name)
     self.concept_id = ConceptName.find_by_name(concept_name).concept_id
-  rescue
-    raise "\"#{concept_name}\" does not exist in the concept_name table"
   end
 
   def value_coded_or_text=(value_coded_or_text)
@@ -120,7 +118,8 @@ class Observation < ActiveRecord::Base
     end
 
     if answer.nil?
-      answer = Concept.find_with_voided(self.value_coded).fullname + ' - retired'
+      #answer = Concept.find_with_voided(self.value_coded).fullname + ' - retired' 
+			answer = ' - retired' 
     end
 	
     return answer.sub(/\.0$/, "")

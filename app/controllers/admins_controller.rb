@@ -33,7 +33,7 @@ class AdminsController < ApplicationController
 				redirect_to protocols_path
 			end
 		end
-
+    @location = Location.all.limit(20)
 	end
   
 	def new_protocol
