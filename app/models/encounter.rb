@@ -5,7 +5,6 @@ class Encounter < ActiveRecord::Base
 	
 	before_save :before_create
 	belongs_to :client, -> { where retired: 0}, foreign_key: "patient_id"
-
 	has_many :observations, -> {where voided: 0}, dependent: :destroy
 	has_many :counseling_answer, -> {where voided: 0}
   has_many :drug_orders,  through: :orders,  foreign_key: 'order_id'
@@ -88,5 +87,5 @@ EOF
       return rows.inject({}) {|result, row| result[encounter_types_hash[row['encounter_type']]] = row['number']; result }
     end     
   end
-	
+
 end
