@@ -89,19 +89,23 @@ class ClientsController < ApplicationController
     end
 	end
 	
-  def previous_visit
-			current_date = session[:datetime].to_day rescue Date.today
-		  @encounters = Encounter.all.where("patient_id = ? 
-								AND encounter_datetime >= ? AND encounter_datetime <= ?", params[:client_id], 
-								current_date.strftime('%Y-%m-%d 00:00:00'), current_date.strftime('%Y-%m-%d 23:59:59'))
+  def get_previous_encounters(patient_id)
+    session_date = (session[:datetime].to_date rescue Date.today.to_date) - 1.days
+    session_date = session_date.to_s + ' 23:59:59'
+   previous_encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime <= ?", 0, patient_id, session_date).includes(:observations).order("encounter.encounter_datetime DESC")
 		
-		@creator_name = {}
-    @encounters.each do |encounter|
-      id = encounter.creator
-      user_name = User.find(id).person.names.first
-      @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
-    end
-	end
+    return previous_encounters
+  end
+
+  def previous_visit
+    @previous_visits  = get_previous_encounters(params[:client_id])
+
+    @encounter_dates = @previous_visits.map{|encounter| encounter.encounter_datetime.to_date}.uniq.first(6) rescue []
+
+    @past_encounter_dates = @encounter_dates
+
+    render :layout => false
+  end
 
   def create
     @client = Client.new(client_params)
