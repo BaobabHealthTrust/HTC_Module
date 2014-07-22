@@ -1,7 +1,7 @@
 
 <% for obs in @observations do %>
 	<li class="data <%= cycle('even', 'odd') %>" encounter="<%= obs.encounter_id %>" observation="<%= obs.id %>">
-		<%
+    <% if defined? obs.concept_id
 			if obs.concept_id == ConceptName.find_by_name("Location of HIV test").concept_id
 				display_obs = (h "#{obs.to_s(["short", "order"]).to_s.split(":")[0]}: #{Location.find(obs.to_s(["short", "order"]).to_s.split(":")[1].to_i).name rescue obs.to_s(["short", "order"]).to_s.split(":")[1]}")
 			elsif  obs.concept_id == ConceptName.find_by_name("Location of ART initiation").concept_id
@@ -25,20 +25,22 @@
 			else
 				display_obs = (h obs.to_s(["short", "order"]))
 			end
-
+   
 			display_obs = display_obs.gsub('hiv','HIV').gsub('Hiv','HIV')
 
 			if obs.to_s(["short", "order"]).upcase.include?("RETIRED")
 				display_obs = "<s>#{display_obs}</s>"
 			end
-
+                
             #if display_obs.include?("Detailed") || display_obs.include?("Specific")
             #   display_obs = "&nbsp&nbsp&nbsp<i>#{display_obs}</i>"
             #end
 		%>
 		<div class="encounter"><%= "#{display_obs}" %></div>
 
-		<% 	for child in @child_obs[obs.obs_id] do
+		<% end
+                  if defined? obs.obs_id
+                        for child in @child_obs[obs.obs_id] do
 
 				if child.concept_id == ConceptName.find_by_name("Location of HIV test").concept_id
 					display_obs = (h "#{child.to_s(["short", "order"]).to_s.split(":")[0]}: #{Location.find(child.to_s(["short", "order"]).to_s.split(":")[1].to_i).name}")
@@ -74,8 +76,14 @@
 				display_obs = "&nbsp&nbsp&nbsp<i>#{display_obs}</i>"
 		%>
 			<div class="encounter"><%= "#{display_obs}" %></div>
-		<%
-			end
+		<%   end
+                      
+		end
+                        if defined? obs.question_id
+                          %>
+                            <div class="encounter"><%= "#{obs.to_s}".html_safe %></div>
+                        <%
+                        end
 		%>
 	</li>
 <% end %>

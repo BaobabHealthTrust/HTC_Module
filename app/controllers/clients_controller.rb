@@ -77,10 +77,8 @@ class ClientsController < ApplicationController
 	end
 
 	def current_visit
-		current_date = session[:datetime].to_day rescue Date.today
-		@encounters = Encounter.all.where("patient_id = ? 
-								AND encounter_datetime >= ? AND encounter_datetime <= ?", params[:client_id], 
-								current_date.strftime('%Y-%m-%d 00:00:00'), current_date.strftime('%Y-%m-%d 23:59:59'))
+		current_date = session[:datetime].to_date rescue Date.today
+		@encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime >= ? and encounter.encounter_datetime <= ?", 0, params[:client_id], current_date.strftime("%Y-%m-%d 00:00:00"), current_date.strftime("%Y-%m-%d 23:59:59")).includes(:observations).order("encounter.encounter_datetime ASC")
 				@creator_name = {}
     @encounters.each do |encounter|
       id = encounter.creator
