@@ -6,8 +6,7 @@ class Encounter < ActiveRecord::Base
 	before_save :before_create
 	belongs_to :client, -> { where retired: 0}, foreign_key: "patient_id"
 	has_many :observations, -> {where voided: 0}, dependent: :destroy
-  has_many :drug_orders,  through: :orders,  foreign_key: 'order_id'
-  has_many :orders, -> {where voided: 0}, dependent: :destroy
+	has_many :counseling_answer, -> {where voided: 0}
   belongs_to :type, -> {where retired: 0}, class_name: "EncounterType", foreign_key: :encounter_type
   belongs_to :provider, -> {where voided: 0}, class_name: "Person", foreign_key: :provider_id
 

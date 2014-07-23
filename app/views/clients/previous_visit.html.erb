@@ -40,7 +40,11 @@
                 <% header = false%>
                 <tr>
                   <td class="visit-summary">
-                    <b><%= ( encounter.name.to_s + ": " ).humanize.titleize.upcase rescue nil %></b><br /> <%= encounter.to_s.html_safe  rescue nil %> <br />
+                    <b><%= ( encounter.name.to_s + ": " ).humanize.titleize.upcase rescue nil %></b><br /> <%= encounter.to_s.html_safe  rescue nil %>
+									<% ( encounter.counseling_answer || []).each {| answer| %>
+											<%= answer.to_s.html_safe %>
+									<% } %>
+											<br />
                   </td>
                   <td>
                   </td>

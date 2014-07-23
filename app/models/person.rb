@@ -14,7 +14,7 @@ class Person < ActiveRecord::Base
   has_many :observations, -> {where voided: 0}, class_name: 'Observation', foreign_key: :person_id, dependent: :destroy 
 
   def after_void(reason = nil)
-    self.patient.void(reason) rescue nil
+    self.client.void(reason) rescue nil
     self.names.each{|row| row.void(reason) }
     self.addresses.each{|row| row.void(reason) }
     self.relationships.each{|row| row.void(reason) }

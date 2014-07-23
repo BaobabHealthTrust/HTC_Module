@@ -17,7 +17,7 @@ class EncountersController < ApplicationController
 			  params[:obs].each do |key, value|
 					 concept_id = ConceptName.find_by_name(value).concept_id
 					 answer = CounselingAnswer.create(question_id: key, patient_id: person.id,
-									  encounter_id: encounter, value_coded: concept_id, 
+									  encounter_id: encounter.encounter_id, value_coded: concept_id, 
 									  creator: current_user.id)
 				end
 		end
@@ -110,7 +110,9 @@ class EncountersController < ApplicationController
 				@child_obs[obs.obs_id] = child_obs
 			end
 		end
-
+		 ( encounter.counseling_answer || []).each {| answer|
+					@observations << answer			
+			}
 		render :layout => false
 	end
 
