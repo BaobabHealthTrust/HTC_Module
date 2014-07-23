@@ -20,7 +20,7 @@ User:
 <br />
 <br />
 
-<%= link_to 'Room Allocation', rooms_path + '/allocation/'%>,
+<%#= link_to 'Room Allocation', rooms_path + '/allocation/'%>
 <%= link_to 'Reports', reports_index_path %>,
 <%= link_to 'Administration', admins_path + '/index/' %>
 
@@ -62,6 +62,6 @@ User:
 	<%= link_to 'Room Clients', @current_location %>	
 <% end %>
 <%= link_to 'Waiting list', unallocated_clients_path %>,
-<%= link_to 'Swap Desk', '' %>,
+<%= link_to 'Swap Desk', swap_desk_path %>,
 <%= link_to 'Find or Register Client', search_path %>
 

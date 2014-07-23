@@ -13,7 +13,9 @@ HTCModule::Application.routes.draw do
   get "referral_consent/:id" => "clients#referral_consent"
 	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
-
+  get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
+  post "htcs/swap" => "htcs#swap", as: :swap
+  
   get "clients/:id/remove_from_unallocated" => "clients#remove_from_unallocated", as: :remove_from_unallocated
   get "clients/:id/assign_to_counseling_room" => "clients#assign_to_counseling_room", as: :assign_to_counseling_room
 
