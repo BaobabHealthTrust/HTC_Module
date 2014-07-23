@@ -27,13 +27,13 @@ class Concept < ActiveRecord::Base
   end
 
   def shortname
-	name = self.concept_names.typed('SHORT').first.name rescue nil
+	name = self.concept_names.typed('SHORT', self.concept_name.concept_id).first.name rescue nil
 	return name unless name.blank?
     return self.concept_names.first.name rescue nil
   end
 
   def fullname
-	name = self.concept_names.typed('FULLY_SPECIFIED').first.name rescue nil
+	name = self.concept_names.typed('FULLY_SPECIFIED', self.concept_id).first.name rescue nil
 	return name unless name.blank?
     return self.concept_names.first.name rescue nil
   end
