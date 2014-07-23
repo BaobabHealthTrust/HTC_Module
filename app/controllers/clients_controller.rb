@@ -4,7 +4,7 @@ class ClientsController < ApplicationController
                                     :assign_to_counseling_room]
 
   def index
-    #@clients = Client.all
+    @clients = Client.all
   end
 
   def show
@@ -66,6 +66,7 @@ class ClientsController < ApplicationController
 	end
 
 	def counseling
+			@client = Client.find(params[:client_id])
 			@protocols = CounselingQuestion.where("retired = 0")	
 	end
 

@@ -1,0 +1,7 @@
+<%= form_tag(swap_path, method: "post")  do %>
+	<%= label_tag(:location, "Swap Location") %>
+	<%= text_field_tag(:location) %>
+	
+	<%= link_to "Cancel" , htcs_path %>|
+	<%= submit_tag("Finish") %>
+<% end %>
