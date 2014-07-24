@@ -1,3 +1,0 @@
-class ObsController < ApplicationController
-
-end

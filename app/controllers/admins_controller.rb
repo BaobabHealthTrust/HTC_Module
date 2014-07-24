@@ -1,9 +1,9 @@
 class AdminsController < ApplicationController
-  before_action :set_admin, only: [:show, :edit, :update, :destroy]
+  #before_action :set_admin, only: [:show, :edit, :update, :destroy]
 
 
   def index
-    @admins = Admin.all
+
   end
 
   def show
@@ -11,8 +11,60 @@ class AdminsController < ApplicationController
 
   def new
 
-  end
+  end 
+	
+	def protocols
+		@protocols = CounselingQuestion.all
+	end
+	
+	def edit_protocols
 
+		@protocol = CounselingQuestion.find(params[:protocol_id])
+		if request.post?
+			@protocol.name = params[:name]
+			@protocol.retired = @protocol.retired
+			@protocol.description = params[:description]
+			if @protocol.save
+				redirect_to protocols_path
+			end
+		elsif ! params[:retire].blank?
+			@protocol.retired = params[:retire].to_i
+			if @protocol.save
+				redirect_to protocols_path
+			end
+		end
+    @location = Location.all.limit(20)
+	end
+  
+  def set_date
+			
+			if defined? session[:datetime].to_date
+				session[:datetime] = nil
+					if ! params[:client_id].blank?
+							redirect_to "/clients/#{params[:client_id]}" and return
+					else
+							redirect_to htcs_path and return
+					end
+			end
+			if request.post?
+				session[:datetime] = params[:date]
+				if ! params[:client_id].blank?
+						redirect_to "/clients/#{params[:client_id]}" and return
+				else
+						redirect_to htcs_path and return
+				end
+			end
+			
+	end
+  
+	def new_protocol
+			if request.post?
+				@protocol = CounselingQuestion.create(name: params[:name],
+										description: params[:description], retired: 0, 
+										creator: current_user.id)
+				redirect_to protocols_path
+			end
+	end
 
   def edit
   end

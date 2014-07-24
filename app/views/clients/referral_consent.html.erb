@@ -1,0 +1,79 @@
+<html>
+<head>
+	<style>
+			#table {
+					display: table;
+					width:960px;
+					margin-left:auto;
+					margin-right:auto;
+			}
+			#table_row {
+					display: table-row;
+			}
+			#table_cell {
+					display: table-cell;
+			}
+
+	</style>
+</head>
+<body>
+	<div id="content">
+		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
+		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+		<input type="hidden" value="Referral Consent Confirmation" name="ENCOUNTER"/>
+		<div id="table">
+				<div id="table_row">
+						<div id="table_cell">
+								<h1>Referral Consent Confirmation</h1>
+						</div>
+				</div>
+				<div id="table_row">
+						<div id="table_cell">	
+											Would you want to go to an ART Clinic? 
+						</div>
+						<div id="table_cell">
+											<%= radio_button_tag("observations[][value_coded_or_text]", "yes") %>
+											<label for="observations__value_coded_or_text_yes">Yes</label>
+											<%= radio_button_tag("observations[][value_coded_or_text]", "no") %>
+											<label for="observations__value_coded_or_text_no">No</label>
+											<%= hidden_field_tag("observations[][concept_name]",        "Refer to hospital or specialist clinic") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_datetime]",       "") %>
+						</div>
+				</div>
+				<div id="table_row">
+						<div id="table_cell">
+											Choose convenient ART clinic location
+						</div>
+						<div id="table_cell">
+											<!-- set the test type concept name and value -->
+											<%=select_tag "observations[][value_coded_or_text]", options_from_collection_for_select(@location, "name", "name") %>
+    									<%= hidden_field_tag("observations[][concept_name]",        "Which clinic") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_datetime]",       "") %>
+						</div>
+				</div>
+				<div id="table_row">
+							<div id="table_cell">
+											Choose convenient ART Clinic day
+							</div>
+							<div id="table_cell">
+											<%= date_field_tag "observations[][value_datetime]" %>
+											<%= hidden_field_tag("observations[][concept_name]",        "Preferred Clinic Day") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+							</div>
+				</div>
+				<div id="table_row">
+								<div id="table_cell">
+											<%= link_to "Cancel" , "/clients/#{params[:id]}" %>
+											<%= submit_tag "Finish" %>
+								</div>
+				</div>	
+		</div>
+	<%end%>
+</div>
+</body>
+</html>

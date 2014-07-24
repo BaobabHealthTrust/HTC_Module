@@ -1,0 +1,45 @@
+<h1>search Results</h1>
+
+<ul>
+<% if ! @scanned.blank? %>
+		<li> 
+      <%= link_to "#{@scanned.person.gender},
+                  DOB: #{@scanned.person.birthdate.strftime('%d/%m/%Y')} ,
+ 					        #{@residence}, Accession Number: #{@accession.identifier}",
+                  @scanned
+      %> 
+		</li>
+<% else
+ @clients.each do |client| %>
+		<li> 
+      <%= link_to "#{client.gender},
+                  DOB: #{client.birthdate.strftime('%d/%m/%Y')} ,
+                  #{client.address1},
+                  Accession Number: #{client.identifier}" , client
+      %>
+      
+     <% current_state = client.current_state rescue "" %>
+     
+     <% if current_state.empty? %>
+     
+	     <%= link_to "Add to waiting list", add_to_unallocated_path(client) %>
+     
+     <% elsif current_state == "Unallocated" %>
+			
+			<%= link_to "Remove from waiting list",
+									 remove_from_unallocated_path(client)%>
+     <% else %>
+     	<%= "Status: #{current_state} "%>
+		 <% end %>
+    </li>
+	<%end
+end%>
+</ul>
+
+<%= link_to "Cancel" , htcs_path %>
+<% if @show_counselling_room != true %>
+<%= link_to "New" , new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>
+<% end %>
+<%= link_to "Select", '' %>
+
+

@@ -3,9 +3,62 @@ HTCModule::Application.routes.draw do
 	get "/login" => "sessions#attempt_login"
 	post "/login" => "sessions#login", as: :log_in
 	get "/logout" => "sessions#logout", as: :log_out
+
+	get "search" => "clients#search"
+	post "search" => "clients#search"
+
+	get "client_demographics" => "clients#demographics"
+	post "client_demographics" => "clients#demographics"
   
+  get "referral_consent/:id" => "clients#referral_consent"
+	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
+  get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
+  get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
+  post "htcs/swap" => "htcs#swap", as: :swap
+  
+  get "clients/:id/remove_from_unallocated" => "clients#remove_from_unallocated", as: :remove_from_unallocated
+  get "clients/:id/assign_to_counseling_room" => "clients#assign_to_counseling_room", as: :assign_to_counseling_room
+
+	post "encounters/new/:id" => "encounters#new", as: :new
+
+  #post "assign_to_unlocated" => "clients#assign_to_unlocated"
+
+  #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
+
+	get "client_counseling" => "clients#counseling"
+	post "client_counseling" => "clients#counseling"
+
+	get "protocols" => "admins#protocols"
+	get "edit_protocols" => "admins#edit_protocols"
+	post "edit_protocols" => "admins#edit_protocols"
+	get "new_protocol" => "admins#new_protocol"
+	post "new_protocol" => "admins#new_protocol"
+
+	get "client_testing" => "clients#testing"
+	post "client_testing" => "clients#testing"
+
+	get "client_previous_visit" => "clients#previous_visit"
+	post "client_previous_visit" => "clients#previous_visit"
+
+	get "client_current_visit" => "clients#current_visit"
+	post "client_current_visit" => "clients#current_visit"
+
+	get "encounters/observations/:id" => "encounters#observations"
+	post "encounters/void/:id" => "encounters#void"
+	
+	get "unallocated_clients" => "clients#unallocated_clients"
+	#post "unallocated_clients" => "clients#unallocated_clients"
+	
+	post "search_results" => "clients#search_results"
+	get "search_results" => "clients#search_results"
+
+	get "admins/set_date" => "admins#set_date" 
+	post "admins/set_date" => "admins#set_date"
+
   resources :locations
 
+	resources :location_tags
+	
   resources :rooms
 
 	root 'sessions#attempt_login'

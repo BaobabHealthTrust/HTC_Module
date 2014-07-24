@@ -8,15 +8,38 @@ class ApplicationController < ActionController::Base
 	def current_user
 		@current_user ||= User.find(session[:user_id]) if session[:user_id]
 	end
+	
+	def current_location
+		if session[:location_id]
+			@current_location ||= Location.find(session[:location_id])
+		end
+	end
+	
+	def show_counselling_room
+		@show_counselling_room = false
+		is_counselor = @current_user.user_roles.map(&:role).include?('Counselor')
+		
+		htc_room_tag_id = LocationTag.find_by_name('HTC Counselling Room').id
+		location_tags = LocationTagMap.where("location_id=#{@current_location.id}")
+																	.map(&:location_tag_id) rescue []
+
+		if location_tags.include?(htc_room_tag_id) && is_counselor
+			@show_counselling_room = true
+		end
+		
+	end
 
 	helper_method :current_user
+	helper_method :current_location
+	helper_method :show_counselling_room
 
 	protected 
 	
 	def authenticate_user
-		#raise params.to_yaml
 		if session[:user_id]
-		  current_user 
+		  current_user
+		  current_location 
+		  show_counselling_room
 		  return true	
 		else
 		  redirect_to('/login')

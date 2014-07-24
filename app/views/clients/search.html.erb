@@ -1,0 +1,23 @@
+<h1>Search client</h1>
+
+<%= form_tag search_results_path do %>
+	
+	<br />
+<% if @show_counselling_room != true %>
+	<%= label_tag :gender %>
+	<%= text_field_tag :gender %>
+	<br />
+	<%= label_tag :date_of_birth %>
+	<%= date_field_tag :date_of_birth %>
+	<br />
+	<%= label_tag :residence %>
+	<%= text_field_tag :residence %>
+	<br />
+ <% else %>
+		<%= label_tag :scan_accession_number %>
+		<%= text_field_tag :accession_number %>
+ <% end %>
+ 	<%= link_to "Cancel" , htcs_path %>
+	<%= submit_tag "Finish" %>
+
+<%end%>

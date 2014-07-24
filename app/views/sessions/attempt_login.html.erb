@@ -1,18 +1,31 @@
-<p id="notice"><%= notice %></p>
-<p id="alert"><%= alert %></p>
-<h1>Log In</h1>
-<%=form_tag log_in_path do%>
-	<%=label_tag :username %>
-	<%=text_field_tag :username %>
+<html>
+	<head>
+			
+	</head>
+<body>
+
+			<p id="notice"><%= notice %></p>
+			<p id="alert"><%= alert %></p>
+                  
+			<%=form_tag log_in_path do%>
+				<fieldset>
+						<legend>Log In</legend>
+                                                <label for="username" >Username:</label>
+                                                <input type="text" id="username" name="username" value="" optional="false" />
 	
-	<br />
-	<%=label_tag :password %>
-	<%=password_field_tag :password %>
+							<br />
+                                                        <label for ="password"> Password:</label>
+							<input type="password" id="password" name="password" value="" optional="false" />
 
-	<br />
-	<%=label_tag :location %>
-	<%=text_field_tag :location %>
+							<br />
+							<label for ="location">Location</label>
+                                                        <input type="text" id="location" name="location" value="" optional="false" />
 
-	<br />
-	<%=submit_tag "Login" %>
-<%end%>
+							<br />
+							
+					</fieldset>
+                                        <%=submit_tag "Login" %>
+			<%end%>
+                       <%= javascript_include_tag "ts" %>
+</body>
+</html>

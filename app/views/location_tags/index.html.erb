@@ -1,0 +1,25 @@
+<h1>Listing location_tags</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @location_tags.each do |location_tag| %>
+      <tr>
+        <td><%= link_to 'Show', location_tag %></td>
+        <td><%= link_to 'Edit', edit_location_tag_path(location_tag) %></td>
+        <td><%= link_to 'Destroy', location_tag, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Location tag', new_location_tag_path %>

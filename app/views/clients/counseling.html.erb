@@ -1,0 +1,55 @@
+<style>
+#table {
+		display: table;
+    width:960px;
+    margin-left:auto;
+    margin-right:auto;
+}
+#table_row {
+		display: table-row;
+}
+#table_cell {
+		display: table-cell;
+}
+
+</style>
+<html>
+	<head>
+	</head>
+</html>
+<body>	
+	<form action='/encounters/new/<%= params[:client_id] %>' method='post'>
+	<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+	<input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
+	<div id='table'>
+	 <div id='table_row'>
+			<div id='table_cell'>
+				<h2> Counseling Protocols</h2>
+			</div>
+		</div>
+		<% @protocols.each do |protocol| %>
+		<div id="table_row">
+					<div id="table_cell">
+							<%= protocol.name %>
+					</div>
+					<div id="table_cell">
+							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" value="YES">
+							<label for="<%= protocol.id %>">Yes</label>
+					</div>
+					<div id="table_cell">
+							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" value="NO">
+							<label for="<%= protocol.id %>">No</label>
+					</div>
+		</div>
+		<% end %>
+	<div id='table_row'>
+			<div id='table_cell' >
+				<%= link_to 'Cancel', @client %>
+			</div>
+			<div id='table_cell'>
+			<button type='submit'>Finish</button>
+			</div>
+	</div>
+	</div>
+	</form>
+</body>

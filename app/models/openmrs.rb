@@ -2,8 +2,8 @@ module Openmrs
   module ClassMethods
     def assign_scopes
       col_names = self.columns.map(&:name)
-      self.default_scope :conditions => "#{self.table_name}.voided = 0" if col_names.include?("voided")
-      self.default_scope :conditions => "#{self.table_name}.retired = 0" if col_names.include?("retired")
+      self.default_scope -> { where "#{self.table_name}.voided = 0"  } if col_names.include?("voided")
+      self.default_scope -> { where "#{self.table_name}.retired = 0" } if col_names.include?("retired")
     end
     
     # We needed a way to break out of the default scope, so we introduce inactive
@@ -51,7 +51,7 @@ module Openmrs
 
   def before_create
     #super
-    self.location_id = Location.current_health_center.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_health_center != nil
+    #self.location_id = Location.current_health_center.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_health_center != nil
     self.creator = User.current.id if self.attributes.has_key?("creator") and (self.creator.blank? || self.creator == 0)and User.current != nil
     self.date_created = Time.now if self.attributes.has_key?("date_created")
 
@@ -62,8 +62,8 @@ module Openmrs
   def after_void(reason = nil)
   end
   
-  def void(reason = "Voided through #{BART_VERSION}",date_voided = Time.now,
-      voided_by = (User.current.user_id unless User.current.nil?))
+  def void(reason = "Invalid encounter",date_voided = Time.now,
+      voided_by = User.current_user_id)
     unless voided?
       self.date_voided = date_voided
       self.voided = 1

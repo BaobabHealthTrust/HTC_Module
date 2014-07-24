@@ -1,0 +1,76 @@
+<html>
+<head>
+	<style>
+			#table {
+					display: table;
+					width:960px;
+					margin-left:auto;
+					margin-right:auto;
+			}
+			#table_row {
+					display: table-row;
+			}
+			#table_cell {
+					display: table-cell;
+			}
+
+	</style>
+</head>
+<body>
+	<div id="content">
+		<%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
+		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+		<input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
+		<div id="table">
+				<div id="table_row">
+						<div id="table_cell">
+								<h1>HIV Testing</h1>
+						</div>
+				</div>
+				<div id="table_row">
+						<div id="table_cell">	
+											Rapid Test Timer 
+						</div>
+						<div id="table_cell">
+											<%= text_field_tag "observations[][value_numeric]" %>
+											<%= hidden_field_tag("observations[][concept_name]", "Rapid Antibody Testing Time frame") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_coded_or_text]",       "") %>
+						</div>
+				</div>
+				<div id="table_row">
+						<div id="table_cell">
+											Gold Test Timer
+						</div>
+						<div id="table_cell">
+											<%= text_field_tag "observations[][value_numeric]" %>
+    									<%= hidden_field_tag("observations[][concept_name]",        "Gold Antibody Testing Time frame") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_coded_or_text]",       "") %>
+						</div>
+				</div>
+				<div id="table_row">
+							<div id="table_cell">
+											Result
+							</div>
+							<div id="table_cell">
+											<%=select_tag "observations[][value_coded_or_text]", options_for_select(["", "Reactive","Non-Reactive", "Unknown"]) %>
+											<%= hidden_field_tag("observations[][concept_name]",        "Result of HIV test") %>
+    									<%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+											<%= hidden_field_tag("observations[][value_numeric]",       "") %>
+							</div>
+				</div>
+				<div id="table_row">
+								<div id="table_cell">
+											<%= link_to 'Cancel', @client %>
+											<%= submit_tag "Finish" %>
+								</div>
+				</div>	
+		</div>
+	<%end%>
+</div>
+</body>
+</html>
