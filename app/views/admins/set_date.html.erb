@@ -1,0 +1,13 @@
+<%= form_tag({:action => "set_date"}, {:method => "post"}) do %>
+		<% if defined? params[:client_id] %>
+			<input type="hidden" value="<%= params[:client_id] %>" name="client_id"/>
+		<% end %>
+	<br />
+	<%= label_tag :date %>
+	<%= date_field_tag :date %>
+	<br />
+
+	<%= link_to "Cancel" , protocols_path %>
+	<%= submit_tag "Finish" %>
+
+<%end%>
