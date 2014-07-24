@@ -52,6 +52,9 @@ HTCModule::Application.routes.draw do
 	post "search_results" => "clients#search_results"
 	get "search_results" => "clients#search_results"
 
+	get "admins/set_date" => "admins#set_date" 
+	post "admins/set_date" => "admins#set_date"
+
   resources :locations
 
 	resources :location_tags

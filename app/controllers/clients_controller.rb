@@ -71,7 +71,7 @@ class ClientsController < ApplicationController
 	end
 
 	def testing
-  		
+  		@client = Client.find(params[:client_id])
   end
 	
 	def referral_consent

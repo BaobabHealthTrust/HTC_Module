@@ -36,6 +36,27 @@ class AdminsController < ApplicationController
     @location = Location.all.limit(20)
 	end
   
+  def set_date
+			
+			if defined? session[:datetime].to_date
+				session[:datetime] = nil
+					if ! params[:client_id].blank?
+							redirect_to "/clients/#{params[:client_id]}" and return
+					else
+							redirect_to htcs_path and return
+					end
+			end
+			if request.post?
+				session[:datetime] = params[:date]
+				if ! params[:client_id].blank?
+						redirect_to "/clients/#{params[:client_id]}" and return
+				else
+						redirect_to htcs_path and return
+				end
+			end
+			
+	end
+  
 	def new_protocol
 			if request.post?
 				@protocol = CounselingQuestion.create(name: params[:name],

@@ -58,6 +58,11 @@ User:
 </table>
 
 <%= link_to 'Logout', log_out_path %>
+<% if defined? session[:datetime].to_date %>
+	<a href='/admins/set_date'>Reset Date</a>
+<% else %>
+	<a href='/admins/set_date'>Set Date</a>
+<% end %>
 <% if @show_counselling_room %>
 	<%= link_to 'Room Clients', @current_location %>	
 <% end %>

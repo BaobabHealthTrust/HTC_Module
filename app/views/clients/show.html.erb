@@ -29,6 +29,11 @@
               <a href='/client_previous_visit?client_id=<%= @client.id %>'>Previous Visits</a>
             <!--/select --><br>
 					<a href='/htcs'>Cancel</a>
+																				<% if defined? session[:datetime].to_date %>
+																					<a href='/set_date?client_id=<%= @client.id -%>'>Reset Date</a>
+																				<% else %>
+																					<a href='/set_date?client_id=<%= @client.id -%>'>Set Date</a>
+																				<% end %>
                                         <a href='/referral_consent/<%= @client.id -%>'>Consent</a>
           <a href='/htcs'>Finish</a>
 				</form>
