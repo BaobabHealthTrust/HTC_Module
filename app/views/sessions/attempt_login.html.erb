@@ -10,22 +10,22 @@
 			<%=form_tag log_in_path do%>
 				<fieldset>
 						<legend>Log In</legend>
-                                                <label for="username" >Username:</label>
-                                                <input type="text" id="username" name="username" value="" optional="false" />
+            <label for="username" >Username:</label>
+            <input type="text" id="username" name="username" value="" optional="false" />
 	
 							<br />
-                                                        <label for ="password"> Password:</label>
-							<input type="password" id="password" name="password" value="" optional="false" />
+              <label for ="password"> Password:</label>
+							<input type="password" id="password" name="password" value="" optional="false" fieldtype="password"/>
 
 							<br />
-							<label for ="location">Location</label>
-                                                        <input type="text" id="location" name="location" value="" optional="false" />
+							<label for ="location">Location:</label>
+		          <input type="text" id="location" name="location" value="" optional="false" />
 
 							<br />
 							
 					</fieldset>
-                                        <%=submit_tag "Login" %>
+       	 <%=submit_tag "Login" %>
 			<%end%>
-                       <%= javascript_include_tag "ts" %>
+   	<%= javascript_include_tag "ts" %>
 </body>
 </html>
