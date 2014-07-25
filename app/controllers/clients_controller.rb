@@ -16,7 +16,7 @@ class ClientsController < ApplicationController
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
 			@names = PersonName.find_by_person_id(@client.id)
 			person = Person.find(@client.id)
-			@status  = @client.current_state rescue "NaN"
+			@status  = @client.current_state.humanize rescue "NaN"
 			@age = person.age(current_date)
   end
 
@@ -80,6 +80,9 @@ class ClientsController < ApplicationController
 	end
 
 	def current_visit
+		@client = Client.find(params[:client_id])
+		@status  = @client.current_state.humanize rescue "NaN"
+		@firststatus  = @client.first_state rescue []
 		current_date = session[:datetime].to_date rescue Date.today
 		@encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime >= ? and encounter.encounter_datetime <= ?", 0, params[:client_id], current_date.strftime("%Y-%m-%d 00:00:00"), current_date.strftime("%Y-%m-%d 23:59:59")).includes(:observations).order("encounter.encounter_datetime ASC")
 				@creator_name = {}
