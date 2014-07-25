@@ -11,8 +11,12 @@
 	
 	<br />
                           <% if @show_counselling_room != true %>
-                                   <label for ="gender">Gender</label>
-                                  <input type="text" name="gender" id="gender" value="" optional="false" />
+                                  <label for="gender"> Gender </label>
+																	<select id="gender" name="gender">
+																			<option></option>
+																			<option value="Female">Female</option>
+																			<option value="Male">Male</option>
+																		</select>
                                   <br />
                                   <label for="date_of_birth">Date Of Birth</label>
                                   <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false" />

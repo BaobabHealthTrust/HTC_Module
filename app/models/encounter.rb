@@ -34,9 +34,9 @@ EOF
         row.void(reason) 
       end rescue []
 
-      self.orders.each do |order|
-        order.void(reason) 
-      end
+     # self.orders.each do |order|
+     #   order.void(reason) 
+     # end
     end
   end
 

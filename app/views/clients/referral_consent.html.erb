@@ -16,10 +16,11 @@
 				<input type="radio" name="refer" id="1.1" value="YES">
 				<label for="1.2">No</label>
 				<input type="radio" name="refer" id="1.2" value="NO">
-											<%= hidden_field_tag("observations[][concept_name]",        "Refer to hospital or specialist clinic") %>
-    									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-    									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-											<%= hidden_field_tag("observations[][value_datetime]",       "") %>
+
+				<%= hidden_field_tag("observations[][concept_name]",        "Refer to hospital or specialist clinic") %>
+				<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+				<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
 					<br />
 				<label for="clinic">Choose convenient ART clinic location</label>
 

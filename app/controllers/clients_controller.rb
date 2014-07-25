@@ -53,6 +53,7 @@ class ClientsController < ApplicationController
 			write_encounter("UNALLOCATED", @person, current)
 
 		end
+		
 		redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
   end

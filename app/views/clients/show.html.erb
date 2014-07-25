@@ -1,5 +1,8 @@
 <html>
 	<head>
+		<script>
+			
+		</script>
 	</head>
 <body>
 	<div id='home'>
@@ -24,9 +27,9 @@
 			
 			<div id="buttons">
 				
-				<button onmousedown="window.location = '/finish'">Finish</button>
+				<button onmousedown="window.location = '/htcs'">Finish</button>
 				
-				<button onmousedown="window.location = '/cancel'">Cancel</button>
+				<button onmousedown="window.location = '/htcs'">Cancel</button>
 				
 				<button onmousedown="window.location = '/client_demographics?client_id=<%= @client.id -%>'">
 				Demographics</button>
@@ -57,9 +60,6 @@
 				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Year Visits</option>
 			</select> 
 					 
-					<a href='/htcs'>Cancel</a>
-																			
-          <a href='/htcs'>Finish</a>
 	</div>
 	<%= javascript_include_tag "dashboard" %>
 </body
