@@ -4,9 +4,9 @@ class HtcsController < ApplicationController
   def index
   	tag_id = LocationTag.find_by_name('HTC Counselling Room').id
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id)
+		@date = (session[:datetime].to_date rescue nil) || Date.today
 
 		@rooms_info = {}
-
 		@rooms.each do |r|
 			@rooms_info[r.name] = {}
 			@rooms_info[r.name][:max_capacity] = Random.rand(100)
