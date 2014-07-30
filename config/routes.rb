@@ -54,6 +54,8 @@ HTCModule::Application.routes.draw do
 
 	get "admins/set_date" => "admins#set_date" 
 	post "admins/set_date" => "admins#set_date"
+	
+	get "htcs/dashboard" => "htcs#dashboard"
 
   resources :locations
 

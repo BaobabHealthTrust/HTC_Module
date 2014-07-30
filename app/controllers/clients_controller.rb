@@ -91,6 +91,8 @@ class ClientsController < ApplicationController
       user_name = User.find(id).person.names.first
       @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
     end
+    
+    render layout: false
 	end
 	
   def get_previous_encounters(patient_id)

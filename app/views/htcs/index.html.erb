@@ -1,78 +1,60 @@
+<!DOCTYPE=HTML>
 <html>
-  <head>
-    <style>
-	#tdb tr td {
-		border: 1px solid black;
-		padding 5px;
-	}
-      </style>
-  </head>
-  <body>
+	<head>
+		<title>HTC Dashboard</title>
+		<script>
+			var barcodeDestination = "index.html";
+		</script>
+	</head>
+	<body>
+		<div id="main">
+			
+			<input type="text" id="appname" value="HIV Testing<br/>&<br/>Counselling" />
+			
+			<input type="text" id="datetoday" value= <%= " #{@date}" %> />
+			
+			<input type="text" id="user" value= <%= @current_user.username %> />
+			
+			<input type="text" id="location" value=<%= " #{@current_location.name}" %> />
+			
+			<input type="text" id="facility" value="Kamuzu Central Hospital" />
+			
+			<div id="buttons">
+				
+				<button onmousedown="window.location = '<%= search_path %>'">Find or Register Client</button>
+				
+				<button onmousedown="window.location = '<%= log_out_path %>'">Logout</button>
 
-Scan Client Barcode:
-<br />
-HTC
-<br />
-Facility:
-<br />
-Location: <%= " #{@current_location.name}" %>
-<br />
-Date: <%= " #{@date}" %>
-<br />
-User:
-
-<br />
-<br />
-
-<%#= link_to 'Room Allocation', rooms_path + '/allocation/'%>
-<%= link_to 'Reports', reports_index_path %>,
-<%= link_to 'Administration', admins_path + '/index/' %>
-
-<br />
-<br />
-
-<table id = "tdb">
-	<tr>
-		<td> Rooms </td>
-		<td> Maximum <br /> capacities</td>
-		<td> Seen</td>
-		<td> Waiting</td>
-		<td> Available <br /> Space</td>
-		<td> Total Attendance	</td>
-	</tr>
+				<% if defined? session[:datetime].to_date %>
+					<button onmousedown="window.location = '/admins/set_date'">
+			    Reset Date</button>
+				<% else %>
+					<button onmousedown="window.location = '/admins/set_date'">
+					Set Date</button>
+				<% end %>
+				
+				<button onmousedown="window.location = '<%= swap_desk_path %>'">Swap Desk</button>
+				
+				<button onmousedown="window.location = '<%= unallocated_clients_path %>'"> Waiting list </button>
+				
+<%# if @show_counselling_room %>
+       <%#= link_to 'Room Clients', @current_location %>        
+<%# end %>
+				
+				<% if @show_counselling_room %>	
+					<button onmousedown="window.location = '<%= @current_location  %>'">Room Clients</button>
+				<% end %>
+			</div>
+			
+			<select id="tabs">
+				<option value= <%= htcs_dashboard_path %> >Rooms Allocation</option>
+				<option value= <%= reports_index_path %> >Reports</option>
+				<option value= <%= admins_path + '/index/' %> >Administration</option>
+			</select>
+			
+		</div>
+		
+	</body>
 	
-	<% @rooms_info.each do |name,data| %>
-	<tr>
-		<td> <%= name.humanize %> </td>
-		<td> <%= data[:max_capacity] %> </td>
-		<td> <%= data[:seen] %> </td>
-		<td> <%= data[:waiting] %> </td>
-		<td> <%= data[:available_space] %> </td>
-		<td> <%= data[:total_attendance] %> </td>
-	</tr>
-	<% end %>
-	<tr>
-		<td> Totals </td>
-		<td> </td>
-		<td> </td>
-		<td> </td>
-		<td> </td>
-		<td> </td>
-	</tr>
-</table>
-
-<%= link_to 'Logout', log_out_path %>
-<% if defined? session[:datetime].to_date %>
-	<a href='/admins/set_date'>Reset Date</a>
-<% else %>
-	<a href='/admins/set_date'>Set Date</a>
-<% end %>
-<% if @show_counselling_room %>
-	<%= link_to 'Room Clients', @current_location %>	
-<% end %>
-<%= link_to 'Waiting list', unallocated_clients_path %>,
-<%= link_to 'Swap Desk', swap_desk_path %>,
-<%= link_to 'Find or Register Client', search_path %>
-
-  </body>
+	<%= javascript_include_tag 'touchscreentoolkitV2/dashboard' %>
 </html>
