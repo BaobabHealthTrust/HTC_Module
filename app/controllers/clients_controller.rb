@@ -18,6 +18,8 @@ class ClientsController < ApplicationController
 			person = Person.find(@client.id)
 			@status  = @client.current_state.humanize rescue "NaN"
 			@age = person.age(current_date)
+			
+			render layout: false
   end
 
   def new
