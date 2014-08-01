@@ -19,9 +19,8 @@ class Client < ActiveRecord::Base
 										id_name_hash[e.id]=e.name
 									end
 		
-		id = encounters.where("encounter_type IN (?) AND DATE(encounter_datetime)= ?", ids, date)
-									 .order(encounter_datetime: :desc).first.encounter_type# rescue nil
-		id_name_hash[id]# rescue nil
+		state = encounters.where("encounter_type IN (?) AND DATE(encounter_datetime)= ?", ids, date)
+									 .order(encounter_datetime: :desc).first
 	end
 
   def first_state(date=Date.today)
