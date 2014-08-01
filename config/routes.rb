@@ -45,6 +45,14 @@ HTCModule::Application.routes.draw do
 
 	get "encounters/observations/:id" => "encounters#observations"
 	post "encounters/void/:id" => "encounters#void"
+
+	get "clients/locations/:id" => "clients#locations"
+
+	get "clients/village/:id" => "clients#village"
+
+	get "clients/first_name/:id" => "clients#first_name"
+
+	get "clients/last_name/:id" => "clients#last_name"
 	
 	get "unallocated_clients" => "clients#unallocated_clients"
 	#post "unallocated_clients" => "clients#unallocated_clients"
