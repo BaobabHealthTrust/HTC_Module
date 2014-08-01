@@ -10,10 +10,10 @@
 			<fieldset>
 						<legend>Update Demographics</legend>
 						<label for="first_name">First name</label>
-						<input type="text" id="first_name" name='first_name' value="" />
+						<input type="text" id="first_name" name='first_name' value=""  ajaxURL="/clients/first_name/<%= params[:client_id] %>"/>
 						<br />
 						<label for="surname"> Surname</label>
-						<input type="text" id="surname" name="surname" value="" />
+						<input type="text" id="surname" name="surname" value=""  ajaxURL="/clients/last_name/<%= params[:client_id] %>"/>
 						<br />
 						<label for="gender"> Gender </label>
 						<select id="gender" selected="<%= @client.person.gender %>">
@@ -23,10 +23,10 @@
 							</select>
 						<br />
 						<label for="date_of_birth"> Date of birth </label>
-						<input type="text" id="date_of_birth" name="date_of_birth" value="<%= @client.person.birthdate %>" disabled="true" />
+						<input type="text" id="date_of_birth" name="date_of_birth" value="<%= @client.person.birthdate %>" fieldtype="date" />
 						<br />
 						<label for="residence">Residence</label>
-						<input type="text" id="residence" name="residence" value="<%= @residence %>" />
+						<input type="text" id="residence" name="residence" value="<%= @residence %>" ajaxURL="/clients/village/<%= params[:client_id] %>"/>
 						<br />
 			
 			</fieldset>

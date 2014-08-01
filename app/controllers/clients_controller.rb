@@ -79,7 +79,39 @@ class ClientsController < ApplicationController
   end
 	
 	def referral_consent
-			@location = Location.all.limit(20)
+			
+	end
+
+	def locations
+			location = Location.where("name LIKE '%#{params[:search]}%'")
+			location = location.map do |locs|
+      "#{locs.name}"
+    end
+    render :text => location.join("\n") and return
+	end
+
+	def village
+			location = Village.where("name LIKE '%#{params[:search]}%'")
+			location = location.map do |locs|
+      "#{locs.name}"
+    end
+    render :text => location.join("\n") and return
+	end
+	
+	def first_name
+			person = PersonName.where("given_name LIKE '%#{params[:search]}%'")
+			person = person.map do |locs|
+      "#{locs.given_name}"
+    end
+    render :text => person.join("\n") and return
+	end
+
+	def last_name
+			person = PersonName.where("family_name LIKE '%#{params[:search]}%'")
+			person = person.map do |locs|
+      "#{locs.family_name}"
+    end
+    render :text => person.join("\n") and return
 	end
 
 	def current_visit
@@ -144,8 +176,11 @@ class ClientsController < ApplicationController
 	
 	def search_results
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
-		 if ! params[:accession_number].blank?
-			  @accession = ClientIdentifier.where("identifier = '#{params[:accession_number]}' 
+		 if ! params[:accession_number].blank? || ! params[:barcode].blank?
+				accession = params[:barcode] if  ! params[:barcode].blank?
+				accession = params[:accession_number] if ! params[:accession_number].blank?
+
+			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
 				if @accession.blank?
 					flash[:notice] = "Invalid accession number...."

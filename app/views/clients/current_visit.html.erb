@@ -56,7 +56,7 @@
 											First State Time
 										</div>
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 50%;">
-												<%= @firststatus.encounter_datetime.strftime("%I :%M") %>
+												<%= @firststatus.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -64,7 +64,7 @@
 											Current State
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
-											<%= @status.encounter_type %>
+											<%= @status.encounter_type rescue "NaN" %>
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -72,7 +72,7 @@
 											Current State Start
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
-											<%= @status.encounter_datetime.strftime("%I :%M") %>
+											<%= @status.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -80,7 +80,7 @@
 											Final State Time
 										</div>
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
-											<%= @firststatus.encounter_datetime.strftime("%I : %M") %>
+											<%= @firststatus.encounter_datetime.strftime("%I : %M") rescue "NaN" %>
 										</div> 
 									</div>
 									<div style="display: table-row;">
