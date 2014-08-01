@@ -26,11 +26,13 @@
 							<br />
 						<% if x == 2 
 								x = 0 
-								set = 1 %>
+								set = 1
+								y = y + 1
+								 %>
 								</fieldset>
-						<% end
+						<% else
 						x = x + 1
-						y = y + 1 %>
+						 end %>
 		<% end %>
 				
 			<button type='submit'>Finish</button>
