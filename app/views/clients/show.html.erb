@@ -1,42 +1,65 @@
 <html>
 	<head>
+		<script>
+			
+		</script>
 	</head>
 <body>
-	<div id='content'>
-		<div id='description'>
-				<form id='dashboard'>
-					<h1 id='project_name'>
-              <span style="font-size: 55px;">HTC</span>
-          </h1>
-					<span id='patient_name'> <%= @names.given_name rescue "" %> <%= @names.family_name rescue "" %> - 
-						<%= @client.person.gender %> </span><br>
-					<span id='accession_number'> <%= @accession_number %> </span><br>
-					<span id='patient_residence'> <%= @residence %></span><br>
-					<span id='patient_age'> <%= @age %></span><br>
-					<span id='workflow_status'> <%= @status %></span><br> 
+	<div id='home'>
+				<input type="text" id="appname" value="HIV Testing<br/>&<br/>Counseling" />
+				
 
-					<!-- select id="links" -->
-                <a href='/client_demographics?client_id=<%= @client.id -%>' label="Edit Demographics">
-											Edit Demographics</a>
-								<a href='/client_counseling?client_id=<%= @client.id -%>' label="Counseling Protocol">
-											Counseling Protocol</a>
-								<a href='/client_testing?client_id=<%= @client.id -%>' label="HIV Testing Protocol">
-											HIV Testing Protocol</a>
-           <!--/select--><br>
+			<div id="patient-card">
+				
+				<input type="text" id="gender" value='<%= @client.person.gender.chars.first.upcase %>' />
+				
+				<input type="text" id="name" value='<%= @names.given_name rescue "" %> <%= @names.family_name rescue "" %>' />
+				
+				<input type="text" id="Accession Number" value='<%= @accession_number %>' />
+				
+				<input type="text" id="Age" value='<%= @age %>' />
+				
+				<input type="text" id="Residence" value='<%= @residence %>' />
+				
+				<input type="text" id="Work-flow Status" value='<%= @status.name %>' />
+				
+			</div>
+			
+			<div id="buttons">
+				
+				<button onmousedown="window.location = '/htcs'">Finish</button>
+				
+				<button onmousedown="window.location = '/htcs'">Cancel</button>
+				
+				<button onmousedown="window.location = '/client_demographics?client_id=<%= @client.id -%>'">
+				Demographics</button>
+				
+				<button onmousedown="window.location = '/client_counseling?client_id=<%= @client.id -%>'">
+				Counseling</button>
+				
+				<button onmousedown="window.location = '/client_testing?client_id=<%= @client.id -%>'">
+				Testing</button>
+
+				<button onmousedown="window.location = '/referral_consent/<%= @client.id -%>'">
+				Referral</button>
+				
+				<% if defined? session[:datetime].to_date %>
+					<button onmousedown="window.location = '/admins/set_date?client_id=<%= @client.id -%>'">
+			    Reset Date</button>
+				<% else %>
+					<button onmousedown="window.location = '/admins/set_date?client_id=<%= @client.id -%>'">
+					Set Date</button>
+				<% end %>
+
+			</div>
+			
+			<select id="tabs">
+				<option value="/client_current_visit?client_id=<%= @client.id %>">Current Visit</option>
+				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Week Visits</option>
+				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Month Visits</option>
+				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Year Visits</option>
+			</select> 
 					 
-					 <!--select id="tabs" -->
-              <a href='/client_current_visit?client_id=<%= @client.id %>'>Current Visit</a>
-              <a href='/client_previous_visit?client_id=<%= @client.id %>'>Previous Visits</a>
-            <!--/select --><br>
-					<a href='/htcs'>Cancel</a>
-																				<% if defined? session[:datetime].to_date %>
-																					<a href='/set_date?client_id=<%= @client.id -%>'>Reset Date</a>
-																				<% else %>
-																					<a href='/set_date?client_id=<%= @client.id -%>'>Set Date</a>
-																				<% end %>
-                                        <a href='/referral_consent/<%= @client.id -%>'>Consent</a>
-          <a href='/htcs'>Finish</a>
-				</form>
-		</div>
 	</div>
+	<%= javascript_include_tag 'touchscreentoolkitV2/dashboard' %>
 </body

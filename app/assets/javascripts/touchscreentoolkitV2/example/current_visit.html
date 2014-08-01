@@ -56,7 +56,7 @@
 											First State Time
 										</div>
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 50%;">
-												<%= @firststatus.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
+											: 09:59
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -64,7 +64,7 @@
 											Current State
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
-											<%= @status.name rescue "NaN"%>
+											: In Session
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -72,7 +72,7 @@
 											Current State Start
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
-											<%= @status.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
+											: 10:59
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -80,7 +80,7 @@
 											Final State Time
 										</div>
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
-											<%= @finalstatus.encounter_datetime.strftime("%I : %M") rescue "NaN" %>
+											: --:--
 										</div> 
 									</div>
 									<div style="display: table-row;">
@@ -108,16 +108,54 @@
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Log</label>
 								
 								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;">
-                                                                      <% @encounters.each{|encounter| %>
 									<div style="display: table-row;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
-											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
+											09:59
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
-											<%= encounter.name   %>
+											Seen at reception
 										</div> 
 									</div>
-									<% } %>
+									<div style="display: table-row;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5x; border-right: 1px solid #5679c1; text-align: center;">
+											10:15
+										</div> 
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
+											Waiting
+										</div> 
+									</div>
+									<div style="display: table-row;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
+											10:30
+										</div> 
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
+											Counseling advice conducted
+										</div> 
+									</div>
+									<div style="display: table-row;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
+											10:50
+										</div> 
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
+											HIV testing
+										</div> 
+									</div>
+									<div style="display: table-row;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
+											10:59
+										</div> 
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
+											Referral confirmation started
+										</div> 
+									</div>
+									<div style="display: table-row;">
+										<div style="display: table-cell; padding: 5px; border-right: 1px solid #5679c1;">
+											&nbsp;
+										</div> 
+										<div style="display: table-cell; padding: 5px; width: 250px;">
+											&nbsp;
+										</div> 
+									</div>
 								</div>
 							</div>
 						</div>

@@ -16,8 +16,11 @@ class ClientsController < ApplicationController
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
 			@names = PersonName.find_by_person_id(@client.id)
 			person = Person.find(@client.id)
-			@status  = @client.current_state rescue "NaN"
+			@status  = @client.current_state 
+			@firststatus  = @client.first_state rescue "NaN"
 			@age = person.age(current_date)
+			
+			render layout: false
   end
 
   def new
@@ -53,6 +56,7 @@ class ClientsController < ApplicationController
 			write_encounter("UNALLOCATED", @person, current)
 
 		end
+		
 		redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
   end
@@ -75,10 +79,46 @@ class ClientsController < ApplicationController
   end
 	
 	def referral_consent
-			@location = Location.all.limit(20)
+			
+	end
+
+	def locations
+			location = Location.where("name LIKE '%#{params[:search]}%'")
+			location = location.map do |locs|
+      "#{locs.name}"
+    end
+    render :text => location.join("\n") and return
+	end
+
+	def village
+			location = Village.where("name LIKE '%#{params[:search]}%'")
+			location = location.map do |locs|
+      "#{locs.name}"
+    end
+    render :text => location.join("\n") and return
+	end
+	
+	def first_name
+			person = PersonName.where("given_name LIKE '%#{params[:search]}%'")
+			person = person.map do |locs|
+      "#{locs.given_name}"
+    end
+    render :text => person.join("\n") and return
+	end
+
+	def last_name
+			person = PersonName.where("family_name LIKE '%#{params[:search]}%'")
+			person = person.map do |locs|
+      "#{locs.family_name}"
+    end
+    render :text => person.join("\n") and return
 	end
 
 	def current_visit
+		@client = Client.find(params[:client_id])
+		@status  = @status  = @client.current_state rescue "NaN"
+		@firststatus  = @client.first_state rescue []
+		@finalstatus = @client.final_state
 		current_date = session[:datetime].to_date rescue Date.today
 		@encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime >= ? and encounter.encounter_datetime <= ?", 0, params[:client_id], current_date.strftime("%Y-%m-%d 00:00:00"), current_date.strftime("%Y-%m-%d 23:59:59")).includes(:observations).order("encounter.encounter_datetime ASC")
 				@creator_name = {}
@@ -87,24 +127,34 @@ class ClientsController < ApplicationController
       user_name = User.find(id).person.names.first
       @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
     end
+    
+    render layout: false
 	end
 	
   def get_previous_encounters(patient_id)
-    session_date = (session[:datetime].to_date rescue Date.today.to_date) - 1.days
-    session_date = session_date.to_s + ' 23:59:59'
-   previous_encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime <= ?", 0, patient_id, session_date).includes(:observations).order("encounter.encounter_datetime DESC")
+    start_date = (session[:datetime].to_date rescue Date.today.to_date) - 1.days
+		end_date = ((start_date) - 7.days).to_s + ' 00:00:00'
+    start_date = start_date.to_s + ' 23:59:59'
+   previous_encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime <= ? AND encounter.encounter_datetime >= ?", 0, patient_id, start_date, end_date).includes(:observations).order("encounter.encounter_datetime DESC")
 		
     return previous_encounters
   end
 
+  def get_previous_month_encounters(patient_id)
+    start_date = (session[:datetime].to_date rescue Date.today.to_date) - 1.days
+		end_date = ((start_date) - 1.months).to_s + ' 00:00:00'
+    start_date = start_date.to_s + ' 23:59:59'
+   previous_encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime <= ? AND encounter.encounter_datetime >= ?", 0, patient_id, start_date, end_date).includes(:observations).order("encounter.encounter_datetime DESC")
+		
+    return previous_encounters
+  end
+
+	def previous_month
+
+	end	
+	
   def previous_visit
     @previous_visits  = get_previous_encounters(params[:client_id])
-
-    @encounter_dates = @previous_visits.map{|encounter| encounter.encounter_datetime.to_date}.uniq.first(6) rescue []
-
-    @past_encounter_dates = @encounter_dates
-
-    render :layout => false
   end
 
   def create
@@ -135,8 +185,11 @@ class ClientsController < ApplicationController
 	
 	def search_results
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
-		 if ! params[:accession_number].blank?
-			  @accession = ClientIdentifier.where("identifier = '#{params[:accession_number]}' 
+		 if ! params[:accession_number].blank? || ! params[:barcode].blank?
+				accession = params[:barcode] if  ! params[:barcode].blank?
+				accession = params[:accession_number] if ! params[:accession_number].blank?
+
+			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
 				if @accession.blank?
 					flash[:notice] = "Invalid accession number...."

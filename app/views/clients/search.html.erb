@@ -1,23 +1,39 @@
-<h1>Search client</h1>
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs";
+	</script>
+	</head>
+<body>
+
 
 <%= form_tag search_results_path do %>
+            <fieldset>
+			<legend>Search Client</legend>
 	
 	<br />
-<% if @show_counselling_room != true %>
-	<%= label_tag :gender %>
-	<%= text_field_tag :gender %>
-	<br />
-	<%= label_tag :date_of_birth %>
-	<%= date_field_tag :date_of_birth %>
-	<br />
-	<%= label_tag :residence %>
-	<%= text_field_tag :residence %>
-	<br />
- <% else %>
-		<%= label_tag :scan_accession_number %>
-		<%= text_field_tag :accession_number %>
- <% end %>
+                          <% if @show_counselling_room != true %>
+                                  <label for="gender"> Gender </label>
+																	<select id="gender" name="gender">
+																			<option></option>
+																			<option value="Female">Female</option>
+																			<option value="Male">Male</option>
+																		</select>
+                                  <br />
+                                  <label for="date_of_birth">Date Of Birth</label>
+                                  <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false" />
+                                  <br />
+                                  <label for="residence">Residence</label>
+                                  <input type="text" name="residence" id="residence" value="" optional="false" />
+                                  <br />
+                           <% else %>
+                                  <label for="scan_accession_number" >Accession Number </label>
+                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+                           <% end %>
+							</fieldset>
  	<%= link_to "Cancel" , htcs_path %>
 	<%= submit_tag "Finish" %>
-
+           
 <%end%>
+</body>
+</html>

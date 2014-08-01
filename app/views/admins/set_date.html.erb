@@ -1,13 +1,27 @@
-<%= form_tag({:action => "set_date"}, {:method => "post"}) do %>
-		<% if defined? params[:client_id] %>
-			<input type="hidden" value="<%= params[:client_id] %>" name="client_id"/>
-		<% end %>
-	<br />
-	<%= label_tag :date %>
-	<%= date_field_tag :date %>
-	<br />
-
-	<%= link_to "Cancel" , protocols_path %>
-	<%= submit_tag "Finish" %>
-
-<%end%>
+<html>
+	<head>
+		<script>
+				<% if defined? params[:client_id] %>
+						var cancelDestination = "clients/<%= params[:client_id] %>";
+				<% else %>
+						var cancelDestination = "/htcs";
+				<% end %>
+		</script>
+	</head>
+<body>
+			<%= form_tag({:action => "set_date"}, {:method => "post"}) do %>
+					<% if defined? params[:client_id] %>
+						<input type="hidden" value="<%= params[:client_id] %>" name="client_id" fieldtype="hidden" />
+					<% end %>
+				<br />
+				<fieldset>
+					<legend>Set Date</legend>
+						<label for="dates">Date</label>
+						<input type="text" name="dates" id="dates" fieldtype="date" />
+						<br />
+				</fiedset>
+				<%= submit_tag "Finish" %>
+					
+			<%end%>
+</body>
+</html>

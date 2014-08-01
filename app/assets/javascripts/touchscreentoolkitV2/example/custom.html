@@ -1,7 +1,10 @@
+<!DOCTYPE=html>
 <html>
-<head>
+	<head>
+		<title>Current Visit</title>
 		<script>
-			var cancelDestination = "clients/<%= params[:client_id] %>";
+			var cancelDestination = "index.html";
+			
 			function loadCustom(){
 			
 				if(__$("main-content-area")){
@@ -101,54 +104,33 @@
 				
 			}
 			
-			function assignValue() {
-				buttons = document.getElementsByClassName('button green')
-				for (var i = 0; i < buttons.length; i++){
-					if (buttons[i].innerHTML == "Next"){
-							buttons[i].setAttribute("onclick", "setValues()")				
-					}				
-				}
-			}
-
-
-			function setValues(){
-						document.getElementById('rapidtimer').value = document.getElementById('timetimer1').innerHTML
-						document.getElementById('goldtimer').value = document.getElementById('timetimer2').innerHTML			
-			}
 		</script>
-</head>
-<body>
-	
-		<%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
-		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
-		<input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
-		<fieldset custom=true fs_onLoad="loadCustom();assignValue();">
-				<legend>HIV Testing</legend>
-						
+	</head>
+	<body>
+		<form>
+			<fieldset>
+				<legend>Single Field Example:</legend>
+				<label for="first_name">First Name:</label>
+				<input id="first_name" name="first_name" type="text" value="" ajaxURL="data/names.txt" />
+				
+				<input id="hidden1" name="hidden1" type="hidden" value="hidden1" />
+				<input id="hidden2" name="hidden2" type="hidden" value="hidden2" />
+				<br>
+			</fieldset>
+			<fieldset custom=true fs_onLoad="loadCustom()">
+				<legend>HIV Testing Protocol</legend>
 				
 				<input id="customresult" name="customresult" type="hidden" value="" />
-						<input type="hidden" name="observations[][concept_name]" value="Result of HIV test" />
-						<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-						<input type="hidden" name="observations[][obs_datetime]" value="" />
-						<input type="hidden" name="observations[][value_numeric]" value="" />
-	
-						<input type="hidden" name="observations[][value_numeric]" id="rapidtimer" value="" fieldtype="number">
-						<input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
-						<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-						<input type="hidden" name="observations[][obs_datetime]" />
-						<input type="hidden" name="observations[][value_coded_or_text]" value="" />
-				<br>
-				<label for="goldtimer">Gold Test Timer</label> 
-						<input type="hidden" name="observations[][value_numeric]" id="goldtimer" fieldtype="number">
-						<input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
-						<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-						<input type="hidden" name="observations[][obs_datetime]", value="" />
-						<input type="hidden" name="observations[][value_coded_or_text]" value="" />
-									
+				
 			</fieldset>
-
-			<input type="submit" value="Submit" />
-
-	<%end%>
-</body>
+			<fieldset>
+				<legend>Single Field Example:</legend>
+				<label for="last_name">Last Name:</label>
+				<input id="last_name" name="last_name" type="text" value="" />
+				
+				<br>
+			</fieldset>
+		</form>
+		<script src="../ts.js"></script>
+    </body>
 </html>
