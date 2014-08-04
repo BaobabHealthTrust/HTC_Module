@@ -23,13 +23,8 @@
 				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
 					<br />
 				<label for="clinic">Choose convenient ART clinic location</label>
-
-				<select id="clinic" name="observations[][value_coded_or_text]" condition="__$('1.1').checked">
-						<option></option>
-						<% @location.each{|location| %>	
-						<option value="<%= location.name %>"><%= location.name %></option>
-						<% } %>
-				</select>	
+				<input type='text' id="clinic" name="observations[][value_coded_or_text]" 
+				condition="__$('1.1').checked" ajaxURL="/clients/locations/<%= params[:id] %>">
     									<%= hidden_field_tag("observations[][concept_name]",        "Which clinic") %>
     									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
     									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
