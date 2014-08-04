@@ -3,6 +3,8 @@ class ClientsController < ApplicationController
                                     :add_to_unallocated, :remove_from_unallocated,
                                     :assign_to_counseling_room]
 
+	skip_before_action :village
+
   def index
     @clients = Client.all
   end
