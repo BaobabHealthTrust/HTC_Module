@@ -69,7 +69,7 @@
 				<div style="display: table-cell; vertical-align: middle;">
 
 					<div style=" margin: auto; margin-bottom: 40px; width: 350px;">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;">Visit Details between <%= @previous_visits.last.encounter_datetime.strftime("%d/%m/%Y")  %> And <%= @previous_visits.first.encounter_datetime.strftime("%d/%m/%Y")  %></label>
+						<label style="color: #5679c1; font-weight: normal; font-size: 24px;">Visit Details between <%= @previous_visits.last.encounter_datetime.strftime("%d/%m/%Y") rescue "" %> And <%= @previous_visits.first.encounter_datetime.strftime("%d/%m/%Y") rescue "" %></label>
 					</div>
 
 					<div style="display: table; margin: auto;">
@@ -83,7 +83,7 @@
 
 								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;">
 								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;">
-                                                                      <% @previous_visits.each{|encounter| %>
+                                                                      <% (@previous_visits || [] ).each{|encounter| %>
 									<div style="display: table-row;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
 											<%= encounter.encounter_datetime.strftime("%Y %d :%I : %M")  %>
