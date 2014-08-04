@@ -69,6 +69,7 @@ HTCModule::Application.routes.draw do
 	
 	get "htcs/dashboard" => "htcs#dashboard"
 
+	get "locations/destroy/:id" => "locations#destroy"
   resources :locations
 
 	resources :location_tags

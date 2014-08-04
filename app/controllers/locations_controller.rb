@@ -5,6 +5,7 @@ class LocationsController < ApplicationController
     htc_tags = LocationTag.where("name LIKE '%HTC%'").map(&:location_tag_id)
     @locations = Location.joins(:location_tag_maps)
                           .where(:location_tag_map => {:location_tag_id => htc_tags})
+    render :layout => false
   end
 
   def show
@@ -57,10 +58,13 @@ class LocationsController < ApplicationController
   end
 
   def destroy
+    @alert=nil
     name = @location.name
-    @location.destroy
-    flash[:alert] = "#{name} successfuly deleted"  
-    redirect_to locations_path
+    
+    @location.destroy rescue @alert="Cannot delete location"
+    flash[:alert] = "#{name} successfuly deleted" if @alert.nil?
+    
+    redirect_to '/locations'
   end
 
   private

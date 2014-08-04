@@ -1,2 +1,13 @@
-<%= link_to 'Manage Locations', locations_path %>
-<%= link_to 'Manage Protocols', protocols_path %>
+<style>
+.pd {
+	margin-right:20px;
+}
+
+</style>
+<br />
+<br />
+
+<base target="_parent">
+
+<%= link_to 'Manage Locations', locations_path, :class=>'pd blue' %>
+<%= link_to 'Manage Protocols', protocols_path, :class=>'pd blue' %>
