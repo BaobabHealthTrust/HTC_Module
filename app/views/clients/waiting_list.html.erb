@@ -26,7 +26,7 @@
 <body>
 
 
-<%= form_tag remove_from_waiting_list_path do %>
+<%= form_tag remove_from_waiting_list_path, :id=>"waiting_list" do %>
             <fieldset>
 						<legend>Waiting List</legend>
 	
@@ -72,6 +72,10 @@
       obj.style.color = "black";
     }
 	}
+	
+	function remove_client_from_waiting_list() {
+	 document.getElementById("waiting_list").submit();
+	}
 		//__$("main-content-area").style.height = "0px";
 		//__$("row0").style.display="none";
 				
@@ -83,6 +87,7 @@
 		btnNext.innerHTML = "Remove client from waiting list";
 		btnNext.style.width = "400px"; 
 		btnCancel.style.width = "250px";
+		btnNext.style.display = "none";
 
 		
 		var display = "inline-table";
@@ -122,11 +127,15 @@
 				dspValue = this.innerHTML.split(';');
 				var s = "";
 				
+		    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
+						 'onmousedown="remove_client_from_waiting_list()"' +
+						 ' class="button green" pos="0" section="0">Remove from waiting list</button>'
+				    						 
 				for(var v=0; v<dspValue.length; v++) {
 					s+="<span class='dspLi'>" + dspValue[v] + "</span>";
 				}
 				
-				__$('dsp').innerHTML = s;  
+				__$('dsp').innerHTML = s + button;  
 			};
 		}
 		__$('textForid').value = -1;
