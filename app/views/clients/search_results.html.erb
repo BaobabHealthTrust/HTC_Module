@@ -17,10 +17,10 @@
                   #{client.address1},
                   Accession Number: #{client.identifier}" , client
       %>
-      
-     <% current_state = client.current_state rescue "" %>
      
-     <% if current_state.empty? %>
+     <% current_state = client.current_state.name rescue "" %>
+     
+     <% if current_state.blank? %>
 	     <%= link_to "Add to waiting list", add_to_unallocated_path(client) %>
      <% else %>
      	<%= "Status: #{current_state} "%>

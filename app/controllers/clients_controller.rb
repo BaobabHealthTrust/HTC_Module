@@ -113,7 +113,7 @@ class ClientsController < ApplicationController
 
 	def current_visit
 		@client = Client.find(params[:client_id])
-		@status  = @status  = @client.current_state rescue "NaN"
+		@status  = @client.current_state rescue "NaN"
 		@firststatus  = @client.first_state rescue []
 		@finalstatus = @client.final_state
 		current_date = session[:datetime].to_date rescue Date.today
