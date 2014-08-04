@@ -29,6 +29,7 @@ HTCModule::Application.routes.draw do
 
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
+	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"
 	get "edit_protocols" => "admins#edit_protocols"
@@ -58,6 +59,7 @@ HTCModule::Application.routes.draw do
 	
 	get "waiting_list" => "clients#waiting_list"
 	#post "unallocated_clients" => "clients#unallocated_clients"
+	
 	
 	post "search_results" => "clients#search_results"
 	get "search_results" => "clients#search_results"

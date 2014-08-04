@@ -25,6 +25,7 @@
 	</head>
 <body>
 
+
 <%= form_tag remove_from_waiting_list_path do %>
             <fieldset>
 						<legend>Waiting List</legend>
@@ -53,7 +54,6 @@
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
 	
-	//Highlist list object
 	function highlightList(obj) {
     if(obj.getAttribute("target") != null){
       if(__$(obj.getAttribute("target"))){

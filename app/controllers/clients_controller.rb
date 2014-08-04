@@ -3,6 +3,8 @@ class ClientsController < ApplicationController
                                     :add_to_unallocated, :remove_from_waiting_list,
                                     :assign_to_counseling_room]
 
+	skip_before_action :village
+
   def index
     @clients = Client.all
   end
@@ -50,7 +52,7 @@ class ClientsController < ApplicationController
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
 															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
-			write_encounter("UNALLOCATED", @person, current)
+			write_encounter("IN WAITING", @person, current)
 
 		end
 		
@@ -205,10 +207,11 @@ class ClientsController < ApplicationController
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
      end
+     render layout: false
 	end
 	
 	def waiting_list
-     encounter_type_id = EncounterType.find_by_name('Unallocated').id
+     encounter_type_id = EncounterType.find_by_name('IN WAITING').id
 		 @clients = Client.joins(:encounters)
                       .where("encounter_type = #{encounter_type_id} AND
                               DATE(encounter_datetime) = '#{Date.today}'")
@@ -216,12 +219,12 @@ class ClientsController < ApplicationController
 	end
   
   def add_to_unallocated
-    write_encounter('Unallocated', @client)
+    write_encounter('IN WAITING', @client)
     redirect_to waiting_list_path
   end
   
   def remove_from_waiting_list
-  	encounter_type_id = EncounterType.find_by_name('Unallocated').id
+  	encounter_type_id = EncounterType.find_by_name('IN WAITING').id
 		@client.encounters.where("encounter_type = #{encounter_type_id} AND
 															DATE(encounter_datetime) = '#{Date.today}'")
 											.each {|e| e.void(reason = "cancelled HTC encounter")}

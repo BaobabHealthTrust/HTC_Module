@@ -10,7 +10,7 @@ class Client < ActiveRecord::Base
 		ids = []
 		id_name_hash = {}
 		
-		state_encounters = ['IN WAITING', 'Unallocated', 'IN SESSION',
+		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
 												'Counseling']
 		EncounterType.where("name IN (?)",state_encounters)
@@ -27,7 +27,7 @@ class Client < ActiveRecord::Base
 		ids = []
 		id_name_hash = {}
 
-		state_encounters = ['IN WAITING', 'Unallocated', 'IN SESSION',
+		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
 												'Counseling']
 		EncounterType.where("name IN (?)",state_encounters)
@@ -44,7 +44,7 @@ class Client < ActiveRecord::Base
 		ids = []
 		id_name_hash = {}
 
-		state_encounters = ['IN WAITING', 'Unallocated', 'IN SESSION',
+		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
 												'Counseling']
 		EncounterType.where("name IN (?)",state_encounters)
