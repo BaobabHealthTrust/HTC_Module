@@ -61,4 +61,15 @@ class Client < ActiveRecord::Base
 		 end
 			return state
 	end
+	
+	def name
+		  "#{person.names.first.given_name  rescue ' '} #{person.names.first.family_name rescue ' '}"
+	end
+	
+	def accession_number
+		  identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+			ClientIdentifier.find(:last, 
+													  :conditions => ["identifier_type = ? AND patient_id = ?", 
+														identifier_type, self.id]).identifier rescue ""
+	end
 end

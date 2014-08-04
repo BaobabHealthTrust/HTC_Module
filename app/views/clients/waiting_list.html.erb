@@ -1,0 +1,139 @@
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs";
+	</script>
+	
+	<style>
+		#row2 {
+			height:100%;
+		}
+		
+		.dspLi {
+			position:relative;
+			display:block;
+			width:100%;
+			color: #000000;
+			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+			font-size: 1.9em;
+			margin-bottom: 19px;
+			margin-top: 2px;
+			padding: 10px;
+		}
+	</style>
+
+	</head>
+<body>
+
+
+<%= form_tag remove_from_waiting_list_path do %>
+            <fieldset>
+						<legend>Waiting List</legend>
+	
+						<br />
+                          <% if @show_counselling_room != true %>
+                                  <label for="id"> Remove from waiting list? </label>
+																	<select id="id" name="id">
+																			<option></option>
+																			<%= @clients.each do |client| %>
+																				<option value="<%= client.id %>"> Accession number :<%= " #{client.accession_number}" %>; Age :<%= "#{client.person.age}" %>; Gender :<%= "#{client.person.gender}" %> </option>
+																			<% end %>
+																		</select>
+                                  <br />
+                           <% else %>
+                                  <label for="scan_accession_number" >Accession Number </label>
+                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+                           <% end %>
+							</fieldset>
+ 	<%= link_to "Cancel" , htcs_path %>
+	<%= submit_tag "Finish" %>
+           
+<%end%>
+</body>
+	
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+	<script>
+	
+	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+        
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
+      
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+		//__$("main-content-area").style.height = "0px";
+		//__$("row0").style.display="none";
+				
+		__$("row1").style.display="none";
+		__$("buttons").style.verticalAlign = "bottom";
+		__$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+		
+		btnNext.innerHTML = "Remove client from waiting list";
+		btnNext.style.width = "400px"; 
+		btnCancel.style.width = "250px";
+
+		
+		var display = "inline-table";
+		
+		btnDivs = __$('buttons').children[0].children;
+		
+		btnDivs[1].style.display = "none";
+		btnDivs[2].style.display = "none";
+	
+		btnDivs[0].style.display  = "inline-table";
+		btnDivs[3].style.display  = "inline-table";
+
+		btnDivs[3].style.cssFloat = "right";
+		
+		var dsp = document.createElement("div");
+		dsp.id = "dsp";
+		dsp.style.display = "table-cell";
+		dsp.style.border = "1px solid #3465a4";
+		dsp.style.overflow = "hidden";
+		dsp.style.borderRadius = "10px";
+		dsp.style.width = "450px";
+		dsp.style.height = "100%";
+		dsp.style.verticalAlign = "top";
+		dsp.innerTHML = "none";
+
+		__$('textForid').style.height = "100%";
+		__$('textForid').style.width = "100%";
+//dsp.appendChild(__$('textForid'));
+		//__$('textForid').onchange=function(){alert(__$('textForid').value);};
+		
+		var lst = __$('ul1').children;
+		for (var i=0; i < lst.length ; i++) {
+				lst[i].onmousedown = function() {
+				highlightList(this);
+				__$('textForid').value = this.value;
+				
+				dspValue = this.innerHTML.split(';');
+				var s = "";
+				
+				for(var v=0; v<dspValue.length; v++) {
+					s+="<span class='dspLi'>" + dspValue[v] + "</span>";
+				}
+				
+				__$('dsp').innerHTML = s;  
+			};
+		}
+		__$('textForid').value = -1;
+		row.insertBefore(dsp, row.firstChild);
+		__$("row0").parentNode.appendChild(__$('buttons'));
+		
+		//row.appendChild(dsp);
+	</script>
+</html>
+

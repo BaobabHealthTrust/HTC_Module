@@ -1,6 +1,6 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy,
-                                    :add_to_unallocated, :remove_from_unallocated,
+                                    :add_to_unallocated, :remove_from_waiting_list,
                                     :assign_to_counseling_room]
 
 	skip_before_action :village
@@ -11,10 +11,7 @@ class ClientsController < ApplicationController
 
   def show
 			current_date = session[:datetime].to_date rescue Date.today
-		  identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
-			@accession_number = ClientIdentifier.find(:last, 
-																	 :conditions => ["identifier_type = ? AND patient_id = ?", 
-																		identifier_type, @client.id]).identifier rescue ""
+			@accession_number = @client.accession_number
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
 			@names = PersonName.find_by_person_id(@client.id)
 			person = Person.find(@client.id)
@@ -212,24 +209,25 @@ class ClientsController < ApplicationController
      end
 	end
 	
-	def unallocated_clients
+	def waiting_list
      encounter_type_id = EncounterType.find_by_name('Unallocated').id
 		 @clients = Client.joins(:encounters)
                       .where("encounter_type = #{encounter_type_id} AND
                               DATE(encounter_datetime) = '#{Date.today}'")
+     render layout: false
 	end
   
   def add_to_unallocated
     write_encounter('Unallocated', @client)
-    redirect_to unallocated_clients_path
+    redirect_to waiting_list_path
   end
   
-  def remove_from_unallocated
+  def remove_from_waiting_list
   	encounter_type_id = EncounterType.find_by_name('Unallocated').id
 		@client.encounters.where("encounter_type = #{encounter_type_id} AND
 															DATE(encounter_datetime) = '#{Date.today}'")
 											.each {|e| e.void(reason = "cancelled HTC encounter")}
-		redirect_to unallocated_clients_path
+		redirect_to waiting_list_path
   end
   
   def assign_to_counseling_room
