@@ -16,7 +16,9 @@ HTCModule::Application.routes.draw do
   get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
   post "htcs/swap" => "htcs#swap", as: :swap
   
-  get "clients/:id/remove_from_unallocated" => "clients#remove_from_unallocated", as: :remove_from_unallocated
+  #get "clients/remove_from_waiting_list" => "clients#remove_from_waiting_list", as: :remove_from_waiting_list
+  post "clients/remove_from_waiting_list" => "clients#remove_from_waiting_list", as: :remove_from_waiting_list
+  
   get "clients/:id/assign_to_counseling_room" => "clients#assign_to_counseling_room", as: :assign_to_counseling_room
 
 	post "encounters/new/:id" => "encounters#new", as: :new
@@ -46,7 +48,7 @@ HTCModule::Application.routes.draw do
 	get "encounters/observations/:id" => "encounters#observations"
 	post "encounters/void/:id" => "encounters#void"
 	
-	get "unallocated_clients" => "clients#unallocated_clients"
+	get "waiting_list" => "clients#waiting_list"
 	#post "unallocated_clients" => "clients#unallocated_clients"
 	
 	post "search_results" => "clients#search_results"

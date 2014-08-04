@@ -2102,6 +2102,7 @@ function loadPage(section){
   __$("__content").appendChild(main);
     
   var row0 = document.createElement("div");
+  row0.id = "row0"
   row0.style.display = "table-row";
   
   main.appendChild(row0);
@@ -2118,6 +2119,7 @@ function loadPage(section){
   row0.appendChild(cell0_1);
   
   var row1 = document.createElement("div");
+  row1.id = "row1"
   row1.style.display = "table-row";
   
   main.appendChild(row1);
@@ -2129,6 +2131,7 @@ function loadPage(section){
   row1.appendChild(cell1_1);
   
   var row2 = document.createElement("div");
+  row2.id = "row2"
   row2.style.display = "table-row";
   
   main.appendChild(row2);
@@ -2147,6 +2150,7 @@ function loadPage(section){
   cell2_1.appendChild(table);
   
   var row = document.createElement("div");
+  row.id = "row"
   row.style.display = "table-row";
   
   table.appendChild(row);
@@ -2165,6 +2169,7 @@ function loadPage(section){
   row.appendChild(stage);
   
   var buttons = document.createElement("div");
+  buttons.id = "buttons";
   buttons.style.display = "table-cell";
   buttons.style.border = "1px solid #3465a4";
   buttons.style.overflow = "hidden";
