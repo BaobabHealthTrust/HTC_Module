@@ -50,7 +50,7 @@
 							<div style="display: table-cell;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Summary</label>
 								
-								<div style="display: table; border: 1px solid #5679c1; font-size: 12px; width: 250px;">
+								<div style="display: table; border: 1px solid #5679c1; font-size: 18px; width: 250px;">
 									<div style="display: table-row;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
 											First State Time
@@ -107,14 +107,15 @@
 							<div style="display: table-cell;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Log</label>
 								
-								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;">
+								<div style="display: table; border: 1px solid #5679c1; font-size: 15px;">
                                                                       <% @encounters.each{|encounter| %>
 									<div style="display: table-row;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
 											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
-											<%= encounter.name   %>
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;width: 90%;">
+											 <b><%= encounter.name   %>:</b> <br />
+											<%= encounter.to_s.html_safe   %>
 										</div> 
 									</div>
 									<% } %>
