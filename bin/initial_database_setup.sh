@@ -27,12 +27,15 @@ PASSWORD=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}'][
 DATABASE=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['database']"`
 HOST=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['host']"`
 
-#echo "DROP DATABASE $DATABASE;" | mysql --host=$HOST --user=$USERNAME --password=$PASSWORD
+echo "DROP DATABASE $DATABASE;" | mysql --host=$HOST --user=$USERNAME --password=$PASSWORD
 echo "CREATE DATABASE $DATABASE;" | mysql --host=$HOST --user=$USERNAME --password=$PASSWORD
 
 mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_1_9_initial.sql
 mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_metadata_1_9.sql
 #mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < ../db/data/${SITE}/${SITE}.sql
 mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/malawi_regions.sql
+
+mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/locations.sql
+
 echo "After completing database setup"
 

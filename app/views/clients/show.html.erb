@@ -3,6 +3,11 @@
 		<script>
 			
 		</script>
+		<style>
+			.blank {
+				display: none;			
+			}
+		</style>
 	</head>
 <body>
 	<div id='home'>
@@ -55,9 +60,9 @@
 			
 			<select id="tabs">
 				<option value="/client_current_visit?client_id=<%= @client.id %>">Current Visit</option>
-				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Week Visits</option>
-				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Month Visits</option>
-				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Year Visits</option>
+				<option value="/client_previous_visit?client_id=<%= @client.id %>">Previous Visits</option>
+				<!-- option value="/client_previous_visit?client_id=<%= @client.id %>">Past Month Visits</option>
+				<option value="/client_previous_visit?client_id=<%= @client.id %>">Past Year Visits</option -->
 			</select> 
 					 
 	</div>

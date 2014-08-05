@@ -134,7 +134,7 @@ class ClientsController < ApplicationController
     start_date = (session[:datetime].to_date rescue Date.today.to_date) - 1.days
 		end_date = ((start_date) - 7.days).to_s + ' 00:00:00'
     start_date = start_date.to_s + ' 23:59:59'
-   previous_encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime <= ? AND encounter.encounter_datetime >= ?", 0, patient_id, start_date, end_date).includes(:observations).order("encounter.encounter_datetime DESC")
+   previous_encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime <= ?", 0, patient_id, start_date).includes(:observations).order("encounter.encounter_datetime DESC").limit(20)
 		
     return previous_encounters
   end
