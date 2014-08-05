@@ -37,7 +37,6 @@ class AdminsController < ApplicationController
 			end
 		end
     @location = Location.all.limit(20)
-    render layout: false
 	end
   
   def set_date
@@ -64,9 +63,9 @@ class AdminsController < ApplicationController
 	def new_protocol
 			if request.post?
 				@protocol = CounselingQuestion.create(name: params[:name],
-										description: params[:description], retired: 0, 
+										description: params[:description], retired: 0,
 										creator: current_user.id)
-				redirect_to protocols_path
+				redirect_to protocols_path and return
 			end
 	end
 

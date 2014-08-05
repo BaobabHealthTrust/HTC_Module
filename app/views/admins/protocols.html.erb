@@ -92,7 +92,8 @@
 		__$("buttons").style.height = "100%";
 		
 		btnNext.innerHTML = "New Question";
-		btnNext.onmousedown = function() { window.location = 'locations/new';};
+		btnNext.id = "newBtn";
+		btnNext.onmousedown = function() { window.location = '/new_protocol';};
 		btnNext.style.width = "250px";
 		btnCancel.style.width = "250px";
 
@@ -171,6 +172,7 @@
 		row.insertBefore(dsp, row.firstChild);
 		__$("row0").parentNode.appendChild(__$('buttons'));
 		
+		__$('newBtn').onmousedown = function() { window.location = '/new_protocol';};
 	</script>
 </html>
 
