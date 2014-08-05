@@ -18,21 +18,14 @@
                                   <label for="description">Description</label>
                                   <%= text_field_tag :description, @protocol.description %>
                                   
-                                  <label for="data_type">Data type</label>
-                                  <%=select_tag "data_type", options_for_select(["","Datetime","Time", "Boolean", "Number", "Text"]), :value =>"Number" %>
+                                  <label for="datatype">Data type</label>
+                                  <%=select_tag "datatype", options_for_select(["","Datetime","Time", "Boolean", "Number", "Text"]) %>
 																	
-																	<%= label_tag :answers %>
-																	<%=select_tag "answers", options_from_collection_for_select(@location, "name", "name")%>
 							</fieldset>
  	<%= link_to "Cancel" , protocols_path %>
 	<%= submit_tag "Finish" %>
            
 <%end%>
-
-<script>
-	document.getElementById('data_type').innerHTML+='<option value="<%#= @protocol.data_type %>" selected="selected" > <%#= @protocol.data_type %> </option>'
-	document.getElementById('answers').innerHTML+='<option value="<%#= @protocol.answers %>" selected="selected" > <%#= @protocol.answers %> </option>'
-</script>
 
 </body>
 </html>
