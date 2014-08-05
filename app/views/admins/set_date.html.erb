@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<script>
-				<% if defined? params[:client_id] %>
-						var cancelDestination = "clients/<%= params[:client_id] %>";
+				<% if (defined? params[:client_id]) && !params[:client_id].blank? %>
+						var cancelDestination = "/clients/<%= params[:client_id] %>";
 				<% else %>
 						var cancelDestination = "/htcs";
 				<% end %>
