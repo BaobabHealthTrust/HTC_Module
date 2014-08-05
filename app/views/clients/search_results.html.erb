@@ -1,39 +1,168 @@
-<h1>search Results</h1>
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs";
+	</script>
+	
+	<style>
+		#row2 {
+			height:100%;
+		}
+		
+		.dspLi {
+			position:relative;
+			display:block;
+			width:100%;
+			color: #000000;
+			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+			font-size: 1.9em;
+			margin-bottom: 19px;
+			margin-top: 2px;
+			padding: 10px;
+		}
+	</style>
 
-<ul>
-<% if ! @scanned.blank? %>
-		<li> 
-      <%= link_to "#{@scanned.person.gender},
-                  DOB: #{@scanned.person.birthdate.strftime('%d/%m/%Y')} ,
- 					        #{@residence}, Accession Number: #{@accession.identifier}",
-                  @scanned
-      %> 
-		</li>
-<% else
- @clients.each do |client| %>
-		<li> 
-      <%= link_to "#{client.gender},
-                  DOB: #{client.birthdate.strftime('%d/%m/%Y')} ,
-                  #{client.address1},
-                  Accession Number: #{client.identifier}" , client
-      %>
+	</head>
+<body>
+
+<%= form_tag show_client_path do %>
+            <fieldset>
+						<legend>Search Result</legend>
+	
+						<br />
+                          <% if @show_counselling_room != true %>
+                                  <label for="id">  </label>
+																	<select id="id" name="id">
+																			<option><i>New client</i></option>
+																			<%= @clients.each do |client| %>
+																			
+																				 <% current_state = client.current_state.name rescue "" %>
+																				 <% if current_state.blank? %>
+																				 			<% current_state = "ATWL" %>
+																				 <% end %>
+																				 
+																				<option value="<%= client.id %>"> Accession Num :<%= " #{client.accession_number}" %>; Age :<%= "#{client.person.age}" %>; Gender :<%= "#{client.person.gender}" %>; Status : <%="#{current_state}"%> </option>
+																			<% end %>
+																		</select>
+                                  <br />
+                           <% else %>
+                                  <label for="scan_accession_number" >Accession Number </label>
+                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+                           <% end %>
+							</fieldset>
+ 	<%= link_to "Cancel" , htcs_path %>
+	<%= submit_tag "Finish" %>
+           
+<%end%>
+</body>
+	
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+	<script>
+	
+	//Highlist list object
+	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+        
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
       
-     <% current_state = client.current_state rescue "" %>
-     
-     <% if current_state.blank? %>
-	     <%= link_to "Add to waiting list", add_to_unallocated_path(client) %>
-     <% else %>
-     	<%= "Status: #{current_state} "%>
-		 <% end %>
-    </li>
-	<%end
-end%>
-</ul>
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+	
+	function create_new_patient() {
+   window.location = '<%= new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>'
+	}
+	
+	function add_to_waiting_list(obj) {
+		window.location = '/clients/' + __$('textForid').value + '/add_to_unallocated';
+	}
+		
+		__$("row1").style.display="none";
+		__$("buttons").style.verticalAlign = "bottom";
+		__$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+		
+		btnNext.innerHTML = "Finish";
+		btnNext.style.width = "250px";
+		btnCancel.style.width = "250px";
 
-<%= link_to "Cancel" , htcs_path %>
-<% if @show_counselling_room != true %>
-<%= link_to "New" , new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>
-<% end %>
-<%= link_to "Select", '' %>
+		var display = "inline-table";
 
+		btnDivs = __$('buttons').children[0].children;
+		
+		btnDivs[1].style.display = "none";
+		btnDivs[2].style.display = "none";
+	
+		btnDivs[0].style.display  = "inline-table";
+		btnDivs[3].style.display  = "inline-table";
+
+		btnDivs[3].style.cssFloat = "right";
+		
+		var dsp = document.createElement("div");
+		dsp.id = "dsp";
+		dsp.style.display = "table-cell";
+		dsp.style.border = "1px solid #3465a4";
+		dsp.style.overflow = "hidden";
+		dsp.style.borderRadius = "10px";
+		dsp.style.width = "450px";
+		dsp.style.height = "100%";
+		dsp.style.verticalAlign = "top";
+		dsp.innerTHML = "none";
+
+		__$('textForid').style.height = "100%";
+		__$('textForid').style.width = "100%";
+		
+		var lst = __$('ul1').children;
+		for (var i=0; i < lst.length ; i++) {
+				lst[i].onmousedown = function() {
+				highlightList(this);
+				__$('textForid').value = this.value;
+				
+				dspValue = this.innerHTML.split(';');
+				var s = "";
+				
+				if (this.innerHTML.trim() != "New client") {
+				
+						btnNext.style.display = "inline-table";
+						
+				    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
+				    						 'onmousedown="add_to_waiting_list(this)"' +
+				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>'
+				
+						for(var v=0; v<dspValue.length; v++) {
+							str = dspValue[v].split(':')
+					
+							if (str[1].trim() == "ATWL") {
+								s+="<span class='dspLi'>"+
+										button + "</span>";
+							}else {
+								s+="<span class='dspLi'>" + str[0].replace("Num","Number") + " : " +
+										str[1].replace("ATWL", "Add to waiting list") + "</span>";
+							}
+						}
+					}
+					else {
+						btnNext.style.display = "none";
+				     s = '<br> <br> <button onmousedown="create_new_patient()" style="margin: 3px; width: 250px; font-size: 24px;"' +
+				    						 ' class="button green" pos="0" section="0">New client</button>'				
+					}
+				__$('dsp').innerHTML = s;  
+			};
+		}
+		__$('textForid').value = -1;
+		row.insertBefore(dsp, row.firstChild);
+		__$("row0").parentNode.appendChild(__$('buttons'));
+		
+	</script>
+</html>
 

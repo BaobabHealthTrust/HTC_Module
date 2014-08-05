@@ -15,6 +15,7 @@ class AdminsController < ApplicationController
 	
 	def protocols
 		@protocols = CounselingQuestion.all
+		render layout: false and return
 	end
 	
 	def edit_protocols
@@ -24,16 +25,19 @@ class AdminsController < ApplicationController
 			@protocol.name = params[:name]
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
+			
 			if @protocol.save
-				redirect_to protocols_path
+				redirect_to protocols_path and return
 			end
 		elsif ! params[:retire].blank?
 			@protocol.retired = params[:retire].to_i
 			if @protocol.save
-				redirect_to protocols_path
+				redirect_to protocols_path and return
+				
 			end
 		end
     @location = Location.all.limit(20)
+    render layout: false
 	end
   
   def set_date
