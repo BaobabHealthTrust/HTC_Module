@@ -12,7 +12,7 @@ class EncountersController < ApplicationController
 		current = session[:datetime].to_date rescue Date.today
 		person = Person.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
-		
+		#raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  params[:obs].each do |key, value|
 					 type = CounselingQuestion.find(key).data_type rescue []
