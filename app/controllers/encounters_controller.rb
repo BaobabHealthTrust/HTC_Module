@@ -15,10 +15,29 @@ class EncountersController < ApplicationController
 		
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  params[:obs].each do |key, value|
-					 concept_id = ConceptName.find_by_name(value).concept_id
+					 type = CounselingQuestion.find(key).data_type rescue []
+					 next if type.blank?
+					 concept_id = nil
+					 value_datetime = nil
+					 value_text = nil 
+				   value_numeric = nil
+					 if type.upcase == "BOOLEAN"
+							concept_id = ConceptName.find_by_name(value).concept_id rescue nil
+							value_text = value if concept_id.blank?
+					 elsif type.upcase == "DATETIME"
+							value_datetime = value
+					 elsif type.upcase == "NUMBER"
+							value_numeric = value
+					 elsif type.upcase == "TEXT"
+							value_text = value
+					 elsif type.upcase == "TIME"
+							value_text = value					
+					 end
+					 
 					 answer = CounselingAnswer.create(question_id: key, patient_id: person.id,
 									  encounter_id: encounter.encounter_id, value_coded: concept_id, 
-									  creator: current_user.id)
+									  creator: current_user.id, value_text: value_text, value_numeric: value_numeric,
+										value_datetime: value_datetime)
 				end
 		end
 		

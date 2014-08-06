@@ -91,6 +91,10 @@
 										<div style="font-size:18px;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 90%;" onmousedown="checkObs('<%= encounter.id   %>')">
                       <b><%= encounter.name   %>:</b> <br />
 											<%= encounter.to_s.html_safe   %>
+											<% answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
+													 (answers || []).each { |answer| %>
+														<%= answer.to_s.html_safe %>
+											<% } %>
 										</div>
 									</div>
 									<% } %>
