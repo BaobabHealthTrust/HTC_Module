@@ -1,5 +1,5 @@
 class PersonNameCode < ActiveRecord::Base
-  self.table_name = "person_name_code"
+  self.table_name = "person_name_codes"
   self.primary_key = "person_name_code_id"
   include Openmrs
   

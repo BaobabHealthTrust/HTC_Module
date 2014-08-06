@@ -115,7 +115,11 @@
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;width: 90%;">
 											 <b><%= encounter.name   %>:</b> <br />
-											<%= encounter.to_s.html_safe   %>
+												<%= encounter.to_s.html_safe   %>
+												<% answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
+													 (answers || []).each { |answer| %>
+														<%= answer.to_s.html_safe %>
+												<% } %>
 										</div> 
 									</div>
 									<% } %>

@@ -10,12 +10,15 @@
 <%= form_tag({:action => "new_protocol"}, {:method => "post"}) do %>
             <fieldset>
 			<legend>Add Protocol</legend>
-                                  <br />
-                                  <label for="name">Name</label>
-                                  <input type="text" name="name" id="name" value="" optional="false" ajaxURL="/location/names" />
+      <br />
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" value="" optional="false" ajaxURL="/location/names" />
 
-                                  <label for="description">Description</label>
-                                  <input type="text" name="description" id="description" value="" optional="false" ajaxURL="/location/descriptions" />
+      <label for="description">Description</label>
+      <input type="text" name="description" id="description" value="" optional="false" ajaxURL="/location/descriptions" />
+
+			 <label for="datatype">Data type</label>
+      <%=select_tag "datatype", options_for_select(["","Datetime","Time", "Boolean", "Number", "Text"]), :value =>"Number" %>
 							</fieldset>
  	<%= link_to "Cancel" , protocols_path %>
 	<%= submit_tag "Finish" %>

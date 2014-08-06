@@ -25,6 +25,7 @@ class AdminsController < ApplicationController
 			@protocol.name = params[:name]
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
+			@protocol.data_type = params[:datatype]
 			
 			if @protocol.save
 				redirect_to protocols_path and return
@@ -63,8 +64,8 @@ class AdminsController < ApplicationController
 	def new_protocol
 			if request.post?
 				@protocol = CounselingQuestion.create(name: params[:name],
-										description: params[:description], retired: 0,
-										creator: current_user.id)
+										description: params[:description], data_type: params[:datatype],
+										retired: 0, creator: current_user.id)
 				redirect_to protocols_path and return
 			end
 	end
