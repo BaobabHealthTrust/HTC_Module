@@ -1,25 +1,200 @@
-<h1>Listing users</h1>
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs";
+	</script>
+	
+	<style>
+		#row2 {
+			height:100%;
+		}
+		
+		.dspLi {
+			position:relative;
+			display:block;
+			width:100%;
+			color: #000000;
+			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+			font-size: 1.9em;
+			margin-bottom: 19px;
+			margin-top: 2px;
+			padding: 10px;
+		}
+	</style>
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+	</head>
+<body>
 
-  <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= link_to 'Show', user %></td>
-        <td><%= link_to 'Edit', edit_user_path(user) %></td>
-        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<%= form_tag users_new_path do %>
+            <fieldset>
+						<legend>Users</legend>
+	
+						<br />
+                <label for="id">  </label>
+								<select id="id" name="id">
+										<option></option>
+										<%= @users.each do |u| %>
+											
+											<%
+												 status = "Active"
+												 if u.retired == true
+												 	status = "Deactivated"
+												 end
+												 
+												 if session[:user_id] == u.id
+												 	status = "Current user"
+												 end							
+											%>
+											
+											<option value="<%= u.id %>"> Username : <%= u.username %>; Status : <%= status %></option>
+										<% end %>
+									</select>
+                <br />
+							</fieldset>
+ 	<%= link_to "Cancel" , htcs_path %>
+	<%= submit_tag "Finish" %>
+           
+<%end%>
+</body>
+	
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+	<script>
+	
+	//Highlist list object
+	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+        
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
+      
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+	
+	function del() {
+		window.location = window.location = '/users/destroy/' + __$('textForid').value;
+	}
+	
+	function vd(stts) {
+		window.location = '/users/retire/' + __$('textForid').value + '?retire=' + stts;
+	}
+	
+	function edit_user() {
+		window.location = '/users/' + __$('textForid').value + '/edit';
+	}
+		
+		__$("row1").style.display="none";
+		__$("buttons").style.verticalAlign = "bottom";
+		__$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+		
+		btnNext.innerHTML = "New User";
+		btnNext.id = "newBtn";
+		btnNext.style.width = "250px";
+		btnCancel.style.width = "250px";
 
-<br>
+		var display = "inline-table";
 
-<%= link_to 'New User', new_user_path %>
+		btnDivs = __$('buttons').children[0].children;
+		
+		btnDivs[1].style.display = "none";
+		btnDivs[2].style.display = "none";
+	
+		btnDivs[0].style.display  = "inline-table";
+		btnDivs[3].style.display  = "inline-table";
+
+		btnDivs[3].style.cssFloat = "right";
+		
+		var dsp = document.createElement("div");
+		dsp.id = "dsp";
+		dsp.style.display = "table-cell";
+		dsp.style.border = "1px solid #3465a4";
+		dsp.style.overflow = "hidden";
+		dsp.style.borderRadius = "10px";
+		dsp.style.width = "50%";
+		dsp.style.height = "100%";
+		dsp.style.verticalAlign = "top";
+		dsp.innerTHML = "none";
+
+		__$('textForid').style.height = "100%";
+		__$('textForid').style.width = "100%";
+		
+		var lst = __$('ul1').children;
+		for (var i=0; i < lst.length ; i++) {
+				lst[i].onmousedown = function() {
+				highlightList(this);
+				__$('textForid').value = this.value;
+				
+				dspValue = this.innerHTML.split(';');
+				var s = "";
+				var vdBtn;
+				var vdtxt;
+				var btnClass;
+				var stts = 0;
+								
+				btnNext.style.display = "inline-table";
+				
+				var edit_btn  = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+												'onmousedown="edit_user()"' +
+												' class="button blue" pos="0" section="0">Edit</button>';
+										 
+				var del = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+						 'onmousedown="del()"' +
+						 ' class="button red" pos="0" section="0">Delete</button>';
+		
+				for(var v=0; v<dspValue.length; v++) {
+					
+					str = dspValue[v].split(':')
+
+					if(str[0].trim()=="Status") {
+						
+						if (str[1].trim() == "Active") {
+							vdtxt = "Deactivate";
+							btnClass = "red";
+							stts = 1;
+						} else {
+							vdtxt = "Activate";
+							btnClass = "green";
+							stts = 0
+						}
+						
+						vdBtn = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+										 'onmousedown="vd('+ stts +')"' +
+										 ' class="button ' + btnClass + '" pos="0" section="0">' + vdtxt + '</button>';
+						if (str[1].trim() == "Current user") {
+							del = "";
+							vdBtn = "";
+						}
+
+					}
+					s+="<span class='dspLi'>" +
+							str[0].replace("Num","Number") + " : " + str[1] +
+							"</span>";
+				}
+				
+				s+="<br />";
+				s+=edit_btn;
+				s+="<br />";
+				s+=vdBtn;
+				s+="<br /> <br /> <br /> <br /> <br />";
+				s+=del;
+				
+				__$('dsp').innerHTML = s;  
+			};
+		}
+		__$('textForid').value = -1;
+		row.insertBefore(dsp, row.firstChild);
+		__$("row0").parentNode.appendChild(__$('buttons'));
+		
+	</script>
+</html>
+

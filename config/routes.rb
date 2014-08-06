@@ -90,6 +90,10 @@ HTCModule::Application.routes.draw do
 
   resources :clients
 
+
+	post "/users/new" => "users#new"
+	get "/users/destroy/:id" => "users#destroy"
+	get "/users/retire/:id" => "users#retire"
   resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.
