@@ -1,6 +1,28 @@
-<h1>Editing user</h1>
+<html>
+	<head>
+	<script>
+					var cancelDestination = '<%= users_path %>';
+	</script>
+	</head>
+	
+	<body>
 
-<%= render 'form' %>
+	<%= form_for(@user) do |f| %>
+			<fieldset>
+				<legend>Update User</legend>
+				<%=f.label :username, "New username" %>
+				<%=f.text_field :username %>
 
-<%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>
+				<br />
+				<%=f.label :password, "New password" %>
+				<%=f.password_field :password %>	
+			</fieldset>
+		<%= submit_tag "Finish" %>
+		         
+	<%end%>
+
+	</body>
+	
+</html>
+
+
