@@ -8,6 +8,7 @@
 	<body>
 
 	<%= form_for(@user) do |f| %>
+			<% @role = @user.user_roles.map(&:role).first %>
 			<fieldset>
 				<legend>Update User</legend>
 				<%=f.label :username, "New username" %>
@@ -15,7 +16,16 @@
 
 				<br />
 				<%=f.label :password, "New password" %>
-				<%=f.password_field :password %>	
+				<%=f.password_field :password %>
+				
+				<input type="hidden" name="role" value="<%= @role %>" />
+				<label for="user_role">User Role: </label> 
+				<select id="user_role" name="user_role[role]" >
+				<option></option>
+					<% @roles.each do |r| %>
+					<option value="<%= r %>"><%= r %></option>
+					<% end %>
+				</select>
 			</fieldset>
 		<%= submit_tag "Finish" %>
 		         
@@ -23,6 +33,9 @@
 
 	</body>
 	
+<script>
+	document.getElementById('user_role').innerHTML+='<option value="<%= @role %>" selected="selected" > <%= @role %> </option>';
+</script>
 </html>
 
 

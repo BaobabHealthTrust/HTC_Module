@@ -4,43 +4,50 @@
 					var cancelDestination = '<%= users_path %>';
 	</script>
 	</head>
-<body>
 
+	<body>
+	<%= form_for User.new do |f| %>
+		<fieldset>
+		<legend>Add User</legend>
+		<%= f.label :username %>
+		<%= f.text_field :username, autocomplete: "off" %>
 
-<%= form_for User.new do |f| %>
-	<fieldset>
-	<legend>Add User</legend>
-	<%= f.label :username %>
-	<%= f.text_field :username, autocomplete: "off" %>
+		<br />
+		<%= f.label :password %>
+		<%= f.password_field :password, autocomplete: "off"%>
 
-	<br />
-	<%= f.label :password %>
-	<%= f.password_field :password, autocomplete: "off"%>
+		<br />
+		<label for="user_role">User Role: </label> 
+		<select id="user_role" name="user_role[role]" >
+		<option></option>
+			<% @roles.each do |r|%>
+			<option value="<%= r %>"><%= r %></option>
+			<% end %>
+		</select>
 
-	<br />
-	<label for="given_name">First Name: </label>
-	<input id="given_name" name="name[given_name]" fieldtype="text" />
+		<br />
+		<label for="given_name">First Name: </label>
+		<input id="given_name" name="name[given_name]" fieldtype="text" />
 
-	<br />
-	<label for="family_name">Family Name: </label>
-	<input id="family_name" name="name[family_name]" fieldtype="text" />
-
-	<br />
-	<label for="birthdate">Birth Date: </label>
-	<input id="birthdate" name="person[birthdate]" fieldtype="date" />
-
-	<br />
-	<label for="gender">Gender:</label> 
-	<select id="gender" name="person[gender]" >
+		<br />
+		<label for="family_name">Family name: </label>
+		<input id="family_name" name="name[family_name]" fieldtype="text" />
 	
-	<option></option>
-		<option value="F">Female</option>
-		<option value="M">Male</option>
-	</select>
+		<br />
+		<label for="birthdate">Date of birth: </label>
+		<input id="birthdate" name="person[birthdate]" fieldtype="date" />
+
+		<br />
+		<label for="gender">Gender:</label> 
+		<select id="gender" name="person[gender]" >
+		<option></option>
+			<option value="F">Female</option>
+			<option value="M">Male</option>
+		</select>
 	
-	</fieldset>
-	<%= submit_tag "Finish" %>
-           
-<%end%>
-</body>
+		</fieldset>
+		<%= submit_tag "Finish" %>
+		         
+	<%end%>
+	</body>
 </html>
