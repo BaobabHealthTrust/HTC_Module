@@ -25,7 +25,7 @@
 	</head>
 <body>
 
-<%= form_tag show_client_path do %>
+<%= form_tag new_location_path do %>
             <fieldset>
 						<legend>HTC Facilty Rooms</legend>
 	
@@ -86,7 +86,6 @@
 		__$("buttons").style.height = "100%";
 		
 		btnNext.innerHTML = "New location";
-		btnNext.onmousedown = function() { window.location = 'locations/new';};
 		btnNext.style.width = "250px";
 		btnCancel.style.width = "250px";
 

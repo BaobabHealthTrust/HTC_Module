@@ -34,6 +34,7 @@ HTCModule::Application.routes.draw do
 	get "protocols" => "admins#protocols"
 	get "edit_protocols" => "admins#edit_protocols"
 	post "edit_protocols" => "admins#edit_protocols"
+	
 	get "new_protocol" => "admins#new_protocol"
 	post "new_protocol" => "admins#new_protocol"
 
@@ -72,7 +73,7 @@ HTCModule::Application.routes.draw do
 	get "locations/destroy/:id" => "locations#destroy"
 
 	get "locations/print/:id" => "locations#print"
-
+	post "/locations/new" => "locations#new"
   resources :locations
 
 	resources :location_tags

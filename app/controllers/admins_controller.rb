@@ -62,7 +62,10 @@ class AdminsController < ApplicationController
 	end
   
 	def new_protocol
-			if request.post?
+	
+			if !params[:new_protocol].blank?
+				return
+			elsif request.post?
 				@protocol = CounselingQuestion.create(name: params[:name],
 										description: params[:description], data_type: params[:datatype],
 										retired: 0, creator: current_user.id)
