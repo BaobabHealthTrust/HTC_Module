@@ -26,8 +26,8 @@
 					
 					row1.appendChild(cell1_1);
 					
-					var timer1 = addTimer(cell1_1, 10, "Rapid Test Timer", 0.55);
-					
+					var timer1 = addTimer(cell1_1, 10, "Rapid Test Timer", 0.55)
+
 					timer1.style.marginLeft = "40px";
 					
 					timer1.style.marginRight = "40px";
@@ -77,12 +77,12 @@
 					div.style.height = "100%";
 					div.style.overflow = "auto";
 					
-					var combo = addCombo(__$("stage"), {"Positive":"Reactive","Negative":"Non-Reactive"}, "single", document.getElementById("resultdisplay"), document.getElementById("customresult"));
+					var combo = addCombo(__$("stage"), {"Unknown":"Uknown","Positive":"Reactive","Negative":"Non-Reactive"}, "single", document.getElementById("resultdisplay"), document.getElementById("customresult"));
 					
 					combo.style.fontSize = "28px";
 
 					combo.style.textAlign = "left";
-          
+
 					if(btnClear){
 						
 						btnClear.onclick = function(){
@@ -98,18 +98,9 @@
 					}
           
 				}
-				
-			}
-			
-			function assignValue() {
-				buttons = document.getElementsByClassName('button green')
-				for (var i = 0; i < buttons.length; i++){
-					if (buttons[i].innerHTML == "Next"){
-							buttons[i].setAttribute("onclick", "setValues()")				
-					}				
-				}
-			}
 
+                                //__$("finish").setAttribute("onclick", "setValues()");
+			}
 
 			function setValues(){
 						document.getElementById('rapidtimer').value = document.getElementById('timetimer1').innerHTML
@@ -117,34 +108,33 @@
 			}
 		</script>
 </head>
-<body>
+<body  onunload="setValues()">
 	
 		<%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
-		<fieldset custom=true fs_onLoad="loadCustom();assignValue();">
+		<fieldset custom=true fs_onLoad="loadCustom();">
 				<legend>HIV Testing</legend>
 						
 				
 				<input id="customresult" name="customresult" type="hidden" value="" />
-						<input type="hidden" name="observations[][concept_name]" value="Result of HIV test" />
-						<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-						<input type="hidden" name="observations[][obs_datetime]" value="" />
-						<input type="hidden" name="observations[][value_numeric]" value="" />
-	
-						<input type="hidden" name="observations[][value_numeric]" id="rapidtimer" value="" fieldtype="number">
-						<input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
-						<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-						<input type="hidden" name="observations[][obs_datetime]" />
-						<input type="hidden" name="observations[][value_coded_or_text]" value="" />
-				<br>
-				<label for="goldtimer">Gold Test Timer</label> 
-						<input type="hidden" name="observations[][value_numeric]" id="goldtimer" fieldtype="number">
-						<input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
-						<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-						<input type="hidden" name="observations[][obs_datetime]", value="" />
-						<input type="hidden" name="observations[][value_coded_or_text]" value="" />
-									
+				<input type="hidden" name="observations[][concept_name]" value="Result of HIV test" />
+				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+				<input type="hidden" name="observations[][obs_datetime]" value="" />
+				<input type="hidden" name="observations[][value_text]" value="" />
+
+
+				<input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number">
+				<input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
+				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+				<input type="hidden" name="observations[][obs_datetime]" />
+		
+
+				<input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number">
+				<input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
+				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+				<input type="hidden" name="observations[][obs_datetime]", value="" />
+							
 			</fieldset>
 
 			<input type="submit" value="Submit" />
