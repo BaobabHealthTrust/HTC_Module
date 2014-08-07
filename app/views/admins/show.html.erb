@@ -4,13 +4,41 @@
 	width: 250px;
 	text-align:center;
 }
+.grey {
+	background-color: #838B8B;
+	display:block; float:left; 
+	padding:0 20px; 
+	margin:-50px 20px 0 20px; 
+	height:66px; 
+	color:#000; 
+	font:bold 25px/96px arial, sans-serif; 
+  text-decoration:none; 
+	position:relative; 
+	white-space:nowrap;
+	-moz-border-radius:20px 20px 0 0;
+	border-radius:20px 20px 20px 20px;
+	border:4px solid #008; border-width:4px 0 0 0;
+	background-image: -webkit-linear-gradient(-90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+	background-image: -moz-linear-gradient(-90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+	background-image: -ms-linear-gradient(-90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+	background-image: -o-linear-gradient(-90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+	text-shadow:1px 1px 5px #fff;
+	-webkit-font-smoothing: antialiased;
+}
+#links{
+	background: black;
+	border-radius:20px 20px 20px 20px;
+	margin-left: auto;
+	margin-right: auto;
+}
 
 </style>
 <br />
 <br />
 
 <base target="_parent">
-
-<%= link_to 'Manage Users', users_path, :class=>'pd blue' %>
-<%= link_to 'Manage Locations', locations_path, :class=>'pd blue' %>
-<%= link_to 'Manage Protocols', protocols_path, :class=>'pd blue' %>
+<div id='links'>
+		<%= link_to 'Manage Users', users_path, :class=>'grey' %>
+		<%= link_to 'Manage Locations', locations_path, :class=>'grey' %>
+		<%= link_to 'Manage Protocols', protocols_path, :class=>'grey' %>
+</div>
