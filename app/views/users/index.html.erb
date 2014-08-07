@@ -46,7 +46,9 @@
 												 end							
 											%>
 											
-											<option value="<%= u.id %>"> Username : <%= u.username %>; Status : <%= status %></option>
+											<% @role = u.user_roles.map(&:role).first %>
+											
+											<option value="<%= u.id %>"> Username : <%= u.username %>; Status : <%= status %>; Role : <%= @role %></option>
 										<% end %>
 									</select>
                 <br />
@@ -173,6 +175,9 @@
 						if (str[1].trim() == "Current user") {
 							del = "";
 							vdBtn = "";
+						}else if (vdtxt == "Activate") {
+							del = "";
+							edit_btn = "";
 						}
 
 					}

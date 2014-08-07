@@ -11,11 +11,13 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @roles = Role.all.map(&:role)
     #render layout: false
   end
 
   def edit
   	@user = User.unscoped.find(params[:id])
+  	@roles = Role.all.map(&:role)
   end
 
   def create
@@ -29,17 +31,23 @@ class UsersController < ApplicationController
  
     @user = User.new(user_params) 		
 		if @user.save
-			flash[:notice] = "Welcome to the site!"
+		  user_role = UserRole.create(user_role_params)
+		  user_role.save
 			redirect_to users_path and return
     else
-			flash[:alert] = "There was a problem creating your account. Please try again."
 			redirect_to :back and return
     end
   end
 
-  def update
-
+  def update			
       if @user.update(user_params)
+					@role = UserRole.find(user_role_params[:user_id],params[:role]) rescue nil
+					
+					if !@role.nil?
+						@role.update(user_role_params)
+					else
+						UserRole.create(user_role_params)
+					end
 					redirect_to users_path
       else
 
@@ -76,5 +84,10 @@ class UsersController < ApplicationController
 
 	def name_params
 		params.require(:name).permit(:person_id, :given_name, :family_name)
+	end
+	
+	def user_role_params
+		params[:user_role][:user_id] = @user.id
+		params.require(:user_role).permit(:user_id, :role)
 	end
 end
