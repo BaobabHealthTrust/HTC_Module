@@ -29,9 +29,9 @@
                            <% else %>
                                   <label for="scan_accession_number" >Accession Number </label>
                                   <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+                           				<input id="add_to_session" type="hidden" name="add_to_session" value="true">
                            <% end %>
 							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
 	<%= submit_tag "Finish" %>
            
 <%end%>
