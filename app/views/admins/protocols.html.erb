@@ -25,10 +25,11 @@
 	</head>
 <body>
 
-<%= form_tag show_client_path do %>
+<%= form_tag new_protocol_path do %>
             <fieldset>
 						<legend>Counseling Protocols</legend>
-	
+
+						<input type='hidden' name='new_protocol' value='true' />
 						<br />
                 <label for="id">  </label>
 								<select id="id" name="id">
@@ -93,7 +94,6 @@
 		
 		btnNext.innerHTML = "New Question";
 		btnNext.id = "newBtn";
-		btnNext.onmousedown = function() { window.location = '/new_protocol';};
 		btnNext.style.width = "250px";
 		btnCancel.style.width = "250px";
 
@@ -158,7 +158,6 @@
 					s+="<span class='dspLi'>" +
 							str[0].replace("Num","Number") + " : " + str[1] +
 							"</span>";
-					btnNext.onmousedown = function() { window.location = '/new_protocol';};
 				}
 				
 				s+="<br />";
@@ -173,7 +172,6 @@
 		row.insertBefore(dsp, row.firstChild);
 		__$("row0").parentNode.appendChild(__$('buttons'));
 		
-		__$('newBtn').onmousedown = function() { window.location = '/new_protocol';};
 	</script>
 </html>
 
