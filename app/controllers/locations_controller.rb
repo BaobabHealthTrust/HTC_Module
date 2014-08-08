@@ -23,7 +23,8 @@ class LocationsController < ApplicationController
   def create
       loc_params = {                                                     
                     :name => params[:name],                             
-                    :description => params[:description]                
+                    :description => params[:description],
+										:creator => current_user.id                
                    }
        
     @location_tag_id = params[:location_tag]
