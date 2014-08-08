@@ -31,7 +31,6 @@
 						<legend>Waiting List</legend>
 	
 						<br />
-                          <% if @show_counselling_room != true %>
                                   <label for="id"> Remove from waiting list? </label>
 																	<select id="id" name="id">
 																			<option></option>
@@ -40,12 +39,7 @@
 																			<% end %>
 																		</select>
                                   <br />
-                           <% else %>
-                                  <label for="scan_accession_number" >Accession Number </label>
-                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
-                           <% end %>
 							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
 	<%= submit_tag "Finish" %>
            
 <%end%>
