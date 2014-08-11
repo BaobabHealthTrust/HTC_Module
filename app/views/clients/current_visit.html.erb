@@ -2,6 +2,24 @@
 <html>
 	<head>
 		<title>Current Visit</title>
+		<script>
+			  function voiding(node) {             
+                                                                                  
+						if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+								xmlhttp=new XMLHttpRequest();                                             
+							}else{// code for IE6, IE5                                                  
+								xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+							}                                                                           
+							xmlhttp.onreadystatechange=function() {                                     
+								if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
+								  var results = xmlhttp.responseText;                                     
+								  }                                                                     
+								}                                                                         
+							                                                                         
+							xmlhttp.open("GET","/encounters/void/" + node, true); 
+							xmlhttp.send();   
+				}
+		</script>
 		<style>
 			.arrow-right {
 				width: 0; 
@@ -156,7 +174,8 @@ button {
 												<% } %>
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;width: 90%;">
-										<button style="margin: 3px; font-size: 20px; height: 60px;" class="button blue" onmousedown="void('<%= encounter.encounter_id %>')">Void</button>
+										<button style="margin: 3px; font-size: 20px; height: 60px;" 
+										class="button blue" onmousedown="voiding('<%= encounter.encounter_id %>')">Void</button>
 									 </div>
 									</div>
 									<% } %>
@@ -175,4 +194,5 @@ button {
 			</div>
 		</div>
 	</body>
-</html>
+</html>		
+			}

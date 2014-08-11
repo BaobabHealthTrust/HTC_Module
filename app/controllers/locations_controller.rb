@@ -68,6 +68,14 @@ class LocationsController < ApplicationController
     redirect_to '/locations'
   end
 
+	def village
+			location = Village.where("name LIKE '%#{params[:search]}%'")
+			location = location.map do |locs|
+      "#{locs.name}"
+    end
+    render :text => location.join("\n") and return
+	end
+
 	def print
 		location = Location.find(params[:id])
 		print_string = get_location_label(location)

@@ -1,9 +1,9 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy,
                                     :add_to_unallocated, :remove_from_waiting_list,
-                                    :assign_to_counseling_room]
+                                    :assign_to_counseling_room, :village]
 
-	skip_before_action :village
+	#skip_before_action :village
 
   def index
     #@clients = Client.all
