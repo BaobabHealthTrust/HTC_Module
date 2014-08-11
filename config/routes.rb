@@ -74,6 +74,11 @@ HTCModule::Application.routes.draw do
 
 	get "locations/print/:id" => "locations#print"
 	post "/locations/new" => "locations#new"
+
+	get "/locations/village" => "locations#village"
+
+  get "/encounters/void/:id" => "encounters#void"
+
   resources :locations
 
 	resources :location_tags
