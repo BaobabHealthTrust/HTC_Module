@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
 				session[:user_id] = @user.id
         User.current_user_id = session[:user_id]
 				session[:location_id] = @location.id
-        session[:datetime] = Date.today        
+        session[:datetime] = DateTime.now        
 				redirect_to "/"
 			else
 				flash[:alert] = "Wrong username or password"
