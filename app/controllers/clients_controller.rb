@@ -213,6 +213,31 @@ class ClientsController < ApplicationController
 											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+				
+				sp = ""
+				@side_panel_date = ""
+				@client_list = ""
+				@clients_info = []
+				
+				@clients.each do |client|
+					id= client.id
+					accession = client.accession_number
+					age = client.person.age
+					gender = client.person.gender
+					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822)
+					residence = PersonAddress.find_by_person_id(id).address1
+					status = client.current_state.name rescue ""
+					
+					@clients_info << { id: id, accession: accession,
+														 birth: birth, gender: gender, residence: residence}
+					
+					@side_panel_date += sp + "#{id} : { id: #{id},
+											accession_number: '#{accession}', status: '#{status}',
+											age: #{age}, gender: '#{gender}',
+											birthDate: '#{birth}', residence: '#{residence.humanize}' }"
+					sp = ','
+				end
+				
      end
      render layout: false
 	end
@@ -257,9 +282,7 @@ class ClientsController < ApplicationController
 										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}' }"
 				sp = ','
 			end
-     
-     
-     #raise @clients.map{|i| i.encounters.first.encounter_datetime}.to_yaml
+
      render layout: false
 	end
   
