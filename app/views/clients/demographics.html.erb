@@ -23,7 +23,7 @@
 							</select>
 						<br />
 						<label for="date_of_birth"> Date of birth </label>
-						<input type="text" id="date_of_birth" name="date_of_birth" value="<%= @client.person.birthdate %>" fieldtype="date" />
+                                                <input type="text" id="date_of_birth" max="<%= Date.today %>" name="date_of_birth" value="<%= @client.person.birthdate.strftime('%d/%m/%Y') %>" fieldtype="date" />
 						<br />
 						<label for="residence">Residence</label>
 						<input type="text" id="residence" name="residence" value="<%= @residence %>" ajaxURL="/clients/village/<%= params[:client_id] %>"/>
