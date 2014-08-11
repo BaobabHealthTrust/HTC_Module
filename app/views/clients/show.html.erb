@@ -48,7 +48,7 @@
 				<button onmousedown="window.location = '/referral_consent/<%= @client.id -%>'">
 				Referral</button>
 				
-				<% if defined? session[:datetime].to_date %>
+				<% if  session[:datetime].to_date != Date.today.to_date  %>
 					<button onmousedown="window.location = '/admins/set_date?client_id=<%= @client.id -%>'">
 			    Reset Date</button>
 				<% else %>

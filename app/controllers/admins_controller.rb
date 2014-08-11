@@ -42,8 +42,8 @@ class AdminsController < ApplicationController
   
   def set_date
 			
-			if defined? session[:datetime].to_date
-				session[:datetime] = nil
+			if session[:datetime].to_date != Date.today.to_date
+				session[:datetime] = Date.today
 					if ! params[:client_id].blank?
 							redirect_to "/clients/#{params[:client_id]}" and return
 					else
@@ -51,7 +51,7 @@ class AdminsController < ApplicationController
 					end
 			end
 			if request.post?
-				session[:datetime] = params[:date]
+				session[:datetime] = params[:dates]
 				if ! params[:client_id].blank?
 						redirect_to "/clients/#{params[:client_id]}" and return
 				else

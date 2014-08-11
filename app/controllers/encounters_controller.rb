@@ -104,7 +104,7 @@ class EncountersController < ApplicationController
     @encounter.destroy
   end
 
-	def write_encounter(encounter_type, person, current = Time.now)		
+	def write_encounter(encounter_type, person, current = DateTime.now)		
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
 									encounter_datetime: current, creator: current_user.id)

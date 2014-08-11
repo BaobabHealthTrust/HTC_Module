@@ -12,7 +12,8 @@ class SessionsController < ApplicationController
 				flash[:notice] = "You've been logged in."
 				session[:user_id] = @user.id
         User.current_user_id = session[:user_id]
-				session[:location_id] = @location.id				
+				session[:location_id] = @location.id
+        session[:datetime] = Date.today        
 				redirect_to "/"
 			else
 				flash[:alert] = "Wrong username or password"

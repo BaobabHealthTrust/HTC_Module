@@ -30,7 +30,7 @@
 				
 				<button onmousedown="window.location = '<%= log_out_path %>'">Logout</button>
 
-				<% if defined? session[:datetime].to_date %>
+				<% if session[:datetime].to_date != Date.today.to_date %>
 					<button onmousedown="window.location = '/admins/set_date'">
 			    Reset Date</button>
 				<% else %>

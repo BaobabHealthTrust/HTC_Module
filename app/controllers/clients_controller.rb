@@ -6,7 +6,7 @@ class ClientsController < ApplicationController
 	#skip_before_action :village
 
   def index
-    @clients = Client.all
+    #@clients = Client.all
   end
 
   def show
@@ -196,6 +196,11 @@ class ClientsController < ApplicationController
 				end
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
+				
+				if params[:add_to_session] =="true"
+					 assign_to_counseling_room(@scanned)
+				end
+				
 				redirect_to "/clients/#{@scanned.patient_id}" and return
 		 else
 		 		@clients = Client.find_by_sql("SELECT * FROM patient p
@@ -231,14 +236,12 @@ class ClientsController < ApplicationController
 		redirect_to waiting_list_path
   end
   
-  def assign_to_counseling_room
-    write_encounter('IN SESSION', @client)
-    
-    redirect_to client_path(@client)
+  def assign_to_counseling_room(client)
+    write_encounter('IN SESSION', client)
   end
 
 
-	def write_encounter(encounter_type, person, current = Date.today)
+	def write_encounter(encounter_type, person, current = DateTime.now)
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id,
 									location_id: current_location.id, encounter_datetime: current,

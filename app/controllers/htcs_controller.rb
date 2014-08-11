@@ -4,7 +4,7 @@ class HtcsController < ApplicationController
   def index
   	tag_id = LocationTag.find_by_name('HTC Counselling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
-		@date = (session[:datetime].to_date rescue nil) || Date.today
+		@date = (session[:datetime].to_date) || Date.today
 
 		@rooms_info = {}
 		@rooms.each do |r|
