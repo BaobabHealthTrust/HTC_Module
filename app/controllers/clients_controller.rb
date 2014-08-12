@@ -115,6 +115,36 @@ class ClientsController < ApplicationController
     render :text => person.join("\n") and return
 	end
 
+  def printouts
+    render layout: false
+  end
+
+  def print_accession
+    client = Client.find(params[:id])
+		print_string = get_accession_label(client)
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
+		#redirect_to '/locations'
+  end
+
+  def print_summary
+    client = Client.find(params[:id])
+		print_string = get_accession_label(client)
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
+		#redirect_to '/locations'
+  end
+
+  def get_accession_label(client)
+    return unless client.patient_id
+    label = ZebraPrinter::StandardLabel.new
+    label.font_size = 2
+    label.font_horizontal_multiplier = 2
+    label.font_vertical_multiplier = 2
+    label.left_margin = 50
+    label.draw_barcode(50,180,0,1,5,15,120,false,"#{client.accession_number rescue ''}")
+    label.draw_multi_text("Accession Number")
+    label.print(1)
+  end
+
 	def current_visit
 		@client = Client.find(params[:client_id])
 		@status  = @client.current_state rescue "NaN"

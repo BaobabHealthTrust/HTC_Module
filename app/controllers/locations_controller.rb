@@ -79,7 +79,8 @@ class LocationsController < ApplicationController
 	def print
 		location = Location.find(params[:id])
 		print_string = get_location_label(location)
-		redirect_to '/locations'
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
+		#redirect_to '/locations'
 	end
 	
 	def get_location_label(location)
@@ -89,7 +90,7 @@ class LocationsController < ApplicationController
     label.font_horizontal_multiplier = 2
     label.font_vertical_multiplier = 2
     label.left_margin = 50
-    label.draw_barcode(50,180,0,1,5,15,120,false,"#{location.location_id}")
+    label.draw_barcode(50,180,0,1,5,15,120,false,"#{location.name}")
     label.draw_multi_text("#{location.name}")
     label.print(1)
   end
