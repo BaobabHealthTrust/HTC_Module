@@ -4,24 +4,7 @@
 					var cancelDestination = "/htcs";
 	</script>
 	
-	<style>
-		#row2 {
-			height:100%;
-		}
-		
-		.dspLi {
-			position:relative;
-			display:block;
-			width:100%;
-			color: #000000;
-			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-			font-size: 1.9em;
-			margin-bottom: 19px;
-			margin-top: 2px;
-			padding: 10px;
-		}
-	</style>
-
+	<%= stylesheet_link_tag 'panel' %>
 	</head>
 <body>
 
@@ -34,12 +17,11 @@
 								<select id="id" name="id">
 										<option></option>
 										<%= @locations.each do |loc| %>
-											<option value="<%= loc.id %>"> Name :<%= loc.name.humanize %>; Dsc: <%= loc.description%></option>
+											<option value="<%= loc.id %>"> <%= loc.name.humanize %>; <%= loc.description%></option>
 										<% end %>
 									</select>
                 <br />
 							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
 	<%= submit_tag "Finish" %>
            
 <%end%>
@@ -48,6 +30,7 @@
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
 	
+	var sidePanelData = {<%= @side_panel_data.html_safe rescue [] %>};
 	//Highlist list object
 	function highlightList(obj) {
     if(obj.getAttribute("target") != null){
@@ -119,29 +102,34 @@
 		for (var i=0; i < lst.length ; i++) {
 				lst[i].onmousedown = function() {
 				highlightList(this);
-				__$('textForid').value = this.value;
+				
+				var obj = sidePanelData[this.value];
+				__$('textForid').value = this.value;				
 				
 				dspValue = this.innerHTML.split(';');
 				var s = "";
 				
 				btnNext.style.display = "inline-table";
 				
-		    var button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+		    var btnDel = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 		    						 'onmousedown="destroy(this)"' +
 		    						 ' class="button red" pos="0" section="0">Delete</button>'
-				button += '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+		    
+				var btnPrnt = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 		    						 'onmousedown="printLocation(this)"' +
 		    						 ' class="button blue" pos="0" section="0">Print</button>'
-		
-				for(var v=0; v<dspValue.length; v++) {
-					str = dspValue[v].split(':')
-			
-					s+="<span class='dspLi'>" +
-							str[0].replace("Num","Number") + " : " + str[1] +
-							"</span>";
-				}
+	
+				s += "<span class='d dL'> Name </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.name  + "</span>";
 				
-				s+=button;
+				s += "<span class='d dL'> Description </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.description  + "</span>";
+				
+				s+= "<span class='dL' style='padding:10px;'>" + btnDel + "</span>";
+				s+= "<span class='dR' style='padding:10px;'>" + btnPrnt + "</span>";
+				
 				__$('dsp').innerHTML = s;  
 			};
 		}

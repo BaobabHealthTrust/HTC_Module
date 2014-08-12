@@ -5,6 +5,17 @@ class LocationsController < ApplicationController
     htc_tags = LocationTag.where("name LIKE '%HTC%'").map(&:location_tag_id)
     @locations = Location.joins(:location_tag_maps)
                           .where(:location_tag_map => {:location_tag_id => htc_tags})
+    @side_panel_data = ""
+    sp = ""
+   	
+   	@locations.each do |l|
+			@side_panel_data += sp + "#{l.id} : {
+																 	name: '#{l.name.humanize}',
+																 	description: '#{l.description}'
+																 }"
+    	sp = ","   	
+   	end
+   	
     render :layout => false
   end
 

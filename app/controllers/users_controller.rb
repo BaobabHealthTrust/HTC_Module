@@ -20,11 +20,11 @@ class UsersController < ApplicationController
 			end
 			
 			@side_panel_data += sp + "#{u.id} : {
-																					 	username: '#{u.username}',
-																					 	retired: #{u.retired},
-																					 	status: '#{status}',
-																					 	role: '#{role}'
-																					 }"
+																 	username: '#{u.username}',
+																 	retired: #{u.retired},
+																 	status: '#{status}',
+																 	role: '#{role}'
+																 }"
     	sp = ","
     end
     
