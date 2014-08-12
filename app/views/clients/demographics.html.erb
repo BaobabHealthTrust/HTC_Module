@@ -2,6 +2,16 @@
 		<head>
 					<script>
 						var cancelDestination = "clients/<%= params[:client_id] %>";
+                                             function checkDate(){
+
+                                                          date = document.getElementById("date_of_birth")
+                                                          function noMondays(e){
+                                                              var day = new Date( e.target.value ).getUTCDay();
+                                                              // Days in JS range from 0-6 where 0 is Sunday and 6 is Saturday
+                                                             
+                                                          }
+                                                          date.addEventListener('input',noMondays);
+                                                }
 					</script>
 		</head>
 <body>
@@ -23,10 +33,10 @@
 							</select>
 						<br />
 						<label for="date_of_birth"> Date of birth </label>
-                                                <input type="text" id="date_of_birth" max="<%= Date.today %>" name="date_of_birth" value="<%= @client.person.birthdate.strftime('%d/%m/%Y') %>" fieldtype="date" />
+                                                <input type="text"  onclick="checkDate()"id="date_of_birth" max="<%= Date.today %>" name="date_of_birth" value="<%= @client.person.birthdate.strftime('%d/%m/%Y') %>" fieldtype="date" />
 						<br />
 						<label for="residence">Residence</label>
-						<input type="text" id="residence" name="residence" value="<%= @residence %>" ajaxURL="/clients/village/<%= params[:client_id] %>"/>
+						<input type="text" id="residence" name="residence" value="<%= @residence %>" ajaxURL="/clients/locations/<%= params[:client_id] %>"/>
 						<br />
 			
 			</fieldset>

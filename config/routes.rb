@@ -54,6 +54,10 @@ HTCModule::Application.routes.draw do
 
 	get "clients/village/:id" => "clients#village"
 
+	get "clients/print_accession/:id" => "clients#print_accession"
+
+  get "clients/print_summary/:id" => "clients#print_summary"
+
 	get "clients/first_name/:id" => "clients#first_name"
 
 	get "clients/last_name/:id" => "clients#last_name"
@@ -76,6 +80,8 @@ HTCModule::Application.routes.draw do
 	post "/locations/new" => "locations#new"
 
 	get "/locations/village" => "locations#village"
+
+  get "client_printouts" => "clients#printouts"
 
   get "/encounters/void/:id" => "encounters#void"
 
