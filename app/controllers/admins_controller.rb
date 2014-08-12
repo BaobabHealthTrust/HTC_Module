@@ -28,7 +28,7 @@ class AdminsController < ApplicationController
 			end
 
 			@side_panel_data += sp + "#{p.id} : {
-																 	name: '#{p.name.humanize}',
+																 	name: '#{p.name}',
 																 	status: '#{status}'
 																 }"
     	sp = ","   	
