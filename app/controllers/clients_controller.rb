@@ -52,6 +52,8 @@ class ClientsController < ApplicationController
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
 															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
+			
+			current = session[:datetime] rescue DateTime.now
 			write_encounter("IN WAITING", @person, current)
 
 		end
@@ -211,6 +213,31 @@ class ClientsController < ApplicationController
 											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+				
+				sp = ""
+				@side_panel_date = ""
+				@client_list = ""
+				@clients_info = []
+				
+				@clients.each do |client|
+					id= client.id
+					accession = client.accession_number
+					age = client.person.age
+					gender = client.person.gender
+					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822)
+					residence = PersonAddress.find_by_person_id(id).address1
+					status = client.current_state.name rescue ""
+					
+					@clients_info << { id: id, accession: accession,
+														 birth: birth, gender: gender, residence: residence}
+					
+					@side_panel_date += sp + "#{id} : { id: #{id},
+											accession_number: '#{accession}', status: '#{status}',
+											age: #{age}, gender: '#{gender}',
+											birthDate: '#{birth}', residence: '#{residence.humanize}' }"
+					sp = ','
+				end
+				
      end
      render layout: false
 	end
@@ -220,6 +247,42 @@ class ClientsController < ApplicationController
 		 @clients = Client.joins(:encounters)
                       .where("encounter_type = #{encounter_type_id} AND
                               DATE(encounter_datetime) = '#{Date.today}'")
+                              .order('encounter_datetime DESC')
+     
+     @waiting = []
+     @clients.each do |c|
+			datetime = c.encounters.first.encounter_datetime
+			time = datetime.strftime("%I:%M")
+			date = datetime.to_date.to_formatted_s(:rfc822)
+			birth = c.person.birthdate.to_date.to_formatted_s(:rfc822)
+			residence = PersonAddress.find_by_person_id(c.id).address1
+			
+     	@waiting << { id: c.id, accession_number: c.accession_number,
+     							  age: c.person.age, gender: c.person.gender,
+     							  datetime: datetime, date: date, time: time,
+     							  birthDate: birth, address: residence}
+     end
+     
+     @waiting = @waiting.sort{|a, b| a[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime <=> b[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime}
+     
+     sp = ""
+     @w = ""
+     @side_panel_date = "";
+     
+			@waiting.each do |i|
+				@w += sp + "{ id: #{i[:id]}, accession_number: '#{i[:accession_number]}',
+										age: #{i[:age]}, gender: '#{i[:gender]}',
+										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', 
+										time: '#{i[:time]}', birthDate: '#{i[:birthDate]}' }"
+				
+				@side_panel_date += sp + "#{i[:id]} : { id: #{i[:id]},
+										accession_number: '#{i[:accession_number]}',
+										age: #{i[:age]}, gender: '#{i[:gender]}',
+										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
+										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}' }"
+				sp = ','
+			end
+
      render layout: false
 	end
   
@@ -244,7 +307,7 @@ class ClientsController < ApplicationController
 	def write_encounter(encounter_type, person, current = DateTime.now)
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id,
-									location_id: current_location.id, encounter_datetime: current,
+									location_id: current_location.id, encounter_datetime: current.strftime("%Y-%m-%d %H:%M:%S"),
 									creator: current_user.id)
 	end
 

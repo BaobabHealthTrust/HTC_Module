@@ -1,63 +1,44 @@
 <html>
 	<head>
 	<script>
-					var cancelDestination = "/htcs";
+		var cancelDestination = "/htcs";
 	</script>
-	
-	<style>
-		#row2 {
-			height:100%;
-		}
-		
-		.dspLi {
-			position:relative;
-			display:block;
-			width:100%;
-			color: #000000;
-			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-			font-size: 1.9em;
-			margin-bottom: 19px;
-			margin-top: 2px;
-			padding: 10px;
-		}
-	</style>
-
+		<%= stylesheet_link_tag 'panel' %>
 	</head>
 <body>
 
 <%= form_tag show_client_path do %>
-            <fieldset>
-						<legend>Search Result</legend>
-	
-						<br />
-                          <% if @show_counselling_room != true %>
-                                  <label for="id">  </label>
-																	<select id="id" name="id">
-																			<option><i>New client</i></option>
-																			<%= @clients.each do |client| %>
-																			
-																				 <% current_state = client.current_state.name rescue "" %>
-																				 <% if current_state.blank? %>
-																				 			<% current_state = "ATWL" %>
-																				 <% end %>
-																				 
-																				<option value="<%= client.id %>"> Accession Num :<%= " #{client.accession_number}" %>; Age :<%= "#{client.person.age}" %>; Gender :<%= "#{client.person.gender}" %>; Status : <%="#{current_state}"%> </option>
-																			<% end %>
-																		</select>
-                                  <br />
-                           <% else %>
-                                  <label for="scan_accession_number" >Accession Number </label>
-                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
-                           <% end %>
-							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
+	<fieldset>
+
+		<legend>Search Result</legend>
+
+		<br />
+		<% if @show_counselling_room != true %>
+		<label for="id">  </label>
+		
+		<select id="id" name="id">
+			<option><i>New client</i></option>	
+			<%= @clients_info.each do |client| %>
+				<option value="<%= client[:id] %>"> Accession :<%= " #{client[:accession]}" %>;<%= " #{client[:gender]}" %>; DOB :<%= client[:birth] %> </option>
+			<% end %>
+		</select>
+		
+		<br />
+		<% else %>
+		<label for="scan_accession_number" >Accession Number </label>
+		<input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+		<% end %>
+		
+	</fieldset>
 	<%= submit_tag "Finish" %>
            
-<%end%>
+<% end %>
 </body>
 	
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
+	
+	var sidePanelData = {<%= @side_panel_date.html_safe %>};
 	
 	//Highlist list object
 	function highlightList(obj) {
@@ -114,7 +95,7 @@
 		dsp.style.border = "1px solid #3465a4";
 		dsp.style.overflow = "hidden";
 		dsp.style.borderRadius = "10px";
-		dsp.style.width = "450px";
+		dsp.style.width = "46%";
 		dsp.style.height = "100%";
 		dsp.style.verticalAlign = "top";
 		dsp.innerTHML = "none";
@@ -129,6 +110,7 @@
 				__$('textForid').value = this.value;
 				
 				dspValue = this.innerHTML.split(';');
+				var obj = sidePanelData[this.value];
 				var s = "";
 				
 				if (this.innerHTML.trim() != "New client") {
@@ -137,18 +119,39 @@
 						
 				    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +
-				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>'
-				
-						for(var v=0; v<dspValue.length; v++) {
-							str = dspValue[v].split(':')
-					
-							if (str[1].trim() == "ATWL") {
-								s+="<span class='dspLi'>"+
-										button + "</span>";
-							}else {
-								s+="<span class='dspLi'>" + str[0].replace("Num","Number") + " : " +
-										str[1].replace("ATWL", "Add to waiting list") + "</span>";
-							}
+				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>';
+				   	
+						s += "<span class='d dL'> Accession Number</span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.accession_number  + "</span>";
+								 
+						s += "<span class='d dL'> Gender </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.gender  + "</span>";
+
+						s += "<span class='d dL'> Date of Birth </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.birthDate  + "</span>";
+								 
+						s += "<span class='d dL'> Age </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.age  + "</span>";					 
+
+						s += "<span class='d dL'> Residence </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.residence  + "</span>";
+								 
+						s += "<span class='d dL'> Date of Visit </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.date  + "</span>";		
+
+
+						if (obj.status.trim()=="") {
+							s+=button;
+						}else {
+							s += "<span class='d dL'> Work-flow Status </span>" +
+									 "<span class='d dC'> : </span>" +
+									 "<span class='d dR'>" + obj.status  + "</span>";
 						}
 					}
 					else {
@@ -163,6 +166,7 @@
 		row.insertBefore(dsp, row.firstChild);
 		__$("row0").parentNode.appendChild(__$('buttons'));
 		
+		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
 	</script>
 </html>
 
