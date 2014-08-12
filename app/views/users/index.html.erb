@@ -1,27 +1,9 @@
 <html>
 	<head>
 	<script>
-					var cancelDestination = "/htcs";
+		var cancelDestination = "/htcs";
 	</script>
-	
-	<style>
-		#row2 {
-			height:100%;
-		}
-		
-		.dspLi {
-			position:relative;
-			display:block;
-			width:100%;
-			color: #000000;
-			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-			font-size: 1.9em;
-			margin-bottom: 19px;
-			margin-top: 2px;
-			padding: 10px;
-		}
-	</style>
-
+		<%= stylesheet_link_tag 'panel' %>
 	</head>
 <body>
 
@@ -35,25 +17,13 @@
 										<option></option>
 										<%= @users.each do |u| %>
 											
-											<%
-												 status = "Active"
-												 if u.retired == true
-												 	status = "Deactivated"
-												 end
-												 
-												 if session[:user_id] == u.id
-												 	status = "Current user"
-												 end							
-											%>
-											
 											<% @role = u.user_roles.map(&:role).first %>
 											
-											<option value="<%= u.id %>"> Username : <%= u.username %>; Status : <%= status %>; Role : <%= @role %></option>
+											<option value="<%= u.id %>"> <%= u.username %>; <%= @role %></option>
 										<% end %>
 									</select>
                 <br />
 							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
 	<%= submit_tag "Finish" %>
            
 <%end%>
@@ -61,6 +31,8 @@
 	
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
+	
+	var sidePanelData = {<%= @side_panel_data.html_safe %>};
 	
 	//Highlist list object
 	function highlightList(obj) {
@@ -132,6 +104,7 @@
 		
 		var lst = __$('ul1').children;
 		for (var i=0; i < lst.length ; i++) {
+		
 				lst[i].onmousedown = function() {
 				highlightList(this);
 				__$('textForid').value = this.value;
@@ -142,6 +115,7 @@
 				var vdtxt;
 				var btnClass;
 				var stts = 0;
+				var obj = sidePanelData[this.value]
 								
 				btnNext.style.display = "inline-table";
 				
@@ -152,47 +126,52 @@
 				var del = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 						 'onmousedown="del()"' +
 						 ' class="button red" pos="0" section="0">Delete</button>';
-		
-				for(var v=0; v<dspValue.length; v++) {
-					
-					str = dspValue[v].split(':')
-
-					if(str[0].trim()=="Status") {
-						
-						if (str[1].trim() == "Active") {
-							vdtxt = "Deactivate";
-							btnClass = "red";
-							stts = 1;
-						} else {
-							vdtxt = "Activate";
-							btnClass = "green";
-							stts = 0
-						}
-						
-						vdBtn = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
-										 'onmousedown="vd('+ stts +')"' +
-										 ' class="button ' + btnClass + '" pos="0" section="0">' + vdtxt + '</button>';
-						if (str[1].trim() == "Current user") {
-							del = "";
-							vdBtn = "";
-						}else if (vdtxt == "Activate") {
-							del = "";
-							edit_btn = "";
-						}
-
-					}
-					s+="<span class='dspLi'>" +
-							str[0].replace("Num","Number") + " : " + str[1] +
-							"</span>";
+				
+				if (obj.retired == false) {
+					vdtxt = "Deactivate";
+					btnClass = "red";
+					stts = 1;
+				} else {
+					vdtxt = "Activate";
+					btnClass = "green";
+					stts = 0
 				}
 				
+				vdBtn = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+								 'onmousedown="vd('+ stts +')"' +
+								 ' class="button ' + btnClass + '" pos="0" section="0">' +
+								 		vdtxt +
+								 '</button>';
+
+				if (<%= session[:user_id] %> == this.value) {
+					del = "";
+					vdBtn = "";
+				}else if (vdtxt == "Activate") {
+					del = "";
+					edit_btn = "";
+				}
+
+				s += "<span class='d dL'> Username </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.username  + "</span>";
+
+
+				s += "<span class='d dL'> Role </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.role  + "</span>";
+						 
+				s += "<span class='d dL'> Status </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.status  + "</span>";
+		
 				s+="<br />";
-				s+=edit_btn;
-				s+=vdBtn;
-				s+=del;
+				s+= "<span class='dL' style='padding:10px;'>" + edit_btn + "</span>";
+				s+= "<span class='dR' style='padding:10px;'>" + vdBtn + "</span>";
+				s+= "<span class='dL' style='padding:10px;'>" + del + "</span>";
 				
 				__$('dsp').innerHTML = s;  
 			};
+			
 		}
 		__$('textForid').value = -1;
 		row.insertBefore(dsp, row.firstChild);
