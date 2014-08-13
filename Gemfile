@@ -49,3 +49,7 @@ gem 'composite_primary_keys'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+#gem 'passenger'
+
+gem 'zebra_printer'
