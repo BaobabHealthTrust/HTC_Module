@@ -134,6 +134,12 @@
 			s += "<span class='d dL'> Time of Visit </span>" +
 					 "<span class='d dC'> : </span>" +
 					 "<span class='d dR'>" + obj.time  + "</span>";
+					 
+			if (parseInt(obj.days_since_last_visit) > 0) {
+				s += "<span class='d dL'> Period Since Last Visit </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
+			}
 
 			__$('dsp').innerHTML = s + "<br /> <br />" +button;  
 		};

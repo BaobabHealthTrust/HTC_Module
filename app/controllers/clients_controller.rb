@@ -264,14 +264,20 @@ class ClientsController < ApplicationController
 					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822)
 					residence = PersonAddress.find_by_person_id(id).address1
 					status = client.current_state.name rescue ""
+					last_visit = client.encounters.last.encounter_datetime.to_date
+																				.to_formatted_s(:rfc822) rescue nil
+					last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
+					
+					days_since_last_visit = (session[:datetime].to_date - last_visit.to_date).to_i
 					
 					@clients_info << { id: id, accession: accession,
 														 birth: birth, gender: gender, residence: residence}
 					
 					@side_panel_date += sp + "#{id} : { id: #{id},
 											accession_number: '#{accession}', status: '#{status}',
-											age: #{age}, gender: '#{gender}',
-											birthDate: '#{birth}', residence: '#{residence.humanize}' }"
+											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
+											birthDate: '#{birth}', residence: '#{residence.humanize}',
+											days_since_last_visit: '#{days_since_last_visit}'}"
 					sp = ','
 				end
 				
@@ -293,11 +299,17 @@ class ClientsController < ApplicationController
 			date = datetime.to_date.to_formatted_s(:rfc822)
 			birth = c.person.birthdate.to_date.to_formatted_s(:rfc822)
 			residence = PersonAddress.find_by_person_id(c.id).address1
+
+			last_visit = c.encounters.last.encounter_datetime.to_date
+																		.to_formatted_s(:rfc822) rescue nil
+			last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
+			days_since_last_visit = (session[:datetime].to_date - last_visit.to_date).to_i
 			
      	@waiting << { id: c.id, accession_number: c.accession_number,
      							  age: c.person.age, gender: c.person.gender,
      							  datetime: datetime, date: date, time: time,
-     							  birthDate: birth, address: residence}
+     							  birthDate: birth, address: residence,
+     							  days_since_last_visit: days_since_last_visit}
      end
      
      @waiting = @waiting.sort{|a, b| a[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime <=> b[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime}
@@ -316,7 +328,8 @@ class ClientsController < ApplicationController
 										accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
-										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}' }"
+										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}',
+										days_since_last_visit: '#{i[:days_since_last_visit]}'}"
 				sp = ','
 			end
 

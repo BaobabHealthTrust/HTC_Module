@@ -141,10 +141,15 @@
 								 "<span class='d dC'> : </span>" +
 								 "<span class='d dR'>" + obj.residence  + "</span>";
 								 
-						s += "<span class='d dL'> Date of Visit </span>" +
+						s += "<span class='d dL'> Last Visit </span>" +
 								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.date  + "</span>";		
-
+								 "<span class='d dR'>" + obj.last_visit  + "</span>";
+						
+						if (parseInt(obj.days_since_last_visit) > 0) {
+							s += "<span class='d dL'> Period Since Last Visit </span>" +
+									 "<span class='d dC'> : </span>" +
+									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
+						}
 
 						if (obj.status.trim()=="") {
 							s+=button;

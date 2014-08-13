@@ -3,6 +3,31 @@ class UsersController < ApplicationController
 
   def index
     @users = User.unscoped.all
+    
+    @side_panel_data = ""
+    sp = ""
+
+    @users.each do |u|
+    	role = u.user_roles.map(&:role).first
+			status = "Active"
+			
+			if u.retired == true
+				status = "Deactivated"
+			end
+
+			if session[:user_id] == u.id
+				status = "Current user"
+			end
+			
+			@side_panel_data += sp + "#{u.id} : {
+																 	username: '#{u.username}',
+																 	retired: #{u.retired},
+																 	status: '#{status}',
+																 	role: '#{role}'
+																 }"
+    	sp = ","
+    end
+    
     render layout: false
   end
 

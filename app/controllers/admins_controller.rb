@@ -15,6 +15,25 @@ class AdminsController < ApplicationController
 	
 	def protocols
 		@protocols = CounselingQuestion.all
+		
+    @side_panel_data = ""
+    sp = ""
+   	
+   	@protocols.each do |p|
+   	
+			status = "Active"
+			
+			if p.retired.to_i == 1
+				status = "Deactivated"
+			end
+
+			@side_panel_data += sp + "#{p.id} : {
+																 	name: '#{p.name}',
+																 	status: '#{status}'
+																 }"
+    	sp = ","   	
+   	end
+   	
 		render layout: false and return
 	end
 	

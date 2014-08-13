@@ -3,25 +3,7 @@
 	<script>
 					var cancelDestination = "/htcs";
 	</script>
-	
-	<style>
-		#row2 {
-			height:100%;
-		}
-		
-		.dspLi {
-			position:relative;
-			display:block;
-			width:100%;
-			color: #000000;
-			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-			font-size: 1.9em;
-			margin-bottom: 19px;
-			margin-top: 2px;
-			padding: 10px;
-		}
-	</style>
-
+		<%= stylesheet_link_tag 'panel' %>
 	</head>
 <body>
 
@@ -41,12 +23,11 @@
 										<% else %>
 												<% status = "Active" %> 
 										<% end %>
-											<option value="<%= p.id %>"> Question :<%= p.name %>; Status: <%= status %></option>
+											<option value="<%= p.id %>"> Question :<%= p.name %> </option>
 										<% end %>
 									</select>
                 <br />
 							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
 	<%= submit_tag "Finish" %>
            
 <%end%>
@@ -54,6 +35,7 @@
 	
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
+	var sidePanelData = {<%= @side_panel_data.html_safe %>};
 	
 	//Highlist list object
 	function highlightList(obj) {
@@ -127,51 +109,50 @@
 		for (var i=0; i < lst.length ; i++) {
 				lst[i].onmousedown = function() {
 				highlightList(this);
+				
 				__$('textForid').value = this.value;
 				
-				dspValue = this.innerHTML.split(';');
+				var obj = sidePanelData[this.value];
 				var s = "";
 				
-				btnNext.style.display = "inline-table";
-				
 				var button;
-				var edit_btn  = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+				var editBtn  = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 												'onmousedown="edit_protocol()"' +
 												' class="button blue" pos="0" section="0">Edit</button>';
-		
-				for(var v=0; v<dspValue.length; v++) {
-					
-					str = dspValue[v].split(':')
+
+				
+				btnNext.style.display = "inline-table";
+						
 			
-					if (str[0].trim() == "Status" ) {
-						if(str[1].trim() == "Active") {
-								button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
-														 'onmousedown="deactivate()"' +
-														 ' class="button red" pos="0" section="0">Deactivate</button>'	
-						}else {
-								button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
-														 'onmousedown="activate()"' +
-														 ' class="button green" pos="0" section="0">Activate</button>'
-						}
-					}
-					
-					s+="<span class='dspLi'>" +
-							str[0].replace("Num","Number") + " : " + str[1] +
-							"</span>";
+				if(obj.status.trim() == "Active") {
+						button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+												 'onmousedown="deactivate()"' +
+												 ' class="button red" pos="0" section="0">Deactivate</button>'	
+				}else {
+						button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+												 'onmousedown="activate()"' +
+												 ' class="button green" pos="0" section="0">Activate</button>'
 				}
+
+				s += "<span class='d dL'> Question </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.name  + "</span>";
+
+				s += "<span class='d dL'> Status </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.status  + "</span>";
 				
 				s+="<br />";
-				s+=edit_btn;
-				s+="<br />";
-				s+=button;
-				
+				s+= "<span class='dL' style='padding:10px;'>" + editBtn + "</span>";
+				s+= "<span class='dR' style='padding:10px;'>" + button + "</span>";
 				__$('dsp').innerHTML = s;  
 			};
 		}
 		__$('textForid').value = -1;
 		row.insertBefore(dsp, row.firstChild);
 		__$("row0").parentNode.appendChild(__$('buttons'));
-		
+	
+		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
 	</script>
 </html>
 
