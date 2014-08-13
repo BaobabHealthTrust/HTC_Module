@@ -4,7 +4,8 @@ class SessionsController < ApplicationController
   end
 
   def login
-  	@location = Location.find_by_name(params[:location]) rescue nil
+    location = params[:location].gsub("$", '').squish
+  	@location = Location.find_by_name(location) rescue nil
 		@user = User.authenticate(params[:username], params[:password]) if @location
 		
 		if @location
@@ -20,7 +21,7 @@ class SessionsController < ApplicationController
 				redirect_to log_in_path
 			end
 		else
-				flash[:alert] = "Location: #{params[:location]} does not exist!"
+				flash[:alert] = "Location: #{location} does not exist!"
 				redirect_to log_in_path
 		end
   end
