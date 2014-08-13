@@ -12,6 +12,13 @@ class ApplicationController < ActionController::Base
 	def current_location
 		if session[:location_id]
 			@current_location ||= Location.find(session[:location_id])
+			Location.login_rooms_details = {} if Location.login_rooms_details.nil?
+			
+			if Location.login_rooms_details[@current_location.name.humanize].nil?
+				
+				#Class variable Hash contains location and user_id
+				Location.login_rooms_details[@current_location.name.humanize] = {user_id: @current_user.id}
+			end
 		end
 	end
 	

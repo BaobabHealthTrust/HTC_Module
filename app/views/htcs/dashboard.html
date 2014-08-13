@@ -48,7 +48,7 @@
 								Room State
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Last Encounter
+								Latest Encounter
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
 								AVG Waiting
@@ -61,19 +61,30 @@
 							</th>
 						</tr>
 						
-						<% @rooms.each do |r| %>
+						<% @ins = 0 %>
+						<% @rooms.sort.each do |r| %>
 							<tr>
 								<td style="border-right: 1px solid #305d97;">
-									<%= r.name.humanize %>
+									<%= r.humanize %>
 								</td>
-								<td style="border-right: 1px solid #305d97; text-align: center;">
-									10
+								
+								<% @ins+=1 if @dash_board[r][:status]=="In" %>
+								<td style="border-right: 1px solid #305d97; padding-left:20px; text-align: left;">
+									<%= @dash_board[r][:status] + " ("+ @dash_board[r][:username] +")" rescue "Out" %>
 								</td>
+								
+								<% if !@dash_board[r][:latest_encounter_name].nil? %>
+									<td style="border-right: 1px solid #305d97; text-align: left; padding-left:20px;">
+										<%= @dash_board[r][:latest_encounter_name] %> <br />
+										<span style="font-size:12px;font-style: italic;"> (<%= @dash_board[r][:latest_encounter_date] %>) </span>
+									</td>			
+								<% else %>
+									<td style="border-right: 1px solid #305d97; text-align: left; padding-left:20px;">
+										<i>NaN</i>
+									</td>
+								<% end %>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
-									0
-								</td>
-								<td style="border-right: 1px solid #305d97; text-align: center;">
-									10
+									<%= Location.login_rooms_details.keys.to_json rescue "<i> Undefined </i>".html_safe %>
 								</td>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
 									10
@@ -86,10 +97,11 @@
 
 						<tr>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
-								Totals
+								Summary
 							</td>
+							
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								40
+							<%= "#{@ins}-<i>In</i> & #{@dash_board.count-@ins}-<i>Out</i>".html_safe %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
 								4

@@ -31,6 +31,10 @@ class SessionsController < ApplicationController
 		session[:user_id] = nil
     User.current_user_id = nil
 		session[:room_id] = nil
+		
+		current_location
+		Location.login_rooms_details.delete(@current_location.name.humanize)
+		
 		flash[:notice] = "You've been logged out successfully."
 		redirect_to "/login"
   end
