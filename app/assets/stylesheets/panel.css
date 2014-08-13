@@ -31,6 +31,7 @@
 		.dR {
 			position: relative;
 			display : block;
-			width: auto;
+			width: 40%;
 			float:left;
+			word-wrap:break-word;
 		}
