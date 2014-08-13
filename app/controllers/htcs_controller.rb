@@ -49,6 +49,10 @@ class HtcsController < ApplicationController
   end
   
   def dashboard
+  
+  	tag_id = LocationTag.find_by_name('HTC Counselling Room').id rescue []
+		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
+  	
   	render layout: false
   end
 

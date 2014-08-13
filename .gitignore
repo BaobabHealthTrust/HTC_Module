@@ -22,3 +22,5 @@
 /*/*/*.swp
 /*/*.swp
 /*.swp
+
+/Gemfile.lock

@@ -35,8 +35,9 @@
 			<div style="display: table-row;">
 				<div style="display: table-cell; vertical-align: top; padding-top: 10px; width: 100px; text-align: center;">
 					<div style="font-size: 32px; color: #305d97; margin: auto;">
-						Client Room Allocation Statuses
+						Counseling Rooms Status
 					</div>
+					
 					
 					<table width="100%" style="border: 1px solid #305d97; margin-top: 10px; font-size: 24px;" cellpadding="10" cellspacing="0">
 						<tr style="color: #305d97;">
@@ -44,101 +45,45 @@
 								&nbsp;
 							</td>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Maximum Capacities
+								Room State
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Seen
+								Last Encounter
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Waiting
+								AVG Waiting
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Available Spaces
+								Seen Today
 							</th>
 							<th style="border-bottom: 1px solid #305d97;">
-								Total Attendance
+								Total Seen
 							</th>
 						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Room 1
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								0
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="text-align: center;">
-								0
-							</td>
-						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Room 2
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								1
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								1
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								8
-							</td>
-							<td style="text-align: center;">
-								2
-							</td>
-						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Room 3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								5
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								-1
-							</td>
-							<td style="text-align: center;">
-								6
-							</td>
-						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								IN WAITING
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								15
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								&nbsp;
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								12
-							</td>
-							<td style="text-align: center;">
-								3
-							</td>
-						</tr>
+						
+						<% @rooms.each do |r| %>
+							<tr>
+								<td style="border-right: 1px solid #305d97;">
+									<%= r.name.humanize %>
+								</td>
+								<td style="border-right: 1px solid #305d97; text-align: center;">
+									10
+								</td>
+								<td style="border-right: 1px solid #305d97; text-align: center;">
+									0
+								</td>
+								<td style="border-right: 1px solid #305d97; text-align: center;">
+									10
+								</td>
+								<td style="border-right: 1px solid #305d97; text-align: center;">
+									10
+								</td>
+								<td style="text-align: center;">
+									0
+								</td>
+							</tr>
+						<% end %>
+
 						<tr>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
 								Totals
