@@ -55,7 +55,7 @@ class ClientsController < ApplicationController
 			
 			current = session[:datetime] rescue DateTime.now
 			write_encounter("IN WAITING", @person, current)
-
+      #print_new_accession(@client.patient_id)
 		end
 		
 		redirect_to action: 'search_results', residence: @address.address1, 
@@ -123,6 +123,13 @@ class ClientsController < ApplicationController
     client = Client.find(params[:id])
 		print_string = get_accession_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
+		#redirect_to '/locations'
+  end
+
+  def print_new_accession(client_id)
+    client = Client.find(client_id)
+		print_string = get_accession_label(client)
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{client_id}#{rand(10000)}.lbl", :disposition => "inline")
 		#redirect_to '/locations'
   end
 
