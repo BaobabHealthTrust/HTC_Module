@@ -14,20 +14,22 @@
                     if(btnNext){
                           
                             if(__$(id) && __$(id).value.trim().match(/\$/)){
+
                                     if(__$("textFor" + id)){
 
                                             __$("textFor" + id).value = __$("textFor" + id).value.trim().replace(/\$/, "");
 
                                     }
 
+                                    clearTimeout(id)
                                     btnNext.click();
 
                                     return;
                             }
 
                    }
-
-                    setTimeout("doLogin('" + id + "')", 500);
+                  
+                      setTimeout("doLogin('" + id + "')", 500);
             }
 
 

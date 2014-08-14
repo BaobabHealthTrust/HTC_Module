@@ -9,6 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
+   # raise params.to_yaml
 		current = session[:datetime].to_date rescue Date.today
 		person = Person.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
