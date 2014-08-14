@@ -49,6 +49,45 @@ class HtcsController < ApplicationController
   end
   
   def dashboard
+  
+  	tag_id = LocationTag.find_by_name('HTC Counselling Room').id rescue []
+		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id)
+										 .map{ |r|r.name.humanize } rescue []
+  	
+  	
+  	
+  	@dash_board = {}
+  	@rooms.each do |r|
+			#Dashboard counseling room status report
+			@dash_board[r] = {}
+			
+			#Room state
+			status = "In"
+			if Location.login_rooms_details[r].nil?
+				status = "Out"
+			else
+				user_id = Location.login_rooms_details[r][:user_id]
+				@dash_board[r][:username] = User.find(user_id).username
+			end
+			@dash_board[r][:status] = status
+			
+			#Current Encounter
+			@dash_board[r][:latest_encounter_name] rescue nil
+			@dash_board[r][:latest_encounter_date] rescue nil
+			
+			if r == @current_location.name.humanize && !Location.login_rooms_details[r].nil?
+					user_id = Location.login_rooms_details[r][:user_id]
+					e = Encounter.where("creator = ?", user_id).last rescue nil
+					
+					if !e.nil?
+						name = e.name
+						datetime = e.encounter_datetime.strftime("On %d-%b-%Y at %H:%M %P")
+						@dash_board[r][:latest_encounter_name] = e.name
+						@dash_board[r][:latest_encounter_date] = datetime
+					end
+			end
+
+  	end
   	render layout: false
   end
 
