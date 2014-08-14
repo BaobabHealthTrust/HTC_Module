@@ -11,6 +11,8 @@ HTCModule::Application.routes.draw do
 	post "client_demographics" => "clients#demographics"
   
   get "referral_consent/:id" => "clients#referral_consent"
+
+  get "appointment/:id" => "clients#appointment"
 	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
   get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
@@ -82,6 +84,8 @@ HTCModule::Application.routes.draw do
 	get "/locations/village" => "locations#village"
 
   get "client_printouts" => "clients#printouts"
+
+   get "client_tasks" => "clients#tasks"
 
   get "/encounters/void/:id" => "encounters#void"
 

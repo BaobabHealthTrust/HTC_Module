@@ -65,6 +65,10 @@ class ClientsController < ApplicationController
   def edit
   end
 
+  def tasks
+      	@client = Client.find(params[:client_id])
+  end
+  
 	def demographics
 		 		@client = Client.find(params[:client_id])
 		 		@residence = PersonAddress.find_by_person_id(@client.id).address1
@@ -83,6 +87,10 @@ class ClientsController < ApplicationController
 			
 	end
 
+  def appointment
+      render :layout => false
+  end
+  
 	def locations
 			location = Location.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|

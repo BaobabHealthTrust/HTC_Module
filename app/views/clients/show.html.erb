@@ -39,15 +39,6 @@
 				<button onmousedown="window.location = '/client_demographics?client_id=<%= @client.id -%>'">
 				Demographics</button>
 				
-				<button onmousedown="window.location = '/client_counseling?client_id=<%= @client.id -%>'">
-				Counseling</button>
-				
-				<button onmousedown="window.location = '/client_testing?client_id=<%= @client.id -%>'">
-				Testing</button>
-
-				<button onmousedown="window.location = '/referral_consent/<%= @client.id -%>'">
-				Referral</button>
-				
 				<% if  session[:datetime].to_date != Date.today.to_date  %>
 					<button onmousedown="window.location = '/admins/set_date?client_id=<%= @client.id -%>'">
 			    Reset Date</button>
@@ -61,8 +52,8 @@
 			<select id="tabs">
 				<option value="/client_current_visit?client_id=<%= @client.id %>">Current Visit</option>
 				<option value="/client_previous_visit?client_id=<%= @client.id %>">Previous Visits</option>
-				<option value="/client_printouts?client_id=<%= @client.id %>">Printouts</option>
-				<!--option value="/client_previous_visit?client_id=<%= @client.id %>">Past Year Visits</option -->
+                                <option value="/client_tasks?client_id=<%= @client.id %>">Tasks</option >
+				<option value="/client_printouts?client_id=<%= @client.id %>">Printouts</option>		
 			</select> 
 					 
 	</div>
