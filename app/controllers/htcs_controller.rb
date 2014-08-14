@@ -2,7 +2,7 @@ class HtcsController < ApplicationController
   before_action :set_htc, only: [:show, :edit, :update, :destroy]
 
   def index
-  	tag_id = LocationTag.find_by_name('HTC Counselling Room').id rescue []
+  	tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
 		@date = (session[:datetime].to_date) || Date.today
 
@@ -50,7 +50,7 @@ class HtcsController < ApplicationController
   
   def dashboard
   
-  	tag_id = LocationTag.find_by_name('HTC Counselling Room').id rescue []
+  	tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id)
 										 .map{ |r|r.name.humanize } rescue []
   	

@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
 		@show_counselling_room = false
 		is_counselor = @current_user.user_roles.map(&:role).include?('Counselor')
 		
-		htc_room_tag_id = LocationTag.find_by_name('HTC Counselling Room').id rescue []
+		htc_room_tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		location_tags = LocationTagMap.where("location_id=#{@current_location.id}")
 																	.map(&:location_tag_id) rescue []
 
