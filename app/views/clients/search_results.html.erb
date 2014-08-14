@@ -73,6 +73,10 @@
 		__$("buttons").style.width = "100%";
 		__$("buttons").style.height = "100%";
 		
+		<% if !@show_counselling_room %>
+			btnNext.style.display = "none";	
+		<% end %>
+		
 		btnNext.innerHTML = "Finish";
 		btnNext.style.width = "250px";
 		btnCancel.style.width = "250px";
@@ -115,7 +119,12 @@
 				
 				if (this.innerHTML.trim() != "New client") {
 				
-						btnNext.style.display = "inline-table";
+				<% if !@show_counselling_room %>
+					btnNext.style.display = "none";	
+				<% else %>
+					btnNext.style.display = "inline-table";
+				<% end %>
+
 						
 				    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +

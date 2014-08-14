@@ -12,12 +12,13 @@
 							}                                                                           
 							xmlhttp.onreadystatechange=function() {                                     
 								if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
-								  var results = xmlhttp.responseText;                                     
+								  var results = xmlhttp.responseText;
+								  location.reload();                              
 								  }                                                                     
 								}                                                                         
 							                                                                         
 							xmlhttp.open("GET","/encounters/void/" + node, true); 
-							xmlhttp.send();   
+							xmlhttp.send(); 
 				}
 		</script>
 		<style>
@@ -127,14 +128,16 @@ button {
 											<%= @status.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
 									</div>
-									<div style="display: table-row;">
+									
+									<!-- div style="display: table-row;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
 											Final State Time
 										</div>
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
 											<%= @finalstatus.encounter_datetime.strftime("%I : %M") rescue "NaN" %>
 										</div> 
-									</div>
+									</div -->
+									
 									<div style="display: table-row;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
 											&nbsp;
