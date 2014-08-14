@@ -77,7 +77,8 @@ class HtcsController < ApplicationController
 			
 			if r == @current_location.name.humanize && !Location.login_rooms_details[r].nil?
 					user_id = Location.login_rooms_details[r][:user_id]
-					e = Encounter.where("creator = ?", user_id).last rescue nil
+					e = Encounter.where("creator = ?", user_id)
+											 .order("encounter_datetime DESC").first rescue nil
 					
 					if !e.nil?
 						name = e.name

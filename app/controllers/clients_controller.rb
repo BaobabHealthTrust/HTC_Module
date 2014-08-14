@@ -299,6 +299,8 @@ class ClientsController < ApplicationController
                       .where("encounter_type = #{encounter_type_id} AND
                               DATE(encounter_datetime) = '#{Date.today}'")
                               .order('encounter_datetime DESC')
+                              
+     @clients = @clients.reject{|c| c.current_state.name != "IN WAITING"} rescue []
      
      @waiting = []
      @clients.each do |c|

@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
 				#Class variable Hash contains location and user_id
 				Location.login_rooms_details[@current_location.name.humanize] = {user_id: @current_user.id}
 			end
-		end
+		end	
 	end
 	
 	def show_counselling_room
