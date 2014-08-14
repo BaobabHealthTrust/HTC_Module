@@ -57,7 +57,7 @@
 								Seen Today
 							</th>
 							<th style="border-bottom: 1px solid #305d97;">
-								Total Seen
+								 Available
 							</th>
 						</tr>
 						
@@ -83,12 +83,12 @@
 										<i>--</i>
 									</td>
 								<% end %>
-								<td style="border-right: 1px solid #305d97; text-align: center;">
-									50
+								<td style="font-size:20px;border-right: 1px solid #305d97; text-align: center;">
+									<%= @dash_board[r][:vg_waiting] %>
 									<%#= Location.login_rooms_details.keys.to_json rescue "<i> Undefined </i>".html_safe %>
 								</td>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
-									10
+									<%= @dash_board[r][:seen_today] %>
 								</td>
 								<td style="text-align: center;">
 									0
