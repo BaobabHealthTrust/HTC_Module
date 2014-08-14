@@ -74,17 +74,18 @@
 								</td>
 								
 								<% if !@dash_board[r][:latest_encounter_name].nil? %>
-									<td style="border-right: 1px solid #305d97; text-align: left; padding-left:20px;">
+									<td style="font-size:16px;border-right: 1px solid #305d97; text-align: center; padding-left:20px;">
 										<%= @dash_board[r][:latest_encounter_name] %> <br />
 										<span style="font-size:12px;font-style: italic;"> (<%= @dash_board[r][:latest_encounter_date] %>) </span>
 									</td>			
 								<% else %>
-									<td style="border-right: 1px solid #305d97; text-align: left; padding-left:20px;">
-										<i>NaN</i>
+									<td style="border-right: 1px solid #305d97; text-align: center; padding-left:20px;">
+										<i>--</i>
 									</td>
 								<% end %>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
-									<%= Location.login_rooms_details.keys.to_json rescue "<i> Undefined </i>".html_safe %>
+									50
+									<%#= Location.login_rooms_details.keys.to_json rescue "<i> Undefined </i>".html_safe %>
 								</td>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
 									10
@@ -104,16 +105,16 @@
 							<%= "#{@ins}-<i>In</i> & #{@dash_board.count-@ins}-<i>Out</i>".html_safe %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								4
+								&nbsp;
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								17
+								&nbsp;
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								29
+								&nbsp;
 							</td>
 							<td style="text-align: center; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
-								11
+								&nbsp;
 							</td>
 						</tr>
 					</table>

@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
 	end
 	
 	def current_location
+
 		if session[:location_id]
 			@current_location ||= Location.find(session[:location_id])
 			Location.login_rooms_details = {} if Location.login_rooms_details.nil?
