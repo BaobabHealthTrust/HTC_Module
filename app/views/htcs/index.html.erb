@@ -53,8 +53,10 @@
 			
 			<select id="tabs">
 				<option value= <%= htcs_dashboard_path %> >Rooms Allocation</option>
+			<% if @is_counselor %>
 				<option value= <%= reports_index_path %> >Reports</option>
 				<option value= <%= admins_path + '/index/' %> >Administration</option>
+			<% end %>
 			</select>
 			
 		</div>
