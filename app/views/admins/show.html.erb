@@ -27,19 +27,21 @@
 }
 
 .blue {
-    border-radius: 75px;
+    border-radius: 35px;
     display: block;
     float: left;
-    height: 150px;
-    margin-right: 20px;
+    height: 90px;
+    margin-right: 35px;
     vertical-align: baseline;
-    width: 195px;
+    width: 90px;
+    background-repeat: no-repeat;
+    background-size: 80px 80px;
 }
 
 #usrs {
 	background-image: url(<%= asset_path 'users.png' %>);
 	background-size: cover;
-	margin-left:33px;
+	margin-left:35px;
 }
 
 #locs {
@@ -48,8 +50,17 @@
 }
 
 #pro {
-	background-image: url(<%= asset_path 'pro.jpg' %>);
+	background-image: url(<%= asset_path 'pro.png' %>);
 	background-size: cover;
+}
+
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 100px;
 }
 
 </style>
@@ -58,7 +69,7 @@
 
 <base target="_parent">
 
-		<%= link_to '', users_path, :class=>'blue', :id => "usrs" %>
-		<%= link_to '', locations_path, :class=>'blue', :id => "locs" %>
-		<%= link_to '', protocols_path, :class=>'blue', :id => "pro" %>
+		<%= link_to '<span class="txt"> Users </span>'.html_safe, users_path, :class=>'blue', :id => "usrs" %>
+		<%= link_to '<span class="txt"> Locations </span>'.html_safe, locations_path, :class=>'blue', :id => "locs" %>
+		<%= link_to '<span class="txt"> Protocols </span>'.html_safe, protocols_path, :class=>'blue', :id => "pro" %>
 
