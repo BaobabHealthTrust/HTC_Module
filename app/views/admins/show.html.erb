@@ -26,13 +26,39 @@
 	-webkit-font-smoothing: antialiased;
 }
 
+.blue {
+    border-radius: 75px;
+    display: block;
+    float: left;
+    height: 150px;
+    margin-right: 20px;
+    vertical-align: baseline;
+    width: 195px;
+}
+
+#usrs {
+	background-image: url(<%= asset_path 'users.png' %>);
+	background-size: cover;
+	margin-left:33px;
+}
+
+#locs {
+	background-image: url(<%= asset_path 'locs.png' %>);
+	background-size: cover;
+}
+
+#pro {
+	background-image: url(<%= asset_path 'pro.jpg' %>);
+	background-size: cover;
+}
+
 </style>
 <br />
 <br />
 
 <base target="_parent">
 
-		<%= link_to 'Manage Users', users_path, :class=>'blue' %>
-		<%= link_to 'Manage Locations', locations_path, :class=>'blue' %>
-		<%= link_to 'Manage Protocols', protocols_path, :class=>'blue' %>
+		<%= link_to '', users_path, :class=>'blue', :id => "usrs" %>
+		<%= link_to '', locations_path, :class=>'blue', :id => "locs" %>
+		<%= link_to '', protocols_path, :class=>'blue', :id => "pro" %>
 
