@@ -32,8 +32,8 @@ class SessionsController < ApplicationController
     User.current_user_id = nil
 		session[:room_id] = nil
 		
-		current_location
-		Location.login_rooms_details.delete(@current_location.name.humanize)
+		current_location rescue nil
+		Location.login_rooms_details.delete(@current_location.name.humanize) rescue nil
 		session = nil
 		flash[:notice] = "You've been logged out successfully."
 		redirect_to "/login"

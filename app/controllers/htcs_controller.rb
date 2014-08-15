@@ -4,16 +4,11 @@ class HtcsController < ApplicationController
   def index
   	tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
-		@date = (session[:datetime].to_date) || Date.today
+		@date = (session[:datetime].to_date rescue nil)
 
-		@rooms_info = {}
-		@rooms.each do |r|
-			@rooms_info[r.name] = {}
-			@rooms_info[r.name][:max_capacity] = Random.rand(100)
-			@rooms_info[r.name][:seen] = @rooms_info[r.name][:max_capacity].to_f
-			@rooms_info[r.name][:waiting] = client_seen_in_room(r.name)
-			@rooms_info[r.name][:available_space] = 'NaN'
-			@rooms_info[r.name][:total_attendance] = 'NaN'
+		if @date.nil?
+			session[:user_id] = nil
+			redirect_to "/login" and return
 		end
 		render layout: false
   end
@@ -57,6 +52,9 @@ class HtcsController < ApplicationController
   	
   	
   	@dash_board = {}
+  	@agv_agv_waiting_time = 0
+  	@avg_count = 0
+  	
   	@rooms.each do |r|
 			#Dashboard counseling room status report
 			@dash_board[r] = {}
@@ -69,10 +67,14 @@ class HtcsController < ApplicationController
 				@dash_board[r][:seen_today] = "--"
 			else
 				user_id = Location.login_rooms_details[r][:user_id]
+				
+				@dash_board[r][:user_id] = user_id
 				@dash_board[r][:username] = User.find(user_id).username
 
 				#Average patient waiting time 
 				@dash_board[r][:vg_waiting] = average_waiting_time_for_user(user_id)
+				@agv_agv_waiting_time += @dash_board[r][:vg_waiting][:diff]
+				@avg_count += 1
 				
 				#Total patients seen today so far
 				date = session[:datetime].to_date rescue date = Date.today
@@ -80,11 +82,11 @@ class HtcsController < ApplicationController
 			end
 			@dash_board[r][:status] = status
 			
-			#Current Encounter
+			#Latest Encounter
 			@dash_board[r][:latest_encounter_name] rescue nil
 			@dash_board[r][:latest_encounter_date] rescue nil
 			
-			if r == @current_location.name.humanize && !Location.login_rooms_details[r].nil?
+			if !Location.login_rooms_details[r].nil?
 					user_id = Location.login_rooms_details[r][:user_id]
 					e = Encounter.where("creator = ?", user_id)
 											 .order("encounter_datetime DESC").first rescue nil
@@ -98,6 +100,9 @@ class HtcsController < ApplicationController
 			end
 			
   	end
+  	
+  	@agv_agv_waiting_time = @agv_agv_waiting_time/@avg_count rescue 0
+  	@agv_agv_waiting_time = distance_between(@agv_agv_waiting_time)
   	render layout: false
   end
   
@@ -126,7 +131,7 @@ class HtcsController < ApplicationController
 				diff = clients_seen_today.map do |e| 
 								e.in_session.to_i - e.in_waiting.to_i
 				end
-				avg_difference = diff.sum/diff.count
+				avg_difference = diff.sum/diff.count rescue 0
   			distance_between(avg_difference)
   end
   
@@ -156,6 +161,7 @@ class HtcsController < ApplicationController
   
   def distance_between(difference)
     #difference = end_date.to_i - start_date.to_i
+    diff = difference
     seconds    =  difference % 60
     difference = (difference - seconds) / 60
     minutes    =  difference % 60
@@ -165,7 +171,7 @@ class HtcsController < ApplicationController
     days       =  difference % 7
     weeks      = (difference - days)    /  7
     
-    return "#{hours}hr, #{minutes}min, #{seconds}sec"
+    return {hrs: hours, min: minutes, sec: seconds, diff: diff}
   end
   
 

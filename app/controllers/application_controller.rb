@@ -12,7 +12,13 @@ class ApplicationController < ActionController::Base
 	def current_location
 
 		if session[:location_id]
-			@current_location ||= Location.find(session[:location_id])
+			@current_location ||= Location.find(session[:location_id]) rescue nil
+			
+			if @current_location.nil?
+				session = nil
+				return 
+			end
+			
 			Location.login_rooms_details = {} if Location.login_rooms_details.nil?
 			
 			if Location.login_rooms_details[@current_location.name.humanize].nil?
