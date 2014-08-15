@@ -26,13 +26,15 @@ CREATE TABLE `counseling_question` (
   `question_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text,
   `description` text,
+  `child` int(11) NOT NULL DEFAULT '0',
   `data_type` varchar(25) DEFAULT NULL,
+  `list_type` text,
   `date_created` datetime DEFAULT NULL,
   `date_updated` datetime DEFAULT NULL,
   `retired` int(11) NOT NULL DEFAULT '0',
   `creator` int(11) NOT NULL,
   PRIMARY KEY (`question_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +43,7 @@ CREATE TABLE `counseling_question` (
 
 LOCK TABLES `counseling_question` WRITE;
 /*!40000 ALTER TABLE `counseling_question` DISABLE KEYS */;
-INSERT INTO `counseling_question` VALUES (7,'Have you ever tested for HIV?','HCT protocols','Boolean',NULL,NULL,0,5),(8,'When did you ever test for HIV?','HCT protocols','Datetime',NULL,NULL,0,5);
+INSERT INTO `counseling_question` VALUES (9,'Have you ever tested for HIV?','HTC Protocols',0,'Number','Residence',NULL,NULL,0,3),(10,'Have you ever tested for STIs?','Risk determination',0,'Boolean',NULL,NULL,NULL,0,3),(11,'Have you ever had foot rush?','HTC screening',0,'Boolean',NULL,NULL,NULL,0,3);
 /*!40000 ALTER TABLE `counseling_question` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,6 +81,30 @@ LOCK TABLES `counseling_answer` WRITE;
 INSERT INTO `counseling_answer` VALUES (28,7,49,71,1065,NULL,NULL,NULL,'2014-08-06 08:07:52',NULL,5,1,NULL),(29,8,49,71,NULL,NULL,NULL,'2013-08-06 00:00:00','2014-08-06 08:07:52',NULL,5,1,NULL);
 /*!40000 ALTER TABLE `counseling_answer` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `child_protocol`
+--
+
+DROP TABLE IF EXISTS `child_protocol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `child_protocol` (
+  `child_id` int(11) NOT NULL AUTO_INCREMENT,
+  `protocol_id` int(11) DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`child_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `child_protocol`
+--
+
+LOCK TABLES `child_protocol` WRITE;
+/*!40000 ALTER TABLE `child_protocol` DISABLE KEYS */;
+/*!40000 ALTER TABLE `child_protocol` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -89,4 +115,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-06 11:03:10
+-- Dump completed on 2014-08-14 16:48:54
