@@ -38,15 +38,27 @@ class AdminsController < ApplicationController
 	end
 	
 	def edit_protocols
-
+		
 		@protocol = CounselingQuestion.find(params[:protocol_id])
+		@parents = CounselingQuestion.where("child = 0").collect { |p| [p.question_id, p.name]  }
 		if request.post?
+			raise params.to_yaml
 			@protocol.name = params[:name]
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
 			@protocol.data_type = params[:datatype]
+			list = nil
+			child = 0
+			list = params[:listtype] if ! params[:listtype].blank?
+			child = 1 if ! params[:parent].blank?
+			@protocol.list_type = list
+			@protocol.child = child
 			
 			if @protocol.save
+				raise params[:parent].to_yaml
+				if child == 1
+					raise params[:parent].to_yaml	
+				end
 				redirect_to protocols_path and return
 			end
 		elsif ! params[:retire].blank?
@@ -81,13 +93,19 @@ class AdminsController < ApplicationController
 	end
   
 	def new_protocol
-	
+    @protocols = CounselingQuestion.all.collect { |p| [p.question_id, p.name]  }
 			if !params[:new_protocol].blank?
 				return
 			elsif request.post?
+			#	raise params.to_yaml
+				list = nil
+				child = 0
+				list = params[:listtype] if ! params[:listtype].blank?
+				child = 1 if ! params[:parent].blank?
 				@protocol = CounselingQuestion.create(name: params[:name],
 										description: params[:description], data_type: params[:datatype],
-										retired: 0, creator: current_user.id)
+										retired: 0, creator: current_user.id, list_type: list,
+									  child: child)
 				redirect_to protocols_path and return
 			end
 	end
