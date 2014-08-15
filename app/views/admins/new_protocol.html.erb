@@ -8,18 +8,35 @@
 
 
 <%= form_tag({:action => "new_protocol"}, {:method => "post"}) do %>
-            <fieldset>
+      <fieldset>
 			<legend>Add Protocol</legend>
       <br />
       <label for="name">Name</label>
-      <input type="text" name="name" id="name" value="" optional="false" ajaxURL="/location/names" />
+      <input type="text" name="name" id="name" value="" optional="false" />
 
       <label for="description">Description</label>
-      <input type="text" name="description" id="description" value="" optional="false" ajaxURL="/location/descriptions" />
+      <input type="text" name="description" id="description" value="" optional="false" />
 
-			 <label for="datatype">Data type</label>
-      <%=select_tag "datatype", options_for_select(["","Datetime","Time", "Boolean", "Number", "Text"]), :value =>"Number" %>
-							</fieldset>
+			 <label for="datatype">Data Type</label>
+      <%=select_tag "datatype", options_for_select(["","Datetime","Time", "Boolean", 
+			"Number", "List", "Text"]), :value =>"Number" %>
+        
+       <label for="list_type">List Type</label>
+       <select id="list_type" condition="__$('datatype').value == 'List'" optional="false" name="listtype">
+								<option></option>
+								<option value="Location">Health Facilities</option>
+								<option value="Residence">Residential</option>
+                <option value="Gender">Gender</option>
+			</select>
+
+      <label for="parent">Parent Protocol</label>
+      <select id="parent" name="parent" optional="true" multiple="true">
+								<option></option>
+								<% (@protocols || []).each {|protocol| %>
+								<option value="<%= protocol[0] %>"><%= protocol[1] %></option>
+								<% } %>
+				</select>
+     </fieldset>
  	<%= link_to "Cancel" , protocols_path %>
 	<%= submit_tag "Finish" %>
            
