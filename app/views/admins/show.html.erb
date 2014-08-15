@@ -26,13 +26,57 @@
 	-webkit-font-smoothing: antialiased;
 }
 
+.blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 90px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 90px;
+    background-repeat: no-repeat;
+    background-size: 80px 80px;
+}
+
+#usrs {
+	background-image: url(<%= asset_path 'users.png' %>);
+	background-size: cover;
+	margin-left:35px;
+}
+
+#locs {
+	background-image: url(<%= asset_path 'locs.png' %>);
+	background-size: cover;
+}
+
+#pro {
+	background-image: url(<%= asset_path 'pro.png' %>);
+	background-size: cover;
+}
+
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 100px;
+}
+
 </style>
 <br />
 <br />
 
 <base target="_parent">
+<<<<<<< HEAD
 <!-- a href="<%= users_path %>"><img src="/images/users.png"  HEIGHT="120" WIDTH="120" /></a -->
 		<%= link_to 'Manage Users', users_path, :class=>'blue' %>
 		<%= link_to 'Manage Locations', locations_path, :class=>'blue' %>
 		<%= link_to 'Manage Protocols', protocols_path, :class=>'blue' %>
+=======
+
+		<%= link_to '<span class="txt"> Users </span>'.html_safe, users_path, :class=>'blue', :id => "usrs" %>
+		<%= link_to '<span class="txt"> Locations </span>'.html_safe, locations_path, :class=>'blue', :id => "locs" %>
+		<%= link_to '<span class="txt"> Protocols </span>'.html_safe, protocols_path, :class=>'blue', :id => "pro" %>
+>>>>>>> fe1202c1fb0dea270c467011283aa99501955a0a
 

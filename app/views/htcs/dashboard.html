@@ -28,6 +28,29 @@
 			.arrow-right:hover{
 				border-left: 40px solid #999; 
 			}
+			
+			.csl {
+				position: relative;
+				display: block;
+				float: left;
+				padding-left:10px;
+			}
+			
+			.wtngl {
+				position: relative;
+				display: block;
+				font-size: 25px;
+			}
+			
+			#num {
+				position: relative;
+				border: 2px solid orange;
+				border-radius: 10px;
+				padding-left: 13px;
+				padding-right: 13px;
+				font-style: normal;
+				display: -moz-inline-stack;
+			}
 		</style>
 	</head>
 	<body style="margin: 10px; overflow: auto; font-family: Helvetica;">
@@ -35,7 +58,8 @@
 			<div style="display: table-row;">
 				<div style="display: table-cell; vertical-align: top; padding-top: 10px; width: 100px; text-align: center;">
 					<div style="font-size: 32px; color: #305d97; margin: auto;">
-						Counseling Rooms Status
+						<span class= "csl">Counseling Rooms Status </span>
+						<span class= "wtngl"> <%= "On waiting list: <span id='num'>#{@total_on_waiting_list}</span>".html_safe %> </span>
 					</div>
 					
 					
@@ -56,12 +80,13 @@
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
 								Seen Today
 							</th>
-							<th style="border-bottom: 1px solid #305d97;">
-								Total Seen
-							</th>
+							<!-- th style="border-bottom: 1px solid #305d97;">
+								 Available
+							</th -->
 						</tr>
 						
 						<% @ins = 0 %>
+						<% @total = 0 %>
 						<% @rooms.sort.each do |r| %>
 							<tr>
 								<td style="border-right: 1px solid #305d97;">
@@ -83,16 +108,26 @@
 										<i>--</i>
 									</td>
 								<% end %>
-								<td style="border-right: 1px solid #305d97; text-align: center;">
-									50
-									<%#= Location.login_rooms_details.keys.to_json rescue "<i> Undefined </i>".html_safe %>
+								<td style="font-size:20px;border-right: 1px solid #305d97; text-align: center;">
+									<% time = @dash_board[r][:vg_waiting] %>
+									<%= "#{time[:hrs].to_s}hr, #{time[:min].to_s}min, #{time[:sec].to_s}sec" rescue "--" %>
 								</td>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
-									10
+									<% @total += @dash_board[r][:seen_today].to_i %>
+									<%= @dash_board[r][:seen_today] %>
 								</td>
-								<td style="text-align: center;">
-									0
-								</td>
+								
+								<!--
+								<% if session[:user_id] == @dash_board[r][:user_id] %>
+									<td style="text-align: center;">
+										<input id="<%=@dash_board[r][:user_id]%>"  type="button" value="Update">
+									</td>
+								 <% else %>
+									<td style="text-align: center;">
+										<div id="<%=@dash_board[r][:username]%>" class="state"> Busy </div>
+									</td>
+								 <% end %>
+								 -->
 							</tr>
 						<% end %>
 
@@ -108,14 +143,16 @@
 								&nbsp;
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								&nbsp;
+									<% time = @agv_agv_waiting_time %>
+									<%= "#{time[:hrs].to_s}hr, #{time[:min].to_s}min, #{time[:sec].to_s}sec" rescue "--" %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								&nbsp;
+								Total: <%= @total %>
 							</td>
-							<td style="text-align: center; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
+							
+							<!--td style="text-align: center; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
 								&nbsp;
-							</td>
+							</td -->
 						</tr>
 					</table>
 				</div>

@@ -245,7 +245,9 @@ class ClientsController < ApplicationController
 				@scanned = Client.find(@accession.patient_id)
 				
 				if params[:add_to_session] =="true"
+					if @scanned.current_state.name == "IN WAITING"
 					 assign_to_counseling_room(@scanned)
+					end
 				end
 				
 				redirect_to "/clients/#{@scanned.patient_id}" and return
@@ -299,6 +301,8 @@ class ClientsController < ApplicationController
                       .where("encounter_type = #{encounter_type_id} AND
                               DATE(encounter_datetime) = '#{Date.today}'")
                               .order('encounter_datetime DESC')
+                              
+     @clients = @clients.reject{|c| c.current_state.name != "IN WAITING"} rescue []
      
      @waiting = []
      @clients.each do |c|
