@@ -28,6 +28,29 @@
 			.arrow-right:hover{
 				border-left: 40px solid #999; 
 			}
+			
+			.csl {
+				position: relative;
+				display: block;
+				float: left;
+				padding-left:10px;
+			}
+			
+			.wtngl {
+				position: relative;
+				display: block;
+				font-size: 25px;
+			}
+			
+			#num {
+				position: relative;
+				border: 2px solid orange;
+				border-radius: 10px;
+				padding-left: 13px;
+				padding-right: 13px;
+				font-style: normal;
+				display: -moz-inline-stack;
+			}
 		</style>
 	</head>
 	<body style="margin: 10px; overflow: auto; font-family: Helvetica;">
@@ -35,7 +58,8 @@
 			<div style="display: table-row;">
 				<div style="display: table-cell; vertical-align: top; padding-top: 10px; width: 100px; text-align: center;">
 					<div style="font-size: 32px; color: #305d97; margin: auto;">
-						Counseling Rooms Status
+						<span class= "csl">Counseling Rooms Status </span>
+						<span class= "wtngl"> <%= "On waiting list: <span id='num'>#{@total_on_waiting_list}</span>".html_safe %> </span>
 					</div>
 					
 					

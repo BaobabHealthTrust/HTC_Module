@@ -103,6 +103,8 @@ class HtcsController < ApplicationController
   	
   	@agv_agv_waiting_time = @agv_agv_waiting_time/@avg_count rescue 0
   	@agv_agv_waiting_time = distance_between(@agv_agv_waiting_time)
+  	
+  	@total_on_waiting_list = waiting_list_total rescue 0
   	render layout: false
   end
   
@@ -174,5 +176,16 @@ class HtcsController < ApplicationController
     return {hrs: hours, min: minutes, sec: seconds, diff: diff}
   end
   
+  def waiting_list_total
+		date = session[:datetime].to_date rescue Date.today
+		encounter_type_id = EncounterType.find_by_name('IN WAITING').id
+		@clients = Client.joins(:encounters)
+				            .where("encounter_type = #{encounter_type_id} AND
+				                    DATE(encounter_datetime) = '#{date}'")
+				                    .order('encounter_datetime DESC')
+				                    
+		@clients = @clients.reject{|c| c.current_state.name != "IN WAITING"} rescue []
+		@clients.count
+	end
 
 end
