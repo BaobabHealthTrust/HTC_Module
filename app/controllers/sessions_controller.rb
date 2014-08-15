@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
 		
 		
 		if @location
-			is_counselor = @user.user_roles.map(&:role).include?('Counselor')
+			is_counselor = @user.user_roles.map(&:role).include?('Counselor') rescue false
 			
 			htc_room_tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 			location_tags = LocationTagMap.where("location_tag_id=#{htc_room_tag_id}")
