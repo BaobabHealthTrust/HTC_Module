@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 	has_one :activities_property, -> {where('property = ?', 'Activities') }, class_name: 'UserProperty', 
 			foreign_key: :user_id
 
-  cattr_accessor :current_user_id
+  #cattr_accessor :current_user_id
   
   def encrypt_password
 		self.salt = BCrypt::Engine.generate_salt
@@ -46,5 +46,18 @@ class User < ActiveRecord::Base
 		name = self.person.names.first
 		"#{name.given_name} #{name.family_name}"
 	end
+	
+	def self.current_user_id
+    Thread.current[:user]
+  end
+
+  def self.current_user_id=(user_id)
+    Thread.current[:user] = user_id
+  end
+  
+	def self.current
+		self.find(self.current_user_id)
+	end
+
 end
 

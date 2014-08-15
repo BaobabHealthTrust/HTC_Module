@@ -5,8 +5,12 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user, :except => [:attempt_login, :login, :logout]
   before_filter :save_login_state, :only => [:attempt_login, :login]
   
+      
+
 	def current_user
 		@current_user ||= User.find(session[:user_id]) if session[:user_id]
+		User.current_user_id = @current_user.id
+		@current_user
 	end
 	
 	def current_location
