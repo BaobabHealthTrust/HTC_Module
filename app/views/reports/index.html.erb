@@ -5,11 +5,44 @@
 	width:250px;
 }
 
+
+.blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 90px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 90px;
+    background-repeat: no-repeat;
+    background-size: 80px 80px;
+}
+
+#csl {
+	background-image: url(<%= asset_path 'csl.png' %>);
+	background-size: cover;
+	margin-left:35px;
+}
+
+#clnt {
+	background-image: url(<%= asset_path 'clnt.png' %>);
+	background-size: cover;
+}
+
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 100px;
+}
+
 </style>
 <br />
 <br />
 
 <base target="_parent">
 
-<%= link_to 'Clients', locations_path, :class=>'pd blue' %>
-<%= link_to 'Counselors', protocols_path, :class=>'pd blue' %>
+<%= link_to '<span class="txt"> Clients </span>'.html_safe, '', :class=>'blue', :id => "clnt" %>
+<%= link_to '<span class="txt"> Counselors </span>'.html_safe, '', :class=>'blue', :id => "csl" %>
