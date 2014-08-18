@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140714092242) do
+ActiveRecord::Schema.define(version: 20140722145413) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -66,16 +66,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
 
   add_index "active_list_type", ["creator"], name: "user_who_created_active_list_type", using: :btree
   add_index "active_list_type", ["retired_by"], name: "user_who_retired_active_list_type", using: :btree
-
-  create_table "client_identifier_types", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "client_identifiers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "clob_datatype_storage", force: true do |t|
     t.string "uuid",  limit: 38,         null: false
@@ -467,37 +457,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "concept_word", ["weight"], name: "concept_word_weight_index", using: :btree
   add_index "concept_word", ["word"], name: "word_in_concept_name", using: :btree
 
-  create_table "counseling_answer", primary_key: "answer_id", force: true do |t|
-    t.integer  "question_id"
-    t.integer  "patient_id"
-    t.integer  "encounter_id"
-    t.integer  "value_coded",                  null: false
-    t.datetime "date_created"
-    t.datetime "date_updated"
-    t.integer  "creator"
-    t.boolean  "voided",       default: false, null: false
-    t.integer  "voided_by"
-  end
-
-  create_table "counseling_answers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "counseling_question", primary_key: "question_id", force: true do |t|
-    t.text     "name"
-    t.text     "description"
-    t.datetime "date_created"
-    t.datetime "date_updated"
-    t.integer  "retired",      default: 0, null: false
-    t.integer  "creator",                  null: false
-  end
-
-  create_table "counseling_questions", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "district", primary_key: "district_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "region_id",     default: 0,     null: false
@@ -634,11 +593,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "encounter_provider", ["provider_id"], name: "provider_id_fk", using: :btree
   add_index "encounter_provider", ["uuid"], name: "uuid", unique: true, using: :btree
 
-  create_table "encounter_providers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "encounter_role", primary_key: "encounter_role_id", force: true do |t|
     t.string   "name",                                       null: false
     t.string   "description",   limit: 1024
@@ -658,11 +612,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "encounter_role", ["retired_by"], name: "encounter_role_retired_by_fk", using: :btree
   add_index "encounter_role", ["uuid"], name: "uuid", unique: true, using: :btree
 
-  create_table "encounter_roles", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "encounter_type", primary_key: "encounter_type_id", force: true do |t|
     t.string   "name",          limit: 50, default: "",    null: false
     t.text     "description"
@@ -679,11 +628,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "encounter_type", ["retired"], name: "retired_status", using: :btree
   add_index "encounter_type", ["retired_by"], name: "user_who_retired_encounter_type", using: :btree
   add_index "encounter_type", ["uuid"], name: "encounter_type_uuid_index", unique: true, using: :btree
-
-  create_table "encounter_types", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "external_source", primary_key: "external_source_id", force: true do |t|
     t.integer  "source",       default: 0, null: false
@@ -1482,11 +1426,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "patientflags_tag_role", ["role"], name: "role", using: :btree
   add_index "patientflags_tag_role", ["tag_id"], name: "tag_id", using: :btree
 
-  create_table "people", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "person", primary_key: "person_id", force: true do |t|
     t.string   "gender",              limit: 50, default: ""
     t.date     "birthdate"
@@ -1548,11 +1487,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "person_address", ["uuid"], name: "person_address_uuid_index", unique: true, using: :btree
   add_index "person_address", ["voided_by"], name: "patient_address_void", using: :btree
 
-  create_table "person_addresses", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "person_attribute", primary_key: "person_attribute_id", force: true do |t|
     t.integer  "person_id",                           default: 0,     null: false
     t.string   "value",                    limit: 50, default: "",    null: false
@@ -1602,6 +1536,16 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "person_attribute_type", ["retired_by"], name: "user_who_retired_person_attribute_type", using: :btree
   add_index "person_attribute_type", ["searchable"], name: "attribute_is_searchable", using: :btree
   add_index "person_attribute_type", ["uuid"], name: "person_attribute_type_uuid_index", unique: true, using: :btree
+
+  create_table "person_attribute_types", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "person_attributes", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "person_merge_log", primary_key: "person_merge_log_id", force: true do |t|
     t.integer  "winner_person_id",                                    null: false
@@ -1656,7 +1600,7 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "person_name", ["uuid"], name: "person_name_uuid_index", unique: true, using: :btree
   add_index "person_name", ["voided_by"], name: "user_who_voided_name", using: :btree
 
-  create_table "person_names", force: true do |t|
+  create_table "person_name_codes", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1790,52 +1734,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "provider_attribute_type", ["creator"], name: "provider_attribute_type_creator_fk", using: :btree
   add_index "provider_attribute_type", ["retired_by"], name: "provider_attribute_type_retired_by_fk", using: :btree
   add_index "provider_attribute_type", ["uuid"], name: "uuid", unique: true, using: :btree
-
-  create_table "providers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "regimen", primary_key: "regimen_id", force: true do |t|
-    t.integer  "concept_id",              default: 0,   null: false
-    t.string   "regimen_index", limit: 5
-    t.integer  "min_weight",              default: 0,   null: false
-    t.integer  "max_weight",              default: 200, null: false
-    t.integer  "creator",                 default: 0,   null: false
-    t.datetime "date_created",                          null: false
-    t.integer  "retired",       limit: 2, default: 0,   null: false
-    t.integer  "retired_by"
-    t.datetime "date_retired"
-    t.integer  "program_id",              default: 0,   null: false
-  end
-
-  add_index "regimen", ["concept_id"], name: "map_concept", using: :btree
-
-  create_table "regimen_drug_order", primary_key: "regimen_drug_order_id", force: true do |t|
-    t.integer  "regimen_id",                       default: 0,     null: false
-    t.integer  "drug_inventory_id",                default: 0
-    t.float    "dose"
-    t.float    "equivalent_daily_dose"
-    t.string   "units"
-    t.string   "frequency"
-    t.boolean  "prn",                              default: false, null: false
-    t.boolean  "complex",                          default: false, null: false
-    t.integer  "quantity"
-    t.text     "instructions"
-    t.integer  "creator",                          default: 0,     null: false
-    t.datetime "date_created",                                     null: false
-    t.integer  "voided",                limit: 2,  default: 0,     null: false
-    t.integer  "voided_by"
-    t.datetime "date_voided"
-    t.string   "void_reason"
-    t.string   "uuid",                  limit: 38,                 null: false
-  end
-
-  add_index "regimen_drug_order", ["creator"], name: "regimen_drug_order_creator", using: :btree
-  add_index "regimen_drug_order", ["drug_inventory_id"], name: "map_drug_inventory", using: :btree
-  add_index "regimen_drug_order", ["regimen_id"], name: "map_regimen", using: :btree
-  add_index "regimen_drug_order", ["uuid"], name: "regimen_drug_order_uuid_index", unique: true, using: :btree
-  add_index "regimen_drug_order", ["voided_by"], name: "user_who_voided_regimen_drug_order", using: :btree
 
   create_table "region", primary_key: "region_id", force: true do |t|
     t.string   "name",          default: "",    null: false
@@ -1998,42 +1896,6 @@ ActiveRecord::Schema.define(version: 20140714092242) do
   add_index "serialized_object", ["creator"], name: "serialized_object_creator", using: :btree
   add_index "serialized_object", ["retired_by"], name: "serialized_object_retired_by", using: :btree
   add_index "serialized_object", ["uuid"], name: "serialized_object_uuid_index", unique: true, using: :btree
-
-  create_table "task", primary_key: "task_id", force: true do |t|
-    t.string   "url"
-    t.string   "encounter_type"
-    t.text     "description"
-    t.string   "location"
-    t.string   "gender",                        limit: 50
-    t.integer  "has_obs_concept_id"
-    t.integer  "has_obs_value_coded"
-    t.integer  "has_obs_value_drug"
-    t.datetime "has_obs_value_datetime"
-    t.float    "has_obs_value_numeric"
-    t.text     "has_obs_value_text"
-    t.text     "has_obs_scope"
-    t.integer  "has_program_id"
-    t.integer  "has_program_workflow_state_id"
-    t.integer  "has_identifier_type_id"
-    t.integer  "has_relationship_type_id"
-    t.integer  "has_order_type_id"
-    t.string   "has_encounter_type_today"
-    t.integer  "skip_if_has",                   limit: 2,  default: 0
-    t.float    "sort_weight"
-    t.integer  "creator",                                              null: false
-    t.datetime "date_created",                                         null: false
-    t.integer  "voided",                        limit: 2,  default: 0
-    t.integer  "voided_by"
-    t.datetime "date_voided"
-    t.string   "void_reason"
-    t.integer  "changed_by"
-    t.datetime "date_changed"
-    t.string   "uuid",                          limit: 38
-  end
-
-  add_index "task", ["changed_by"], name: "user_who_changed_task", using: :btree
-  add_index "task", ["creator"], name: "task_creator", using: :btree
-  add_index "task", ["voided_by"], name: "user_who_voided_task", using: :btree
 
   create_table "traditional_authority", primary_key: "traditional_authority_id", force: true do |t|
     t.string   "name",          default: "",    null: false
