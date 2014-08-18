@@ -117,11 +117,11 @@ class HtcsController < ApplicationController
 								 in_waiting.encounter_datetime as in_waiting,
 								 in_session.encounter_datetime as in_session
 					 FROM
-							(SELECT * FROM htc_development.encounter
+							(SELECT * FROM encounter
 												WHERE encounter_type = #{in_waiting} AND voided = 0 
 							) AS in_waiting
 							LEFT JOIN
-							(SELECT * FROM htc_development.encounter
+							(SELECT * FROM encounter
 												WHERE encounter_type = #{in_session}
 													AND voided = 0 AND creator = #{user_id}
 							) AS in_session
@@ -146,11 +146,11 @@ class HtcsController < ApplicationController
 								 in_waiting.encounter_datetime as in_waiting,
 								 in_session.encounter_datetime as in_session
 					 FROM
-							(SELECT * FROM htc_development.encounter
+							(SELECT * FROM encounter
 												WHERE encounter_type = #{in_waiting} AND voided = 0 
 							) AS in_waiting
 							LEFT JOIN
-							(SELECT * FROM htc_development.encounter
+							(SELECT * FROM encounter
 												WHERE encounter_type = #{in_session}
 													AND voided = 0 AND creator = #{user_id}
 							) AS in_session
