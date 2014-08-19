@@ -20,7 +20,9 @@ class ApplicationController < ActionController::Base
 			
 			if @current_location.nil?
 				session = nil
-				return 
+				return
+			else
+				Location.current_location_id = @current_location.id
 			end
 			
 			Location.login_rooms_details = {} if Location.login_rooms_details.nil?

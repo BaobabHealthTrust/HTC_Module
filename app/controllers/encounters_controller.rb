@@ -106,6 +106,7 @@ class EncountersController < ApplicationController
   end
 
 	def write_encounter(encounter_type, person, current = DateTime.now)	
+			current = current.strftime("%Y-%m-%d %H:%M:%S")
 			current_location = @current_location if current_location.nil?	
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
@@ -126,7 +127,7 @@ class EncountersController < ApplicationController
 			else
 				@observations << obs
 			end
-			child_obs = Observation.where("obs_group_id = ?", obs.obs_id)
+			child_obs = ObservDation.where("obs_group_id = ?", obs.obs_id)
 			if child_obs
 				@child_obs[obs.obs_id] = child_obs
 			end
