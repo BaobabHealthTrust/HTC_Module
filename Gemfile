@@ -53,3 +53,11 @@ gem 'composite_primary_keys'
 gem 'passenger'
 
 gem 'zebra_printer'
+
+#Easiest way to add multi-environment yaml settings to Rails
+#RailsConfig helps you easily manage environment specific Rails
+#settings in an easy and usable manner
+#https://github.com/railsconfig/rails_config
+
+gem "rails_config"
+
