@@ -5,25 +5,43 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user, :except => [:attempt_login, :login, :logout]
   before_filter :save_login_state, :only => [:attempt_login, :login]
   
+      
+
 	def current_user
 		@current_user ||= User.find(session[:user_id]) if session[:user_id]
+		User.current_user_id = @current_user.id
+		@current_user
 	end
 	
 	def current_location
+
 		if session[:location_id]
-			@current_location ||= Location.find(session[:location_id])
-		end
+			@current_location ||= Location.find(session[:location_id]) rescue nil
+			
+			if @current_location.nil?
+				session = nil
+				return 
+			end
+			
+			Location.login_rooms_details = {} if Location.login_rooms_details.nil?
+			
+			if Location.login_rooms_details[@current_location.name.humanize].nil?
+				
+				#Class variable Hash contains location and user_id
+				Location.login_rooms_details[@current_location.name.humanize] = {user_id: @current_user.id}
+			end
+		end	
 	end
 	
 	def show_counselling_room
 		@show_counselling_room = false
-		is_counselor = @current_user.user_roles.map(&:role).include?('Counselor')
+		@is_counselor = @current_user.user_roles.map(&:role).include?('Counselor')
 		
-		htc_room_tag_id = LocationTag.find_by_name('HTC Counselling Room').id
+		htc_room_tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		location_tags = LocationTagMap.where("location_id=#{@current_location.id}")
 																	.map(&:location_tag_id) rescue []
 
-		if location_tags.include?(htc_room_tag_id) && is_counselor
+		if location_tags.include?(htc_room_tag_id) && @is_counselor
 			@show_counselling_room = true
 		end
 		

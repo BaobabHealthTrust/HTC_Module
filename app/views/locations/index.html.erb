@@ -1,31 +1,143 @@
-<h1>Locations</h1>
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs";
+	</script>
+	
+	<%= stylesheet_link_tag 'panel' %>
+	</head>
+<body>
 
-<p id="notice"><%= notice %></p>                                                
-<p id="alert"><%= alert %></p> 
+<%= form_tag new_location_path do %>
+            <fieldset>
+						<legend>HTC Facilty Rooms</legend>
+	
+						<br />
+                <label for="id">  </label>
+								<select id="id" name="id">
+										<option></option>
+										<%= @locations.each do |loc| %>
+											<option value="<%= loc.id %>"> <%= loc.name.humanize %>; <%= loc.description%></option>
+										<% end %>
+									</select>
+                <br />
+							</fieldset>
+	<%= submit_tag "Finish" %>
+           
+<%end%>
+</body>
+	
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+	<script>
+	
+	var sidePanelData = {<%= @side_panel_data.html_safe rescue [] %>};
+	//Highlist list object
+	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+        
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
+      
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+	
+	function create_new_patient() {
+  // window.location = '<%= new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>'
+	}
+	
+	function destroy(obj) {
+		window.location = '/locations/destroy/' + __$('textForid').value;
+	}
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+	function printLocation(obj) {
+		window.location = '/locations/print/' + __$('textForid').value;
+	}
+		
+		__$("row1").style.display="none";
+		__$("buttons").style.verticalAlign = "bottom";
+		__$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+		
+		btnNext.innerHTML = "New location";
+		btnNext.style.width = "250px";
+		btnCancel.style.width = "250px";
 
-  <tbody>
-    <% @locations.each do |location| %>
-      <tr>
-        <td><%= link_to "Edit #{location.name}",
-                 edit_location_path(location) %>
-        </td>
-        <td><%= link_to 'Destroy', location, method: :delete,
-                 data: { confirm: 'Are you sure?' } %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+		var display = "inline-table";
 
-<br>
+		btnDivs = __$('buttons').children[0].children;
+		
+		btnDivs[1].style.display = "none";
+		btnDivs[2].style.display = "none";
+	
+		btnDivs[0].style.display  = "inline-table";
+		btnDivs[3].style.display  = "inline-table";
 
-<%= link_to "Cancel" , htcs_path %>
-<%= link_to 'New Location', new_location_path %>
+		btnDivs[3].style.cssFloat = "right";
+		
+		var dsp = document.createElement("div");
+		dsp.id = "dsp";
+		dsp.style.display = "table-cell";
+		dsp.style.border = "1px solid #3465a4";
+		dsp.style.overflow = "hidden";
+		dsp.style.borderRadius = "10px";
+		dsp.style.width = "50%";
+		dsp.style.height = "100%";
+		dsp.style.verticalAlign = "top";
+		dsp.innerTHML = "none";
+
+		__$('textForid').style.height = "100%";
+		__$('textForid').style.width = "100%";
+		
+		var lst = __$('ul1').children;
+		for (var i=0; i < lst.length ; i++) {
+				lst[i].onmousedown = function() {
+				highlightList(this);
+				
+				var obj = sidePanelData[this.value];
+				__$('textForid').value = this.value;				
+				
+				dspValue = this.innerHTML.split(';');
+				var s = "";
+				
+				btnNext.style.display = "inline-table";
+				
+		    var btnDel = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+		    						 'onmousedown="destroy(this)"' +
+		    						 ' class="button red" pos="0" section="0">Delete</button>'
+		    
+				var btnPrnt = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+		    						 'onmousedown="printLocation(this)"' +
+		    						 ' class="button blue" pos="0" section="0">Print</button>'
+	
+				s += "<span class='d dL'> Name </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.name  + "</span>";
+				
+				s += "<span class='d dL'> Description </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.description  + "</span>";
+				
+				s+= "<span class='dL' style='padding:10px;'>" + btnDel + "</span>";
+				s+= "<span class='dR' style='padding:10px;'>" + btnPrnt + "</span>";
+				
+				__$('dsp').innerHTML = s;  
+			};
+		}
+		__$('textForid').value = -1;
+		row.insertBefore(dsp, row.firstChild);
+		__$("row0").parentNode.appendChild(__$('buttons'));
+		
+		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+	</script>
+</html>
+

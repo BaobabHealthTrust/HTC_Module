@@ -11,6 +11,8 @@ HTCModule::Application.routes.draw do
 	post "client_demographics" => "clients#demographics"
   
   get "referral_consent/:id" => "clients#referral_consent"
+
+  get "appointment/:id" => "clients#appointment"
 	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
   get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
@@ -29,10 +31,12 @@ HTCModule::Application.routes.draw do
 
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
+	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"
 	get "edit_protocols" => "admins#edit_protocols"
 	post "edit_protocols" => "admins#edit_protocols"
+	
 	get "new_protocol" => "admins#new_protocol"
 	post "new_protocol" => "admins#new_protocol"
 
@@ -52,12 +56,17 @@ HTCModule::Application.routes.draw do
 
 	get "clients/village/:id" => "clients#village"
 
+	get "clients/print_accession/:id" => "clients#print_accession"
+
+  get "clients/print_summary/:id" => "clients#print_summary"
+
 	get "clients/first_name/:id" => "clients#first_name"
 
 	get "clients/last_name/:id" => "clients#last_name"
 	
 	get "waiting_list" => "clients#waiting_list"
 	#post "unallocated_clients" => "clients#unallocated_clients"
+	
 	
 	post "search_results" => "clients#search_results"
 	get "search_results" => "clients#search_results"
@@ -66,6 +75,19 @@ HTCModule::Application.routes.draw do
 	post "admins/set_date" => "admins#set_date"
 	
 	get "htcs/dashboard" => "htcs#dashboard"
+
+	get "locations/destroy/:id" => "locations#destroy"
+
+	get "locations/print/:id" => "locations#print"
+	post "/locations/new" => "locations#new"
+
+	get "/locations/village" => "locations#village"
+
+  get "client_printouts" => "clients#printouts"
+
+   get "client_tasks" => "clients#tasks"
+
+  get "/encounters/void/:id" => "encounters#void"
 
   resources :locations
 
@@ -87,6 +109,10 @@ HTCModule::Application.routes.draw do
 
   resources :clients
 
+
+	post "/users/new" => "users#new"
+	get "/users/destroy/:id" => "users#destroy"
+	get "/users/retire/:id" => "users#retire"
   resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.

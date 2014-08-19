@@ -4,56 +4,35 @@
 					var cancelDestination = "/htcs";
 	</script>
 	
-	<style>
-		#row2 {
-			height:100%;
-		}
-		
-		.dspLi {
-			position:relative;
-			display:block;
-			width:100%;
-			color: #000000;
-			font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-			font-size: 1.9em;
-			margin-bottom: 19px;
-			margin-top: 2px;
-			padding: 10px;
-		}
-	</style>
-
+	<%= stylesheet_link_tag 'panel' %>
 	</head>
 <body>
 
 
-<%= form_tag remove_from_waiting_list_path do %>
-            <fieldset>
-						<legend>Waiting List</legend>
-	
-						<br />
-                          <% if @show_counselling_room != true %>
-                                  <label for="id"> Remove from waiting list? </label>
-																	<select id="id" name="id">
-																			<option></option>
-																			<%= @clients.each do |client| %>
-																				<option value="<%= client.id %>"> Accession number :<%= " #{client.accession_number}" %>; Age :<%= "#{client.person.age}" %>; Gender :<%= "#{client.person.gender}" %> </option>
-																			<% end %>
-																		</select>
-                                  <br />
-                           <% else %>
-                                  <label for="scan_accession_number" >Accession Number </label>
-                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
-                           <% end %>
-							</fieldset>
- 	<%= link_to "Cancel" , htcs_path %>
+<%= form_tag remove_from_waiting_list_path, :id=>"waiting_list" do %>
+		<fieldset>
+			<legend>Waiting List</legend>
+
+			<br />
+				<label for="id"> Remove from waiting list? </label>
+				<select id="id" name="id">
+						<option></option>
+						<%= @waiting.each do |li| %>
+							<option value="<%= li[:id] %>"> Accession number :<%= " #{li[:accession_number]}" %>;<%= "#{li[:gender]}" %>; </option>
+						<% end %>
+					</select>
+				<br />
+		</fieldset>
 	<%= submit_tag "Finish" %>
            
 <%end%>
 </body>
 	
-	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
-	<script>
-	
+<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+<script>
+
+	var sidePanelData = {<%= @side_panel_date.html_safe %>};
+
 	function highlightList(obj) {
     if(obj.getAttribute("target") != null){
       if(__$(obj.getAttribute("target"))){
@@ -66,74 +45,120 @@
           }
         }
       }
-      
+
       obj.setAttribute("selecttag", true);
       obj.style.backgroundColor = "lightblue";
       obj.style.color = "black";
     }
 	}
-		//__$("main-content-area").style.height = "0px";
-		//__$("row0").style.display="none";
-				
-		__$("row1").style.display="none";
-		__$("buttons").style.verticalAlign = "bottom";
-		__$("buttons").style.width = "100%";
-		__$("buttons").style.height = "100%";
-		
-		btnNext.innerHTML = "Remove client from waiting list";
-		btnNext.style.width = "400px"; 
-		btnCancel.style.width = "250px";
 
-		
-		var display = "inline-table";
-		
-		btnDivs = __$('buttons').children[0].children;
-		
-		btnDivs[1].style.display = "none";
-		btnDivs[2].style.display = "none";
+	function remove_client_from_waiting_list() {
+	 document.getElementById("waiting_list").submit();
+	}
+
+	__$("row1").style.display="none";
+	__$("buttons").style.verticalAlign = "bottom";
+	__$("buttons").style.width = "100%";
+	__$("buttons").style.height = "100%";
+
+	btnNext.innerHTML = "Remove client from waiting list";
+	btnNext.style.width = "400px"; 
+	btnCancel.style.width = "250px";
+	btnNext.style.display = "none";
+
+	var display = "inline-table";
+
+	btnDivs = __$('buttons').children[0].children;
+
+	btnDivs[1].style.display = "none";
+	btnDivs[2].style.display = "none";
+
+	btnDivs[0].style.display  = "inline-table";
+	btnDivs[3].style.display  = "inline-table";
+
+	btnDivs[3].style.cssFloat = "right";
+
+	var dsp = document.createElement("div");
+	dsp.id = "dsp";
+	dsp.style.display = "table-cell";
+	dsp.style.border = "1px solid #3465a4";
+	dsp.style.overflow = "hidden";
+	dsp.style.borderRadius = "10px";
+	dsp.style.width = "46%";
+	dsp.style.height = "100%";
+	dsp.style.verticalAlign = "top";
+	dsp.innerTHML = "none";
+
+	__$('textForid').style.height = "100%";
+	__$('textForid').style.width = "100%";
 	
-		btnDivs[0].style.display  = "inline-table";
-		btnDivs[3].style.display  = "inline-table";
+	var lst = __$('ul1').children;
+	
+	for (var i=0; i < lst.length ; i++) {
+			lst[i].onmousedown = function() {
+			highlightList(this);
+			__$('textForid').value = this.value;
+			
+			dspValue = this.innerHTML.split(';');
+			var s = "";
+			
+	    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
+					 				 'onmousedown="remove_client_from_waiting_list()"' +
+					 				 ' class="button green" pos="0" section="0">Remove from waiting list</button>';
 
-		btnDivs[3].style.cssFloat = "right";
-		
-		var dsp = document.createElement("div");
-		dsp.id = "dsp";
-		dsp.style.display = "table-cell";
-		dsp.style.border = "1px solid #3465a4";
-		dsp.style.overflow = "hidden";
-		dsp.style.borderRadius = "10px";
-		dsp.style.width = "450px";
-		dsp.style.height = "100%";
-		dsp.style.verticalAlign = "top";
-		dsp.innerTHML = "none";
+			var obj = sidePanelData[this.value];
+			s += "<span class='d dL'> Accession Number</span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.accession_number  + "</span>";
+					 
+			s += "<span class='d dL'> Gender </span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.gender  + "</span>";
 
-		__$('textForid').style.height = "100%";
-		__$('textForid').style.width = "100%";
-//dsp.appendChild(__$('textForid'));
-		//__$('textForid').onchange=function(){alert(__$('textForid').value);};
+			s += "<span class='d dL'> Date of Birth </span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.birthDate  + "</span>";
+					 
+			s += "<span class='d dL'> Age </span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.age  + "</span>";					 
 		
-		var lst = __$('ul1').children;
-		for (var i=0; i < lst.length ; i++) {
-				lst[i].onmousedown = function() {
-				highlightList(this);
-				__$('textForid').value = this.value;
-				
-				dspValue = this.innerHTML.split(';');
-				var s = "";
-				
-				for(var v=0; v<dspValue.length; v++) {
-					s+="<span class='dspLi'>" + dspValue[v] + "</span>";
-				}
-				
-				__$('dsp').innerHTML = s;  
-			};
-		}
-		__$('textForid').value = -1;
-		row.insertBefore(dsp, row.firstChild);
-		__$("row0").parentNode.appendChild(__$('buttons'));
-		
-		//row.appendChild(dsp);
+			s += "<span class='d dL'> Residence </span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.residence  + "</span>";
+					 
+			s += "<span class='d dL'> Date of Visit </span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.date  + "</span>";		
+
+			s += "<span class='d dL'> Time of Visit </span>" +
+					 "<span class='d dC'> : </span>" +
+					 "<span class='d dR'>" + obj.time  + "</span>";
+					 
+			if (parseInt(obj.days_since_last_visit) > 0) {
+				s += "<span class='d dL'> Period Since Last Visit </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
+			}
+
+			__$('dsp').innerHTML = s + "<br /> <br />" +button;  
+		};
+	}
+	__$('textForid').value = -1;
+	row.insertBefore(dsp, row.firstChild);
+	__$("row0").parentNode.appendChild(__$('buttons'));
+	
+	//Load prioritised list
+	var list = [<%= @w.to_s.html_safe %>];
+	var d = document.getElementById('ul1').children;
+
+	for(var i=0; i<list.length; i++) {
+		li = list[i];
+		d[i].innerHTML = "Accession :" + li.accession_number + ";" + li. gender + "; DOB : " + li.birthDate;
+		d[i].value = li.id;
+	}
+
+	btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
 	</script>
 </html>
 

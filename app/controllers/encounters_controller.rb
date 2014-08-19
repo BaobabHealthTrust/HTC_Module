@@ -9,16 +9,36 @@ class EncountersController < ApplicationController
   end
 
   def new
+   # raise params.to_yaml
 		current = session[:datetime].to_date rescue Date.today
 		person = Person.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
-		
+		#raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  params[:obs].each do |key, value|
-					 concept_id = ConceptName.find_by_name(value).concept_id
+					 type = CounselingQuestion.find(key).data_type rescue []
+					 next if type.blank?
+					 concept_id = nil
+					 value_datetime = nil
+					 value_text = nil 
+				   value_numeric = nil
+					 if type.upcase == "BOOLEAN"
+							concept_id = ConceptName.find_by_name(value).concept_id rescue nil
+							value_text = value if concept_id.blank?
+					 elsif type.upcase == "DATETIME"
+							value_datetime = value
+					 elsif type.upcase == "NUMBER"
+							value_numeric = value
+					 elsif type.upcase == "TEXT"
+							value_text = value
+					 elsif type.upcase == "TIME"
+							value_text = value					
+					 end
+					 
 					 answer = CounselingAnswer.create(question_id: key, patient_id: person.id,
 									  encounter_id: encounter.encounter_id, value_coded: concept_id, 
-									  creator: current_user.id)
+									  creator: current_user.id, value_text: value_text, value_numeric: value_numeric,
+										value_datetime: value_datetime)
 				end
 		end
 		
@@ -85,11 +105,12 @@ class EncountersController < ApplicationController
     @encounter.destroy
   end
 
-	def write_encounter(encounter_type, person, current = Time.now)		
+	def write_encounter(encounter_type, person, current = DateTime.now)	
+			current_location = @current_location if current_location.nil?	
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
 									encounter_datetime: current, creator: current_user.id)
-			return encounter		
+			return encounter	
 	end
 
 	def observations
@@ -121,7 +142,7 @@ class EncountersController < ApplicationController
 
 		@encounter.void
   
-		head :ok
+		render :text => "ok"
 	end
   private
     # Use callbacks to share common setup or constraints between actions.

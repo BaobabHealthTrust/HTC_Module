@@ -28,6 +28,29 @@
 			.arrow-right:hover{
 				border-left: 40px solid #999; 
 			}
+			
+			.csl {
+				position: relative;
+				display: block;
+				float: left;
+				padding-left:10px;
+			}
+			
+			.wtngl {
+				position: relative;
+				display: block;
+				font-size: 25px;
+			}
+			
+			#num {
+				position: relative;
+				border: 2px solid orange;
+				border-radius: 10px;
+				padding-left: 13px;
+				padding-right: 13px;
+				font-style: normal;
+				display: -moz-inline-stack;
+			}
 		</style>
 	</head>
 	<body style="margin: 10px; overflow: auto; font-family: Helvetica;">
@@ -35,8 +58,10 @@
 			<div style="display: table-row;">
 				<div style="display: table-cell; vertical-align: top; padding-top: 10px; width: 100px; text-align: center;">
 					<div style="font-size: 32px; color: #305d97; margin: auto;">
-						Client Room Allocation Statuses
+						<span class= "csl">Counseling Rooms Status </span>
+						<span class= "wtngl"> <%= "On waiting list: <span id='num'>#{@total_on_waiting_list}</span>".html_safe %> </span>
 					</div>
+					
 					
 					<table width="100%" style="border: 1px solid #305d97; margin-top: 10px; font-size: 24px;" cellpadding="10" cellspacing="0">
 						<tr style="color: #305d97;">
@@ -44,120 +69,90 @@
 								&nbsp;
 							</td>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Maximum Capacities
+								Room State
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Seen
+								Latest Encounter
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Waiting
+								AVG Waiting
 							</th>
 							<th style="border-right: 1px solid #305d97; border-bottom: 1px solid #305d97;">
-								Available Spaces
+								Seen Today
 							</th>
-							<th style="border-bottom: 1px solid #305d97;">
-								Total Attendance
-							</th>
+							<!-- th style="border-bottom: 1px solid #305d97;">
+								 Available
+							</th -->
 						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Room 1
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								0
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="text-align: center;">
-								0
-							</td>
-						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Room 2
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								10
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								1
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								1
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								8
-							</td>
-							<td style="text-align: center;">
-								2
-							</td>
-						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Room 3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								5
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								-1
-							</td>
-							<td style="text-align: center;">
-								6
-							</td>
-						</tr>
-						<tr>
-							<td style="border-right: 1px solid #305d97;">
-								Unallocated
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								15
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								&nbsp;
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								3
-							</td>
-							<td style="border-right: 1px solid #305d97; text-align: center;">
-								12
-							</td>
-							<td style="text-align: center;">
-								3
-							</td>
-						</tr>
+						
+						<% @ins = 0 %>
+						<% @total = {} %>
+						<% @rooms.sort.each do |r| %>
+							<tr>
+								<td style="border-right: 1px solid #305d97;">
+									<%= r.humanize %>
+								</td>
+								<% @ins+=1 if @dash_board[r][:status]=="In" %>
+								<td style="border-right: 1px solid #305d97; padding-left:20px; text-align: left;">
+									<%= @dash_board[r][:status] + " ("+ @dash_board[r][:username] +")" rescue "Out" %>
+								</td>
+								
+								<% if !@dash_board[r][:latest_encounter_name].nil? %>
+									<td style="font-size:16px;border-right: 1px solid #305d97; text-align: center; padding-left:20px;">
+										<%= @dash_board[r][:latest_encounter_name] %> <br />
+										<span style="font-size:12px;font-style: italic;"> (<%= @dash_board[r][:latest_encounter_date] %>) </span>
+									</td>			
+								<% else %>
+									<td style="border-right: 1px solid #305d97; text-align: center; padding-left:20px;">
+										<i>--</i>
+									</td>
+								<% end %>
+								<td style="font-size:20px;border-right: 1px solid #305d97; text-align: center;">
+									<% time = @dash_board[r][:vg_waiting] %>
+									<%= "#{time[:hrs].to_s}hr, #{time[:min].to_s}min, #{time[:sec].to_s}sec" rescue "--" %>
+								</td>
+								<td style="border-right: 1px solid #305d97; text-align: center;">
+									<% id = @dash_board[r][:user_id] %>
+									<% @total[id] = @dash_board[r][:seen_today].to_i if !id.blank? %>
+									<%= @dash_board[r][:seen_today] %>
+								</td>
+								
+								<!--
+								<% if session[:user_id] == @dash_board[r][:user_id] %>
+									<td style="text-align: center;">
+										<input id="<%=@dash_board[r][:user_id]%>"  type="button" value="Update">
+									</td>
+								 <% else %>
+									<td style="text-align: center;">
+										<div id="<%=@dash_board[r][:username]%>" class="state"> Busy </div>
+									</td>
+								 <% end %>
+								 -->
+							</tr>
+						<% end %>
+
 						<tr>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
-								Totals
+								Summary
+							</td>
+							
+							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
+							<%= "#{@ins}-<i>In</i> & #{@dash_board.count-@ins}-<i>Out</i>".html_safe %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								40
+								&nbsp;
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								4
+									<% time = @agv_agv_waiting_time %>
+									<%= "#{time[:hrs].to_s}hr, #{time[:min].to_s}min, #{time[:sec].to_s}sec" rescue "--" %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								17
+								Total: <%= @total.values.sum rescue 0 %>
 							</td>
-							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								29
-							</td>
-							<td style="text-align: center; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
-								11
-							</td>
+							
+							<!--td style="text-align: center; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">
+								&nbsp;
+							</td -->
 						</tr>
 					</table>
 				</div>

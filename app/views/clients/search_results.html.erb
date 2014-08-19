@@ -1,39 +1,186 @@
-<h1>search Results</h1>
+<html>
+	<head>
+	<script>
+		var cancelDestination = "/htcs";
+	</script>
+		<%= stylesheet_link_tag 'panel' %>
+	</head>
+<body>
 
-<ul>
-<% if ! @scanned.blank? %>
-		<li> 
-      <%= link_to "#{@scanned.person.gender},
-                  DOB: #{@scanned.person.birthdate.strftime('%d/%m/%Y')} ,
- 					        #{@residence}, Accession Number: #{@accession.identifier}",
-                  @scanned
-      %> 
-		</li>
-<% else
- @clients.each do |client| %>
-		<li> 
-      <%= link_to "#{client.gender},
-                  DOB: #{client.birthdate.strftime('%d/%m/%Y')} ,
-                  #{client.address1},
-                  Accession Number: #{client.identifier}" , client
-      %>
-      
-     <% current_state = client.current_state rescue "" %>
-     
-     <% if current_state.blank? %>
-	     <%= link_to "Add to waiting list", add_to_unallocated_path(client) %>
-     <% else %>
-     	<%= "Status: #{current_state} "%>
-		 <% end %>
-    </li>
-	<%end
-end%>
-</ul>
+<%= form_tag show_client_path do %>
+	<fieldset>
 
-<%= link_to "Cancel" , htcs_path %>
-<% if @show_counselling_room != true %>
-<%= link_to "New" , new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>
+		<legend>Search Result</legend>
+
+		<br />
+		<% if @show_counselling_room != true %>
+		<label for="id">  </label>
+		
+		<select id="id" name="id">
+			<option><i>New client</i></option>	
+			<%= @clients_info.each do |client| %>
+				<option value="<%= client[:id] %>"> Accession :<%= " #{client[:accession]}" %>;<%= " #{client[:gender]}" %>; DOB :<%= client[:birth] %> </option>
+			<% end %>
+		</select>
+		
+		<br />
+		<% else %>
+		<label for="scan_accession_number" >Accession Number </label>
+		<input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+		<% end %>
+		
+	</fieldset>
+	<%= submit_tag "Finish" %>
+           
 <% end %>
-<%= link_to "Select", '' %>
+</body>
+	
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+	<script>
+	
+	var sidePanelData = {<%= @side_panel_date.html_safe %>};
+	
+	//Highlist list object
+	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+        
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
+      
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+	
+	function create_new_patient() {
+   window.location = '<%= new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>'
+	}
+	
+	function add_to_waiting_list(obj) {
+		window.location = '/clients/' + __$('textForid').value + '/add_to_unallocated';
+	}
+		
+		__$("row1").style.display="none";
+		__$("buttons").style.verticalAlign = "bottom";
+		__$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+		
+		<% if !@show_counselling_room %>
+			btnNext.style.display = "none";	
+		<% end %>
+		
+		btnNext.innerHTML = "Finish";
+		btnNext.style.width = "250px";
+		btnCancel.style.width = "250px";
 
+		var display = "inline-table";
+
+		btnDivs = __$('buttons').children[0].children;
+		
+		btnDivs[1].style.display = "none";
+		btnDivs[2].style.display = "none";
+	
+		btnDivs[0].style.display  = "inline-table";
+		btnDivs[3].style.display  = "inline-table";
+
+		btnDivs[3].style.cssFloat = "right";
+		
+		var dsp = document.createElement("div");
+		dsp.id = "dsp";
+		dsp.style.display = "table-cell";
+		dsp.style.border = "1px solid #3465a4";
+		dsp.style.overflow = "hidden";
+		dsp.style.borderRadius = "10px";
+		dsp.style.width = "46%";
+		dsp.style.height = "100%";
+		dsp.style.verticalAlign = "top";
+		dsp.innerTHML = "none";
+
+		__$('textForid').style.height = "100%";
+		__$('textForid').style.width = "100%";
+		
+		var lst = __$('ul1').children;
+		for (var i=0; i < lst.length ; i++) {
+				lst[i].onmousedown = function() {
+				highlightList(this);
+				__$('textForid').value = this.value;
+				
+				dspValue = this.innerHTML.split(';');
+				var obj = sidePanelData[this.value];
+				var s = "";
+				
+				if (this.innerHTML.trim() != "New client") {
+				
+				<% if !@show_counselling_room %>
+					btnNext.style.display = "none";	
+				<% else %>
+					btnNext.style.display = "inline-table";
+				<% end %>
+
+						
+				    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
+				    						 'onmousedown="add_to_waiting_list(this)"' +
+				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>';
+				   	
+						s += "<span class='d dL'> Accession Number</span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.accession_number  + "</span>";
+								 
+						s += "<span class='d dL'> Gender </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.gender  + "</span>";
+
+						s += "<span class='d dL'> Date of Birth </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.birthDate  + "</span>";
+								 
+						s += "<span class='d dL'> Age </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.age  + "</span>";					 
+
+						s += "<span class='d dL'> Residence </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.residence  + "</span>";
+								 
+						s += "<span class='d dL'> Last Visit </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.last_visit  + "</span>";
+						
+						if (parseInt(obj.days_since_last_visit) > 0) {
+							s += "<span class='d dL'> Period Since Last Visit </span>" +
+									 "<span class='d dC'> : </span>" +
+									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
+						}
+
+						if (obj.status.trim()=="") {
+							s+=button;
+						}else {
+							s += "<span class='d dL'> Work-flow Status </span>" +
+									 "<span class='d dC'> : </span>" +
+									 "<span class='d dR'>" + obj.status  + "</span>";
+						}
+					}
+					else {
+						btnNext.style.display = "none";
+				     s = '<br> <br> <button onmousedown="create_new_patient()" style="margin: 3px; width: 250px; font-size: 24px;"' +
+				    						 ' class="button green" pos="0" section="0">New client</button>'				
+					}
+				__$('dsp').innerHTML = s;  
+			};
+		}
+		__$('textForid').value = -1;
+		row.insertBefore(dsp, row.firstChild);
+		__$("row0").parentNode.appendChild(__$('buttons'));
+		
+		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+	</script>
+</html>
 

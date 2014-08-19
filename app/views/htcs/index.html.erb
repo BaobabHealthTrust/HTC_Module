@@ -5,6 +5,11 @@
 		<script>
 			var barcodeDestination = '<%= search_results_path %>'
 		</script>
+		<style>
+			.blank {
+				display: none;			
+			}
+		</style>
 	</head>
 	<body>
 		<div id="main">
@@ -15,7 +20,7 @@
 			
 			<input type="text" id="user" value= <%= @current_user.username %> />
 			
-			<input type="text" id="location" value=<%= " #{@current_location.name}" %> />
+			<input type="text" id="location" value='<%= "#{@current_location.name}" %>' />
 			
 			<input type="text" id="facility" value="Kamuzu Central Hospital" />
 			
@@ -25,7 +30,7 @@
 				
 				<button onmousedown="window.location = '<%= log_out_path %>'">Logout</button>
 
-				<% if defined? session[:datetime].to_date %>
+				<% if session[:datetime].to_date != Date.today.to_date %>
 					<button onmousedown="window.location = '/admins/set_date'">
 			    Reset Date</button>
 				<% else %>
@@ -41,15 +46,17 @@
        <%#= link_to 'Room Clients', @current_location %>        
 <%# end %>
 				
-				<% if @show_counselling_room %>	
-					<button onmousedown="window.location = '<%= @current_location  %>'">Room Clients</button>
-				<% end %>
+				<#% if @show_counselling_room %>	
+					<!-- button onmousedown="window.location = '<%= @current_location  %>'">Room Clients</button -->
+				<#% end %>
 			</div>
 			
 			<select id="tabs">
 				<option value= <%= htcs_dashboard_path %> >Rooms Allocation</option>
+			<% if @is_counselor %>
 				<option value= <%= reports_index_path %> >Reports</option>
 				<option value= <%= admins_path + '/index/' %> >Administration</option>
+			<% end %>
 			</select>
 			
 		</div>

@@ -1,22 +1,49 @@
-<h1>Update Protocol</h1>
+<html>
+	<head>
+	<script>
+					var cancelDestination = '<%= protocols_path %>';
+	</script>
+	</head>
+<body>
+
 
 <%= form_tag({:action => "edit_protocols"}, {:method => "post"}) do %>
-	<input type='hidden' name='protocol_id' value=<%= @protocol.id %>
-	<br />
-	<%= label_tag :name %>
-	<%= text_field_tag :name, @protocol.name %>
-	<br />
-	<%= label_tag :description %>
-	<%= text_field_tag :description, @protocol.description %>
-	<br />
-        <%= label_tag :data_type %>
-	<%=select_tag "data_type", options_for_select(["","Datetime","Time", "Boolean", "Number", "Text"]) %>
-	<br />
-        <%= label_tag :answers %>
-	<%=select_tag "answers", options_from_collection_for_select(@location, "name", "name")%>
-	<br />
+      <fieldset>
+			<legend>Update Protocol</legend>
+			<input type='hidden' name='protocol_id' value=<%= @protocol.id %>
+      <br />
+      <label for="name">Name</label>
+      <%= text_field_tag :name, @protocol.name %>
 
-	<%= link_to "Cancel" , protocols_path %>
+      <label for="description">Description</label>
+      <%= text_field_tag :description, @protocol.description %>
+      
+      <label for="datatype">Data type</label>
+      <%=select_tag "datatype", options_for_select(["","Datetime","Time", "Boolean", "Number", 'List', "Text"]) %>
+	
+			 <label for="list_type">List Type</label>
+       <select id="list_type" condition="__$('datatype').value == 'List'" 
+				optional="false" name="listtype">
+								<option></option>
+								<option value="Location">Health Facilities</option>
+								<option value="Residence">Residential</option>
+                <option value="Gender">Gender</option>
+			</select>
+
+      <label for="parent_protocol">Parent Protocol</label>
+      <select id="parent_protocol" name="parent_protocol" optional="true" multiple="true">
+								<option></option>
+								<% (@parents || []).each {|protocol| %>
+								<option value="<%= protocol[0] %>"><%= protocol[1] %></option>
+								<% } %>
+				</select>														
+				</fieldset>
+ 	<%= link_to "Cancel" , protocols_path %>
 	<%= submit_tag "Finish" %>
-
+           
 <%end%>
+
+</body>
+</html>
+
+

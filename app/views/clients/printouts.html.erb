@@ -1,0 +1,44 @@
+<style>
+.blue {
+    background-color: #a7cfdf;
+    background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+    border: 1px solid #7eb9d0;
+    border-radius: 3px;
+    color: #ffffff;
+    display: inline-block;
+    font-family: arial,helvetica,sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 10px;
+    text-decoration: none;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+</style>
+<script>
+   function printAccession(){
+        window.location = '/clients/print_accession/' + <%=  params[:client_id] %>;
+   }
+
+   function printSummary(){
+        window.location = '/clients/print_summary/' + <%= params[:client_id] %>;
+   }
+
+  function printConfimation(){
+        window.location = '/clients/print_confimation/' + <%= params[:client_id] %>;
+   }
+</script>
+<br />
+<br />
+
+<base target="_parent">
+                <button style="margin: 3px; width: 250px; font-size: 24px;"
+		    						 onmousedown="printAccession()"
+		    						  class="button blue" pos="0" section="0">Accession Number</button>
+
+                   <button style="margin: 3px; width: 250px; font-size: 24px;"
+		    						 onmousedown="printSummary()"
+		    						  class="button blue" pos="0" section="0">Visit Summary</button>
+
+                      <button style="margin: 3px; width: 250px; font-size: 24px;"
+		    						 onmousedown="printConfirmation()"
+		    						  class="button blue" pos="0" section="0">Confirmation</button>

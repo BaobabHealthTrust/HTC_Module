@@ -4,4 +4,6 @@ class Location < ActiveRecord::Base
 	include Openmrs
 	before_save :before_create
   has_many :location_tag_maps, foreign_key: "location_id", dependent: :destroy
+  
+  cattr_accessor :login_rooms_details
 end

@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20140722145413) do
+=======
+ActiveRecord::Schema.define(version: 20140801091928) do
+>>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -457,6 +461,30 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "concept_word", ["weight"], name: "concept_word_weight_index", using: :btree
   add_index "concept_word", ["word"], name: "word_in_concept_name", using: :btree
 
+<<<<<<< HEAD
+=======
+  create_table "counseling_answer", primary_key: "answer_id", force: true do |t|
+    t.integer  "question_id"
+    t.integer  "patient_id"
+    t.integer  "encounter_id"
+    t.integer  "value_coded",                  null: false
+    t.datetime "date_created"
+    t.datetime "date_updated"
+    t.integer  "creator"
+    t.boolean  "voided",       default: false, null: false
+    t.integer  "voided_by"
+  end
+
+  create_table "counseling_question", primary_key: "question_id", force: true do |t|
+    t.text     "name"
+    t.text     "description"
+    t.datetime "date_created"
+    t.datetime "date_updated"
+    t.integer  "retired",      default: 0, null: false
+    t.integer  "creator",                  null: false
+  end
+
+>>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
   create_table "district", primary_key: "district_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "region_id",     default: 0,     null: false
@@ -472,6 +500,11 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "district", ["region_id"], name: "region_for_district", using: :btree
   add_index "district", ["retired"], name: "retired_status", using: :btree
   add_index "district", ["retired_by"], name: "user_who_retired_district", using: :btree
+
+  create_table "districts", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "drug", primary_key: "drug_id", force: true do |t|
     t.integer  "concept_id",                    default: 0,     null: false
@@ -1601,6 +1634,14 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "person_name", ["voided_by"], name: "user_who_voided_name", using: :btree
 
   create_table "person_name_codes", force: true do |t|
+<<<<<<< HEAD
+=======
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "person_names", force: true do |t|
+>>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1735,6 +1776,14 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "provider_attribute_type", ["retired_by"], name: "provider_attribute_type_retired_by_fk", using: :btree
   add_index "provider_attribute_type", ["uuid"], name: "uuid", unique: true, using: :btree
 
+<<<<<<< HEAD
+=======
+  create_table "providers", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+>>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
   create_table "region", primary_key: "region_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "creator",       default: 0,     null: false
@@ -1748,6 +1797,11 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "region", ["creator"], name: "user_who_created_region", using: :btree
   add_index "region", ["retired"], name: "retired_status", using: :btree
   add_index "region", ["retired_by"], name: "user_who_retired_region", using: :btree
+
+  create_table "regions", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "relationship", primary_key: "relationship_id", force: true do |t|
     t.integer  "person_a",                                null: false
@@ -1897,6 +1951,14 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "serialized_object", ["retired_by"], name: "serialized_object_retired_by", using: :btree
   add_index "serialized_object", ["uuid"], name: "serialized_object_uuid_index", unique: true, using: :btree
 
+<<<<<<< HEAD
+=======
+  create_table "traditional_authorities", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+>>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
   create_table "traditional_authority", primary_key: "traditional_authority_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "district_id",   default: 0,     null: false
@@ -1970,6 +2032,11 @@ ActiveRecord::Schema.define(version: 20140722145413) do
   add_index "village", ["retired"], name: "retired_status", using: :btree
   add_index "village", ["retired_by"], name: "user_who_retired_village", using: :btree
   add_index "village", ["traditional_authority_id"], name: "ta_for_village", using: :btree
+
+  create_table "villages", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "visit", primary_key: "visit_id", force: true do |t|
     t.integer  "patient_id",                                       null: false
