@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update]
+  before_action :current_logged_in_user, only: [:update, :edit, :destroy, :retire]
 
   def index
     @users = User.unscoped.all
@@ -81,7 +82,10 @@ class UsersController < ApplicationController
 
   def destroy
   	@user = User.unscoped.find(params[:id])
+  	person = Person.find(@user.person_id)
     @user.destroy rescue flash[:alert] = "Failed to delete: Foreign key constraint issue"
+    person.destroy rescue "Failed to delete: Foreign key constraint issue"
+    
     redirect_to users_path and return 
   end
   
@@ -114,5 +118,16 @@ class UsersController < ApplicationController
 	def user_role_params
 		params[:user_role][:user_id] = @user.id
 		params.require(:user_role).permit(:user_id, :role)
+	end
+	
+	def current_logged_in_user
+		log = Location.login_rooms_details.values.map{|v| v[:user_id]} rescue []
+		
+		if params[:id] != session[:user_id]
+			if log.include?(params[:id])
+				@alert = "This user is currently logged in at a different location"
+				redirect_to users_path and return
+			end
+		end
 	end
 end

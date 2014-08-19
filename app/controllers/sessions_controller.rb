@@ -49,6 +49,7 @@ class SessionsController < ApplicationController
 		current_location rescue nil
 		Location.login_rooms_details.delete(@current_location.name.humanize) rescue nil
 		session = nil
+		reset_session
 		flash[:notice] = "You've been logged out successfully."
 		redirect_to "/login"
   end
