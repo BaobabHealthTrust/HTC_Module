@@ -112,14 +112,24 @@
 				btnNext.style.display = "inline-table";
 				
 				var btnDel = "";
+				var loggedInRoom = "";
+				
 				if (<%=session[:location_id]%> != this.value ) {
 						 btnDel = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 												 'onmousedown="destroy(this)"' +
 			    						 ' class="button red" pos="0" section="0">Delete</button>'
 		    }
+				
+				if (<%= current_location_occupied -%>.indexOf(obj.name) > -1 ) {		    
+						loggedInRoom = "<span class='d dL orange' style='width:223px;'> Room Occupied</span>" +
+									 "<span class='d dC'> &nbsp; </span>" +
+									 "<span class='d dR'> &nbsp; </span>";
+						btnDel = "";
+				}
+
 				var btnPrnt = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 		    						 'onmousedown="printLocation(this)"' +
-		    						 ' class="button blue" pos="0" section="0">Print</button>'
+		    						 ' class="button blue" pos="0" section="0">Print</button>';
 	
 				s += "<span class='d dL'> Name </span>" +
 						 "<span class='d dC'> : </span>" +
@@ -128,6 +138,8 @@
 				s += "<span class='d dL'> Description </span>" +
 						 "<span class='d dC'> : </span>" +
 						 "<span class='d dR'>" + obj.description  + "</span>";
+				
+				s += loggedInRoom;
 				
 				s+= "<span class='dL' style='padding:10px;'>" + btnDel + "</span>";
 				s+= "<span class='dR' style='padding:10px;'>" + btnPrnt + "</span>";
