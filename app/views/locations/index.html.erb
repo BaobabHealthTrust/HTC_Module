@@ -111,10 +111,12 @@
 				
 				btnNext.style.display = "inline-table";
 				
-		    var btnDel = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
-		    						 'onmousedown="destroy(this)"' +
-		    						 ' class="button red" pos="0" section="0">Delete</button>'
-		    
+				var btnDel = "";
+				if (<%=session[:location_id]%> != this.value ) {
+						 btnDel = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+												 'onmousedown="destroy(this)"' +
+			    						 ' class="button red" pos="0" section="0">Delete</button>'
+		    }
 				var btnPrnt = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
 		    						 'onmousedown="printLocation(this)"' +
 		    						 ' class="button blue" pos="0" section="0">Print</button>'
