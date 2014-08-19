@@ -378,7 +378,9 @@ class ClientsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
-      @client = Client.find(params[:id])
+      @client = Client.find(params[:id]) rescue nil
+      redirect_to  htcs_path and return if @client.nil?
+      @client
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
