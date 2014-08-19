@@ -40,6 +40,7 @@ class LocationsController < ApplicationController
        
     @location_tag_id = params[:location_tag]
     @location = Location.new(loc_params)
+    @location.id = Location.last.id + 1
     if @location.save
     	location_tag_map_params = {
     															:location_id => @location.id,
