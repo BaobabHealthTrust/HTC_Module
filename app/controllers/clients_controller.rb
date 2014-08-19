@@ -53,7 +53,7 @@ class ClientsController < ApplicationController
 															patient_id: @client.id, 
 															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
 			
-			current = session[:datetime] rescue DateTime.now
+			current = session[:datetime] rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
       #print_new_accession(@client.patient_id)
 		end

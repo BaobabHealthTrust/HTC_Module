@@ -35,3 +35,9 @@
 			float:left;
 			word-wrap:break-word;
 		}
+		
+		.orange {
+			background-color:orange;
+			margin-left:20px;
+			color:black;
+		}
