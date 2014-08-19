@@ -81,7 +81,10 @@ class UsersController < ApplicationController
 
   def destroy
   	@user = User.unscoped.find(params[:id])
+  	person = Person.find(@user.person_id)
     @user.destroy rescue flash[:alert] = "Failed to delete: Foreign key constraint issue"
+    person.destroy rescue "Failed to delete: Foreign key constraint issue"
+    
     redirect_to users_path and return 
   end
   
