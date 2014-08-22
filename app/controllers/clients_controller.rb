@@ -53,7 +53,7 @@ class ClientsController < ApplicationController
 															patient_id: @client.id, 
 															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
 			
-			current = session[:datetime] rescue DateTime.now
+			current = session[:datetime] rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
       #print_new_accession(@client.patient_id)
 		end
@@ -378,7 +378,9 @@ class ClientsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
-      @client = Client.find(params[:id])
+      @client = Client.find(params[:id]) rescue nil
+      redirect_to  htcs_path and return if @client.nil?
+      @client
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

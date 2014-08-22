@@ -2,6 +2,13 @@
 <html>
 	<head>
 		<title>Current Visit</title>
+		
+		<script>
+			var refresh_interval = <%= Settings.refresh_dashboard %>;
+			setInterval(function() {
+						window.location.reload();
+					}, refresh_interval);
+		</script>
 		<style>
 			.arrow-right {
 				width: 0; 
@@ -86,13 +93,12 @@
 						</tr>
 						
 						<% @ins = 0 %>
-						<% @total = 0 %>
+						<% @total = {} %>
 						<% @rooms.sort.each do |r| %>
 							<tr>
 								<td style="border-right: 1px solid #305d97;">
 									<%= r.humanize %>
 								</td>
-								
 								<% @ins+=1 if @dash_board[r][:status]=="In" %>
 								<td style="border-right: 1px solid #305d97; padding-left:20px; text-align: left;">
 									<%= @dash_board[r][:status] + " ("+ @dash_board[r][:username] +")" rescue "Out" %>
@@ -113,7 +119,8 @@
 									<%= "#{time[:hrs].to_s}hr, #{time[:min].to_s}min, #{time[:sec].to_s}sec" rescue "--" %>
 								</td>
 								<td style="border-right: 1px solid #305d97; text-align: center;">
-									<% @total += @dash_board[r][:seen_today].to_i %>
+									<% id = @dash_board[r][:user_id] %>
+									<% @total[id] = @dash_board[r][:seen_today].to_i if !id.blank? %>
 									<%= @dash_board[r][:seen_today] %>
 								</td>
 								
@@ -147,7 +154,7 @@
 									<%= "#{time[:hrs].to_s}hr, #{time[:min].to_s}min, #{time[:sec].to_s}sec" rescue "--" %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-								Total: <%= @total %>
+								Total: <%= @total.values.sum rescue 0 %>
 							</td>
 							
 							<!--td style="text-align: center; border-top: 1px solid #305d97; font-weight: bold; color: #305d97;">

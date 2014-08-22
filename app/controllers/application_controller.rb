@@ -20,7 +20,9 @@ class ApplicationController < ActionController::Base
 			
 			if @current_location.nil?
 				session = nil
-				return 
+				return
+			else
+				Location.current_location_id = @current_location.id
 			end
 			
 			Location.login_rooms_details = {} if Location.login_rooms_details.nil?
@@ -35,13 +37,13 @@ class ApplicationController < ActionController::Base
 	
 	def show_counselling_room
 		@show_counselling_room = false
-		is_counselor = @current_user.user_roles.map(&:role).include?('Counselor')
+		@is_counselor = @current_user.user_roles.map(&:role).include?('Counselor')
 		
 		htc_room_tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		location_tags = LocationTagMap.where("location_id=#{@current_location.id}")
 																	.map(&:location_tag_id) rescue []
 
-		if location_tags.include?(htc_room_tag_id) && is_counselor
+		if location_tags.include?(htc_room_tag_id) && @is_counselor
 			@show_counselling_room = true
 		end
 		

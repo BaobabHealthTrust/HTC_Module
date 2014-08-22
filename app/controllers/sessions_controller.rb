@@ -8,6 +8,20 @@ class SessionsController < ApplicationController
   	@location = Location.find_by_name(location) rescue nil
 		@user = User.authenticate(params[:username], params[:password]) if @location
 		
+		
+		if @location
+			is_counselor = @user.user_roles.map(&:role).include?('Counselor') rescue false
+			
+			htc_room_tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
+			location_tags = LocationTagMap.where("location_tag_id=#{htc_room_tag_id}")
+																		.map(&:location_id) rescue []
+		
+			if location_tags.include?(@location.id) && !is_counselor
+				@location = nil
+				flash[:alert] = "You are not allow to visit this location"
+			end
+		end
+		
 		if @location
 			if @user
 				flash[:notice] = "You've been logged in."
@@ -35,6 +49,7 @@ class SessionsController < ApplicationController
 		current_location rescue nil
 		Location.login_rooms_details.delete(@current_location.name.humanize) rescue nil
 		session = nil
+		reset_session
 		flash[:notice] = "You've been logged out successfully."
 		redirect_to "/login"
   end
