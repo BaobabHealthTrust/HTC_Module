@@ -1,17 +1,30 @@
 <style>
 .blue {
-    background-color: #a7cfdf;
-    background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
-    border: 1px solid #7eb9d0;
-    border-radius: 3px;
-    color: #ffffff;
-    display: inline-block;
-    font-family: arial,helvetica,sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    padding: 10px;
-    text-decoration: none;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 90px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 90px;
+    background-repeat: no-repeat;
+    background-size: 80px 80px;
+}
+#accession{
+ 	background-image: url(<%= asset_path 'accession.png' %>);
+	background-size: cover;
+}
+#summary{
+ 	background-image: url(<%= asset_path 'summary.png' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 100px;
 }
 </style>
 <script>
@@ -31,14 +44,14 @@
 <br />
 
 <base target="_parent">
-                <button style="margin: 3px; width: 250px; font-size: 24px;"
+                <button
 		    						 onmousedown="printAccession()"
-		    						  class="button blue" pos="0" section="0">Accession Number</button>
+                                                                 class="blue" pos="0" section="0" id="accession"><span class="txt">Accession Number</span></button>
 
-                   <button style="margin: 3px; width: 250px; font-size: 24px;"
+                   <button 
 		    						 onmousedown="printSummary()"
-		    						  class="button blue" pos="0" section="0">Visit Summary</button>
+		    						  class="blue" pos="0" section="0" id="summary"><span class="txt">Visit Summary</span></button>
 
                       <button style="margin: 3px; width: 250px; font-size: 24px;"
 		    						 onmousedown="printConfirmation()"
-		    						  class="button blue" pos="0" section="0">Confirmation</button>
+		    						  class="blue" pos="0" section="0">Confirmation</button>

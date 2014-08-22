@@ -76,7 +76,16 @@ class ClientsController < ApplicationController
 
 	def counseling
 			@client = Client.find(params[:client_id])
-			@protocols = CounselingQuestion.where("retired = 0")	
+      @protocol = []
+			CounselingQuestion.where("retired = 0 AND child = 0")	.each {|protocol|
+          @protocol << protocol
+          ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
+             CounselingQuestion.where("question_id = #{child.protocol_id}").each{|x|
+               @protocol << x
+             }
+          }
+      }
+      #raise @protocol.to_yaml
 	end
 
 	def testing

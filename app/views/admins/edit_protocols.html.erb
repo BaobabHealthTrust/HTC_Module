@@ -31,7 +31,7 @@
 			</select>
 
       <label for="parent_protocol">Parent Protocol</label>
-      <select id="parent_protocol" name="parent_protocol" optional="true" multiple="true">
+      <select id="parent_protocol" name="parent_protocol" optional="true">
 								<option></option>
 								<% (@parents || []).each {|protocol| %>
 								<option value="<%= protocol[0] %>"><%= protocol[1] %></option>

@@ -12,7 +12,7 @@
 		<% x = 0
 			 y = 1
 			 	set = 0
-				@protocols.each do |protocol| 
+				(@protocol || []).each do |protocol|
 					 if x == 0 
 						set = 0 %>
 						<fieldset>
@@ -37,6 +37,9 @@
 							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
 							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="time" />
 						<% elsif protocol.data_type.upcase == "TEXT" %>
+							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
+							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" />
+                                                  <% elsif protocol.data_type.upcase == "LIST" %>
 							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
 							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" />
 						<% end %>	

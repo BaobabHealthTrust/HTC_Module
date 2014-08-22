@@ -1,21 +1,39 @@
 <style>
+
 .blue {
-    background-color: #a7cfdf;
-    background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
-    border: 1px solid #7eb9d0;
-    border-radius: 3px;
-    color: #ffffff;
-    display: inline-block;
-    font-family: arial,helvetica,sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    padding: 10px;
-    text-decoration: none;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
-    margin: 3px;
-    width: 250px;
-    font-size: 24px;
-    text-align: center;
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 90px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 90px;
+    background-repeat: no-repeat;
+    background-size: 80px 80px;
+}
+#test {
+	background-image: url(<%= asset_path 'testing.png' %>);
+	background-size: cover;
+}
+#hospital {
+	background-image: url(<%= asset_path 'hospital.png' %>);
+	background-size: cover;
+}
+#counseling{
+	background-image: url(<%= asset_path 'users.png' %>);
+	background-size: cover;
+}
+#schedule{
+ 	background-image: url(<%= asset_path 'schedule.png' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 100px;
 }
 </style>
 <script>
@@ -24,14 +42,14 @@
 <br />
 
 <base target="_parent">
-<a href="/client_counseling?client_id=<%= @client.id -%>"class='blue' >
-  Counseling</a>
+<a href="/client_counseling?client_id=<%= @client.id -%>"  id="counseling" class='blue' >
+   <span class="txt"> Counseling</span></a>
 
-<a href= '/client_testing?client_id=<%= @client.id -%>' class=" blue">
-  Testing</a>
+<a href= '/client_testing?client_id=<%= @client.id -%>' id="test" class=" blue">
+  <span class="txt">Testing</span></a>
 
-  <a href= '/referral_consent/<%= @client.id -%>'  class=" blue">
-  Referral</a>
+  <a href= '/referral_consent/<%= @client.id -%>' id="hospital" class=" blue">
+    <span class="txt">Referral</span></a>
 
- <a href= '/appointment/<%= @client.id -%>'  class=" blue">
-  Scheduler</a>
+ <a href= '/appointment/<%= @client.id -%>'  id="schedule" class=" blue">
+    <span class="txt">Scheduler</span></a>
