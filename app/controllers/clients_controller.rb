@@ -371,7 +371,7 @@ class ClientsController < ApplicationController
 			
 			current_location = @current_location if current_location.nil?
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id,
-									location_id: current_location.id, encounter_datetime: current.strftime("%Y-%m-%d %H:%M:%S"),
+									location_id: current_location.id, encounter_datetime: current.to_date.strftime("%Y-%m-%d %H:%M:%S"),
 									creator: current_user.id)
 	end
 
