@@ -1,5 +1,5 @@
 #Name of the HTC facility
-facility_name: ?? Add Facility Name (config/settings.yml) ??
+facility_name: kamuzu Central Hospital
 
 #60000 = 1 Minute
 refresh_dashboard: 60000

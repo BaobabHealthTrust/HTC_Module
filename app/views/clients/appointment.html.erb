@@ -100,7 +100,7 @@
       selectHelper: true,
 			dayClick: function(date, jsEvent, view) {
          document.getElementById("id").value = date.format()
-					alert(document.getElementById("id").value)
+				//	alert(document.getElementById("id").value)
     },
 			header: {
 				left: 'prev,next today',
@@ -156,6 +156,33 @@
 		.fc-button-month{
 				display:none;
 			}
+		.fc-button-today{
+				margin-left: auto;
+				margin-right: auto;
+				font-weight: bold;
+				font-size: 1.0em;
+			}
+		.fc-button {
+				height:	3.9em;
+				/*width: 11.5em;	*/
+				border-radius: 25px;
+				background: #7AC5CD;
+				padding: 15px 20px 12px 15px;
+				vertical-align:middle;
+				cursor: pointer;
+		}
+		.fc-icon {
+				margin-left: auto;
+				margin-right: auto;
+				font-size: 9.5em ! important;
+		}
+		.fc-button-next{
+				margin-left: 12px;		
+		}
+		.fc-state-default.fc-corner-right {
+				border-bottom-left-radius: 18px ! important;
+				border-top-left-radius: 18px ! important;
+		}
 	</style>
 </html>
 

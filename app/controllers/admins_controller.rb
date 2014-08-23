@@ -42,7 +42,6 @@ class AdminsController < ApplicationController
 		@protocol = CounselingQuestion.find(params[:protocol_id])
 		@parents = CounselingQuestion.where("child = 0").collect { |p| [p.question_id, p.name]  }
 		if request.post?
-			raise params.to_yaml
 			@protocol.name = params[:name]
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
@@ -50,14 +49,14 @@ class AdminsController < ApplicationController
 			list = nil
 			child = 0
 			list = params[:listtype] if ! params[:listtype].blank?
-			child = 1 if ! params[:parent].blank?
+			child = 1 if ! params[:parent_protocol].blank?
 			@protocol.list_type = list
 			@protocol.child = child
-			
+      
 			if @protocol.save
-				raise params[:parent].to_yaml
 				if child == 1
-					raise params[:parent].to_yaml	
+					@children = ChildProtocol.create(protocol_id: @protocol.id,
+            parent_id: params[:parent_protocol])
 				end
 				redirect_to protocols_path and return
 			end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140801091928) do
+ActiveRecord::Schema.define(version: 20140822141340) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -67,12 +67,12 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "active_list_type", ["creator"], name: "user_who_created_active_list_type", using: :btree
   add_index "active_list_type", ["retired_by"], name: "user_who_retired_active_list_type", using: :btree
 
-  create_table "client_identifier_types", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "child_protocol", primary_key: "child_id", force: true do |t|
+    t.integer "protocol_id"
+    t.integer "parent_id"
   end
 
-  create_table "client_identifiers", force: true do |t|
+  create_table "child_protocols", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -471,21 +471,27 @@ ActiveRecord::Schema.define(version: 20140801091928) do
     t.integer  "question_id"
     t.integer  "patient_id"
     t.integer  "encounter_id"
-    t.integer  "value_coded",                  null: false
+    t.integer  "value_coded"
+    t.integer  "value_numeric"
+    t.text     "value_text"
+    t.datetime "value_datetime"
     t.datetime "date_created"
     t.datetime "date_updated"
     t.integer  "creator"
-    t.boolean  "voided",       default: false, null: false
+    t.boolean  "voided",         default: false, null: false
     t.integer  "voided_by"
   end
 
   create_table "counseling_question", primary_key: "question_id", force: true do |t|
     t.text     "name"
     t.text     "description"
+    t.integer  "child",                   default: 0, null: false
+    t.string   "data_type",    limit: 25
+    t.text     "list_type"
     t.datetime "date_created"
     t.datetime "date_updated"
-    t.integer  "retired",      default: 0, null: false
-    t.integer  "creator",                  null: false
+    t.integer  "retired",                 default: 0, null: false
+    t.integer  "creator",                             null: false
   end
 
   create_table "district", primary_key: "district_id", force: true do |t|
@@ -629,11 +635,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "encounter_provider", ["provider_id"], name: "provider_id_fk", using: :btree
   add_index "encounter_provider", ["uuid"], name: "uuid", unique: true, using: :btree
 
-  create_table "encounter_providers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "encounter_role", primary_key: "encounter_role_id", force: true do |t|
     t.string   "name",                                       null: false
     t.string   "description",   limit: 1024
@@ -653,11 +654,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "encounter_role", ["retired_by"], name: "encounter_role_retired_by_fk", using: :btree
   add_index "encounter_role", ["uuid"], name: "uuid", unique: true, using: :btree
 
-  create_table "encounter_roles", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "encounter_type", primary_key: "encounter_type_id", force: true do |t|
     t.string   "name",          limit: 50, default: "",    null: false
     t.text     "description"
@@ -674,11 +670,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "encounter_type", ["retired"], name: "retired_status", using: :btree
   add_index "encounter_type", ["retired_by"], name: "user_who_retired_encounter_type", using: :btree
   add_index "encounter_type", ["uuid"], name: "encounter_type_uuid_index", unique: true, using: :btree
-
-  create_table "encounter_types", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "external_source", primary_key: "external_source_id", force: true do |t|
     t.integer  "source",       default: 0, null: false
@@ -1477,11 +1468,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "patientflags_tag_role", ["role"], name: "role", using: :btree
   add_index "patientflags_tag_role", ["tag_id"], name: "tag_id", using: :btree
 
-  create_table "people", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "person", primary_key: "person_id", force: true do |t|
     t.string   "gender",              limit: 50, default: ""
     t.date     "birthdate"
@@ -1542,11 +1528,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "person_address", ["person_id"], name: "patient_addresses", using: :btree
   add_index "person_address", ["uuid"], name: "person_address_uuid_index", unique: true, using: :btree
   add_index "person_address", ["voided_by"], name: "patient_address_void", using: :btree
-
-  create_table "person_addresses", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "person_attribute", primary_key: "person_attribute_id", force: true do |t|
     t.integer  "person_id",                           default: 0,     null: false
@@ -1662,11 +1643,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "person_name", ["voided_by"], name: "user_who_voided_name", using: :btree
 
   create_table "person_name_codes", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "person_names", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1800,11 +1776,6 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "provider_attribute_type", ["creator"], name: "provider_attribute_type_creator_fk", using: :btree
   add_index "provider_attribute_type", ["retired_by"], name: "provider_attribute_type_retired_by_fk", using: :btree
   add_index "provider_attribute_type", ["uuid"], name: "uuid", unique: true, using: :btree
-
-  create_table "providers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "region", primary_key: "region_id", force: true do |t|
     t.string   "name",          default: "",    null: false
