@@ -97,6 +97,10 @@ class ClientsController < ApplicationController
 	end
 
   def appointment
+  		today = (session[:datetime].to_date rescue Date.today)
+  		@start_week_date = today - 1.week
+  		@initial_date =  today + 1.day
+  		@end_week_date = today + 2.years
       render :layout => false
   end
   
@@ -254,8 +258,12 @@ class ClientsController < ApplicationController
 				@scanned = Client.find(@accession.patient_id)
 				
 				if params[:add_to_session] =="true"
-					if @scanned.current_state.name == "IN WAITING"
-					 assign_to_counseling_room(@scanned)
+					if !@scanned.current_state.blank?
+						if @scanned.current_state.name == "IN WAITING"
+						 assign_to_counseling_room(@scanned)
+						end
+					else
+						redirect_to "/search" and return
 					end
 				end
 				
