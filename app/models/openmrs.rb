@@ -46,15 +46,14 @@ module Openmrs
 
     self.changed_by = User.first if self.attributes.has_key?("changed_by") and User.current.nil?
     
-    self.date_changed = Time.now.strftime("%Y-%m-%d %H:%M:%S") if self.attributes.has_key?("date_changed")
+    self.date_changed = DateTime.now.strftime("%Y-%m-%d %H:%M:%S") if self.attributes.has_key?("date_changed")
   end
 
   def before_create
     #super
     self.location_id = Location.current_location.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_location != nil
     self.creator = User.current.id if self.attributes.has_key?("creator") and (self.creator.blank? || self.creator == 0)and User.current != nil
-    self.date_created = Time.now.strftime("%Y-%m-%d %H:%M:%S") if self.attributes.has_key?("date_created")
-
+    self.date_created = DateTime.now.to_datetime.strftime("%Y-%m-%d") if self.attributes.has_key?("date_created")
     self.uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid'] if self.attributes.has_key?("uuid")
   end
   
@@ -62,10 +61,10 @@ module Openmrs
   def after_void(reason = nil)
   end
   
-  def void(reason = "Invalid encounter",date_voided = Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+  def void(reason = "Invalid encounter",date_voided = DateTime.now.strftime("%Y-%m-%d %H:%M:%S"),
       voided_by = User.current_user_id)
     unless voided?
-      self.date_voided = date_voided.strftime("%Y-%m-%d %H:%M:%S")
+      self.date_voided = date_voided.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
       self.voided = 1
       self.void_reason = reason
       self.voided_by = voided_by
