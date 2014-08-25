@@ -20,7 +20,9 @@
       
       <label for="datatype">Data type</label>
       <%=select_tag "datatype", options_for_select(["","Datetime","Time", "Boolean", "Number", 'List', "Text"]) %>
-	
+      </fieldset>
+  <fieldset>
+                <legend>Update Protocol</legend>
 			 <label for="list_type">List Type</label>
        <select id="list_type" condition="__$('datatype').value == 'List'" 
 				optional="false" name="listtype">
@@ -31,7 +33,7 @@
 			</select>
 
       <label for="parent_protocol">Parent Protocol</label>
-      <select id="parent_protocol" name="parent_protocol" optional="true">
+      <select id="parent_protocol" name="parent_protocol" optional="true" multiple="true">
 								<option></option>
 								<% (@parents || []).each {|protocol| %>
 								<option value="<%= protocol[0] %>"><%= protocol[1] %></option>
