@@ -78,7 +78,6 @@ class AdminsController < ApplicationController
 			if !params[:new_protocol].blank?
 				return
 			elsif request.post?
-			#	raise params.to_yaml
 				list = nil
 				child = 0
 				list = params[:listtype] if ! params[:listtype].blank?
@@ -87,6 +86,11 @@ class AdminsController < ApplicationController
 										description: params[:description], data_type: params[:datatype],
 										retired: 0, creator: current_user.id, list_type: list,
 									  child: child)
+        if child == 1
+         # raise params[:parent].to_yaml
+					@children = ChildProtocol.create(protocol_id: @protocol.id,
+            parent_id: params[:parent])
+				end
 				redirect_to protocols_path and return
 			end
 	end
