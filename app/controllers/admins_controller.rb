@@ -96,7 +96,7 @@ class AdminsController < ApplicationController
 			if !params[:new_protocol].blank?
 				return
 			elsif request.post?
-			#	raise params.to_yaml
+				raise params.to_yaml
 				list = nil
 				child = 0
 				list = params[:listtype] if ! params[:listtype].blank?
