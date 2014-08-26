@@ -83,8 +83,11 @@ class EncountersController < ApplicationController
               
              
             end
-
-		redirect_to "/clients/#{params[:id]}" and return
+    if params[:giveconcent].upcase == "YES"
+       redirect_to  "/referral_consent/#{params[:id]}"
+    else
+      	redirect_to "/clients/#{params[:id]}" and return
+    end 
   end
 
   def edit
