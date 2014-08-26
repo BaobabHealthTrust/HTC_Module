@@ -14,26 +14,8 @@ class AdminsController < ApplicationController
   end 
 	
 	def protocols
-		@protocols = CounselingQuestion.all
-		
-    @side_panel_data = ""
-    sp = ""
-   	
-   	@protocols.each do |p|
-   	
-			status = "Active"
-			
-			if p.retired.to_i == 1
-				status = "Deactivated"
-			end
-
-			@side_panel_data += sp + "#{p.id} : {
-																 	name: '#{p.name}',
-																 	status: '#{status}'
-																 }"
-    	sp = ","   	
-   	end
-   	
+		@protocols = CounselingQuestion.all		
+    @side_panel_data = generate_protocols_javascript_hash(@protocols)
 		render layout: false and return
 	end
 	
@@ -134,6 +116,42 @@ class AdminsController < ApplicationController
 
   def destroy
     @admin.destroy
+  end
+  
+	def generate_protocols_javascript_hash(protocols)
+	
+    side_panel_data = ""
+    sp = ""
+   	
+   	protocols.each do |p|
+   	
+			status = "Active"
+			
+			if p.retired.to_i == 1
+				status = "Deactivated"
+			end
+
+			position = 0
+			position = p.position if !p.position.blank?
+			side_panel_data += sp + "#{p.id} : {name: '#{p.name}', status: '#{status}',position: '#{position}'}"
+    	sp = ","   	
+   	end
+   	side_panel_data = "{}" if side_panel_data.blank?
+		side_panel_data
+	end
+  
+  def update_protocol_position
+  	@result = false
+  	
+  	protocol = CounselingQuestion.find(params[:id])
+  	protocol.position = params[:position].to_i
+  	
+  	@result = protocol.save
+  	
+		@protocols = CounselingQuestion.all		
+    @side_panel_data = generate_protocols_javascript_hash(@protocols);
+  	
+  	render text: %Q(#{@result};"{#{@side_panel_data}}")
   end
 
   private
