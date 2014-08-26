@@ -1,3 +1,5 @@
+<html>
+	<head>
 <style>
 .blue {
     border-radius: 35px;
@@ -16,6 +18,10 @@
 }
 #summary{
  	background-image: url(<%= asset_path 'summary.png' %>);
+	background-size: cover;
+}
+#confirm{
+ 	background-image: url(<%= asset_path 'confirmation.png' %>);
 	background-size: cover;
 }
 .txt {
@@ -40,18 +46,22 @@
         window.location = '/clients/print_confimation/' + <%= params[:client_id] %>;
    }
 </script>
+</head>
+<body>
 <br />
 <br />
 
 <base target="_parent">
-                <button
-		    						 onmousedown="printAccession()"
-                                                                 class="blue" pos="0" section="0" id="accession"><span class="txt">Accession Number</span></button>
+		<button
+		onmousedown="printAccession()"
+		class="blue" pos="0" section="0" id="accession"><span class="txt">Accession Number</span></button>
 
-                   <button 
-		    						 onmousedown="printSummary()"
-		    						  class="blue" pos="0" section="0" id="summary"><span class="txt">Visit Summary</span></button>
+		<button 
+		onmousedown="printSummary()"
+		class="blue" pos="0" section="0" id="summary"><span class="txt">Visit Summary</span></button>
 
-                      <button style="margin: 3px; width: 250px; font-size: 24px;"
-		    						 onmousedown="printConfirmation()"
-		    						  class="blue" pos="0" section="0">Confirmation</button>
+		<button id="confirm"
+		onmousedown="printConfirmation()"
+		class="blue" pos="0" section="0"><span class="txt">Confirmation</span></button>
+</body>
+

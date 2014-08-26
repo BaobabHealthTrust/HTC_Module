@@ -77,15 +77,15 @@ class ClientsController < ApplicationController
 	def counseling
 			@client = Client.find(params[:client_id])
       @protocol = []
-			CounselingQuestion.where("retired = 0 AND child = 0")	.each {|protocol|
+			CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
           @protocol << protocol
           ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
-             CounselingQuestion.where("question_id = #{child.protocol_id}").each{|x|
+             CounselingQuestion.where("question_id = #{child.protocol_id}").order("position ASC").each{|x|
                @protocol << x
              }
           }
       }
-      #raise @protocol.to_yaml
+      redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
 	def testing

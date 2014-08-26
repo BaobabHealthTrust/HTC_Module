@@ -31,6 +31,8 @@ class EncountersController < ApplicationController
 					 elsif type.upcase == "TEXT"
 							value_text = value
 					 elsif type.upcase == "TIME"
+							value_text = value	
+					 elsif type.upcase == "LIST"
 							value_text = value					
 					 end
 					 
@@ -83,7 +85,7 @@ class EncountersController < ApplicationController
               
              
             end
-    if params[:giveconcent].upcase == "YES"
+    if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
        redirect_to  "/referral_consent/#{params[:id]}"
     else
       	redirect_to "/clients/#{params[:id]}" and return

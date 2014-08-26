@@ -81,7 +81,7 @@ class LocationsController < ApplicationController
   end
 
 	def village
-			location = Village.where("name LIKE '%#{params[:search]}%'")
+			location = District.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
       "#{locs.name}"
     end
