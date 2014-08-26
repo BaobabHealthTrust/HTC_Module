@@ -99,7 +99,11 @@
           
 				}
 
-                                //__$("finish").setAttribute("onclick", "setValues()");
+                                if(btnNext){
+                                    btnNext.onclick = function(){
+                                        
+                                     }
+                                }
 			}
 
 			function setValues(){
@@ -124,16 +128,16 @@
 				<input type="hidden" name="observations[][value_text]" value="" />
 
 
-				<input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number">
+				<input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number" />
 				<input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
 				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
 				<input type="hidden" name="observations[][obs_datetime]" />
 		
 
-				<input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number">
+				<input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
 				<input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
 				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-				<input type="hidden" name="observations[][obs_datetime]", value="" />
+				<input type="hidden" name="observations[][obs_datetime]"  value="" />
 							
 			</fieldset>
 
