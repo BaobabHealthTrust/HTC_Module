@@ -108,6 +108,7 @@
                                     btnNext.onclick = function(){
                                         if(document.getElementById("customresult").value == "Positive"){
                                              document.getElementById("give_concent").value = "YES"
+																						 document.forms[0].submit() = false;
                                         }
                                      };
                               //       btnNext.onmousedown = function(){
@@ -130,7 +131,7 @@
 		<fieldset custom=true fs_onLoad="loadCustom();">
 				<legend>HIV Testing</legend>
 						
-                                <input type="hidden" id="give_concent" name="giveconcent" value="" />
+        <input type="hidden" id="give_concent" name="giveconcent" value="" />
 				<input id="customresult" name="observations[][value_text]" type="hidden" value="" />
 				<input type="hidden" name="observations[][concept_name]" value="Result of HIV test" />
 				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />

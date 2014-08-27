@@ -156,9 +156,27 @@ class ClientsController < ApplicationController
 
   def print_summary
     client = Client.find(params[:id])
-		print_string = get_accession_label(client)
+		print_string = get_summary_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
 		#redirect_to '/locations'
+  end
+
+    def get_summary_label(client)
+    current = session[:datetime].to_date rescue Date.today
+    return unless client.patient_id
+    tested = client.tested(current)
+    answer = "No"
+    answer = "Yes" if ! tested.blank?
+    label = ZebraPrinter::StandardLabel.new
+    label.draw_text("Visit Date: #{current.strftime('%d/%m/%Y')}",75, 30, 0, 2, 2, 1, false)
+    label.draw_text("Accession Number: #{client.accession_number}",75, 75, 0, 3, 2, 1, false)
+    label.draw_text("Tested: #{answer}",75, 100, 0, 2, 2, 1, false)
+    if ! tested.blank?
+        status = tested.to_s.split(':')[1]
+        label.draw_text("status: #{status}",75, 130, 0, 2, 2, 1, false)
+    end
+    label.print(2)
+
   end
 
   def get_accession_label(client)

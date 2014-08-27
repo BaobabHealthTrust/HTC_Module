@@ -5,7 +5,13 @@ class Client < ActiveRecord::Base
 	before_save :before_create
 	has_one :person, -> {where voided: 0}, foreign_key: "person_id"
 	has_many :encounters, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
-	
+
+  def tested(date = Date.today)
+     type = EncounterType.where("name = ?", "HIV TESTING").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first
+  end
+
 	def current_state(date=Date.today)
 		ids = []
 		id_name_hash = {}

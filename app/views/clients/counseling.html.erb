@@ -34,7 +34,7 @@
 	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="date" />
 	<% elsif protocol.data_type.upcase == "TIME" %>
 	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
-	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="date" />
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="number" />
 	<% elsif protocol.data_type.upcase == "TEXT" %>
 	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
 	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" />
