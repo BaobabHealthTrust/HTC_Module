@@ -37,7 +37,6 @@ class AdminsController < ApplicationController
       
 			if @protocol.save
 				if child == 1
-					raise params[:parent_protocol].to_yaml
 					@children = ChildProtocol.create(protocol_id: @protocol.id,
             parent_id: params[:parent_protocol])
 				end
