@@ -80,7 +80,7 @@ class ClientsController < ApplicationController
 			CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
           @protocol << protocol
           ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
-             CounselingQuestion.where("question_id = #{child.protocol_id}").order("position ASC").each{|x|
+             CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each{|x|
                @protocol << x
              }
           }
