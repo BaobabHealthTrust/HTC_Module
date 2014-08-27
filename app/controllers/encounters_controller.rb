@@ -151,9 +151,15 @@ class EncountersController < ApplicationController
 
 	def void
 		@encounter = Encounter.find(params[:id])
-
 		@encounter.void
-  
+    (Observation.where("encounter_id = ?", params[:id]) || []).each { |obs|
+        obs.void
+    }
+    (CounselingAnswer.where("encounter_id = ?", params[:id]) || []).each{|answer|
+       answer.voided = 1
+       answer.voided_by = current_user.id
+       answer.save
+    }
 		render :text => "ok"
 	end
   private
