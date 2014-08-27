@@ -1,5 +1,9 @@
+#Dashboard counseling room refresh 60000 = 1 Minute
+refresh_dashboard: 60000
+
 #Name of the HTC facility
 facility_name: kamuzu Central Hospital
 
-#60000 = 1 Minute
-refresh_dashboard: 60000
+#HTC Rooms
+other_htc_rooms: [Reception]
+counseling_rooms: [Room 1, Room 2, Room 3, Room 4]
