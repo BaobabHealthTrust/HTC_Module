@@ -1,12 +1,13 @@
 <html>
   <head>
+    <%= javascript_include_tag 'jquery-1.3.2.min' %>
   <script>
     var cancelDestination = '<%= protocols_path %>';
   </script>
   </head>
 <body>
 <%= form_tag({:action => "new_protocol"}, {:method => "post"}) do %>
-  <fieldset>
+  <fieldset fs_onLoad="addButton();">
    <legend>Add Protocol</legend>
      <br />
       <label for="name">Name</label>
@@ -37,3 +38,13 @@
 <%end%>
 </body>
 </html>
+<script>
+   $(function() {
+     /*
+      btnOuter = document.createElement("div")
+      btnOuter.style.display = "table-cell"
+      btnOuter.innerHTML = '<button id="?" class="button blue" style="width: 65px; height: 60px; min-width: 40px; min-height: 40px; margin: 2px; font-size: 24px;">?</button>'
+      document.getElementById('fixedkeyboard').childNodes[0].lastChild.appendChild(btnOuter);
+      */
+});
+</script>
