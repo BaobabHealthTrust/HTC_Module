@@ -2,16 +2,21 @@ class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy]
 
   def index
-    htc_tags = LocationTag.where("name LIKE '%HTC%'").map(&:location_tag_id)
-    @locations = Location.joins(:location_tag_maps)
-                          .where(:location_tag_map => {:location_tag_id => htc_tags})
+    locations = all_htc_facility_locations
+    
+    @locations = {}
     @side_panel_data = ""
     sp = ""
    	
-   	@locations.each do |l|
+   	locations.each do |l|
+   		tag_id = LocationTagMap.where("location_id = #{l.id}").first.location_tag_id
+   		location_tag = LocationTag.find(tag_id).name
+   		name = l.name.humanize
+   		@locations[l.id] = {name: name, description: location_tag}
+   		
 			@side_panel_data += sp + "#{l.id} : {
 																 	name: '#{l.name.humanize}',
-																 	description: '#{l.description}'
+																 	description: '#{location_tag}'
 																 }"
     	sp = ","   	
    	end
@@ -32,15 +37,19 @@ class LocationsController < ApplicationController
   end
 
   def create
-      loc_params = {                                                     
-                    :name => params[:name],                             
-                    :description => params[:description],
-										:creator => current_user.id                
-                   }
+  	rooms = all_htc_facility_locations.map{|r| r.name.humanize}
+  	redirect_to locations_path and return if rooms.include?(params[:name].humanize)
+    
+    loc_params = {                                                     
+                  :name => params[:name],                             
+                  :description => params[:description],
+									:creator => current_user.id                
+                 }
        
     @location_tag_id = params[:location_tag]
     @location = Location.new(loc_params)
     @location.id = Location.last.id + 1
+    
     if @location.save
     	location_tag_map_params = {
     															:location_id => @location.id,
@@ -54,10 +63,7 @@ class LocationsController < ApplicationController
 			 flash[:alert] = "Failed to created Location: #{location_params[:name]}"
        redirect_to locations_path 
       end
-    else
-
     end
-
   end
 
   def update

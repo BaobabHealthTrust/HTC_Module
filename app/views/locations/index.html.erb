@@ -16,8 +16,8 @@
                 <label for="id">  </label>
 								<select id="id" name="id">
 										<option></option>
-										<%= @locations.each do |loc| %>
-											<option value="<%= loc.id %>"> <%= loc.name.humanize %>; <%= loc.description%></option>
+										<%= @locations.each do |key, loc| %>
+											<option value="<%= key %>"> <%= loc[:name] %>; <%= loc[:description]%></option>
 										<% end %>
 									</select>
                 <br />

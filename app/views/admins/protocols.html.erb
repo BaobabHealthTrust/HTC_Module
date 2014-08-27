@@ -27,7 +27,7 @@
 											@pos = 0
 											@pos = p.position if !p.position.blank?
 										%>
-											<option value="<%= p.id %>">Pos: <%= @pos %>; Question: <%= p.name %> </option>
+											<option value="<%= p.id %>">Pos: <%= @pos %>; <%= p.name %> </option>
 										<% end %>
 									</select>
                 <br />
@@ -80,7 +80,7 @@
 		var l = child.length;
 		
 		for(var i=0; i<l; i++) {
-			child[i].innerHTML = "Pos: " + data[child[i].id].position + "; Question: " + data[child[i].id].name;
+			child[i].innerHTML = "Pos: " + data[child[i].id].position + "; " + data[child[i].id].name;
 			child[i].setAttribute("position",data[child[i].id].position);
 		}
 	}
@@ -139,7 +139,8 @@
 				}
 				
 				setTimeout('__$("'+ id + '").setAttribute("class", "button green");'+
-									 '__$("'+ id + '").innerHTML="Save"',500);
+									 '__$("'+ id + '").innerHTML="Save";' +
+									 'shieldOperator(__$("'+ id + '"));',500);
 			}
 		}
 		xmlhttp.open(method,url,true);

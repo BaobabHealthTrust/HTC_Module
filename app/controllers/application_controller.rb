@@ -53,6 +53,14 @@ class ApplicationController < ActionController::Base
 	helper_method :current_location
 	helper_method :show_counselling_room
 
+
+	def all_htc_facility_locations
+  	htc_tags = ["HTC Counseling Room","Other HTC Room"] 
+  	htc_tags = htc_tags.map{|l| LocationTag.find_by_name(l).location_tag_id}
+    Location.joins(:location_tag_maps)
+            .where(:location_tag_map => {:location_tag_id => htc_tags})
+	end
+	
 	protected 
 	
 	def authenticate_user
