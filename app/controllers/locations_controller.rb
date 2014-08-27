@@ -37,15 +37,19 @@ class LocationsController < ApplicationController
   end
 
   def create
-      loc_params = {                                                     
-                    :name => params[:name],                             
-                    :description => params[:description],
-										:creator => current_user.id                
-                   }
+  	rooms = all_htc_facility_locations.map{|r| r.name.humanize}
+  	redirect_to locations_path and return if rooms.include?(params[:name].humanize)
+    
+    loc_params = {                                                     
+                  :name => params[:name],                             
+                  :description => params[:description],
+									:creator => current_user.id                
+                 }
        
     @location_tag_id = params[:location_tag]
     @location = Location.new(loc_params)
     @location.id = Location.last.id + 1
+    
     if @location.save
     	location_tag_map_params = {
     															:location_id => @location.id,
@@ -59,10 +63,7 @@ class LocationsController < ApplicationController
 			 flash[:alert] = "Failed to created Location: #{location_params[:name]}"
        redirect_to locations_path 
       end
-    else
-
     end
-
   end
 
   def update
