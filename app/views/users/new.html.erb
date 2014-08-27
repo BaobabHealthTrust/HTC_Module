@@ -6,9 +6,14 @@
 	</head>
 
 	<body>
+            
 	<%= form_for User.new do |f| %>
 		<fieldset>
-		<legend>Add User</legend>
+		<legend>Add User
+                <% flash.each do |name, msg| %>
+                  <%= content_tag :div, msg, class: "alert" %>
+                <% end %>
+                </legend>
 		<%= f.label :username %>
 		<%= f.text_field :username, autocomplete: "off" %>
 
@@ -54,3 +59,8 @@
 	<%end%>
 	</body>
 </html>
+<style>
+  .alert {
+    border-color: #f04124;
+}
+</style>
