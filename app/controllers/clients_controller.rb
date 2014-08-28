@@ -45,7 +45,29 @@ class ClientsController < ApplicationController
 			type = type.identifier.split("-")[0].to_i rescue 0
 			identifier = current_number + type
 			
-			@person = Person.create(gender: params[:gender], birthdate: params[:dob], creator: current_user.id)
+			birthdate_estimated = false
+
+			birth_date = params[:dob].split("/")
+			birth_year = birth_date[2]
+			birth_month = birth_date[1]
+			birth_day = birth_date[0]
+
+
+			if birth_month == "?"
+				birthdate_estimated = true
+				birth_month = 7
+			end
+			
+			if birth_day == "?"
+				birthdate_estimated = true
+				birth_day = 1
+			end			
+			
+			birthdate = "#{birth_year}-#{birth_month}-#{birth_day}"
+			
+			@person = Person.create(gender: params[:gender], birthdate: birthdate,
+															birthdate_estimated: birthdate_estimated,
+															creator: current_user.id)
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
