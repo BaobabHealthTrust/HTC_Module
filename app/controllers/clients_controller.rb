@@ -201,7 +201,7 @@ class ClientsController < ApplicationController
 				@creator_name = {}
     @encounters.each do |encounter|
       id = encounter.creator
-      user_name = User.find(id).person.names.first
+      user_name = User.find(id).person.names.first rescue ""
       @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
     end
     
