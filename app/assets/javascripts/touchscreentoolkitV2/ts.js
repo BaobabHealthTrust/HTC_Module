@@ -557,7 +557,7 @@ function showKeyboard(ctrl, disabled, numbers, caps){
                             }
                             
                         }
-                        
+                        overwriteNumber = false;
                         __$('.').setAttribute('class', 'button blue');
                         
                     }
