@@ -29,7 +29,10 @@ class HtcsController < ApplicationController
   
   def swap
 		name = params[:location]
-  	htc_tags = LocationTag.where("name LIKE '%HTC%'").map(&:location_tag_id)
+
+  	htc_tags = ["HTC Counseling Room","Other HTC Room"] 
+  	htc_tags = htc_tags.map{|l| LocationTag.find_by_name(l).location_tag_id}
+  	
   	location = Location.joins(:location_tag_maps).where(:location_tag_map => {:location_tag_id => htc_tags},
   																					 :location => {:name => name}).first
   	
@@ -38,7 +41,13 @@ class HtcsController < ApplicationController
   		redirect_to(:controller => 'htcs', :action => 'swap_desk')
   	else
   		session[:location_id] = location.id
+  		
+  		previous_location = @current_location.name.humanize
+
   		current_location
+  		Location.login_rooms_details[location.name.humanize] = {user_id: @current_user.id}		
+  		Location.login_rooms_details.delete(previous_location)
+
   		redirect_to(:controller => 'htcs', :action => 'index')
   	end
   end
