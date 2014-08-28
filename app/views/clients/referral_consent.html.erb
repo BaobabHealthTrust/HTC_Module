@@ -2,9 +2,99 @@
 <head>
 		<script>
 			var cancelDestination = "/clients/<%= params[:id] %>";
+
+                      function __$(id){
+                            return document.getElementById(id);
+                      }
+                      monthNumber = {}
+                      list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                      for (i = 0; i < list.length; i ++){
+                         monthNumber[list[i]] = i
+                      }
+                      
+                        function verify(id){
+                         if (__$(id).value.length > 0){
+                          if ( !  (__$(id).value.match(/\?/)) ){
+                              var today = new Date();
+                              var value =   __$("textFor" + id).value.split('/');
+                               var day = parseInt(value[0]);
+                               var month = value[1];
+                               var year = parseInt(value[2]);
+
+                               selectedDate = new Date(year,monthNumber[month],day);
+                               if (selectedDate < today){
+                                   __$("textFor" + id).value = "?/?/?"
+                                   confirm()
+                                   clearTimeout(id)
+                               }
+                          }
+                         }
+                            setTimeout("verify('" + id + "')", 50);
+                        }
+
+               function confirm(){
+                     var ele = document.getElementById('cover')
+                      ele.style.display = "inline";
+                      document.body.appendChild(ele);
+
+                      var ele = document.getElementById('popup')
+                      ele.style.display = "inline";
+                      html = "<div style='display:table;'><div style='display:'table-row'>"
+                      html += "<div id='text'>Date is below current day</div></div><div style='display:'table-row'>"
+                      html += '<div id="confirm"><button class="button blue" style="font-size: 20px; height: 60px;" onmousedown="reset();verify(' + 'location' + ');">OK</button></div>'
+                      html += "</div></div>"
+                      ele.innerHTML = "<span>" + html + "</span>"
+                      document.body.appendChild(ele);
+                  }
+
+              function reset(){
+                            ele = document.getElementById('cover')
+                            ele.style.display = "none";
+                            ele = document.getElementById('popup')
+                            ele.style.display = "none";
+                        }
 		</script>
+  <style>
+#text, #confirm, #cancel{
+  display: table-cell;
+}
+#confirm{
+  vertical-align: middle;
+}
+#cancel{
+  vertical-align: middle;
+}
+
+    #popup{
+      -moz-user-select: none;
+      background-color: #A9A9A9;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: black;
+      font-size: 28px;
+      height: 150px;
+      left: 38%;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      top: 5%;
+      width: 250px;
+      z-index: 991;
+    }
+    #cover{
+      display:none;
+      position: absolute;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.5;
+    }
+    
+  </style>
 </head>
-<body>
+<body onload="verify('location')">
 	
 		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
@@ -47,7 +137,7 @@
 											<%= hidden_field_tag("observations[][value_datetime]",       "") %>
 				<br />	
 				<label for="location">Choose convenient Clinic day</label>
-											<input type='text' name="observations[][value_datetime]" id="location" fieldtype="date" condition="__$('clinic').value.length > 0">
+                                <input  type='text' name="observations[][value_datetime]" id="location" fieldtype="date" condition="__$('clinic').value.length > 0">
 											<%= hidden_field_tag("observations[][concept_name]",        "Preferred Clinic Day") %>
     									<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
     									<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
@@ -57,3 +147,7 @@
 	<%end%>
 </body>
 </html>
+  <div id="cover" align="center">
+  </div>
+  <div id="popup" style="display:none">
+  </div>
