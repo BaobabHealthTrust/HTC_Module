@@ -9,13 +9,19 @@
 			.blank {
 				display: none;			
 			}
+                       <% if session[:datetime].to_date != Date.today.to_date %>
+                        #uifield2label{
+                                color:#8B0000;
+                        }
+                        <% end %>
 		</style>
 	</head>
 	<body>
 		<div id="main">
 			
 			<input type="text" id="appname" value="HIV Testing<br/>&<br/>Counselling" />
-			
+
+                       
 			<input type="text" id="datetoday" value= <%= " #{@date}" %> />
 			
 			<input type="text" id="user" value= <%= @current_user.username %> />
