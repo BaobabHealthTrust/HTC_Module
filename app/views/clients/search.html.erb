@@ -2,7 +2,38 @@
 	<head>
 	<script>
 					var cancelDestination = "/htcs";
+
+            function __$(id){
+                    return document.getElementById(id);
+            }
+
+            function doLogin(id){
+
+                    if(btnNext){
+
+                            if(__$(id) && __$(id).value.trim().match(/\$/)){
+
+                               __$(id).value =  __$(id).value.trim().replace(/\$/, "");
+
+                                    clearTimeout(id)
+                                    btnNext.click();
+
+                                    return;
+                            }
+
+                   }
+
+                      setTimeout("doLogin('" + id + "')", 500);
+            }
+
 	</script>
+          <style>
+            <% if @show_counselling_room == true %>
+            #stage, #buttons {
+              display: none ! important;
+            }
+            <% end %>
+          </style>
 	</head>
 <body>
 
@@ -30,7 +61,7 @@
                                   <br />
                            <% else %>
                                   <label for="scan_accession_number" >Accession Number </label>
-                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" >
                            				<input id="add_to_session" type="hidden" name="add_to_session" value="true">
                            <% end %>
 							</fieldset>

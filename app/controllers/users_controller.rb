@@ -47,6 +47,11 @@ class UsersController < ApplicationController
   end
 
   def create
+   exists = User.where("username = ?", user_params[:username])
+    if ! exists.blank?
+      flash[:alert] = "User already exists"
+      redirect_to :back and return
+    end
   	User.current_user_id = session[:user_id];
   	person = Person.create(person_params)
 

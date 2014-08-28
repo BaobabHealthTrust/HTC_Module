@@ -201,7 +201,7 @@ class ClientsController < ApplicationController
 				@creator_name = {}
     @encounters.each do |encounter|
       id = encounter.creator
-      user_name = User.find(id).person.names.first
+      user_name = User.find(id).person.names.first rescue ""
       @creator_name[id] = '(' + (user_name.given_name rescue "").to_s + '. ' + (user_name.family_name rescue "").to_s + ')'
     end
     
@@ -306,7 +306,7 @@ class ClientsController < ApplicationController
 					accession = client.accession_number
 					age = client.person.age
 					gender = client.person.gender
-					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822)
+					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 					residence = PersonAddress.find_by_person_id(id).address1
 					status = client.current_state.name rescue ""
 					last_visit = client.encounters.last.encounter_datetime.to_date
@@ -344,7 +344,7 @@ class ClientsController < ApplicationController
 			datetime = c.encounters.first.encounter_datetime
 			time = datetime.strftime("%I:%M")
 			date = datetime.to_date.to_formatted_s(:rfc822)
-			birth = c.person.birthdate.to_date.to_formatted_s(:rfc822)
+			birth = c.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 			residence = PersonAddress.find_by_person_id(c.id).address1
 
 			last_visit = c.encounters.last.encounter_datetime.to_date
