@@ -198,7 +198,7 @@ class ClientsController < ApplicationController
 		@finalstatus = @client.final_state
 		current_date = session[:datetime].to_date rescue Date.today
 		@encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime >= ? and encounter.encounter_datetime <= ?", 0, params[:client_id], current_date.strftime("%Y-%m-%d 00:00:00"), current_date.strftime("%Y-%m-%d 23:59:59")).includes(:observations).includes(:counseling_answer).order("encounter.encounter_datetime DESC")
-				@creator_name = {}
+    @creator_name = {}
     @encounters.each do |encounter|
       id = encounter.creator
       user_name = User.find(id).person.names.first rescue ""
