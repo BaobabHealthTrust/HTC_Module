@@ -52,6 +52,7 @@ class ClientsController < ApplicationController
 			birth_month = birth_date[1]
 			birth_day = birth_date[0]
 
+			birthdate = params[:dob]
 
 			if birth_month == "?"
 				birthdate_estimated = true
@@ -61,9 +62,9 @@ class ClientsController < ApplicationController
 			if birth_day == "?"
 				birthdate_estimated = true
 				birth_day = 1
-			end			
+			end
 			
-			birthdate = "#{birth_year}-#{birth_month}-#{birth_day}"
+			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
 			
 			@person = Person.create(gender: params[:gender], birthdate: birthdate,
 															birthdate_estimated: birthdate_estimated,
