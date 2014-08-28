@@ -344,7 +344,7 @@ class ClientsController < ApplicationController
 			datetime = c.encounters.first.encounter_datetime
 			time = datetime.strftime("%I:%M")
 			date = datetime.to_date.to_formatted_s(:rfc822)
-			birth = c.person.birthdate.to_date.to_formatted_s(:rfc822)
+			birth = c.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 			residence = PersonAddress.find_by_person_id(c.id).address1
 
 			last_visit = c.encounters.last.encounter_datetime.to_date
