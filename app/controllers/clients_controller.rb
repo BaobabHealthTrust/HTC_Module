@@ -306,7 +306,7 @@ class ClientsController < ApplicationController
 					accession = client.accession_number
 					age = client.person.age
 					gender = client.person.gender
-					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822)
+					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 					residence = PersonAddress.find_by_person_id(id).address1
 					status = client.current_state.name rescue ""
 					last_visit = client.encounters.last.encounter_datetime.to_date
