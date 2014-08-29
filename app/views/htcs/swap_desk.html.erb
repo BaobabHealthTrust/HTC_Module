@@ -10,19 +10,15 @@
 
             function doLogin(id){
 
-                    if(btnNext){
-
                             if(__$(id) && __$(id).value.trim().match(/\$/)){
 
                                __$(id).value =  __$(id).value.trim().replace(/\$/, "");
 
                                     clearTimeout(id)
-                                    btnNext.click();
+                                  document.forms[0].submit();
 
                                     return;
                             }
-
-                   }
 
                       setTimeout("doLogin('" + id + "')", 500);
             }

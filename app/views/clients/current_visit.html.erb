@@ -10,8 +10,8 @@
 
                       var ele = document.getElementById('popup')
                       ele.style.display = "inline";
-                      html = "<div style='display:table;'><div style='display:'table-row'>"
-                      html += "<div id='text'>Continue Voiding?</div></div><div style='display:'table-row'>"
+                      html = "<div style='display:table;'><div style='display:table-row'>"
+                      html += "<div id='text'>Continue Voiding?</div></div><div style='display:table-row'>"
                       html += '<div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
                       html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="voiding(' + node + ')">Yes</button></div>'
                       html += "</div></div>"
@@ -132,21 +132,23 @@ button {
 #cancel{
   vertical-align: left;
 }
-
+#text{
+  height: 70px;
+}
     #popup{
       -moz-user-select: none;
-      background-color: white;
+      background-color: #FEEFB3;
       border: 4px solid #C6C6C6;
       border-radius: 15px 15px 15px 15px;
-      color: black;
+      color: #9F6000;
       font-size: 28px;
-      height: 150px;
+      height: 159px;
       left: 38%;
       padding: 5px;
       position: absolute;
       text-align: center;
       top: 5%;
-      width: 200px;
+      width: 319px;
       z-index: 991;
     }
     #cover{
