@@ -39,11 +39,11 @@
 
                       var ele = document.getElementById('popup')
                       ele.style.display = "inline";
-                      html = "<div style='display:table;'><div style='display:'table-row'>"
-                      html += "<div id='text'>Date is below current day</div></div><div style='display:'table-row'>"
-                      html += '<div id="confirm"><button class="button blue" style="font-size: 20px; height: 60px;" onmousedown="reset();verify(' + 'location' + ');">OK</button></div>'
+                      html = "<div style='display:table;'><div style='display:table-row'>"
+                      html += "<div id='text'>Date is below current day</div></div><div style='display:table-row'>"
+                      html += '<div id="confirm"><button class="button red" style="font-size: 20px; height: 60px;" onmousedown="reset();verify(' + 'location' + ');">OK</button></div>'
                       html += "</div></div>"
-                      ele.innerHTML = "<span>" + html + "</span>"
+                      ele.innerHTML =  html;
                       document.body.appendChild(ele);
                   }
 
@@ -58,6 +58,9 @@
 #text, #confirm, #cancel{
   display: table-cell;
 }
+#text{
+  height: 70px;
+}
 #confirm{
   vertical-align: middle;
 }
@@ -67,18 +70,18 @@
 
     #popup{
       -moz-user-select: none;
-      background-color: #A9A9A9;
+      background-color: #FEEFB3;
       border: 4px solid #C6C6C6;
       border-radius: 15px 15px 15px 15px;
-      color: black;
+      color: #9F6000;
       font-size: 28px;
-      height: 150px;
+      height: 159px;
       left: 38%;
       padding: 5px;
       position: absolute;
       text-align: center;
-      top: 5%;
-      width: 250px;
+      top: 28%;
+      width: 319px;
       z-index: 991;
     }
     #cover{

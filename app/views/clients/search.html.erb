@@ -29,13 +29,16 @@
 	</script>
           <style>
             <% if @show_counselling_room == true %>
-            #stage, #buttons {
-              display: none ! important;
-            }
+              #stage, #btn3, #btn2, #btn1{
+                    display: none ! important;
+              }
+              #buttons{
+                width:10% ! important;
+              }
             <% end %>
           </style>
 	</head>
-<body>
+<body onload="adjust()">
 
 
 <%= form_tag search_results_path do %>
@@ -73,6 +76,12 @@
 
 <script>
 	btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+   function adjust(){
+     <% if @show_counselling_room == true %>
+          node =  document.getElementById('row2').childNodes[0].childNodes[0]
+           node.style.width = "6%"
+      <% end %>
+  }
 </script>
 
 </html>

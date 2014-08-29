@@ -1,3 +1,4 @@
+<html>
 <head>
   	<%= javascript_include_tag 'jquery-1.3.2.min' %>
 	<script>
@@ -28,13 +29,16 @@
 
 	</script>
   <style>
-    #stage, #buttons{
+    #stage, #btn3, #btn2, #btn1{
       display: none ! important;
+}
+#buttons{
+  width:10% ! important;
 }
   </style>
 
 </head>
-
+<body onload="adjust()">
 
 <%= form_tag(swap_path, method: "post")  do %>
 	<fieldset>
@@ -49,3 +53,12 @@
 	
 	
 <% end %>
+</body>
+</html>
+<script>
+  function adjust(){
+     node =  document.getElementById('row2').childNodes[0].childNodes[0]
+     node.style.width = "6%"
+  }
+ 
+</script>
