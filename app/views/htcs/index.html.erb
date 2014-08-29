@@ -9,7 +9,7 @@
 			.blank {
 				display: none;			
 			}
-                       <% if session[:datetime].to_date != Date.today.to_date %>
+                       <% if !session[:datetime].blank? %>
                         #uifield2label{
                                 color:#8B0000;
                         }
@@ -36,7 +36,7 @@
 				
 				<button onmousedown="window.location = '<%= log_out_path %>'">Logout</button>
 
-				<% if session[:datetime].to_date != Date.today.to_date %>
+				<% if !session[:datetime].blank? %>
 					<button onmousedown="window.location = '/admins/set_date'">
 			    Reset Date</button>
 				<% else %>
