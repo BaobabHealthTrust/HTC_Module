@@ -9,7 +9,25 @@ class Client < ActiveRecord::Base
   def tested(date = Date.today)
      type = EncounterType.where("name = ?", "HIV TESTING").first.id
     encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
-                          type, date).order(encounter_datetime: :desc).first
+                          type, date).order(encounter_datetime: :desc).first rescue []
+  end
+
+ def referred(date = Date.today)
+     type = EncounterType.where("name = ?", "REFERRAL CONSENT CONFIRMATION").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first rescue []
+  end
+
+  def counselled(date = Date.today)
+     type = EncounterType.where("name = ?", "COUNSELING").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first rescue []
+  end
+
+  def appointment(date = Date.today)
+     type = EncounterType.where("name = ?", "APPOINTMENT").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first rescue []
   end
 
 	def current_state(date=Date.today)
