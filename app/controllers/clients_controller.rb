@@ -188,17 +188,18 @@ class ClientsController < ApplicationController
     current = session[:datetime].to_date rescue Date.today
     return unless client.patient_id
     tested = client.tested(current)
+    counsel = client.counselled(current)
+    refer = client.referred(current)
+    appointment = client.appointment(current)
     answer = "No"
     answer = "Yes" if ! tested.blank?
     label = ZebraPrinter::StandardLabel.new
-    label.draw_text("Visit Date: #{current.strftime('%d/%m/%Y')}",75, 30, 0, 2, 2, 1, false)
-    label.draw_text("Accession Number: #{client.accession_number}",75, 75, 0, 3, 2, 1, false)
-    label.draw_text("Tested: #{answer}",75, 100, 0, 2, 2, 1, false)
-    if ! tested.blank?
-        status = tested.to_s.split(':')[1]
-        label.draw_text("status: #{status}",75, 130, 0, 2, 2, 1, false)
-    end
-    label.print(2)
+   # label.draw_text("#{current.strftime('%d/%m/%Y')}",575, 30, 0, 2, 1, 2, false)
+     label.draw_barcode(300,30,0,1,4,8,50,false,"#{client.accession_number}")
+    label.draw_line(25,120,800,5)
+    label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
+    label.draw_text("Tested : #{answer}",75, 130, 0, 3, 1, 1, false)
+    label.print(1)
 
   end
 

@@ -26,6 +26,10 @@ class EncountersController < ApplicationController
 							value_text = value if concept_id.blank?
 					 elsif type.upcase == "DATETIME"
 							value_datetime = value
+              if value.match(/\?/)
+                value_text = value
+                value_datetime = nil
+              end
 					 elsif type.upcase == "NUMBER"
 							value_numeric = value
 					 elsif type.upcase == "TEXT"
