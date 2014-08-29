@@ -117,7 +117,7 @@ class EncountersController < ApplicationController
   end
 
 	def write_encounter(encounter_type, person)      
-			current = session[:datetime].to_date.strftime("%Y-%m-%d") rescue Time.now.strftime("%Y-%m-%d %H:%M:%S")
+			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue Time.now.strftime("%Y-%m-%d %H:%M:%S")
 			current_location = @current_location if current_location.nil?	
 			type = EncounterType.find_by_name(encounter_type).id
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,

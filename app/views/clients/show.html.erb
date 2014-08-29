@@ -39,7 +39,7 @@
 				<button onmousedown="window.location = '/client_demographics?client_id=<%= @client.id -%>'">
 				Demographics</button>
 				
-				<% if  session[:datetime].to_date != Date.today.to_date  %>
+				<% if !session[:datetime].blank?  %>
 					<button onmousedown="window.location = '/admins/set_date?client_id=<%= @client.id -%>'">
 			    Reset Date</button>
 				<% else %>
