@@ -63,7 +63,10 @@
 	function create_new_patient() {
    window.location = '<%= new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>'
 	}
-	
+
+   function printAccession(id){
+        window.location = '/clients/print_accession/' + id
+   }
 	function add_to_waiting_list(obj) {
 		window.location = '/clients/' + __$('textForid').value + '/add_to_unallocated';
 	}
@@ -125,7 +128,7 @@
 					btnNext.style.display = "inline-table";
 				<% end %>
 
-						
+					
 				    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +
 				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>';
@@ -167,6 +170,8 @@
 									 "<span class='d dC'> : </span>" +
 									 "<span class='d dR'>" + obj.status  + "</span>";
 						}
+                                                 s += "<br> <br> <button onmousedown='printAccession(" + obj.id + ")' style='margin: 3px; width: 250px; font-size: 24px;'" +
+                                                                   ' class="button green" pos="0" section="1">Accesssion</button>'
 					}
 					else {
 						btnNext.style.display = "none";
