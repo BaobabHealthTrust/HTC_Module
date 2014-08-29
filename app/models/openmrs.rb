@@ -84,6 +84,7 @@ module Openmrs
     obs.concept_id = ConceptName.find_by_name("WORKSTATION LOCATION").concept_id
     obs.value_text = Location.current_location.name
     obs.obs_datetime = self.encounter_datetime
+    obs.date_created = DateTime.now.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
     obs.creator = User.current.id rescue 1
     obs.save
   end
