@@ -310,12 +310,34 @@ class ClientsController < ApplicationController
 				
 				redirect_to "/clients/#{@scanned.patient_id}" and return
 		 else
+		 		
+			
+			birthdate_estimated = false
+
+			birth_date = params[:date_of_birth].split("/")
+			birth_year = birth_date[2]
+			birth_month = birth_date[1]
+			birth_day = birth_date[0]
+
+			birthdate = params[:date_of_birth]
+
+			if birth_month == "?"
+				birthdate_estimated = true
+				birth_month = 7
+			end
+			
+			if birth_day == "?"
+				birthdate_estimated = true
+				birth_day = 1
+			end
+			
+			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
 		 		@clients = Client.find_by_sql("SELECT * FROM patient p
 											INNER JOIN person pe ON pe.person_id = p.patient_id 
 											INNER JOIN person_address pn ON pn.person_id = pe.person_id
 											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
 											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
-											AND DATE(pe.birthdate) = '#{params[:date_of_birth].to_date}' AND p.voided = 0
+											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
 				
