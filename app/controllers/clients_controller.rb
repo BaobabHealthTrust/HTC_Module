@@ -76,7 +76,7 @@ class ClientsController < ApplicationController
 															patient_id: @client.id, 
 															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
 			
-			current = session[:datetime] rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
+			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
       #print_new_accession(@client.patient_id)
 		end
@@ -357,8 +357,8 @@ class ClientsController < ApplicationController
 					last_visit = client.encounters.last.encounter_datetime.to_date
 																				.to_formatted_s(:rfc822) rescue nil
 					last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
-					
-					days_since_last_visit = (session[:datetime].to_date - last_visit.to_date).to_i
+					date_today = session[:datetime].to_date rescue Date.today.to_date
+					days_since_last_visit = (date_today - last_visit.to_date).to_i
 					
 					@clients_info << { id: id, accession: accession,
 														 birth: birth, gender: gender, residence: residence}
@@ -395,7 +395,8 @@ class ClientsController < ApplicationController
 			last_visit = c.encounters.last.encounter_datetime.to_date
 																		.to_formatted_s(:rfc822) rescue nil
 			last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
-			days_since_last_visit = (session[:datetime].to_date - last_visit.to_date).to_i
+			date_today = session[:datetime].to_date rescue Date.today.to_date
+			days_since_last_visit = (date_today - last_visit.to_date).to_i
 			
      	@waiting << { id: c.id, accession_number: c.accession_number,
      							  age: c.person.age, gender: c.person.gender,
@@ -451,7 +452,7 @@ class ClientsController < ApplicationController
 			
 			current_location = @current_location if current_location.nil?
 			encounter = Encounter.create(encounter_type: type, patient_id: person.id,
-									location_id: current_location.id, encounter_datetime: current.to_date.strftime("%Y-%m-%d %H:%M:%S"),
+									location_id: current_location.id, encounter_datetime: current.to_datetime.strftime("%Y-%m-%d %H:%M:%S"),
 									creator: current_user.id)
 	end
 
