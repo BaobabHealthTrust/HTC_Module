@@ -187,10 +187,18 @@ class ClientsController < ApplicationController
     def get_summary_label(client)
     current = session[:datetime].to_date rescue Date.today
     return unless client.patient_id
+    coulnsel = "No"
+    refer = "No"
+    appointment = "No"
     tested = client.tested(current)
-    counsel = client.counselled(current)
-    refer = client.referred(current)
-    appointment = client.appointment(current)
+    counsel = "Yes" if ! client.counselled(current).blank?
+    refer = "Yes" if ! client.referred(current).blank?
+     if ! client.appointment(current).blank?
+       appointment = "Yes"
+       concept = ConceptName.where("name = 'appointment date'").last.concept_id
+       encounter = client.appointment(current).encounter_id
+       date = Observation.where("concept_id= ? AND encounter_id = ?", concept, encounter).first.to_s.split(':')[1]
+     end
     answer = "No"
     answer = "Yes" if ! tested.blank?
     label = ZebraPrinter::StandardLabel.new
@@ -199,6 +207,12 @@ class ClientsController < ApplicationController
     label.draw_line(25,120,800,5)
     label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
     label.draw_text("Tested : #{answer}",75, 130, 0, 3, 1, 1, false)
+    label.draw_text("Counselled : #{counsel}",300, 130, 0, 3, 1, 1, false)
+    label.draw_text("Referred : #{refer}",75, 150, 0, 3, 1, 1, false)
+    label.draw_text("Appointment : #{appointment}",75, 180, 0, 3, 1, 1, false)
+    if appointment == "Yes"
+      label.draw_text("  #{date}",300, 180, 0, 3, 1, 1, false)
+    end
     label.print(1)
 
   end
@@ -211,7 +225,7 @@ class ClientsController < ApplicationController
     label.font_vertical_multiplier = 2
     label.left_margin = 50
     label.draw_barcode(50,180,0,1,5,15,120,false,"#{client.accession_number rescue ''}")
-    label.draw_multi_text("Accession Number")
+    label.draw_multi_text("Accession Number     #{client.accession_number}")
     label.print(1)
   end
 
