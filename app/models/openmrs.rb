@@ -51,7 +51,7 @@ module Openmrs
 
   def before_create
     #super
-    self.location_id = Location.current_location.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_location != nil
+    #self.location_id = Location.current_location.id if self.attributes.has_key?("location_id") and (self.location_id.blank? || self.location_id == 0) and Location.current_location != nil
     self.creator = User.current.id if self.attributes.has_key?("creator") and (self.creator.blank? || self.creator == 0)and User.current != nil
     self.date_created = DateTime.now.to_datetime.strftime("%Y-%m-%d") if self.attributes.has_key?("date_created")
     self.uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid'] if self.attributes.has_key?("uuid")
@@ -78,12 +78,14 @@ module Openmrs
   end 
   
   def add_location_obs
-    obs = Ob.new()
+    obs = Observation.new()
     obs.person_id = self.patient_id
     obs.encounter_id = self.id
     obs.concept_id = ConceptName.find_by_name("WORKSTATION LOCATION").concept_id
     obs.value_text = Location.current_location.name
     obs.obs_datetime = self.encounter_datetime
+    obs.date_created = DateTime.now.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    obs.creator = User.current.id rescue 1
     obs.save
   end
    

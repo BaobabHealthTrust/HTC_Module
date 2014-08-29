@@ -4,6 +4,8 @@ class Encounter < ActiveRecord::Base
   include Openmrs
 	
 	before_save :before_create
+	after_create :after_create
+
 	belongs_to :client, -> { where retired: 0}, foreign_key: "patient_id"
 	has_many :observations, -> {where voided: 0}, dependent: :destroy
 	has_many :counseling_answer, -> {where voided: 0}
@@ -20,6 +22,10 @@ class Encounter < ActiveRecord::Base
   end
 
   def after_save
+    self.add_location_obs
+  end
+  
+  def after_create
     self.add_location_obs
   end
 

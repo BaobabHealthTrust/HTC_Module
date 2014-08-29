@@ -2,6 +2,8 @@
     <head>        
         <title>Calendar</title>
         <script type="text/javascript">
+						var cancelDestination = "/clients/<%= params[:id] %>";
+        
             var sel = {};
             var today = new Date();
             var y = today.getFullYear();
