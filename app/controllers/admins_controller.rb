@@ -81,7 +81,7 @@ class AdminsController < ApplicationController
 				list = nil
 				child = 0
 				list = params[:listtype] if ! params[:listtype].blank?
-				child = 1 if ! params[:parent].blank?
+				child = 1 if ! params[:parent_protocol].blank?
 				@protocol = CounselingQuestion.create(name: params[:name],
 										description: params[:description], data_type: params[:datatype],
 										retired: 0, creator: current_user.id, list_type: list,
@@ -89,7 +89,7 @@ class AdminsController < ApplicationController
         if child == 1
          # raise params[:parent].to_yaml
 					@children = ChildProtocol.create(protocol_id: @protocol.id,
-            parent_id: params[:parent])
+            parent_id: params[:parent_protocol])
 				end
 				redirect_to protocols_path and return
 			end
