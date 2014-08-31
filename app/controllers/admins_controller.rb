@@ -28,6 +28,7 @@ class AdminsController < ApplicationController
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
 			@protocol.data_type = params[:datatype]
+      @protocol.date_updated = Date.today
 			list = nil
 			child = 0
 			list = params[:listtype] if ! params[:listtype].blank?
@@ -85,7 +86,7 @@ class AdminsController < ApplicationController
 				@protocol = CounselingQuestion.create(name: params[:name],
 										description: params[:description], data_type: params[:datatype],
 										retired: 0, creator: current_user.id, list_type: list,
-									  child: child)
+									  child: child, date_created: Date.today)
         if child == 1
          # raise params[:parent].to_yaml
 					@children = ChildProtocol.create(protocol_id: @protocol.id,
