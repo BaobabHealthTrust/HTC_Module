@@ -15,7 +15,7 @@ class ClientsController < ApplicationController
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
 			@names = PersonName.find_by_person_id(@client.id)
 			person = Person.find(@client.id)
-			@status  = @client.current_state 
+			@status  = @client.current_state(current_date) 
 			@firststatus  = @client.first_state rescue "NaN"
 			@age = person.age(current_date)
 			
@@ -215,11 +215,11 @@ class ClientsController < ApplicationController
   end
 
 	def current_visit
+		current_date = session[:datetime].to_date rescue Date.today
 		@client = Client.find(params[:client_id])
-		@status  = @client.current_state rescue "NaN"
+		@status  = @client.current_state(current_date) rescue "NaN"
 		@firststatus  = @client.first_state rescue []
 		@finalstatus = @client.final_state
-		current_date = session[:datetime].to_date rescue Date.today
 		@encounters = Encounter.where("encounter.voided = ? and patient_id = ? and encounter.encounter_datetime >= ? and encounter.encounter_datetime <= ?", 0, params[:client_id], current_date.strftime("%Y-%m-%d 00:00:00"), current_date.strftime("%Y-%m-%d 23:59:59")).includes(:observations).includes(:counseling_answer).order("encounter.encounter_datetime DESC")
     @creator_name = {}
     @encounters.each do |encounter|
@@ -284,13 +284,17 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
+		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
-		 if ! params[:accession_number].blank? || ! params[:barcode].blank?
+
+		 if !params[:accession_number].blank? || !params[:barcode].blank?
+
 				accession = params[:barcode] if  ! params[:barcode].blank?
 				accession = params[:accession_number] if ! params[:accession_number].blank?
 
 			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
+
 				if @accession.blank?
 					flash[:notice] = "Invalid accession number...."
 					redirect_to "/search" and return
@@ -299,8 +303,8 @@ class ClientsController < ApplicationController
 				@scanned = Client.find(@accession.patient_id)
 				
 				if params[:add_to_session] =="true"
-					if !@scanned.current_state.blank?
-						if @scanned.current_state.name == "IN WAITING"
+					if !@scanned.current_state(current_date).blank?
+						if @scanned.current_state(current_date).name == "IN WAITING"
 						 assign_to_counseling_room(@scanned)
 						end
 					else
@@ -353,7 +357,7 @@ class ClientsController < ApplicationController
 					gender = client.person.gender
 					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 					residence = PersonAddress.find_by_person_id(id).address1
-					status = client.current_state.name rescue ""
+					status = client.current_state(current_date).name rescue ""
 					last_visit = client.encounters.last.encounter_datetime.to_date
 																				.to_formatted_s(:rfc822) rescue nil
 					last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
@@ -376,13 +380,14 @@ class ClientsController < ApplicationController
 	end
 	
 	def waiting_list
+		 current_date = session[:datetime].to_date rescue Date.today.to_date
      encounter_type_id = EncounterType.find_by_name('IN WAITING').id
 		 @clients = Client.joins(:encounters)
                       .where("encounter_type = #{encounter_type_id} AND
-                              DATE(encounter_datetime) = '#{Date.today}'")
+                              DATE(encounter_datetime) = ?", current_date)
                               .order('encounter_datetime DESC')
-                              
-     @clients = @clients.reject{|c| c.current_state.name != "IN WAITING"} rescue []
+
+     @clients = @clients.reject{|c| c.current_state(current_date).name != "IN WAITING"} rescue []
      
      @waiting = []
      @clients.each do |c|
@@ -448,6 +453,7 @@ class ClientsController < ApplicationController
 
 
 	def write_encounter(encounter_type, person, current = DateTime.now)
+			current = session[:datetime] if !session[:datetime].blank?
 			type = EncounterType.find_by_name(encounter_type).id
 			
 			current_location = @current_location if current_location.nil?
