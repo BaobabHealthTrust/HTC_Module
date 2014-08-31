@@ -115,7 +115,7 @@ class HtcsController < ApplicationController
   	@agv_agv_waiting_time = distance_between(@agv_agv_waiting_time)
   	
   	@total_on_waiting_list = waiting_list_total rescue 0
-  	@past_total_waiting_list = past_waiting_list_total rescue 0
+  	@todays_bookings = todays_booking  rescue 0
   	render layout: false
   end
   
@@ -195,7 +195,7 @@ class HtcsController < ApplicationController
 				                    DATE(encounter_datetime) = '#{date}'")
 				                    .order('encounter_datetime DESC')
 				                    
-		@clients = @clients.reject{|c| c.current_state.name != "IN WAITING"} rescue []
+		@clients = @clients.reject{|c| c.current_state(date).name != "IN WAITING"} rescue []
 		@clients.count
 	end
 
@@ -214,4 +214,26 @@ class HtcsController < ApplicationController
 			WHERE waiting.encounter_type = #{encounter_type_id}
 		").count
 	end
+	
+	def todays_booking
+		date = session[:datetime].to_date rescue Date.today
+		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
+		
+		booking_list = Observation.find_by_sql("
+			SELECT  todays_bookings.*, lastest_encounter_date.encounter_datetime
+				FROM (
+							SELECT person_id, value_datetime
+								FROM obs
+								WHERE concept_id = #{concept_id} AND DATE(value_datetime) = '#{date}' AND voided=0) AS todays_bookings
+					LEFT JOIN (
+							SELECT patient_id, MAX(encounter_datetime) AS encounter_datetime
+								FROM encounter
+								WHERE voided=0
+							GROUP BY patient_id) AS lastest_encounter_date
+						ON todays_bookings.person_id=lastest_encounter_date.patient_id
+			WHERE todays_bookings.value_datetime > lastest_encounter_date.encounter_datetime
+		")
+		booking_list.count
+	end
+
 end
