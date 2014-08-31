@@ -302,7 +302,7 @@ class ClientsController < ApplicationController
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
 				
-				if params[:add_to_session] =="true"
+				if params[:add_to_session] =="true" || !params[:barcode].blank?
 					if !@scanned.current_state(current_date).blank?
 						if @scanned.current_state(current_date).name == "IN WAITING"
 						 assign_to_counseling_room(@scanned)
