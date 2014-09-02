@@ -494,6 +494,36 @@ class ClientsController < ApplicationController
 									encounter_datetime: current.to_datetime.strftime("%Y-%m-%d %H:%M:%S"),
 									creator: current_user.id)
 	end
+	
+  def total_bookings
+    date = params[:date].to_date
+    date = Date.today.to_date if date.blank?
+    encounter_type = EncounterType.find_by_name('APPOINTMENT')
+    concept_id = ConceptName.find_by_name('APPOINTMENT DATE').concept_id
+
+    start_date = date.strftime('%Y-%m-%d 00:00:00')
+    end_date = date.strftime('%Y-%m-%d 23:59:59')
+
+    appointments = Observation.find_by_sql("
+			SELECT  todays_bookings.*, lastest_encounter_date.encounter_datetime
+				FROM (
+							SELECT person_id, value_datetime
+								FROM obs
+								WHERE concept_id = #{concept_id} AND value_datetime >= '#{start_date}' AND value_datetime <= '#{end_date}' AND voided=0) AS todays_bookings
+					LEFT JOIN (
+							SELECT patient_id, MAX(encounter_datetime) AS encounter_datetime
+								FROM encounter
+								WHERE voided=0
+							GROUP BY patient_id) AS lastest_encounter_date
+						ON todays_bookings.person_id=lastest_encounter_date.patient_id
+			WHERE todays_bookings.value_datetime > lastest_encounter_date.encounter_datetime
+		")
+ 
+    count = appointments.count unless appointments.blank?
+    count = '0' if count.blank?
+
+    render :text => (count.to_i >= 0 ? {params[:date] => count}.to_json : 0)
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
