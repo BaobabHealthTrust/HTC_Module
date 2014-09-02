@@ -1,9 +1,13 @@
-#Dashboard counseling room refresh 60000 = 1 Minute
+#	Dashboard counseling room refresh 60000 = 1 Minute
 refresh_dashboard: 60000
 
-#Name of the HTC facility
+#	Name of the HTC facility
 facility_name: kamuzu Central Hospital
 
-#HTC Rooms
+# HTC Rooms
 other_htc_rooms: [Reception]
 counseling_rooms: [Room 1, Room 2, Room 3, Room 4]
+
+# Calendar settings
+clinic.holidays: '1900-12-25,1900-03-03,2014-09-03'
+clinic.days: ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", ""]

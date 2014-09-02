@@ -56,10 +56,8 @@
 					  var globalDate;
 
 						<%
-						#clinic_holidays = CoreService.get_global_property_value('clinic.holidays') || '1900-12-25,1900-03-03'
-						clinic_holidays = "1900-12-25,1900-03-03".html_safe
-						@clinic_days = [] #CoreService.get_global_property_value('clinic.days') rescue []
-						#@clinic_days = CoreService.get_global_property_value('peads.clinic.days') rescue [] if PatientService.age(@patient.person).to_i <= 14
+						clinic_holidays = get_global_property_value('clinic.holidays')
+						@clinic_days = get_global_property_value('clinic.days') rescue []
 						days = []
 						(@clinic_days || []).include?('Sunday')?days.push("Sunday"):days.push("")
 						(@clinic_days || []).include?('Monday')?days.push("Monday"):days.push("")
@@ -71,7 +69,7 @@
 						clinic_holidays = clinic_holidays.split(',').to_json.html_safe
 						 
 						if @clinic_days.blank?
-							 days = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", ""]
+							 days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 						end
 						%>
 						
