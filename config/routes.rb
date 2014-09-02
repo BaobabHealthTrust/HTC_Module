@@ -66,6 +66,8 @@ HTCModule::Application.routes.draw do
 
 	get "clients/last_name/:id" => "clients#last_name"
 	
+	get "total_bookings" => "clients#total_bookings"
+	
 	get "waiting_list" => "clients#waiting_list"
 	#post "unallocated_clients" => "clients#unallocated_clients"
 	
