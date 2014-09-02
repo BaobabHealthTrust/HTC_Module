@@ -97,23 +97,25 @@ class Client < ActiveRecord::Base
 														identifier_type, self.id]).identifier rescue ""
 	end
 	
-	def has_booking(date)
+	def has_booking
 		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
 		
 		Observation.find_by_sql("
-			SELECT  todays_bookings.*, lastest_encounter_date.encounter_datetime
+			SELECT  last_appointment.*, last_encounter.encounter_datetime
 				FROM (
-							SELECT person_id, value_datetime
+							SELECT person_id, concept_id, MAX(value_datetime) AS value_datetime
 								FROM obs
-								WHERE person_id = #{self.id} AND concept_id = #{concept_id}
-									AND DATE(value_datetime) = '#{date}' AND voided=0) AS todays_bookings
+								WHERE person_id = #{self.id} AND concept_id=#{concept_id} AND voided=0
+								GROUP BY person_id
+							) AS last_appointment
 					LEFT JOIN (
 							SELECT patient_id, MAX(encounter_datetime) AS encounter_datetime
 								FROM encounter
 								WHERE voided=0
-							GROUP BY patient_id) AS lastest_encounter_date
-						ON todays_bookings.person_id=lastest_encounter_date.patient_id
-			WHERE todays_bookings.value_datetime > lastest_encounter_date.encounter_datetime
-		") rescue nil
+								GROUP BY patient_id
+							) AS last_encounter
+					ON last_appointment.person_id=last_encounter.patient_id
+					WHERE last_appointment.value_datetime > last_encounter.encounter_datetime
+		").first rescue nil
 	end
 end
