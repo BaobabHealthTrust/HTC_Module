@@ -379,6 +379,14 @@ class ClientsController < ApplicationController
 					date_today = session[:datetime].to_date rescue Date.today.to_date
 					days_since_last_visit = (date_today - last_visit.to_date).to_i
 					
+					has_booking = false
+					appointment_date = client.has_booking.value_datetime rescue nil
+					
+					if !appointment_date.blank?
+						has_booking = true
+						appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+					end
+					
 					@clients_info << { id: id, accession: accession,
 														 birth: birth, gender: gender, residence: residence}
 					
@@ -386,7 +394,8 @@ class ClientsController < ApplicationController
 											accession_number: '#{accession}', status: '#{status}',
 											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
 											birthDate: '#{birth}', residence: '#{residence.humanize}',
-											days_since_last_visit: '#{days_since_last_visit}'}"
+											days_since_last_visit: '#{days_since_last_visit}',
+											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
 					sp = ','
 				end
 				
@@ -431,6 +440,14 @@ class ClientsController < ApplicationController
      @w = ""
      @side_panel_date = "";
      
+		 has_booking = false
+		 appointment_date = client.has_booking.value_datetime rescue nil
+
+		 if !appointment_date.blank?
+		 	has_booking = true
+		 	appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+		 end
+     
 			@waiting.each do |i|
 				@w += sp + "{ id: #{i[:id]}, accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
@@ -442,7 +459,8 @@ class ClientsController < ApplicationController
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
 										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}',
-										days_since_last_visit: '#{i[:days_since_last_visit]}'}"
+										days_since_last_visit: '#{i[:days_since_last_visit]}',
+										has_booking: #{has_booking}, appointment_date: '#{appointment_date}' }"
 				sp = ','
 			end
 
