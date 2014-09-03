@@ -124,6 +124,10 @@ class ClientsController < ApplicationController
   		@start_week_date = today - 1.week
   		@initial_date =  today + 1.day
   		@end_week_date = today + 2.years
+
+  		@waiting_list = nil
+  		@waiting_list = true if !params[:waiting_list].blank?
+
       render :layout => false
   end
   
@@ -473,11 +477,13 @@ class ClientsController < ApplicationController
   end
   
   def remove_from_waiting_list
+  	date = session[:datetime].to_date rescue Date.today.to_date
   	encounter_type_id = EncounterType.find_by_name('IN WAITING').id
 		@client.encounters.where("encounter_type = #{encounter_type_id} AND
-															DATE(encounter_datetime) = '#{Date.today}'")
+															DATE(encounter_datetime) = '#{date}'")
 											.each {|e| e.void(reason = "cancelled HTC encounter")}
-		redirect_to waiting_list_path
+											
+		redirect_to "/clients/appointment?id=" + @client.id.to_s + "&waiting_list=true" and return
   end
   
   def assign_to_counseling_room(client)

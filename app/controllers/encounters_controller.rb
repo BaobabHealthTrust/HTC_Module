@@ -89,6 +89,11 @@ class EncountersController < ApplicationController
               
              
             end
+    
+    if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
+    		redirect_to waiting_list_path and return
+    end
+    
     if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
        redirect_to  "/referral_consent/#{params[:id]}"
     else
