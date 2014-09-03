@@ -263,7 +263,12 @@
 				</script>
 				
         <script type="text/javascript">
-						var cancelDestination = "/clients/<%= params[:id] %>";
+						<% if !@waiting_list.blank? %>
+							var cancelDestination = "<%= waiting_list_path %>";
+						<% else %>
+							var cancelDestination = "/clients/<%= params[:id] %>";
+						<% end %>
+						
         
             var sel = {};
             var today = new Date();
@@ -350,7 +355,11 @@
 																	
 										<%= hidden_field_tag("observations[][concept_name]", "Appointment date") %>
 										<%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
-										
+
+										<% if !@waiting_list.blank? %>
+												<%= hidden_field_tag("waiting_list", true) %>
+										<% end %>
+
 										<legend> Calendar </legend>
 
                     <label for="initial_date"> Calendar </label>
