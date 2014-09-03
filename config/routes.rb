@@ -9,6 +9,8 @@ HTCModule::Application.routes.draw do
 
 	get "client_demographics" => "clients#demographics"
 	post "client_demographics" => "clients#demographics"
+
+  get "clients/demographics_edit/:id" => "clients#demographics_edit"
   
   get "referral_consent/:id" => "clients#referral_consent"
 
