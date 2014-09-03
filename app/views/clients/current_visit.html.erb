@@ -10,12 +10,12 @@
 
                       var ele = document.getElementById('popup')
                       ele.style.display = "inline";
-                      html = "<div style='display:table;'><div style='display:table-row'>"
-                      html += "<div id='text'>Continue Voiding?</div></div><div style='display:table-row'>"
-                      html += '<div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
+                      html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+                      html += "<div id='text'>Continue Voiding?</div></div><div style='display:table-row;width:100%;'>"
+                      html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
                       html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="voiding(' + node + ')">Yes</button></div>'
-                      html += "</div></div>"
-                      ele.innerHTML = "<span>" + html + "</span>"
+                      html += "</div></div></div></div></div>"
+                      ele.innerHTML =  html;
                       document.body.appendChild(ele);
 /*
                       var newDiv = document.createElement('div');
@@ -77,6 +77,14 @@
 			.arrow-right:hover{
 				border-left: 40px solid #999; 
 			}
+
+* {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
 .red_cancel {
     background-color: #a90329;
     background-image: linear-gradient(to bottom, #a90329, #6d0019);
@@ -128,12 +136,15 @@ button {
 }
 #confirm{
   vertical-align: right;
+    width:50%;
 }
 #cancel{
   vertical-align: left;
+  width:50%;
 }
 #text{
   height: 70px;
+    width:100%;
 }
     #popup{
       -moz-user-select: none;
@@ -180,7 +191,7 @@ button {
 }
 		</style>
 	</head>
-	<body style="margin: 10px; overflow: auto; font-family: Helvetica;">
+        <body style="margin: 10px; overflow: auto; font-family: Helvetica;">
 		<div style="display: table; width: 100%; border: 1px solid #eee; height: 99%;">
 			<div style="display: table-row;">
 				<div style="display: table-cell; vertical-align: middle; padding-left: 10px; width: 100px;">
@@ -192,7 +203,7 @@ button {
 				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 0px 0px 25px 25px;hieght:200px;overflow: auto;">
 					
 					<div style=" margin: auto; margin-bottom: 40px; width: 100%; vertical-align: middle; ">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;">Today's Visit Details</label>
+						<label style="color: #5679c1; font-weight: normal; font-size: 24px;" class="noselect" >Today's Visit Details</label>
 					</div>
 					
 					<div style="display: table; margin: auto;">
