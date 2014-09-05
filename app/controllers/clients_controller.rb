@@ -97,6 +97,10 @@ class ClientsController < ApplicationController
 		 		@residence = PersonAddress.find_by_person_id(@client.id).address1
 	end
 
+  def demographics_edit
+      	@client = Client.find(params[:id])
+  end
+  
 	def counseling
 			@client = Client.find(params[:client_id])
       @protocol = []
@@ -140,6 +144,7 @@ class ClientsController < ApplicationController
 	end
 
 	def village
+      return if params[:search].blank?
 			location = Village.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
       "#{locs.name}"
@@ -148,6 +153,7 @@ class ClientsController < ApplicationController
 	end
 	
 	def first_name
+     return if params[:search].blank?
 			person = PersonName.where("given_name LIKE '%#{params[:search]}%'")
 			person = person.map do |locs|
       "#{locs.given_name}"
@@ -156,6 +162,7 @@ class ClientsController < ApplicationController
 	end
 
 	def last_name
+      return if params[:search].blank?
 			person = PersonName.where("family_name LIKE '%#{params[:search]}%'")
 			person = person.map do |locs|
       "#{locs.family_name}"
