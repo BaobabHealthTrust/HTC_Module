@@ -115,7 +115,7 @@ class Client < ActiveRecord::Base
 								GROUP BY patient_id
 							) AS last_encounter
 					ON last_appointment.person_id=last_encounter.patient_id
-					WHERE last_appointment.value_datetime > last_encounter.encounter_datetime
+					WHERE last_appointment.value_datetime >= last_encounter.encounter_datetime
 		").first rescue nil
 	end
 end

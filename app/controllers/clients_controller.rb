@@ -431,26 +431,28 @@ class ClientsController < ApplicationController
 			date_today = session[:datetime].to_date rescue Date.today.to_date
 			days_since_last_visit = (date_today - last_visit.to_date).to_i
 			
+		 has_booking = false
+		 appointment_date = c.has_booking.value_datetime rescue nil
+
+		 if !appointment_date.blank?
+		 	has_booking = true
+		 	appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+		 end
+			
      	@waiting << { id: c.id, accession_number: c.accession_number,
      							  age: c.person.age, gender: c.person.gender,
      							  datetime: datetime, date: date, time: time,
      							  birthDate: birth, address: residence,
-     							  days_since_last_visit: days_since_last_visit}
+     							  days_since_last_visit: days_since_last_visit,
+     							  has_booking: has_booking, appointment_date: appointment_date
+     							 }
      end
      
      @waiting = @waiting.sort{|a, b| a[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime <=> b[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime}
      
      sp = ""
      @w = ""
-     @side_panel_date = "";
-     
-		 has_booking = false
-		 appointment_date = client.has_booking.value_datetime rescue nil
-
-		 if !appointment_date.blank?
-		 	has_booking = true
-		 	appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
-		 end
+     @side_panel_date = ""
      
 			@waiting.each do |i|
 				@w += sp + "{ id: #{i[:id]}, accession_number: '#{i[:accession_number]}',
@@ -464,7 +466,7 @@ class ClientsController < ApplicationController
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
 										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}',
 										days_since_last_visit: '#{i[:days_since_last_visit]}',
-										has_booking: #{has_booking}, appointment_date: '#{appointment_date}' }"
+										has_booking: #{i[:has_booking]}, appointment_date: '#{i[:appointment_date]}' }"
 				sp = ','
 			end
 
