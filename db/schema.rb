@@ -12,10 +12,14 @@
 # It's strongly recommended that you check this file into your version control system.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20140722145413) do
 =======
 ActiveRecord::Schema.define(version: 20140801091928) do
 >>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
+=======
+ActiveRecord::Schema.define(version: 20140822141340) do
+>>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -71,6 +75,19 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "active_list_type", ["creator"], name: "user_who_created_active_list_type", using: :btree
   add_index "active_list_type", ["retired_by"], name: "user_who_retired_active_list_type", using: :btree
 
+<<<<<<< HEAD
+=======
+  create_table "child_protocol", primary_key: "child_id", force: true do |t|
+    t.integer "protocol_id"
+    t.integer "parent_id"
+  end
+
+  create_table "child_protocols", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+>>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "clob_datatype_storage", force: true do |t|
     t.string "uuid",  limit: 38,         null: false
     t.text   "value", limit: 2147483647, null: false
@@ -467,21 +484,27 @@ ActiveRecord::Schema.define(version: 20140801091928) do
     t.integer  "question_id"
     t.integer  "patient_id"
     t.integer  "encounter_id"
-    t.integer  "value_coded",                  null: false
+    t.integer  "value_coded"
+    t.integer  "value_numeric"
+    t.text     "value_text"
+    t.datetime "value_datetime"
     t.datetime "date_created"
     t.datetime "date_updated"
     t.integer  "creator"
-    t.boolean  "voided",       default: false, null: false
+    t.boolean  "voided",         default: false, null: false
     t.integer  "voided_by"
   end
 
   create_table "counseling_question", primary_key: "question_id", force: true do |t|
     t.text     "name"
     t.text     "description"
+    t.integer  "child",                   default: 0, null: false
+    t.string   "data_type",    limit: 25
+    t.text     "list_type"
     t.datetime "date_created"
     t.datetime "date_updated"
-    t.integer  "retired",      default: 0, null: false
-    t.integer  "creator",                  null: false
+    t.integer  "retired",                 default: 0, null: false
+    t.integer  "creator",                             null: false
   end
 
 >>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
@@ -1640,12 +1663,15 @@ ActiveRecord::Schema.define(version: 20140801091928) do
     t.datetime "updated_at"
   end
 
+<<<<<<< HEAD
   create_table "person_names", force: true do |t|
 >>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+=======
+>>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "privilege", primary_key: "privilege", force: true do |t|
     t.string "description", limit: 250, default: "", null: false
     t.string "uuid",        limit: 38
@@ -1777,6 +1803,7 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   add_index "provider_attribute_type", ["uuid"], name: "uuid", unique: true, using: :btree
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   create_table "providers", force: true do |t|
     t.datetime "created_at"
@@ -1784,6 +1811,8 @@ ActiveRecord::Schema.define(version: 20140801091928) do
   end
 
 >>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
+=======
+>>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "region", primary_key: "region_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "creator",       default: 0,     null: false

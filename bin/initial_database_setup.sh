@@ -35,7 +35,7 @@ mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/openmrs_
 #mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < ../db/data/${SITE}/${SITE}.sql
 mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/malawi_regions.sql
 
-mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/locations.sql
+#mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/locations.sql
 mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/protocols.sql
 
 echo "After completing database setup"

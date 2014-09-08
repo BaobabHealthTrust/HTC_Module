@@ -19,7 +19,7 @@ class HtcsController < ApplicationController
 		         .where("encounter_type = #{encounter_type_id} AND
 		                 DATE(encounter_datetime) = ?",date).count
   end
-  
+
   def swap_desk
 		htc_tags = LocationTag.where("name LIKE '%HTC%'").map(&:location_tag_id)
 		@locations = Location.joins(:location_tag_maps)
@@ -101,10 +101,12 @@ class HtcsController < ApplicationController
 			
   	end
   	
+  	
   	@agv_agv_waiting_time = @agv_agv_waiting_time/@avg_count rescue 0
   	@agv_agv_waiting_time = distance_between(@agv_agv_waiting_time)
   	
   	@total_on_waiting_list = waiting_list_total rescue 0
+  	@past_total_waiting_list = past_waiting_list_total rescue 0
   	render layout: false
   end
   
@@ -188,4 +190,19 @@ class HtcsController < ApplicationController
 		@clients.count
 	end
 
+  def past_waiting_list_total
+		date = session[:datetime].to_date rescue Date.today
+		encounter_type_id = EncounterType.find_by_name('IN WAITING').id
+		
+			Client.find_by_sql("
+				SELECT *
+					FROM( 
+						SELECT patient_id, encounter_type, MAX(e.encounter_datetime) AS lastest_date_time
+							FROM  encounter e
+						      WHERE e.encounter_datetime < '#{date}' AND voided = 0
+							GROUP BY patient_id
+						) waiting
+			WHERE waiting.encounter_type = #{encounter_type_id}
+		").count
+	end
 end

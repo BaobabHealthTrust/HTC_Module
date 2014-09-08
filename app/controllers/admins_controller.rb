@@ -14,26 +14,8 @@ class AdminsController < ApplicationController
   end 
 	
 	def protocols
-		@protocols = CounselingQuestion.all
-		
-    @side_panel_data = ""
-    sp = ""
-   	
-   	@protocols.each do |p|
-   	
-			status = "Active"
-			
-			if p.retired.to_i == 1
-				status = "Deactivated"
-			end
-
-			@side_panel_data += sp + "#{p.id} : {
-																 	name: '#{p.name}',
-																 	status: '#{status}'
-																 }"
-    	sp = ","   	
-   	end
-   	
+		@protocols = CounselingQuestion.all		
+    @side_panel_data = generate_protocols_javascript_hash(@protocols)
 		render layout: false and return
 	end
 	
@@ -42,7 +24,6 @@ class AdminsController < ApplicationController
 		@protocol = CounselingQuestion.find(params[:protocol_id])
 		@parents = CounselingQuestion.where("child = 0").collect { |p| [p.question_id, p.name]  }
 		if request.post?
-			raise params.to_yaml
 			@protocol.name = params[:name]
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
@@ -50,14 +31,14 @@ class AdminsController < ApplicationController
 			list = nil
 			child = 0
 			list = params[:listtype] if ! params[:listtype].blank?
-			child = 1 if ! params[:parent].blank?
+			child = 1 if ! params[:parent_protocol].blank?
 			@protocol.list_type = list
 			@protocol.child = child
-			
+      
 			if @protocol.save
-				raise params[:parent].to_yaml
 				if child == 1
-					raise params[:parent].to_yaml	
+					@children = ChildProtocol.create(protocol_id: @protocol.id,
+            parent_id: params[:parent_protocol])
 				end
 				redirect_to protocols_path and return
 			end
@@ -97,7 +78,6 @@ class AdminsController < ApplicationController
 			if !params[:new_protocol].blank?
 				return
 			elsif request.post?
-			#	raise params.to_yaml
 				list = nil
 				child = 0
 				list = params[:listtype] if ! params[:listtype].blank?
@@ -106,6 +86,11 @@ class AdminsController < ApplicationController
 										description: params[:description], data_type: params[:datatype],
 										retired: 0, creator: current_user.id, list_type: list,
 									  child: child)
+        if child == 1
+         # raise params[:parent].to_yaml
+					@children = ChildProtocol.create(protocol_id: @protocol.id,
+            parent_id: params[:parent])
+				end
 				redirect_to protocols_path and return
 			end
 	end
@@ -131,6 +116,42 @@ class AdminsController < ApplicationController
 
   def destroy
     @admin.destroy
+  end
+  
+	def generate_protocols_javascript_hash(protocols)
+	
+    side_panel_data = ""
+    sp = ""
+   	
+   	protocols.each do |p|
+   	
+			status = "Active"
+			
+			if p.retired.to_i == 1
+				status = "Deactivated"
+			end
+
+			position = 0
+			position = p.position if !p.position.blank?
+			side_panel_data += sp + "#{p.id} : {name: '#{p.name}', status: '#{status}',position: '#{position}'}"
+    	sp = ","   	
+   	end
+   	side_panel_data = "{}" if side_panel_data.blank?
+		side_panel_data
+	end
+  
+  def update_protocol_position
+  	@result = false
+  	
+  	protocol = CounselingQuestion.find(params[:id])
+  	protocol.position = params[:position].to_i
+  	
+  	@result = protocol.save
+  	
+		@protocols = CounselingQuestion.all		
+    @side_panel_data = generate_protocols_javascript_hash(@protocols);
+  	
+  	render text: %Q(#{@result};"{#{@side_panel_data}}")
   end
 
   private

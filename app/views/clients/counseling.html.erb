@@ -8,50 +8,70 @@
 	<form action='/encounters/new/<%= params[:client_id] %>' method='post'>
 	<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 	<input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
-	 
 		<% x = 0
-			 y = 1
-			 	set = 0
-				@protocols.each do |protocol| 
-					 if x == 0 
-						set = 0 %>
-						<fieldset>
-						<legend>Counseling Protocols Page <%= y %></legend>
-						<% end %>
-						<% if protocol.data_type.upcase == "BOOLEAN" %>
-							<label for="obs[<%= protocol.id %>]"> <%= protocol.name %> </label>
-							<label for="<%= protocol.id %>.1">Yes</label>	
-							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.1" value="YES">
-							<label for="<%= protocol.id %>.2">No</label>
-							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.2" value="NO">
-							<label for="<%= protocol.id %>.3">Unknown</label>
-							<input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.3" value="Unknown">
-							<br />
-						<% elsif protocol.data_type.upcase == "NUMBER" %>
-							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
-							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="number" />
-						<% elsif protocol.data_type.upcase == "DATETIME" %>
-							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
-							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="date" />
-						<% elsif protocol.data_type.upcase == "TIME" %>
-							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
-							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="time" />
-						<% elsif protocol.data_type.upcase == "TEXT" %>
-							<label for="<%= protocol.id %>"> <%= protocol.name %></label>
-							<input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" />
-						<% end %>	
-						<% if x == 2 
-								x = 0 
-								set = 1
-								y = y + 1
-								 %>
-								</fieldset>
-						<% else
-						x = x + 1
-						 end %>
-		<% end %>
-				
-			<button type='submit'>Finish</button>
+		y = 1
+		set = 0
+		(@protocol || []).each do |protocol|
+			if x == 0
+			set = 0 %>
+<fieldset>
+<legend>Counseling Protocols Page <%= y %></legend>
+<% end %>
+	<% if protocol.data_type.upcase == "BOOLEAN" %>
+	   <label for="obs[<%= protocol.id %>]"> <%= protocol.name %> </label>
+	   <label for="<%= protocol.id %>.1">Yes</label>	
+	   <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.1" value="YES">
+	   <label for="<%= protocol.id %>.2">No</label>
+	   <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.2" value="NO">
+	   <label for="<%= protocol.id %>.3">Unknown</label>
+	   <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.3" value="Unknown">
+	   <br />
+  <% elsif protocol.data_type.upcase == "NUMBER" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="number" />
+  <% elsif protocol.data_type.upcase == "DATETIME" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="date" />
+	<% elsif protocol.data_type.upcase == "TIME" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="number" />
+	<% elsif protocol.data_type.upcase == "TEXT" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" />
+  <% elsif protocol.data_type.upcase == "LIST" %>
+       <% if protocol.list_type.upcase == "RESIDENCE" %>
+				<br />
+				<label for="<%= protocol.id %>"><%= protocol.name %></label>
+			  <input type="text" id="<%= protocol.id %>" name="obs[<%= protocol.id %>]" 
+					ajaxURL="/locations/village"/>
+			
+       <% elsif protocol.list_type.upcase == "GENDER"   %>
+					<br />
+					<label for="<%= protocol.id %>"> <%= protocol.name %> </label>
+					<select name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" >
+						<option></option>
+						<option value="Female">Female</option>
+						<option value="Male">Male</option>
+					</select>
+        <% elsif protocol.list_type.upcase == "HEALTH FACILITIES"  %>
+				<br />
+				<label for="<%= protocol.id %>"><%= protocol.name %></label>
+			  <input type="text" id="<%= protocol.id %>" name="obs[<%= protocol.id %>]" 
+							ajaxURL="/clients/locations/<%= params[:client_id] %>"/>
+        <% end %>	   
+	<% end %>	
+<% if x == 2
+x = 0
+set = 1
+y = y + 1
+%>
+</fieldset>
+<% else
+x = x + 1
+end %>
+<% end %>
+	</fieldset>			
+	<button type='submit'>Finish</button>
 			
 	</form>
 </body>

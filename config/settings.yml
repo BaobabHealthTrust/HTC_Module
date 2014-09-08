@@ -1,5 +1,9 @@
 #Name of the HTC facility
+<<<<<<< HEAD
 facility_name: Lighthouse HTC
+=======
+facility_name: kamuzu Central Hospital
+>>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
 
 #60000 = 1 Minute
 refresh_dashboard: 30000

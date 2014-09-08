@@ -23,7 +23,11 @@
 										<% else %>
 												<% status = "Active" %> 
 										<% end %>
-											<option value="<%= p.id %>"> Question :<%= p.name %> </option>
+										<% 
+											@pos = 0
+											@pos = p.position if !p.position.blank?
+										%>
+											<option value="<%= p.id %>">Pos: <%= @pos %>; Question: <%= p.name %> </option>
 										<% end %>
 									</select>
                 <br />
@@ -36,8 +40,51 @@
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
 	var sidePanelData = {<%= @side_panel_data.html_safe %>};
+	var selectProtocolId;
+	var currentPosition;
 	
-	//Highlist list object
+	function setIdsForChildren(parent_id) {
+		children = __$(parent_id).children;
+		var l = children.length;
+		var pos;
+		
+		for(var i=0; i<l; i++) {
+			children[i].id = children[i].value;
+			pos = sidePanelData[children[i].value].position;
+			children[i].setAttribute("position", pos);
+		}
+	}
+	
+	function sortChildren(parent_id) {
+		parent = __$(parent_id);
+		children = parent.children;
+		
+		var sortable = [];
+		var pos;
+		var l = children.length;
+		for (var i=0;  i<l; i++) {
+			pos = children[i].getAttribute("position");
+			sortable.push([children[i], pos]);
+		}
+		
+		sortable.sort(function(a, b) {return a[1] - b[1]})
+		parent.innerHTML = "";
+		
+		for(var i in sortable) {
+			parent.appendChild(sortable[i][0]);
+		}
+	}
+	
+	function updateList(parent_id, data) {
+		var child = __$(parent_id).children;
+		var l = child.length;
+		
+		for(var i=0; i<l; i++) {
+			child[i].innerHTML = "Pos: " + data[child[i].id].position + "; Question: " + data[child[i].id].name;
+			child[i].setAttribute("position",data[child[i].id].position);
+		}
+	}
+	
 	function highlightList(obj) {
     if(obj.getAttribute("target") != null){
       if(__$(obj.getAttribute("target"))){
@@ -67,6 +114,67 @@
 	
 	function edit_protocol() {
 		window.location = 'edit_protocols?protocol_id=' + __$('textForid').value;
+	}
+	
+	function UpdateProtocolPosition(method,url,id) {
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+			xmlhttp=new XMLHttpRequest();
+		}
+	
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var rsp = xmlhttp.responseText.split(";");
+				var result = [rsp[0]];
+				sidePanelData = eval('(' + rsp[1] + ')');
+				sidePanelData = eval('(' + sidePanelData + ')');
+				__$(id).innerHTML=result;
+				
+				if (__$(id).innerHTML == "true") {
+					__$(id).setAttribute("class", "button orange");
+					updateList('ul1', sidePanelData);
+					sortChildren('ul1');
+				} else {
+					__$(id).setAttribute("class", "button red");
+				}
+				
+				setTimeout('__$("'+ id + '").setAttribute("class", "button green");'+
+									 '__$("'+ id + '").innerHTML="Save"',500);
+			}
+		}
+		xmlhttp.open(method,url,true);
+		xmlhttp.send();
+	}
+	
+	function shieldOperator(obj){
+		__$('txtYearFortextFordates').value = sidePanelData[selectProtocolId].position;
+		if(obj.getAttribute("action") != null){
+			showShield(obj.getAttribute("action"));
+		} else {
+			showShield();
+		}
+	}
+	
+	
+	function updatePosition() {
+		__$('?').innerHTML= "Save";
+		__$('?').setAttribute("class","button green");
+		
+		__$('abc').innerHTML= "C";
+		__$('abc').setAttribute("class","button red");
+		
+		
+		__$('?').onmousedown = function() {
+			var url = "update_protocol_position/";
+					url += selectProtocolId + "/" + __$('txtYearFortextFordates').value;
+			UpdateProtocolPosition('GET', url,this.id);
+		};
+		
+		__$('abc').onmousedown = function() {
+			shieldOperator(this);
+		};
+		
+		__$('shield').setAttribute("onclick", "shieldOperator(this);");
 	}
 		
 		__$("row1").style.display="none";
@@ -113,6 +221,7 @@
 				__$('textForid').value = this.value;
 				
 				var obj = sidePanelData[this.value];
+				selectProtocolId = this.value;
 				var s = "";
 				
 				var button;
@@ -141,6 +250,21 @@
 				s += "<span class='d dL'> Status </span>" +
 						 "<span class='d dC'> : </span>" +
 						 "<span class='d dR'>" + obj.status  + "</span>";
+		
+				var textFordates = document.createElement("input");
+				var inPos = "<input type='input' id='txtYearFortextFordates' " + 
+								"target='textFordates' value='" + obj.position + "' " + 
+								" onmousedown='overwriteNumber = true;" + 
+								" if(__$(\"keyboard\")){document.body.removeChild(__$(\"keyboard\"));} " +
+								"else {showShield(\"checkDate(\" + this.getAttribute(\"textFordates\") + \", false)\"); " +
+								" showKeyboard(__$(\"txtYearFor\" + this.getAttribute(\"target\"))," + 
+								"{\":\":\":\",\"/\":\"/\",\".\":\".\",\"abc\":\"abc\"},true);updatePosition();} "+
+								"checkDate(this.getAttribute(\"target\"));' class='input_cell'" + 
+								" style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
+
+				s += "<span class='d dL'> Position </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + inPos  + "</span>";
 				
 				s+="<br />";
 				s+= "<span class='dL' style='padding:10px;'>" + editBtn + "</span>";
@@ -153,6 +277,13 @@
 		__$("row0").parentNode.appendChild(__$('buttons'));
 	
 		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+		
+		setIdsForChildren('ul1');
+		sortChildren('ul1');
+		
+		if (__$('ul1')) {
+			__$('ul1').children[0].onmousedown();
+		}
 	</script>
 </html>
 

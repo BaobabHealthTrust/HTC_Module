@@ -4,7 +4,10 @@ class SessionsController < ApplicationController
   end
 
   def login
-    location = params[:location].gsub("$", '').squish
+    location = params[:location].gsub("$", '').squish rescue nil
+    
+    redirect_to "/" and return if location.blank?
+     
   	@location = Location.find_by_name(location) rescue nil
 		@user = User.authenticate(params[:username], params[:password]) if @location
 		

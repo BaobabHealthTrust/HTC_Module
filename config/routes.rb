@@ -37,6 +37,8 @@ HTCModule::Application.routes.draw do
 	get "edit_protocols" => "admins#edit_protocols"
 	post "edit_protocols" => "admins#edit_protocols"
 	
+	get "update_protocol_position/:id/:position" => "admins#update_protocol_position"
+	
 	get "new_protocol" => "admins#new_protocol"
 	post "new_protocol" => "admins#new_protocol"
 
