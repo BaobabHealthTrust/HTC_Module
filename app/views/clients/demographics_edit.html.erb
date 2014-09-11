@@ -1,7 +1,7 @@
 <html>
     <head>
 	<script>
-                var cancelDestination = "clients/<%= params[:id] %>";
+                var cancelDestination = "/client_demographics?client_id=<%=  params[:id] %>";
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   for (i = 1; i <= list.length; i ++){
@@ -56,12 +56,12 @@
 			<legend>Update <%= params[:ref].humanize %></legend>
 			<% if params[:ref] == "surname"  %>
                               <label for="surname"> Surname</label>
-                              <input type="text" id="surname" name="family_name" value=""
+                              <input type="text" id="surname" name="surname" value=""
                                               ajaxURL="/clients/last_name/<%= params[:id] %>"/>
                               <br />
                          <% elsif params[:ref] == "firstname"  %>
                               <label for="firstname"> First name</label>
-                              <input type="text" id="firstname" name="family_name" value=""
+                              <input type="text" id="firstname" name="firstname" value=""
                                               ajaxURL="/clients/first_name/<%= params[:id] %>"/>
                               <br />
                          <% elsif params[:ref] == "gender" %>
@@ -75,7 +75,7 @@
                            <% elsif params[:ref] == "date_of_birth" %>
                                     <label for="date_of_birth"> Date of birth </label>
                                     <input type="text"  onclick="checkDate()" id="date_of_birth"
-                                                  max="<%= Date.today %>" name="birthdate"
+                                                  max="<%= Date.today %>" name="date_of_birth"
                                                    fieldtype="age" />
                                           <br />
                              <% elsif params[:ref] == "residence" %>
@@ -90,12 +90,12 @@
                                 <br />
                                 <% elsif params[:ref] == "traditional_authority" %>
                                     <label for="<%= params[:ref] %>">Traditional Authority</label>
-                                    <input type="text" id="<%= params[:ref] %>" name="<%= params[:ref] %>" value=""
+                                    <input type="text" id="<%= params[:ref] %>" name="ta" value=""
                                         ajaxURL="/locations/ta"/>
                                 <br />
                              <% elsif params[:ref] == "occupation" %>
                                     <label for="<%= params[:ref] %>">Occupation</label>
-                                       <select id="<%= params[:ref] %>">
+                                       <select id="<%= params[:ref] %>" name="<%= params[:ref] %>">
                                                 <option></option>
                                                 <% @occupation.each{|occupation| %>
                                                 <option value="<%= occupation %>"><%= occupation %></option>
@@ -104,7 +104,7 @@
                                   <br />
                                <% elsif params[:ref] == "land_mark" %>
                                     <label for="<%= params[:ref] %>">Land Mark</label>
-                                       <select id="<%= params[:ref] %>">
+                                       <select id="<%= params[:ref] %>" name="<%= params[:ref] %>">
                                                 <option></option>
                                                 <% @land_mark.each{|land_mark| %>
                                                 <option value="<%= land_mark %>"><%= land_mark %></option>

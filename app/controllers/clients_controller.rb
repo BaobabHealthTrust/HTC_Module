@@ -94,7 +94,20 @@ class ClientsController < ApplicationController
   
 	def demographics
 		 		@client = Client.find(params[:client_id])
-		 		@residence = PersonAddress.find_by_person_id(@client.id).address1
+        address = PersonAddress.find_by_person_id(@client.id)
+		 		@residence = address.address1
+        @ta = address.county_district
+        @home_district = address.address2
+         type = PersonAttributeType.where("name = 'occupation'").first.id rescue ""
+         @occupation = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         type = PersonAttributeType.where("name = 'Home Phone Number'").first.id rescue ""
+         @home_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+          type = PersonAttributeType.where("name = 'Office Phone Number'").first.id rescue ""
+         @office_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+          type = PersonAttributeType.where("name = 'Cell Phone Number'").first.id rescue ""
+         @cell_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         type = PersonAttributeType.where("name = 'Landmark Or Plot Number'").first.id rescue ""
+         @land_mark = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
 	end
 
   def demographics_edit
@@ -106,7 +119,118 @@ class ClientsController < ApplicationController
   end
 
   def modify_field
-     raise "here"
+    client = Client.find(params[:id])
+    if  params[:home_phone_number] || params[:cell_phone_number] || params[:office_phone_number] || params[:occupation] || params[:land_mark]
+     uuid =  ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+        if params[:occupation]
+          value = params[:occupation]
+          name = "Occupation"
+        elsif params[:home_phone_number]
+          value = params[:home_phone_number]
+          name = "Home Phone Number"
+        elsif params[:office_phone_number]
+          value = params[:office_phone_number]
+          name = "Office Phone Number"
+        elsif params[:cell_phone_number]
+          value = params[:cell_phone_number]
+          name = "Cell Phone Number"
+       elsif params[:land_mark]
+          value = params[:land_mark]
+          name = "Landmark Or Plot Number"
+        end
+        
+         type = PersonAttributeType.where("name = ?", name).first.id
+         available = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:id], type)
+         (available || []).each{|attribute|
+           attribute.voided = 1
+           attribute.save
+         }
+      attribute = PersonAttribute.create(person_id: params[:id],
+        value: value, creator: current_user.id,
+        person_attribute_type_id: type, uuid: uuid)
+
+    elsif params[:firstname] || params[:surname]
+      names = PersonName.where("person_id = #{params[:id]} AND voided = 0 ")
+      given_name = names.first.given_name
+      family_name = names.first.family_name
+			names.each do |name|
+					 name.voided = 1
+					 name.save!
+				end
+        given_name = params[:firstname] if params[:firstname]
+         family_name = params[:surname] if params[:surname]
+				new_name = PersonName.create(preferred: '0', person_id: params[:id],
+															given_name: given_name, family_name: family_name,
+															creator: current_user.id)
+
+    elsif params[:gender] || params[:date_of_birth]
+        person = Person.find(params[:id])
+        gender = person.gender
+        birthdate = person.birthdate
+        gender = params[:gender] if params[:gender]
+        if params[:date_of_birth]
+            birthdate_estimated = false
+
+            birth_date = params[:date_of_birth].split("/")
+            birth_year = birth_date[2]
+            birth_month = birth_date[1]
+            birth_day = birth_date[0]
+
+            birthdate = params[:date_of_birth]
+
+            if birth_month == "?"
+                birthdate_estimated = true
+                birth_month = 7
+            end
+
+            if birth_day == "?"
+                birthdate_estimated = true
+                birth_day = 1
+            end
+
+            if birthdate_estimated == true
+              birthdate = "#{birth_day}/#{birth_month}/#{birth_year}"
+              person.birthdate_estimated = 1
+            end
+
+        end
+        person.gender = gender
+        person.birthdate = birthdate
+        person.save
+    elsif params[:ta] || params[:address1] || params[:address2]
+
+        addresses = PersonAddress.where("person_id = ?", params[:id])
+        address1 = nil
+        address2 = nil
+        county_district = nil
+
+        if ! addresses.blank?
+           if addresses.first.address2.blank? and addresses.first.county_district.blank?
+              addresses.first.address1 = params[:address1] if params[:address1]
+              addresses.first.address2 = params[:address2] if params[:address2]
+              addresses.first.county_district = params[:ta] if params[:ta]
+              addresses.first.save
+              redirect_to "/client_demographics?client_id=#{params[:id]}" and return
+           elsif
+             address1 = addresses.first.address1
+             address2 = addresses.first.address2
+           county_district = addresses.first.county_district
+
+             (addresses || []).each{|address|
+               address.voided = 1
+               address.save
+             }
+           end
+        end
+
+       address1 = params[:address1] if params[:address1]
+       address2 = params[:address2] if params[:address2]
+       county_district = params[:ta] if params[:ta]
+
+       new_address = PersonAddress.create(person_id: params[:id],
+                        address1: address1, address2: address2, county_district: county_district, creator: current_user.id)
+     end
+     redirect_to "/client_demographics?client_id=#{params[:id]}"
   end
   
 	def counseling
