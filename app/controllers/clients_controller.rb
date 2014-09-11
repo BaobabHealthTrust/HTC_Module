@@ -99,6 +99,14 @@ class ClientsController < ApplicationController
 
   def demographics_edit
       	@client = Client.find(params[:id])
+        @occupation = ["Business", "Craftsman","Domestic worker","Driver","Farmer","Health worker",
+          "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
+          "Security guard","Soldier","Student","Teacher","Other","Unknown"]
+        @land_mark = ["School","Police","Church","Mosque","Borehole"]
+  end
+
+  def modify_field
+     raise "here"
   end
   
 	def counseling
