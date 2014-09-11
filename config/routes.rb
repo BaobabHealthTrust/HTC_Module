@@ -11,6 +11,8 @@ HTCModule::Application.routes.draw do
 	post "client_demographics" => "clients#demographics"
 
   get "clients/demographics_edit/:id" => "clients#demographics_edit"
+
+  post "clients/modify_field/:id" => "clients#modify_field"
   
   get "referral_consent/:id" => "clients#referral_consent"
 
@@ -89,6 +91,8 @@ HTCModule::Application.routes.draw do
 	post "/locations/new" => "locations#new"
 
 	get "/locations/village" => "locations#village"
+
+  get "/locations/ta" => "locations#ta"
 
   get "client_printouts" => "clients#printouts"
 
