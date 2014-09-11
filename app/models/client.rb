@@ -115,7 +115,17 @@ class Client < ActiveRecord::Base
 								GROUP BY patient_id
 							) AS last_encounter
 					ON last_appointment.person_id=last_encounter.patient_id
-					WHERE last_appointment.value_datetime > last_encounter.encounter_datetime
+					WHERE last_appointment.value_datetime >= last_encounter.encounter_datetime
+		").first rescue nil
+	end
+	
+	def latest_booking
+		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
+		Observation.find_by_sql("
+			SELECT person_id, concept_id, MAX(value_datetime) AS value_datetime
+				FROM obs
+				WHERE person_id = #{self.id} AND concept_id=#{concept_id} AND voided=0
+				GROUP BY person_id
 		").first rescue nil
 	end
 end

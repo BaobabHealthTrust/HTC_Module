@@ -51,6 +51,26 @@
       obj.style.color = "black";
     }
 	}
+	
+	function sortChildren(parent_id) {
+		parent = __$(parent_id);
+		children = parent.children;
+		
+		var sortable = [];
+		var pos;
+		var l = children.length;
+		for (var i=0;  i<l; i++) {
+			pos = children[i].getAttribute("order");
+			sortable.push([children[i], pos]);
+		}
+		
+		sortable.sort(function(a, b) {return a[1] - b[1]})
+		parent.innerHTML = "";
+		
+		for(var i in sortable) {
+			parent.appendChild(sortable[i][0]);
+		}
+	}
 
 	function remove_client_from_waiting_list() {
 	 document.getElementById("waiting_list").submit();
@@ -135,6 +155,13 @@
 					 "<span class='d dC'> : </span>" +
 					 "<span class='d dR'>" + obj.time  + "</span>";
 					 
+						
+			if (obj.has_booking) {
+				s += "<span class='d dL' style='color:red;'> Booking On</span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.appointment_date  + "</span>";
+			}
+					 
 			if (parseInt(obj.days_since_last_visit) > 0) {
 				s += "<span class='d dL'> Period Since Last Visit </span>" +
 						 "<span class='d dC'> : </span>" +
@@ -154,7 +181,11 @@
 
 	for(var i=0; i<list.length; i++) {
 		li = list[i];
-		d[i].innerHTML = "Accession :" + li.accession_number + ";" + li. gender + "; DOB : " + li.birthDate;
+		if (li.has_booking) {
+			d[i].innerHTML = "Accession :" + li.accession_number + ";" + li. gender + "; DOB : " + li.birthDate + "; <span style='color:red;'>App: " + li.appointment_date + "</span>";
+		}else {
+			d[i].innerHTML = "Accession :" + li.accession_number + ";" + li. gender + "; DOB : " + li.birthDate;		
+		}
 		d[i].value = li.id;
 	}
 
