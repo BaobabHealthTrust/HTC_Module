@@ -266,7 +266,7 @@
 						<% if !@waiting_list.blank? %>
 							var cancelDestination = "<%= waiting_list_path %>";
 						<% else %>
-							var cancelDestination = "/clients/<%= params[:id] %>";
+							var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
 						<% end %>
 						
         
