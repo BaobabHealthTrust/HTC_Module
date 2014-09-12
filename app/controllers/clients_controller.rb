@@ -150,19 +150,26 @@ class ClientsController < ApplicationController
         person_attribute_type_id: type, uuid: uuid)
 
     elsif params[:firstname] || params[:surname]
+      given_name = nil
+      family_name = nil
       names = PersonName.where("person_id = #{params[:id]} AND voided = 0 ")
-      given_name = names.first.given_name
-      family_name = names.first.family_name
+
+      unless names.blank?
+        given_name = names.first.given_name
+        family_name = names.first.family_name
+      end
+
 			names.each do |name|
 					 name.voided = 1
 					 name.save!
 				end
+
         given_name = params[:firstname] if params[:firstname]
-         family_name = params[:surname] if params[:surname]
+        family_name = params[:surname] if params[:surname]
 				new_name = PersonName.create(preferred: '0', person_id: params[:id],
 															given_name: given_name, family_name: family_name,
 															creator: current_user.id)
-
+        # raise new_name.to_yaml
     elsif params[:gender] || params[:date_of_birth]
         person = Person.find(params[:id])
         gender = person.gender
@@ -327,6 +334,41 @@ class ClientsController < ApplicationController
 		#redirect_to '/locations'
   end
 
+  def print_confirmation
+    client = Client.find(params[:id])
+		print_string = get_confirmation_label(client)
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
+    def get_confirmation_label(client)
+    test_type = ConceptName.find_by_name("HIV TEST TYPE").concept_id
+    confirmed = Observation.where("concept_id = ? AND person_id = ?", test_type, client.patient_id).order("encounter_id DESC").first rescue []
+
+     label = ZebraPrinter::StandardLabel.new
+     label.draw_barcode(300,30,0,1,4,8,50,false,"#{client.accession_number}")
+     label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
+     label.draw_line(25,120,800,5)
+    if ! confirmed.blank?
+      if confirmed.to_s.split(':')[1].squish.upcase == "CONFIRMATORY HIV TEST"
+          test_result = ConceptName.find_by_name("RESULT OF HIV TEST").concept_id
+          result = Observation.where("encounter_id = ? AND concept_id = ?", confirmed.encounter_id, test_result).first.to_s.split(':')[1].squish
+          result = "Test Result : #{result}"
+          test_location = "Confirmed at #{Settings.facility_name}"
+          test_date = "Confirmed on #{confirmed.obs_datetime.strftime('%d/%m/%Y')}"
+          user = "Confirmed by #{User.find(confirmed.creator).username}"
+  
+          label.draw_text(test_location,75, 130, 0, 3, 1, 1, false)        
+          label.draw_text(result,75, 160, 0, 3, 1, 1, false)
+          label.draw_text(user,75, 190, 0, 3, 1, 1, false)
+          label.draw_text(test_date,75, 220, 0, 3, 1, 1, false)
+      else
+         label.draw_text("Tested But not confirmed",75, 130, 0, 3, 1, 1, false)
+      end
+    else
+       label.draw_text("Never Tested",75, 130, 0, 3, 1, 1, false)
+    end
+      label.print(1)
+    end
     def get_summary_label(client)
     current = session[:datetime].to_date rescue Date.today
     return unless client.patient_id
@@ -470,7 +512,7 @@ class ClientsController < ApplicationController
 					end
 				end
 				
-				redirect_to "/clients/#{@scanned.patient_id}" and return
+				redirect_to "/client_demographics?client_id=#{@scanned.patient_id}" and return
 		 else
 		 		
 			

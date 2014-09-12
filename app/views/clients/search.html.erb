@@ -74,8 +74,11 @@
 	btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
    function adjust(){
      <% if @show_counselling_room == true %>
-          node =  document.getElementById('row2').childNodes[0].childNodes[0]
-           node.style.width = "6%"
+            node =  document.getElementById('row2').childNodes[0].childNodes[0]
+            node.style.width = "6%"
+            node.style.height = "92px"
+            document.getElementById('row2').childNodes[0].style.height = "92px"
+            document.getElementById('row2').style.height = "92px"
       <% end %>
   }
 </script>

@@ -42,8 +42,8 @@
         window.location = '/clients/print_summary/' + <%= params[:client_id] %>;
    }
 
-  function printConfimation(){
-        window.location = '/clients/print_confimation/' + <%= params[:client_id] %>;
+  function printConfirmation(){
+        window.location = '/clients/print_confirmation/' + <%= params[:client_id] %>;
    }
 </script>
 </head>
@@ -60,8 +60,7 @@
 		onmousedown="printSummary()"
 		class="blue" pos="0" section="0" id="summary"><span class="txt">Visit Summary</span></button>
 
-		<button id="confirm"
-		onmousedown="printConfirmation()"
-		class="blue" pos="0" section="0"><span class="txt">Confirmation</span></button>
+		<button id="confirm" onmousedown="printConfirmation()" class="blue" pos="0" section="0">
+                  <span class="txt">Confirmation</span></button>
 </body>
 

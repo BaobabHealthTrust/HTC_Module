@@ -15,18 +15,6 @@
                       return document.getElementById(id);
               }
               
-              function addSelected(id1, id2, id3, id4){
-                      __$("textFor" + id1).value = '<%= @client.person.gender %>';
-                      __$(id1).value = '<%= @client.person.gender %>';
-
-                        __$("textFor" + id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
-                        __$("textFor" + id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
-                        __$("textFor" + id4).value = day + '/' + month + '/' + year ;
-
-                        __$(id4).value = '<%= @client.person.birthdate.strftime('%d/%m/%Y') %>';
-                        __$(id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
-                        __$(id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
-              }
              function checkDate(){
 
                           date = document.getElementById("date_of_birth")
@@ -348,8 +336,15 @@
                         }
 	</script>
       <style>
+ .disabled {
+   pointer-events: none;
+   cursor: default;
+}
 table{
   width: 100%;
+}
+#text, #values, #links{
+  border-radius: 25px;
 }
 #demographics{
  width: 100%;
@@ -379,10 +374,16 @@ table{
     text-align: center;
     text-decoration: none;
 }
+#buttons{
+  height: 20px ! important;
+}
+#main-content-area{
+   height: 500px ! important;
+}
       </style>
      </head>
-<body >
-		<%= form_tag({:action => "new"}, {:method => "get"}) do %>
+<body onload="adjust()" >
+		<%= form_tag show_client_path(:id => @client.id) do %>
 			<input type='hidden' name='name_id' value=<%= @client.id %> />
 			<fieldset  custom=true fs_onLoad="loadCustom();">
 			<legend>Update Demographics</legend>
@@ -392,3 +393,11 @@ table{
 		<%end%>
 </body>
 </html>
+<script>
+   function adjust(){
+          node =  document.getElementById('row2').childNodes[0].childNodes[0]
+           node.style.height = "92px"
+           document.getElementById('row2').childNodes[0].style.height = "92px"
+           document.getElementById('row2').style.height = "92px"
+  }
+</script>

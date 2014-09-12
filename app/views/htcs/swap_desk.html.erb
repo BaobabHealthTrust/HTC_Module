@@ -14,7 +14,7 @@
 
                                __$(id).value =  __$(id).value.trim().replace(/\$/, "");
 
-                                    clearTimeout(id)
+                                    clearTimeout(id);
                                   document.forms[0].submit();
 
                                     return;
@@ -53,8 +53,10 @@
 </html>
 <script>
   function adjust(){
-     node =  document.getElementById('row2').childNodes[0].childNodes[0]
-     node.style.width = "6%"
+    node =  document.getElementById('row2').childNodes[0].childNodes[0]
+    node.style.width = "6%"
+    node.style.height = "92px"
+    document.getElementById('row2').childNodes[0].style.height = "92px"
+    document.getElementById('row2').style.height = "92px"
   }
- 
 </script>

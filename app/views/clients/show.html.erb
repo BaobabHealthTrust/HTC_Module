@@ -25,7 +25,7 @@
 				
 				<input type="text" id="gender" value='<%= @client.person.gender.chars.first.upcase %>' />
 				
-				<input type="text" id="name" value='<%= @names.given_name rescue "" %> <%= @names.family_name rescue "" %>' />
+				<input type="text" id="name" value='<%= @names.given_name.humanize rescue "" %> <%= @names.family_name.humanize rescue "" %>' />
 				
 				<input type="text" id="Accession Number" value='<%= @accession_number %>' />
 				
