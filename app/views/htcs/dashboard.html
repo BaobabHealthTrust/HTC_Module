@@ -103,7 +103,9 @@
 						</tr>
 						
 						<% @ins = 0 %>
-						<% @total = {} %>
+						<% @total = {} 
+                                                status = {}
+                                                status["IN"] = "In Session" %>
 						<% @rooms.sort.each do |r| %>
 							<tr>
 								<td style="border-right: 1px solid #305d97;">
@@ -111,7 +113,7 @@
 								</td>
 								<% @ins+=1 if @dash_board[r][:status]=="In" %>
 								<td style="border-right: 1px solid #305d97; padding-left:20px; text-align: left;">
-									<%= @dash_board[r][:status] + " ("+ @dash_board[r][:username] +")" rescue "Out" %>
+									<%= status[@dash_board[r][:status].upcase] + " ("+ @dash_board[r][:username] +")" rescue "Free" %>
 								</td>
 								
 								<% if !@dash_board[r][:latest_encounter_name].nil? %>
@@ -154,7 +156,7 @@
 							</td>
 							
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
-							<%= "#{@ins}-<i>In</i> & #{@dash_board.count-@ins}-<i>Out</i>".html_safe %>
+							<%= "#{@ins}-<i>In Session</i> <br>#{@dash_board.count-@ins}-<i>Free</i>".html_safe %>
 							</td>
 							<td style="border-right: 1px solid #305d97; border-top: 1px solid #305d97; font-weight: bold; color: #305d97; text-align: center;">
 								&nbsp;

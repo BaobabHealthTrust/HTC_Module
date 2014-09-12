@@ -317,21 +317,18 @@ class ClientsController < ApplicationController
     client = Client.find(params[:id])
 		print_string = get_accession_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
-		#redirect_to '/locations'
   end
 
   def print_new_accession(client_id)
     client = Client.find(client_id)
 		print_string = get_accession_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{client_id}#{rand(10000)}.lbl", :disposition => "inline")
-		#redirect_to '/locations'
   end
 
   def print_summary
     client = Client.find(params[:id])
 		print_string = get_summary_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
-		#redirect_to '/locations'
   end
 
   def print_confirmation
