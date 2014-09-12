@@ -67,6 +67,8 @@ HTCModule::Application.routes.draw do
 
   get "clients/print_summary/:id" => "clients#print_summary"
 
+  get "clients/print_confirmation/:id" => "clients#print_confirmation"
+
 	get "clients/first_name/:id" => "clients#first_name"
 
 	get "clients/last_name/:id" => "clients#last_name"
