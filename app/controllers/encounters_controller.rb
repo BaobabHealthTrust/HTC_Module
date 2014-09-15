@@ -55,7 +55,13 @@ class EncountersController < ApplicationController
               # This keeps us from saving empty observations
               
               if !observation["value_datetime"].blank?
+                 if observation["value_datetime"].match(/\?/)
+                    observation["value_text"] = observation["value_datetime"]
+                    observation["value_datetime"] = nil
+
+                 else
               		observation["value_datetime"] = observation["value_datetime"].to_date.strftime("%Y-%m-%d %H:%M:%S")
+                 end
               end
               
               values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
