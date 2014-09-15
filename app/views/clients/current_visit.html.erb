@@ -42,7 +42,7 @@
 								}                                                                         
 							                                                                         
 							xmlhttp.open("GET","/encounters/void/" + node, true); 
-							xmlhttp.send(); 
+							xmlhttp.send();
 				}
                         function reset(){
                             ele = document.getElementById('cover')
@@ -250,7 +250,7 @@ button {
 														<%= answer.to_s.html_safe %>
 												<% } %>
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width: 100px;">
 										<button style="float: right;margin: 3px; font-size: 20px; height: 60px;"
 										class="button blue" onmousedown="confirm('<%= encounter.encounter_id %>')">Void</button>
 									 </div>

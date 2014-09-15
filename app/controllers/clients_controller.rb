@@ -18,7 +18,24 @@ class ClientsController < ApplicationController
 			@status  = @client.current_state(current_date) 
 			@firststatus  = @client.first_state rescue "NaN"
 			@age = person.age(current_date)
-			
+
+      @all_encounters = {}
+      state_encounters = ['IN WAITING', 'IN SESSION',
+												'HIV Testing', 'Referral Consent Confirmation',
+												'Counseling']
+      ids = []
+		EncounterType.where("name IN (?)",state_encounters)
+								 .each do |e|
+										ids << e.id
+                    @all_encounters[e.name.upcase] = '#FF4040'
+									end
+
+	 Encounter.joins(:type).where("encounter_type IN (?) AND DATE(encounter_datetime)= ? 
+                          AND encounter.voided = 0 AND encounter.patient_id = ?", ids, current_date, person.person_id)
+                .each{|state|
+                  @all_encounters[state.name.upcase] = "#E0EEEE"
+                }
+      
 			render layout: false
   end
 
