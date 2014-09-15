@@ -12,12 +12,12 @@
 			<fieldset>
 				<legend>Update User</legend>
                                 <label for="username">New username</label>
-				 <input type="text" id="username" name="username" fieldtype="text"/>
+				 <input type="text" id="username" name="user[username]" fieldtype="text"/>
 
 				<br />
 
 				<label for="password">New password</label>
-				 <input type="password" id="password" name="password" fieldtype="password" />
+				 <input type="password" id="password" name="user[password]" fieldtype="password" />
 				
 				<input type="hidden" name="role" value="<%= @role %>" />
 				<label for="user_role">User Role: </label> 
