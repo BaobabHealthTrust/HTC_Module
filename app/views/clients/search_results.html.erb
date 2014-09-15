@@ -17,7 +17,11 @@
 		<label for="id">  </label>
 		
 		<select id="id" name="id">
-			<option><i>New client</i></option>	
+		
+			<% if @show_new_client_button %>
+				<option><i>New client</i></option>	
+			<% end %>
+			
 			<%= @clients_info.each do |client| %>
 				<option value="<%= client[:id] %>"> Accession :<%= " #{client[:accession]}" %>;<%= " #{client[:gender]}" %>; DOB :<%= client[:birth] %> </option>
 			<% end %>
@@ -76,9 +80,7 @@
 		__$("buttons").style.width = "100%";
 		__$("buttons").style.height = "100%";
 		
-		<% if !@show_counselling_room %>
-			btnNext.style.display = "none";	
-		<% end %>
+			//btnNext.style.display = "none";	
 		
 		btnNext.innerHTML = "Finish";
 		btnNext.style.width = "250px";
@@ -127,11 +129,9 @@
 				
 				if (this.innerHTML.trim() != "New client") {
 				
-				<% if !@show_counselling_room %>
-					btnNext.style.display = "none";	
-				<% else %>
+
 					btnNext.style.display = "inline-table";
-				<% end %>
+
 
 					
 				    var button = '<button style="margin: 3px; margin-left:10px; width: 250px; font-size: 24px;"' +
@@ -188,7 +188,6 @@
 						
 					}
 					else {
-						btnNext.style.display = "none";
 				     s = '<br> <br> <button onmousedown="create_new_patient()" style="margin: 3px; width: 250px; font-size: 24px;"' +
 				    						 ' class="button green" pos="0" section="0">New client</button>'				
 					}
@@ -205,12 +204,14 @@
 			__$('ul1').children[0].onmousedown();
 		}
                 
-                function humanize(string){
-                 return string.replace(/_/g, ' ')
-                        .replace(/(\w+)/g, function(match) {
-                            return match.charAt(0).toUpperCase() + match.slice(1);
-                        });
-                }
-	</script>
+    function humanize(string){
+     return string.replace(/_/g, ' ')
+            .replace(/(\w+)/g, function(match) {
+                return match.charAt(0).toUpperCase() + match.slice(1);
+            });
+    }
+    
+    document.getElementById('btn3').children[0].setAttribute("onclick","eval(window.location='/htcs')");
+</script>
 </html>
 
