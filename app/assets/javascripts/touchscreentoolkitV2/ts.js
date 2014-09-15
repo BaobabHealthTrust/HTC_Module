@@ -187,11 +187,11 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
      
          if(currentKeysQWERTY){
 
-        keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','Space','&larr;',":",".","/","num","abc","?"]];
+        keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','Space','&larr;',":",".","/","?","num","abc"]];
 
       } else {
 
-        keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','Space','&larr;',":",".","/","num","qwe","?"]];
+        keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','Space','&larr;',":",".","/","?","num","qwe"]];
 
       }
 
