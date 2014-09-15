@@ -4,6 +4,7 @@ class SessionsController < ApplicationController
   end
 
   def login
+  	flash[:alert] = nil
   	load_location_from_setting if session[:user_id].blank?
     location = params[:location].gsub("$", '').squish rescue nil
     
@@ -24,6 +25,8 @@ class SessionsController < ApplicationController
 				@location = nil
 				flash[:alert] = "You are not allow to visit this location"
 			end
+		else
+			flash[:alert] = "Location: #{location} does not exist!"
 		end
 		
 		if @location
@@ -38,7 +41,6 @@ class SessionsController < ApplicationController
 				redirect_to log_in_path
 			end
 		else
-				flash[:alert] = "Location: #{location} does not exist!"
 				redirect_to log_in_path
 		end
   end

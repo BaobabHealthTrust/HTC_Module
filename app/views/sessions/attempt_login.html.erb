@@ -1,3 +1,40 @@
+<style>
+	.message{
+		font-size:20px;
+		color:white;
+		font-weight:bold;
+	}
+	
+	#alertPage{
+		position: absolute;
+		left: 575px;
+		width: 350px;
+		height: 150px;
+		top: 185px;
+		padding-bottom: 10px;
+		font-size: 1em;
+		text-align: center;
+		background-color: tomato;
+		padding: 10px;
+		z-index: 999;
+		border: 5px outset tomato;
+		border-radius: 15px;
+		z-index: 900;
+	}
+	
+	#warning {
+		position: absolute;
+		background-color: black;
+		width: 100%;
+		height: 102%;
+		left: 0%;
+		top: 0%;
+		z-index: 500;
+		opacity: 0.5;
+		align: center;
+	}
+</style>
+
 <html>
 	<head>
 		<%= javascript_include_tag 'jquery-1.3.2.min' %>
@@ -36,9 +73,6 @@
           </script>
 	</head>
 <body>
-
-			<p id="notice"><%#= notice %></p>
-			<p id="alert"><%#= alert %></p>
                   
 			<%=form_tag log_in_path do%>
 				<fieldset>
@@ -60,5 +94,39 @@
 					</fieldset>
        	 <%=submit_tag "Login" %>
 			<%end%>
+			
+			<div id="warning">
+			</div>
 </body>
 </html>
+
+<script>
+	document.getElementById('warning').style.display='none';
+</script>
+
+<script>
+	
+	function showWarning(warning) {
+		
+		document.getElementById('warning').style.display='block';
+		var ele = document.getElementById('warning');
+		
+		ele.style.display = "block";
+		document.body.appendChild(ele);
+
+		var newDiv = document.createElement('div');
+		newDiv.id = "alertPage";
+		newDiv.innerHTML = "<p class='message'>" + warning + "</p>";
+		document.body.appendChild(newDiv);
+
+		var newBtn = document.createElement('button');
+		newBtn.className = "blue";
+		newBtn.innerHTML = "<span>Ok</span>";
+		newDiv.appendChild(newBtn);
+		newBtn.setAttribute('onclick', "document.getElementById('warning').style.display='none'; this.parentNode.style.display='none';");
+	}
+	
+	<% if !flash[:alert].blank? %>
+		showWarning("<%= flash[:alert] %>");
+	<% end %>
+</script>
