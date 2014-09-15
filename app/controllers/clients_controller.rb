@@ -23,6 +23,7 @@ class ClientsController < ApplicationController
   end
 
   def new
+  	
 		if ! params[:name_id].blank?
 				@names = PersonName.where("person_id = #{params[:name_id]} AND voided = 0")				
 				@names.each do |name|
@@ -81,6 +82,7 @@ class ClientsController < ApplicationController
       #print_new_accession(@client.patient_id)
 		end
 		
+		session[:show_new_client_button] = false
 		redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
   end
@@ -477,10 +479,11 @@ class ClientsController < ApplicationController
   end
 
 	def search
-			 
+			 session[:show_new_client_button] = true
 	end
 	
 	def search_results
+		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 

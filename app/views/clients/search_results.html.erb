@@ -17,7 +17,11 @@
 		<label for="id">  </label>
 		
 		<select id="id" name="id">
-			<option><i>New client</i></option>	
+		
+			<% if @show_new_client_button %>
+				<option><i>New client</i></option>	
+			<% end %>
+			
 			<%= @clients_info.each do |client| %>
 				<option value="<%= client[:id] %>"> Accession :<%= " #{client[:accession]}" %>;<%= " #{client[:gender]}" %>; DOB :<%= client[:birth] %> </option>
 			<% end %>
