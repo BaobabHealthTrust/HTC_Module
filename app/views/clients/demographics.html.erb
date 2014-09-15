@@ -249,29 +249,6 @@
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
                                         cell1.id = "texts"
-                                        cell1.innerHTML = "Land mark"
-                                        row1.appendChild(cell1)
-
-                                        var cell2 = document.createElement("div");
-					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
-                                        cell2.innerHTML = '<%= @land_mark rescue "" %>' ;
-                                        row1.appendChild(cell2)
-
-                                         var cell3 = document.createElement("div");
-					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'land_mark' + "' class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
-
-                                         var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-                                        row1.id = "demographics"
-					table.appendChild(row1);
-
-                                        var cell1 = document.createElement("div");
-					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
                                         cell1.innerHTML = "Cell Phone Number"
                                         row1.appendChild(cell1)
 
@@ -286,12 +263,12 @@
                                         cell3.id = "links"
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
-
+/*
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
                                         row1.id = "demographics"
 					table.appendChild(row1);
-
+                                       
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
                                         cell1.id = "texts"
@@ -331,7 +308,7 @@
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'home_phone_number' + "' class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3) */
                                 }
                         }
 	</script>
@@ -378,7 +355,7 @@ table{
   height: 20px ! important;
 }
 #main-content-area{
-   height: 500px ! important;
+   height: 576px ! important;
 }
       </style>
      </head>
