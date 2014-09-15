@@ -14,6 +14,22 @@
         -o-user-select: none;
         user-select: none;
       }
+
+      #encounters{
+            background-color: grey;
+            border-bottom: 1px outset #eeeeee;
+            border-style: outset;
+            border-top: 1px outset #eeeeee;
+            display: block;
+            width: 98%;
+            padding: 10px 16px 10px 10px;
+            text-align: center;
+            text-decoration: none;
+}
+#texts{
+  border-radius: 10px;
+  border: 3px solid #BADA55;
+}
     </style>
   </head>
 <body>
@@ -91,4 +107,30 @@
     }
   }
   <% params[:tab] = ""  %>
+
+   eContainer = document.getElementsByClassName('cell8')[0];
+         var table = document.createElement("div");
+        table.style.display = "table";
+        table.style.margin = "auto";
+        table.style.width = "100%";
+        //table.style.border = "1px solid #000";
+
+        eContainer.appendChild(table);
+
+        var row1 = document.createElement("div");
+        row1.style.display = "table-row";
+        row1.id = "encounters"
+        table.appendChild(row1);
+        <% @all_encounters.each{|encounter, color| %>
+        var cell1 = document.createElement("div");
+        cell1.style.display = "table-cell";
+        cell1.id = "texts"
+        cell1.style.backgroundColor = '<%= color.humanize %>'
+          <% if encounter.match(/confirmation/i) %>
+              cell1.innerHTML = 'Confirm'
+          <% else %>
+            cell1.innerHTML = '<%= encounter.squish.humanize %>'
+          <% end %>
+        row1.appendChild(cell1)
+        <% } %>
 </script>

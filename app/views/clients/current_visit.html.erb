@@ -42,7 +42,7 @@
 								}                                                                         
 							                                                                         
 							xmlhttp.open("GET","/encounters/void/" + node, true); 
-							xmlhttp.send(); 
+							xmlhttp.send();
 				}
                         function reset(){
                             ele = document.getElementById('cover')
@@ -194,78 +194,46 @@ button {
         <body style="margin: 10px; overflow: auto; font-family: Helvetica;">
 		<div style="display: table; width: 100%; border: 1px solid #eee; height: 99%;">
 			<div style="display: table-row;">
-				<div style="display: table-cell; vertical-align: middle; padding-left: 10px; width: 100px;">
-
-					<div class="arrow-left" onmousedown="window.parent.clickPrevious()">
-					</div>
-
-				</div>
+				
 				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 0px 0px 25px 25px;hieght:200px;overflow: auto;">
 					
-					<div style=" margin: auto; margin-bottom: 40px; width: 100%; vertical-align: middle; ">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;" class="noselect" >Today's Visit Details</label>
+					<div style=" margin: auto; margin-bottom: 5px; width: 100%; vertical-align: middle; ">
+						<label style="color: #5679c1; font-weight: normal; font-size: 24px;text-align: center;" class="noselect" >Today's Visit Details</label>
 					</div>
 					
 					<div style="display: table; margin: auto;">
 						<div style="display: table-row;">
-							<div style="display: table-cell; padding:15px;width:40%;">
+							<div style="display: table-cell;width:100%;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Summary</label>
 								
 								<div style="display: table; border: 1px solid #5679c1; font-size: 18px;">
 									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											First State Time
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:16%;">
+											First State Time:
 										</div>
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 50%;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%; border-right: 1px solid #5679c1;">
 												<%= @firststatus.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
-									</div>
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											Current State
+									
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:16%;">
+											Current State:
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%; border-right: 1px solid #5679c1;">
 											<%= @status.name rescue "NaN"%>
 										</div> 
-									</div>
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											Current State Start
+									
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:17%;">
+											Current State Start:
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%;">
 											<%= @status.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
-										</div> 
-									</div>
-									
-									<!-- div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											Final State Time
-										</div>
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
-											<%= @finalstatus.encounter_datetime.strftime("%I : %M") rescue "NaN" %>
-										</div> 
-									</div -->
-									
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											&nbsp;
-										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
-											&nbsp;
-										</div> 
-									</div>
-									<div style="display: table-row;">
-										<div style="display: table-cell; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											&nbsp;
-										</div> 
-										<div style="display: table-cell; padding: 5px;">
-											&nbsp;
 										</div> 
 									</div>
 								</div>
 							</div>
-							
-							<div style="display: table-cell;width:60%;">
+                                                </div>
+                                                <div style="display: table-row;">
+							<div style="display: table-cell;width:100%;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Log</label>
 								
 								<div style="display: table; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
@@ -282,7 +250,7 @@ button {
 														<%= answer.to_s.html_safe %>
 												<% } %>
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width: 100px;">
 										<button style="float: right;margin: 3px; font-size: 20px; height: 60px;"
 										class="button blue" onmousedown="confirm('<%= encounter.encounter_id %>')">Void</button>
 									 </div>
@@ -294,12 +262,7 @@ button {
 					</div>
 					
 				</div>
-				<div style="display: table-cell; vertical-align: middle; padding-right: 10px; width: 100px; text-align: right;">
-					
-					<div class="arrow-right" style="float: right;" onmousedown="window.parent.clickNext()">					
-					</div>
-					
-				</div>
+				
 			</div>
 		</div>
 	</body>
