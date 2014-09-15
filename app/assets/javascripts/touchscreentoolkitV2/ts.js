@@ -187,11 +187,11 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
      
          if(currentKeysQWERTY){
 
-        keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','|_|','&larr;',":",".","/","num","abc","?"]];
+        keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','Space','&larr;',":",".","/","num","abc","?"]];
 
       } else {
 
-        keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','|_|','&larr;',":",".","/","num","qwe","?"]];
+        keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','Space','&larr;',":",".","/","num","qwe","?"]];
 
       }
 
@@ -227,7 +227,11 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
             button.setAttribute('class', (disabled[keys[i][j]] ? 'button gray' : 'button blue'));
             button.style.width = '65px';
             button.style.height = '60px';
-            button.style.minWidth = '40px';
+            if (String(keys[i][j]).trim() == "Space"){
+                 button.style.minWidth = '80px';
+            } else {
+                button.style.minWidth = '40px';
+            }           
             button.style.minHeight = '40px';
             button.style.margin = '2px';
             button.style.fontSize = "24px";
@@ -308,7 +312,7 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
                           
                         }
                        
-                    } else if(this.innerHTML.trim() == '|_|'){ 
+                    } else if(this.innerHTML.trim() == 'Space'){
                        
                        target.value += " ";
                        
@@ -403,20 +407,20 @@ function showKeyboard(ctrl, disabled, numbers, caps){
           
         } else {
          
-          if(currentKeysQWERTY){
-            
-            keys = [["Q","W","E","R","T","Y","U","I","O","P"],["A","S","D","F","G","H","J","K","L"],['',"Z","X","C","V","B","N","M",'',"CAP"],['','|_|','&larr;',":",".","/","num","abc"]];
-            
-          } else {
-          
-            keys = [["A","B","C","D","E","F","G","H","I"],["J","K","L","M","N","O","P","Q","R"],["S","T","U","V","W","X","Y","Z","CAP"],['','|_|','&larr;',":",".","/","num","qwe"]];
-            
-          }
-          
-        }
-        
-        var letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
-                            
+             if(currentKeysQWERTY){
+
+             keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','Space','&larr;',":",".","/","num","abc","?"]];
+
+              } else {
+
+                keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','Space','&larr;',":",".","/","num","qwe","?"]];
+
+              }
+
+            }
+
+        var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+
         var table = document.createElement('div');
         table.style.display = 'table';
         table.style.margin = 'auto';
@@ -530,7 +534,7 @@ function showKeyboard(ctrl, disabled, numbers, caps){
                               
                             }
                            
-                        } else if(this.innerHTML.trim() == '|_|'){ 
+                        } else if(this.innerHTML.trim() == 'Space'){
                            
                            target.value += " ";
                            
