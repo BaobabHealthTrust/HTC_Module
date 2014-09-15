@@ -11,12 +11,13 @@
 			<% @role = @user.user_roles.map(&:role).first %>
 			<fieldset>
 				<legend>Update User</legend>
-				<%=f.label :username, "New username" %>
-				<%=f.text_field :username %>
+                                <label for="username">New username</label>
+				 <input type="text" id="username" name="username" fieldtype="text"/>
 
 				<br />
-				<%=f.label :password, "New password" %>
-				<%=f.password_field :password %>
+
+				<label for="password">New password</label>
+				 <input type="password" id="password" name="password" fieldtype="password" />
 				
 				<input type="hidden" name="role" value="<%= @role %>" />
 				<label for="user_role">User Role: </label> 

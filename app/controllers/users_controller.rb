@@ -62,8 +62,8 @@ class UsersController < ApplicationController
  
     @user = User.new(user_params) 		
 		if @user.save
-		  user_role = UserRole.create(user_role_params)
-		  user_role.save
+		  user_role = UserRole.create(user_role_params) rescue []
+		  user_role.save unless user_role.blank?
 			redirect_to users_path and return
     else
 			redirect_to :back and return
