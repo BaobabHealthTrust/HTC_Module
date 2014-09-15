@@ -111,6 +111,10 @@
 		__$('textForid').style.width = "100%";
 		
 		var lst = __$('ul1').children;
+
+                if (lst.length == 1){
+                    __$('stage').style.display = "none";
+                }
 		for (var i=0; i < lst.length ; i++) {
 				lst[i].onmousedown = function() {
 				highlightList(this);
@@ -177,7 +181,7 @@
 						}else {
 							s += "<span class='d dL'> Work-flow Status </span>" +
 									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + obj.status  + "</span>";
+									 "<span class='d dR'>" + humanize(obj.status.toLowerCase())  + "</span>";
 			        s += accession_number;
 						}
 						
@@ -199,6 +203,13 @@
 		if (__$('ul1')) {
 			__$('ul1').children[0].onmousedown();
 		}
+                
+                function humanize(string){
+                 return string.replace(/_/g, ' ')
+                        .replace(/(\w+)/g, function(match) {
+                            return match.charAt(0).toUpperCase() + match.slice(1);
+                        });
+                }
 	</script>
 </html>
 
