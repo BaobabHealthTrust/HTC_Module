@@ -215,7 +215,7 @@ button {
 											Current State:
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%; border-right: 1px solid #5679c1;">
-											<%= @status.name rescue "NaN"%>
+											<%= @status.name.humanize rescue "NaN"%>
 										</div> 
 									
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:17%;">
