@@ -37,7 +37,7 @@
 							xmlhttp.onreadystatechange=function() {                                     
 								if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
 								  var results = xmlhttp.responseText;
-								  location.reload();                              
+                                                                  window.top.location.href = "/clients/<%= @client.id %>"
 								  }                                                                     
 								}                                                                         
 							                                                                         
@@ -192,19 +192,15 @@ button {
 		</style>
 	</head>
         <body style="margin: 10px; overflow: auto; font-family: Helvetica;">
-		<div style="display: table; width: 100%; border: 1px solid #eee; height: 99%;">
+		<div style="display: table; width: 100%;height: 99%;">
 			<div style="display: table-row;">
 				
-				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 0px 0px 25px 25px;hieght:200px;overflow: auto;">
-					
-					<div style=" margin: auto; margin-bottom: 5px; width: 100%; vertical-align: middle; ">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;text-align: center;" class="noselect" >Today's Visit Details</label>
-					</div>
+				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 15px 15px 15px 15px;hieght:200px;overflow: auto;">
 					
 					<div style="display: table; margin: auto;">
 						<div style="display: table-row;">
-							<div style="display: table-cell;width:100%;">
-								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Summary</label>
+							<div style="display: table-cell;width:100%;padding-bottom: 15px;padding-left: 15px;">
+								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Summary</label>
 								
 								<div style="display: table; border: 1px solid #5679c1; font-size: 18px;">
 									<div style="display: table-row;">
@@ -232,9 +228,9 @@ button {
 								</div>
 							</div>
                                                 </div>
-                                                <div style="display: table-row;">
-							<div style="display: table-cell;width:100%;">
-								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Log</label>
+                                                <div style="display: table-row;width:100%;">
+							<div style="display: table-cell;width:100%;padding-left: 15px;">
+								<label style="color: #5679c1; font-weight: bold; font-size: 16px;"> Log</label>
 								
 								<div style="display: table; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
                                                                       <% @encounters.each{|encounter| %>
@@ -242,7 +238,7 @@ button {
 										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
 											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
 										</div> 
-										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
+										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:70%;">
 											 <b><%= encounter.name   %>:</b> <br />
 												<%= encounter.to_s.html_safe   %>
 												<% answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
@@ -250,7 +246,7 @@ button {
 														<%= answer.to_s.html_safe %>
 												<% } %>
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width: 100px;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width:15%;">
 										<button style="float: right;margin: 3px; font-size: 20px; height: 60px;"
 										class="button blue" onmousedown="confirm('<%= encounter.encounter_id %>')">Void</button>
 									 </div>
