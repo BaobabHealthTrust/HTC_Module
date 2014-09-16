@@ -113,13 +113,46 @@
     text-decoration: none;
     text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
 }
+.void {
+	-moz-box-shadow:inset 0px 1px 0px 0px #fce2c1;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #fce2c1;
+	box-shadow:inset 0px 1px 0px 0px #fce2c1;
+	background-color:#f7f4f4;
+	-webkit-border-top-left-radius:20px;
+	-moz-border-radius-topleft:20px;
+	border-top-left-radius:20px;
+	-webkit-border-top-right-radius:20px;
+	-moz-border-radius-topright:20px;
+	border-top-right-radius:20px;
+	-webkit-border-bottom-right-radius:20px;
+	-moz-border-radius-bottomright:20px;
+	border-bottom-right-radius:20px;
+	-webkit-border-bottom-left-radius:20px;
+	-moz-border-radius-bottomleft:20px;
+	border-bottom-left-radius:20px;
+	text-indent:0;
+	border:1px solid #eeb44f;
+	display:inline-block;
+	color:#ed1a48;
+	font-family:Arial;
+	font-size:35px;
+	font-weight:bold;
+	font-style:normal;
+	height:40px;
+	line-height:40px;
+	width:86px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #cc9f52;
+}
+
 .button {
     border-radius: 10px !important;
     cursor: pointer;
     font-size: 0.5em;
     margin: 3px;
-    min-height: 60px;
-    min-width: 70px;
+    min-height: 40px;
+    min-width: 45px;
     padding: 15px;
 }
 button {
@@ -199,7 +232,7 @@ button {
 					
 					<div style=" width: 100%;display: table; margin: auto;">
 						<div style="display: table-row; width: 100%;">
-							<div style="display: table-cell;width:100%;padding-bottom: 15px;padding-left: 15px;">
+							<div style="display: table-cell;width:100%;padding-bottom: 15px;padding-left: 15px;padding-right: 15px;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Summary</label>
 								
 								<div style="display: table; border: 1px solid #5679c1; font-size: 18px; width: 100%;">
@@ -229,7 +262,7 @@ button {
 							</div>
                                                 </div>
                                                 <div style="display: table-row;width:100%;">
-							<div style="display: table-cell;width:100%;padding-left: 15px;">
+							<div style="display: table-cell;width:100%;padding-left: 15px;padding-right: 15px;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;"> Log</label>
 								
 								<div style="display: table; width: 100%; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
@@ -247,8 +280,7 @@ button {
 												<% } %>
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width:15%;">
-										<button style="float: right;margin: 3px; font-size: 20px; height: 60px;"
-										class="button blue" onmousedown="confirm('<%= encounter.encounter_id %>')">Void</button>
+										<a href="#" class="void" onmousedown="confirm('<%= encounter.encounter_id %>')">X</a>
 									 </div>
 									</div>
 									<% } %>
