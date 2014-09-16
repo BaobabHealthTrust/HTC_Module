@@ -193,17 +193,17 @@ button {
 	</head>
         <body style="margin: 10px; overflow: auto; font-family: Helvetica;">
 		<div style="display: table; width: 100%;height: 99%;">
-			<div style="display: table-row;">
+			<div style="display: table-row; width: 100%;">
 				
-				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 15px 15px 15px 15px;hieght:200px;overflow: auto;">
+				<div style=" width: 100%;display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 15px 15px 15px 15px;hieght:200px;overflow: auto;">
 					
-					<div style="display: table; margin: auto;">
-						<div style="display: table-row;">
+					<div style=" width: 100%;display: table; margin: auto;">
+						<div style="display: table-row; width: 100%;">
 							<div style="display: table-cell;width:100%;padding-bottom: 15px;padding-left: 15px;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Summary</label>
 								
-								<div style="display: table; border: 1px solid #5679c1; font-size: 18px;">
-									<div style="display: table-row;">
+								<div style="display: table; border: 1px solid #5679c1; font-size: 18px; width: 100%;">
+									<div style="display: table-row; width: 100%;">
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:16%;">
 											First State Time:
 										</div>
@@ -232,9 +232,9 @@ button {
 							<div style="display: table-cell;width:100%;padding-left: 15px;">
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;"> Log</label>
 								
-								<div style="display: table; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
+								<div style="display: table; width: 100%; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
                                                                       <% @encounters.each{|encounter| %>
-									<div style="display: table-row;">
+									<div style="display: table-row; width: 100%;">
 										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
 											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
 										</div> 
