@@ -471,6 +471,7 @@ class ClientsController < ApplicationController
 	
   def previous_visit
     @previous_visits  = get_previous_encounters(params[:client_id])
+    render layout: false
   end
 
   def create

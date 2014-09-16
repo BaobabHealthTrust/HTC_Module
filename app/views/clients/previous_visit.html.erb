@@ -2,88 +2,28 @@
 <html>
 	<head>
 		<title>Current Visit</title>
-                <script src="/assets/javascripts/jquery-1.3.2.min.js" type="text/javascript"></script>
-                <%= javascript_include_tag 'jquery-1.3.2.min' %>
-                  <%= javascript_include_tag 'jquery.flot' %>
                 <script>
-
-                  function checkObs(encounter){
-                    cell = document.getElementById("obs");
-                    cell.style.display = "table-cell";
-                    area = document.getElementById("display_area")
-                     $('display_area').empty().load('/encounters/observations/' + encounter)
-                     // $('#encounters li.data').removeClass("active");
-                   // node.addClass("active");
-                  }
                   
                 </script>
 		<style>
-			.arrow-right {
-				width: 0;
-				height: 0;
-				border-top: 180px solid transparent;
-				border-left: 40px solid #ccc;
-				border-bottom: 180px solid transparent;
-				cursor: pointer;
-			}
-
-			.arrow-left {
-				width: 0;
-				height: 0;
-				border-top: 180px solid transparent;
-				border-right: 40px solid #ccc;
-				border-bottom: 180px solid transparent;
-				cursor: pointer;
-			}
-
-			.arrow-left:hover{
-				border-right: 40px solid #999;
-			}
-
-			.arrow-right:hover{
-				border-left: 40px solid #999;
-			}
-
-                        div.feature{
-                          position: relative;
-}
-                      div.feature a {
-                        position: absolute;width: 100%;
-                        height: 100%;
-                        top: 0;
-                        left: 0;
-                        z-index: 10; /* Places the link above everything else in the div */
-                        background-color: #FFF; /* Fix to make div clickable in IE */
-                      }
+			
+                    
 		</style>
 	</head>
 	<body style="margin: 10px; overflow: auto; font-family: Helvetica;">
 		<div style="display: table; width: 100%; border: 1px solid #eee; height: 99%;">
-			<div style="display: table-row;">
+			<div style="display: table-row;width: 100%;">
 			
-				<div style="display: table-cell; vertical-align: middle;">
+							<div style="display: table-cell;width: 100%;">
+								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Client's States History</label>
 
-					<div style=" margin: auto; margin-bottom: 40px; width: 350px;">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;">Visit Details between <%= @previous_visits.last.encounter_datetime.strftime("%d/%m/%Y") rescue "" %> And <%= @previous_visits.first.encounter_datetime.strftime("%d/%m/%Y") rescue "" %></label>
-					</div>
-
-					<div style="display: table; margin: auto;">
-						<div style="display: table-row;">
-							
-							<div style="display: table-cell; width: 30px;">
-								&nbsp;
-							</div>
-							<div style="display: table-cell;">
-								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Log</label>
-
-								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;">
-								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;">
+								<div style="display: table; border: 1px solid #5679c1; font-size: 12px;width: 100%;">
                                                                       <% (@previous_visits || [] ).each{|encounter| %>
-									<div style="display: table-row;">
-										<div style="font-size:18px;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
+									<div style="display: table-row;width: 100%;">
+										<div style="width: 15%;font-size:18px;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
 											<%= encounter.encounter_datetime.strftime("%d/%m/%Y %I : %M")  %>
 										</div>
-										<div style="font-size:18px;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 90%;" onmousedown="checkObs('<%= encounter.id   %>')">
+										<div style="width: 85%;font-size:18px;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 90%;" onmousedown="checkObs('<%= encounter.id   %>')">
                       <b><%= encounter.name   %>:</b> <br />
 											<%= encounter.to_s.html_safe   %>
 											<% answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
@@ -94,13 +34,8 @@
 									</div>
 									<% } %>
 								</div>
-								</div>
 							</div>
-						</div>
-					</div>
-
 				</div>
-			</div>
-		</div>
+                    </div>
 	</body>
 </html>
