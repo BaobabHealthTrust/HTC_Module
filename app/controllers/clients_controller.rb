@@ -22,7 +22,7 @@ class ClientsController < ApplicationController
       @all_encounters = {}
       state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','Appointment']
       ids = []
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|

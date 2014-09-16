@@ -27,6 +27,18 @@
   border-radius: 10px;
   border: 3px solid #BADA55;
 }
+#caption{
+  padding-left: 5px;
+  font-size: 25px;
+  vertical-align: middle;
+  font-weight: bold;
+  color: #5679c1;
+}
+#enctable{
+  border:1px solid #5679c1;
+  border-radius: 10px 32px 0px 0px;
+
+}
     </style>
   </head>
 <body>
@@ -108,16 +120,25 @@
    eContainer = document.getElementsByClassName('cell8')[0];
          var table = document.createElement("div");
         table.style.display = "table";
+        table.id = "enctable";
         table.style.margin = "auto";
-        table.style.width = "100%";
+        table.style.width = "99%";
         //table.style.border = "1px solid #000";
 
         eContainer.appendChild(table);
+        
+        var cell1 = document.createElement("div");
+        cell1.style.display = "table-caption";
+        cell1.id = "caption";
+        cell1.style.width = "100%";
+        cell1.innerHTML = "Client movement";
+        table.appendChild(cell1);
 
         var row1 = document.createElement("div");
         row1.style.display = "table-row";
         row1.id = "encounters"
         table.appendChild(row1);
+
         <% @all_encounters.each{|encounter, color| %>
         var cell1 = document.createElement("div");
         cell1.style.display = "table-cell";
