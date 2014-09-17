@@ -20,9 +20,12 @@ class ClientsController < ApplicationController
 			@age = person.age(current_date)
 
       @all_encounters = {}
-      state_encounters = ['IN WAITING', 'IN SESSION',
+      state_encounters = ['IN WAITING', 'IN SESSION','Counseling',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling','Appointment']
+												'Appointment']
+      state_encounters.each{|encounter|
+        @all_encounters[encounter.upcase] = ""
+      }
       ids = []
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
