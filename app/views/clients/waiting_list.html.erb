@@ -122,9 +122,9 @@
 			dspValue = this.innerHTML.split(';');
 			var s = "";
 			
-	    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
+	    var button = '<a href="#" id="remove" ' +
 					 				 'onmousedown="remove_client_from_waiting_list()"' +
-					 				 ' class="button green" pos="0" section="0">Remove from waiting list</button>';
+					 				 ' class="blue" pos="0" section="0"><span class="txt">Remove from waiting list</span></a>';
 
 			var obj = sidePanelData[this.value];
 			s += "<span class='d dL'> Accession Number</span>" +
@@ -196,4 +196,40 @@
 		}
 	</script>
 </html>
-
+<style>
+   .blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 75px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 75px;
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+}
+#remove {
+	background-image: url(<%= asset_path 'add_list.png' %>);
+	background-size: cover;
+}
+#print {
+	background-image: url(<%= asset_path 'printer2.png' %>);
+	background-size: cover;
+}
+#new {
+	background-image: url(<%= asset_path 'add_client.png' %>);
+	background-size: cover;
+}
+#deactivate {
+	background-image: url(<%= asset_path 'activate.jpeg' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 15px;
+  position: relative;
+  text-align: center;
+  top: 85px;
+}
+</style>
