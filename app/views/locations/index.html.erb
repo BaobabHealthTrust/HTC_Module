@@ -115,21 +115,21 @@
 				var loggedInRoom = "";
 				
 				if (<%=session[:location_id]%> != this.value ) {
-						 btnDel = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
-												 'onmousedown="destroy(this)"' +
-			    						 ' class="button red" pos="0" section="0">Delete</button>'
+						 btnDel ='<a href="#" id="delete"' +
+		    						 'onmousedown="destroy(this)"' +
+		    						 ' class="blue" pos="0" section="0"><span class="txt">Delete</span></a>';
 		    }
 				
 				if (<%= current_location_occupied -%>.indexOf(obj.name) > -1 ) {		    
-						loggedInRoom = "<span class='d dL orange' style='width:223px;'> Room Occupied</span>" +
+						loggedInRoom = "<span class='d dL' style='width:223px;'>Status </span>" +
 									 "<span class='d dC'> &nbsp; </span>" +
-									 "<span class='d dR'> &nbsp; </span>";
+									 "<span class='d dR orange'> Room Occupied </span>";
 						btnDel = "";
 				}
 
-				var btnPrnt = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+				var btnPrnt = '<a href="#" id="print"' +
 		    						 'onmousedown="printLocation(this)"' +
-		    						 ' class="button blue" pos="0" section="0">Print</button>';
+		    						 ' class="blue" pos="0" section="0"><span class="txt">Print</span></a>';
 	
 				s += "<span class='d dL'> Name </span>" +
 						 "<span class='d dC'> : </span>" +
@@ -158,4 +158,33 @@
 		}
 	</script>
 </html>
-
+<style>
+   .blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 70px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 70px;
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+}
+#delete {
+	background-image: url(<%= asset_path 'delete.jpeg' %>);
+	background-size: cover;
+	border-style: none;
+}
+#print {
+	background-image: url(<%= asset_path 'printer2.png' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 80px;
+}
+</style>

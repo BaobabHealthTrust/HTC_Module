@@ -226,22 +226,22 @@
 				var s = "";
 				
 				var button;
-				var editBtn  = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+				var editBtn  = '<a href="#" id="edit"' +
 												'onmousedown="edit_protocol()"' +
-												' class="button blue" pos="0" section="0">Edit</button>';
+												' class="blue" pos="0" section="0"><span class="txt">Edit</span></a>';
 
 				
 				btnNext.style.display = "inline-table";
 						
 			
 				if(obj.status.trim() == "Active") {
-						button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+						button = '<a href="#" id="deactivate"' +
 												 'onmousedown="deactivate()"' +
-												 ' class="button red" pos="0" section="0">Deactivate</button>'	
+												 ' class="blue" pos="0" section="0"><span class="txt">Deactivate</span></a>'	
 				}else {
-						button = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+						button = '<a href="#" id="activate"' +
 												 'onmousedown="activate()"' +
-												 ' class="button green" pos="0" section="0">Activate</button>'
+												 ' class="blue" pos="0" section="0"><span class="txt">Activate</span></a>'	
 				}
 
 				s += "<span class='d dL'> Question </span>" +
@@ -287,4 +287,36 @@
 		}
 	</script>
 </html>
-
+<style>
+   .blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 75px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 75px;
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+}
+#edit {
+	background-image: url(<%= asset_path 'edit_protocol.png' %>);
+	background-size: cover;
+}
+#activate {
+	background-image: url(<%= asset_path 'deactive.jpeg' %>);
+	background-size: cover;
+}
+#deactivate {
+	background-image: url(<%= asset_path 'activate.jpeg' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 15px;
+  position: relative;
+  text-align: center;
+  top: 85px;
+}
+</style>

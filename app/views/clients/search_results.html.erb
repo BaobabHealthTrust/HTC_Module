@@ -134,9 +134,9 @@
 
 
 					
-				    var button = '<button style="margin: 3px; margin-left:10px; width: 250px; font-size: 24px;"' +
+				    var button = '<a href="#" id="add" ' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +
-				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>';
+				    						 ' class="blue" pos="0" section="0"><span class="txt">Add to waiting list</span></a>';
 				   	
 						s += "<span class='d dL'> Accession Number</span>" +
 								 "<span class='d dC'> : </span>" +
@@ -174,8 +174,9 @@
 									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
 						}
 
-						var accession_number = "<button onmousedown='printAccession(" + obj.id + ")' style='margin: 3px; margin-left:10px; width: 230px; font-size: 24px;'" +
-		                         ' class="button green" pos="0" section="1">Accesssion</button>';
+						var accession_number =  '<a href="#" id="print" ' +
+				    						 'onmousedown="printAccession(' + obj.id + ')"' +
+				    						 ' class="blue" pos="0" section="0"><span class="txt">Accession</span></a>';
 						if (obj.status.trim()=="") {
 							//s+=button;
 							s +=  button + accession_number;
@@ -188,8 +189,8 @@
 						
 					}
 					else {
-				     s = '<br> <br> <button onmousedown="create_new_patient()" style="margin: 3px; width: 250px; font-size: 24px;"' +
-				    						 ' class="button green" pos="0" section="0">New client</button>'				
+				     s = '<br> <br> <a href="#" id="new" onmousedown="create_new_patient()" ' +
+				    						 ' class="blue" pos="0" section="0"><span class="txt">New client</span></a>'				
 					}
 				__$('dsp').innerHTML = s;  
 			};
@@ -214,4 +215,40 @@
     document.getElementById('btn3').children[0].setAttribute("onclick","eval(window.location='/htcs')");
 </script>
 </html>
-
+<style>
+   .blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 75px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 75px;
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+}
+#add {
+	background-image: url(<%= asset_path 'add_list.png' %>);
+	background-size: cover;
+}
+#print {
+	background-image: url(<%= asset_path 'printer2.png' %>);
+	background-size: cover;
+}
+#new {
+	background-image: url(<%= asset_path 'add_client.png' %>);
+	background-size: cover;
+}
+#deactivate {
+	background-image: url(<%= asset_path 'activate.jpeg' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 15px;
+  position: relative;
+  text-align: center;
+  top: 85px;
+}
+</style>
