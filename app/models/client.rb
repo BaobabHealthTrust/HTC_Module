@@ -118,4 +118,14 @@ class Client < ActiveRecord::Base
 					WHERE last_appointment.value_datetime >= last_encounter.encounter_datetime
 		").first rescue nil
 	end
+	
+	def latest_booking
+		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
+		Observation.find_by_sql("
+			SELECT person_id, concept_id, MAX(value_datetime) AS value_datetime
+				FROM obs
+				WHERE person_id = #{self.id} AND concept_id=#{concept_id} AND voided=0
+				GROUP BY person_id
+		").first rescue nil
+	end
 end

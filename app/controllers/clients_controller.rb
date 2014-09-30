@@ -441,12 +441,20 @@ class ClientsController < ApplicationController
 		 has_booking = false
 		 appointment_date = c.has_booking.value_datetime rescue nil
 
+		 if appointment_date.blank?
+			appointment_date = c.latest_booking.value_datetime rescue nil
+		end
+		
 		 if !appointment_date.blank?
 		 	has_booking = true
-		 	appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+		 end
+
+		 if appointment_date.blank?
+			appointment_date = c.latedst_booking.value_datetime rescue nil
+			has_booking = true if !appointment_date.blank?
 		 end
 			
-     	@waiting << { id: c.id, accession_number: c.accession_number,
+     @waiting << { id: c.id, accession_number: c.accession_number,
      							  age: c.person.age, gender: c.person.gender,
      							  datetime: datetime, date: date, time: time,
      							  birthDate: birth, address: residence,
@@ -455,25 +463,36 @@ class ClientsController < ApplicationController
      							 }
      end
      
-     @waiting = @waiting.sort{|a, b| a[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime <=> b[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime}
+     #raise @waiting.to_json 
+     @waiting = @waiting.sort!{ |b,a| (a[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) <=> (b[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) } rescue []
      
      sp = ""
      @w = ""
      @side_panel_date = ""
      
-			@waiting.each do |i|
+     order = 0
+     
+		 @waiting.each do |i|
+				appointment_date = i[:appointment_date]
+				if !appointment_date.blank?
+					appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+				end
+				
 				@w += sp + "{ id: #{i[:id]}, accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', 
-										time: '#{i[:time]}', birthDate: '#{i[:birthDate]}' }"
+										time: '#{i[:time]}', birthDate: '#{i[:birthDate]}',
+										has_booking: #{i[:has_booking]}, appointment_date: '#{appointment_date}'}"
 				
-				@side_panel_date += sp + "#{i[:id]} : { id: #{i[:id]},
+
+				@side_panel_date += sp + "#{i[:id]} : {order: #{order}, id: #{i[:id]},
 										accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
 										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}',
 										days_since_last_visit: '#{i[:days_since_last_visit]}',
-										has_booking: #{i[:has_booking]}, appointment_date: '#{i[:appointment_date]}' }"
+										has_booking: #{i[:has_booking]}, appointment_date: '#{appointment_date}' }"
+				order+=1
 				sp = ','
 			end
 
