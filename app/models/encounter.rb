@@ -1,3 +1,4 @@
+# coding: utf-8
 class Encounter < ActiveRecord::Base
   self.table_name = 'encounter'
   self.primary_key = 'encounter_id'
