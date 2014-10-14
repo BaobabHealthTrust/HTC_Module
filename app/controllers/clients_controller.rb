@@ -59,10 +59,17 @@ class ClientsController < ApplicationController
 		elsif ! params[:gender].blank? and ! params[:dob].blank?
 			current_number = 1
 			current = session[:datetime].to_date rescue Date.today
+    
+      if current.month >= 7
+         string = "#{current.year.to_s}-#{(current.year + 1).to_s}"
+      else
+        string = "#{(current.year - 1).to_s}-#{current.year.to_s}"
+      end
+
 			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 			type = ClientIdentifier.find(:last, 
 																	 :conditions => ["identifier_type = ? AND identifier LIKE ?",
-																	  identifier_type, "%#{current.year.to_s}"])
+																	  identifier_type, "%#{string}"])
 			type = type.identifier.split("-")[0].to_i rescue 0
 			identifier = current_number + type
 			
@@ -93,9 +100,10 @@ class ClientsController < ApplicationController
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
+
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
-															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
+															identifier: "#{identifier}-#{string}", creator: current_user.id)
 			
 			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
