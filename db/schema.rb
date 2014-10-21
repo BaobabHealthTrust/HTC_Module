@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140825121028) do
+ActiveRecord::Schema.define(version: 20141021124059) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -917,6 +917,16 @@ ActiveRecord::Schema.define(version: 20140825121028) do
   add_index "htmlformentry_html_form", ["creator"], name: "User who created htmlformentry_htmlform", using: :btree
   add_index "htmlformentry_html_form", ["form_id"], name: "Form with which this htmlform is related", using: :btree
 
+  create_table "kits", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "creator"
+    t.string   "status"
+    t.integer  "flow_order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "liquibasechangelog", id: false, force: true do |t|
     t.string   "ID",            limit: 63,  null: false
     t.string   "AUTHOR",        limit: 63,  null: false
@@ -1650,7 +1660,7 @@ ActiveRecord::Schema.define(version: 20140825121028) do
 
   create_table "privilege", primary_key: "privilege", force: true do |t|
     t.string "description", limit: 250, default: "", null: false
-    t.string "uuid",        limit: 38
+    t.string "uuid",        limit: 38,               null: false
   end
 
   add_index "privilege", ["uuid"], name: "privilege_uuid_index", unique: true, using: :btree
@@ -1874,7 +1884,7 @@ ActiveRecord::Schema.define(version: 20140825121028) do
 
   create_table "role", primary_key: "role", force: true do |t|
     t.string "description",            default: "", null: false
-    t.string "uuid",        limit: 38
+    t.string "uuid",        limit: 38,              null: false
   end
 
   add_index "role", ["uuid"], name: "role_uuid_index", unique: true, using: :btree
