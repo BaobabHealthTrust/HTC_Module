@@ -1,0 +1,77 @@
+<html>
+<head>
+		<script>
+			var cancelDestination = "/clients/<%= params[:id] %>";
+		</script>
+  <style>
+#text, #confirm, #cancel{
+  display: table-cell;
+}
+#text{
+  height: 70px;
+}
+#confirm{
+  vertical-align: middle;
+}
+#cancel{
+  vertical-align: middle;
+}
+
+    #popup{
+      -moz-user-select: none;
+      background-color: #FEEFB3;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: #9F6000;
+      font-size: 28px;
+      height: 159px;
+      left: 38%;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      top: 28%;
+      width: 319px;
+      z-index: 991;
+    }
+    #cover{
+      display:none;
+      position: absolute;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.5;
+    }
+    #popupkeyboard{
+                height: 255px ! important;
+            }
+  </style>
+</head>
+<body >
+
+		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
+		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+		<input type="hidden" value="ASSESSMENT" name="ENCOUNTER"/>
+				<fieldset>
+				<legend>Risk Assessment</legend>
+                               <label for="type">Client Risk Category</label>
+
+                                <select id="type" name="observations[][value_coded_or_text]">
+					<option></option>
+					<option value="Low Risk">Low Risk</option>
+					<option value="AVD+ or High Risk">On-going Risk</option>
+                                       <option value="High risk event in last 3 months">High risk event in last 3 months</option>
+                                       <option value="Risk assessment not done">Risk assessment not done</option>
+
+				</select>
+                            <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
+                            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                            <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+</fieldset>
+<%= link_to "Cancel" , "/clients/#{params[:id]}" %>
+<%= submit_tag "Finish" %>
+	<%end%>
+</body>
+</html>

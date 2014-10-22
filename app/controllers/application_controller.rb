@@ -5,7 +5,79 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user, :except => [:attempt_login, :login, :logout]
   before_filter :save_login_state, :only => [:attempt_login, :login]
   
-      
+  def next_task(client)
+     htc_tasks = ["IN SESSION", "IN WAITING", "UPDATE HIV STATUS","ASSESSMENT", "COUNSELING",
+                          "HIV TESTING","APPOINTMENT","REFERRAL CONSENT CONFIRMATION"]
+     current_date = session[:datetime].to_date rescue Date.today
+     conselled = encounter_done(client.patient_id, "COUNSELING")
+    htc_tasks.each { |encounter|
+              case encounter
+              when "UPDATE HIV STATUS"
+                   if encounter_done(client.patient_id, encounter).blank?
+                        link = { "name" =>  "Update Status",
+                        "url" => "/client_status/#{client.patient_id}"}
+                        return link
+                    end
+              when "ASSESSMENT"
+                   if encounter_done(client.patient_id, encounter).blank?
+                        link = { "name" =>  "Assessment",
+                        "url" => "/client_assessment/#{client.patient_id}"}
+                        return link
+                    end
+              when "COUNSELING"
+                   if encounter_done(client.patient_id, encounter).blank?
+                        link = { "name" =>  "Counseling",
+                        "url" => "/client_counseling?client_id=#{client.patient_id}"}
+                        return link
+                    end
+              when "HIV TESTING"
+                   if ! conselled.blank?
+                        o = ActionView::Base.full_sanitizer.sanitize(conselled.first.to_s).upcase
+                        if o.match(/TEST CONCEPT: NO/i)
+                            next
+                        end
+                   end
+                   if encounter_done(client.patient_id, encounter).blank?
+                        link = { "name" =>  "HIV Testing",
+                        "url" => "/client_testing?client_id=#{client.patient_id}"}
+                        return link
+                    end
+              when "APPOINTMENT"
+                   if ! conselled.blank?
+                        o = ActionView::Base.full_sanitizer.sanitize(conselled.first.to_s).upcase
+                        if o.match(/TEST CONCEPT: NO/i)
+                            next
+                        end
+                   end
+                  if encounter_done(client.patient_id, encounter).blank?
+                        link = { "name" =>  "Appointment",
+                        "url" => "/appointment/#{client.patient_id}"}
+                        return link
+                    end
+              when "REFERRAL CONSENT CONFIRMATION"
+                   if ! conselled.blank?
+                        o = ActionView::Base.full_sanitizer.sanitize(conselled.first.to_s).upcase
+                        if o.match(/TEST CONCEPT: NO/i)
+                            next
+                        end
+                   end
+                    if encounter_done(client.patient_id, encounter).blank?
+                        link = { "name" =>  "Referral",
+                        "url" => "/referral_consent/#{client.patient_id}"}
+                        return link
+                    end
+              end
+    }
+       link = { "name" =>  "None",
+                        "url" => "/clients/#{client.patient_id}"}
+       return link
+  end
+
+  def encounter_done(patient_id, encounter)
+      current_date = session[:datetime].to_date rescue Date.today
+      type = EncounterType.where("name = ?", encounter).first.encounter_type_id
+      return Encounter.where("patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?", patient_id, type, current_date  ).order("encounter_datetime desc")
+  end
 
 	def current_user
 		@current_user ||= User.find(session[:user_id]) if session[:user_id]

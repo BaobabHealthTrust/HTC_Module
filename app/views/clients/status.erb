@@ -1,0 +1,167 @@
+<html>
+<head>
+		<script>
+			var cancelDestination = "/clients/<%= params[:id] %>";
+
+                      function __$(id){
+                            return document.getElementById(id);
+                      }
+                      monthNumber = {}
+                      list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                      for (i = 0; i < list.length; i ++){
+                         monthNumber[list[i]] = i
+                      }
+
+                        function verify(id){
+                         if (__$(id).value.length > 0){
+                          if ( !  (__$(id).value.match(/\?/)) ){
+                              var today = new Date();
+                              var value =   __$("textFor" + id).value.split('/');
+                               var day = parseInt(value[0]);
+                               var month = value[1];
+                               var year = parseInt(value[2]);
+
+                               selectedDate = new Date(year,monthNumber[month],day);
+                               if (selectedDate > today){
+                                   __$("textFor" + id).value = "?/?/?"
+                                   confirm()
+                                   clearTimeout(id)
+                               }
+                          }
+                         }
+                            setTimeout("verify('" + id + "')", 50);
+                        }
+
+               function confirm(){
+                     var ele = document.getElementById('cover')
+                      ele.style.display = "inline";
+                      document.body.appendChild(ele);
+
+                      var ele = document.getElementById('popup')
+                      ele.style.display = "inline";
+                      html = "<div style='display:table;'><div style='display:table-row'>"
+                      html += "<div id='text'>Date is greater than current day</div></div><div style='display:table-row'>"
+                      html += '<div id="confirm"><button class="button red" style="font-size: 20px; height: 60px;" onmousedown="reset();verify(' + 'test_date' + ');">OK</button></div>'
+                      html += "</div></div>"
+                      ele.innerHTML =  html;
+                      document.body.appendChild(ele);
+                  }
+
+              function reset(){
+                            ele = document.getElementById('cover')
+                            ele.style.display = "none";
+                            ele = document.getElementById('popup')
+                            ele.style.display = "none";
+                        }
+		</script>
+  <style>
+#text, #confirm, #cancel{
+  display: table-cell;
+}
+#text{
+  height: 70px;
+}
+#confirm{
+  vertical-align: middle;
+}
+#cancel{
+  vertical-align: middle;
+}
+
+    #popup{
+      -moz-user-select: none;
+      background-color: #FEEFB3;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: #9F6000;
+      font-size: 28px;
+      height: 159px;
+      left: 38%;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      top: 28%;
+      width: 319px;
+      z-index: 991;
+    }
+    #cover{
+      display:none;
+      position: absolute;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.5;
+    }
+    #popupkeyboard{
+                height: 255px ! important;
+            }
+  </style>
+</head>
+<body onload="verify('test_date')" >
+
+		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
+		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+		<input type="hidden" value="Update HIV status" name="ENCOUNTER"/>
+				<fieldset>
+				<legend>Update Status</legend>
+				<label for="patient">Client Pregnant?</label>
+				<label for="patient.1">Yes</label>
+				<input type="radio" name="patient" id="patient.1" value="YES" >
+				<label for="patient.2">No</label>
+				<input type="radio" name="patient" id="patient.2" value="NO" >
+
+				<%= hidden_field_tag("observations[][concept_name]",        "Patient Pregnant") %>
+				<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+				<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
+                                <%= hidden_field_tag("observations[][value_coded_or_text]",       "") %>
+				<br />
+                               
+       <label for="type">HTC Access Type</label>
+        <select id="type" name="observations[][value_coded_or_text]">
+					<option></option>
+					<option value="Routine HTC with health service">Routine HTC with health service</option>
+					<option value="Comes with HTC family Ref slip">Comes with HTC family Ref slip</option>
+          <option value="Other">Other</option>
+				</select>
+        <%= hidden_field_tag("observations[][concept_name]",        "HTC Access Type") %>
+        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+           <br />
+       <label for="last">Last HIV test</label>
+
+            <select id="last" name="observations[][value_coded_or_text]">
+					<option></option>
+					<option value="Never Tested">Never tested</option>
+					<option value="Last Negative">Negative</option>
+		       <option value="Last Positive">Last Positive</option>
+		       <option value="Last Exposed Infant">Last Exposed Infant</option>
+		       <option value="Last Inconclusive">Last Inconclusive</option>
+				</select>
+        <%= hidden_field_tag("observations[][concept_name]",        "Last HIV test") %>
+        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        <br />
+
+       <label for="test_date">Last test date (day)</label>
+            <input  type='text' name="observations[][value_datetime]" id="test_date"
+             fieldtype="date"
+             condition="__$('last').value.toUpperCase() != 'NEVER TESTED' && __$('last').value.length > 0" >
+            <%= hidden_field_tag("observations[][concept_name]",        "Hiv test date") %>
+            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+            
+</fieldset>
+<%= link_to "Cancel" , "/clients/#{params[:id]}" %>
+<%= submit_tag "Finish" %>
+	<%end%>
+</body>
+</html>
+  <div id="cover" align="center">
+  </div>
+  <div id="popup" style="display:none">
+  </div>

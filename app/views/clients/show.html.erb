@@ -70,7 +70,11 @@
 				
 				<button onmousedown="window.location = '/client_demographics?client_id=<%= @client.id -%>'">
 				Demographics</button>
-				
+
+				<% unless @task["name"].upcase == "NONE" %>
+                                <button onmousedown="window.location = '<%= @task["url"] -%>'">
+				Continue</button>
+                                <% end %>
 				<% if !session[:datetime].blank?  %>
 					<button onmousedown="window.location = '/admins/set_date?client_id=<%= @client.id -%>'">
 			    Reset Date</button>
@@ -131,7 +135,7 @@
         cell1.style.display = "table-caption";
         cell1.id = "caption";
         cell1.style.width = "100%";
-        cell1.innerHTML = "Client movement";
+        cell1.innerHTML = "Client movement" + '<span style="float:right; width:50%;">Next: <%= @task["name"] %></span>';
         table.appendChild(cell1);
 
         var row1 = document.createElement("div");
