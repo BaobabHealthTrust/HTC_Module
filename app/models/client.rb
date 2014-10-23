@@ -36,7 +36,7 @@ class Client < ActiveRecord::Base
 		
 		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','ASSESSMENT',"UPDATE HIV STATUS", "APPOINTMENT"]
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
 										ids << e.id
@@ -53,7 +53,7 @@ class Client < ActiveRecord::Base
 
 		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','ASSESSMENT',"UPDATE HIV STATUS", "APPOINTMENT"]
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
 										ids << e.id
@@ -70,7 +70,7 @@ class Client < ActiveRecord::Base
 
 		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','ASSESSMENT',"UPDATE HIV STATUS", "APPOINTMENT"]
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
 										ids << e.id

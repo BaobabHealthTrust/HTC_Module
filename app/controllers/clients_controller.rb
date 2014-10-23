@@ -10,6 +10,7 @@ class ClientsController < ApplicationController
   end
 
   def show
+      @task = next_task(@client)
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
@@ -270,6 +271,14 @@ class ClientsController < ApplicationController
      redirect_to "/client_demographics?client_id=#{params[:id]}"
   end
   
+  def status
+     @client = Client.find(params[:id])
+  end
+
+  def assessment
+    @client = Client.find(params[:id])
+  end
+
 	def counseling
 			@client = Client.find(params[:client_id])
       @protocol = []
@@ -523,7 +532,7 @@ class ClientsController < ApplicationController
 
 			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
-
+                      
 				if @accession.blank?
 					flash[:notice] = "Invalid accession number...."
 					redirect_to "/search" and return

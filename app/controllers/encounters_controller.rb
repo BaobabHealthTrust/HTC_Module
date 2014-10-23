@@ -9,8 +9,10 @@ class EncountersController < ApplicationController
   end
 
   def new
+    
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
+    patient = Client.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
 
 		if params["ENCOUNTER"].upcase == "COUNSELING"
@@ -53,7 +55,10 @@ class EncountersController < ApplicationController
 
               # Check to see if any values are part of this observation
               # This keeps us from saving empty observations
-              
+              if params["ENCOUNTER"].upcase == "UPDATE HIV STATUS"  and observation[:concept_name].upcase == "PATIENT PREGNANT"
+                    observation[:value_coded_or_text] = params[:patient]
+              end
+
               if !observation["value_datetime"].blank?
                  if observation["value_datetime"].match(/\?/)
                     observation["value_text"] = observation["value_datetime"]
@@ -100,11 +105,11 @@ class EncountersController < ApplicationController
     		redirect_to waiting_list_path and return
     end
     
-    if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
-       redirect_to  "/referral_consent/#{params[:id]}"
-    else
-      	redirect_to "/clients/#{params[:id]}" and return
-    end 
+    #if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
+    #   redirect_to  "/referral_consent/#{params[:id]}"
+   # else
+      	redirect_to next_task(patient)["url"] and return
+   # end
   end
 
   def edit

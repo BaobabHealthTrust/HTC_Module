@@ -12,7 +12,15 @@ class AdminsController < ApplicationController
   def new
 
   end 
-	
+
+  def tests
+    
+  end
+
+  def new_test
+      @tests = ["Unigold", "Determine"]
+  end
+
 	def protocols
 		@protocols = CounselingQuestion.all		
     @side_panel_data = generate_protocols_javascript_hash(@protocols)

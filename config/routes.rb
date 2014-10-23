@@ -33,12 +33,15 @@ HTCModule::Application.routes.draw do
   #post "assign_to_unlocated" => "clients#assign_to_unlocated"
 
   #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
-
+  get "client_assessment/:id" => "clients#assessment"
+  get "client_status/:id" => "clients#status"
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
 	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"
+  get "tests" => "admins#tests"
+  get "new_test" => "admins#new_test"
 	get "edit_protocols" => "admins#edit_protocols"
 	post "edit_protocols" => "admins#edit_protocols"
 	
