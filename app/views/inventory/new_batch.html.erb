@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<%= form_tag new_location_path do %>
+<%= form_tag create_batch_path do %>
     <fieldset>
       <legend>Testkit delivery</legend>
 
@@ -61,6 +61,20 @@
     __$("buttons").style.height = "100%";
 
     btnNext.style.width = "250px";
+    btnNext.onclick = function(){
+
+        for (var i in kit_names){
+
+            if (!validateCompleteness(kit_names[i], true)){
+                customAlert("Cannot proceed, <span style=\"color: gray;\">'" + kit_names[i] + "'</span> entries incomplete!")
+                return;
+            }
+        }
+
+        buildParams();
+
+       document.forms[0].submit();
+    }
     btnCancel.style.width = "250px";
 
     var display = "inline-table";
@@ -91,6 +105,12 @@
     var inputKeys = [];
     var inputControls = {};
 
+    var kit_names = [];
+
+    <%  @kits.each do |kit|%>
+        kit_names.push("<%= kit.name%>");
+    <% end %>
+
     //build a javascript hash defining entry controls
     //All defintitions in controllers
     <% @input_controls.each do |control|%>
@@ -110,6 +130,10 @@
             highlightList(this);
             loadControls(this, undefined, true);
         }
+    }
+
+    function buildParams(){
+
     }
 
     function setInputTable() {
@@ -144,15 +168,19 @@
     function addBatchButton(){
 
         var addbut = document.createElement("div");
+        addbut.id = "addbatch";
         addbut.className = "addbatch blue";
         addbut.innerHTML = "New " + dsp.getAttribute("target") + " batch";
         addbut.onmousedown = function(){
-
-            var max = 0;
-            if (Object.keys(data[dsp.getAttribute("target")]).length > 0){
-                var max = Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")]));
+            if (validateCompleteness()) {
+                var max = 0;
+                if (Object.keys(data[dsp.getAttribute("target")]).length > 0) {
+                    var max = Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")]));
+                }
+                loadControls(__$(dsp.getAttribute("target")), (max + 1));
+            }else{
+                customAlert("Cannot proceed, incomplete batch!");
             }
-            loadControls(__$(dsp.getAttribute("target")), (max + 1));
         }
         return addbut;
     }
@@ -274,12 +302,12 @@
 
     function loadControls(node, pos, checkWindowSwitch) {
         dsp.innerHTML = "&nbsp";
-        dsp.setAttribute("target", node.getAttribute("value"))
+        dsp.setAttribute("target", node.getAttribute("value"));
 
         if(checkWindowSwitch){
             if (Object.keys(data[dsp.getAttribute("target")]).length > 1) {
                 loadList();
-                return
+                return;
             }
         }
 
@@ -300,6 +328,49 @@
         }
         __$(inputKeys[0]).onmousedown();
         __$(inputKeys[0]).focus();
+    }
+
+    function validateCompleteness(li_name, checkAll){
+        var returnValue = true;
+        try {
+            if (!li_name) {
+                var li_name = dsp.getAttribute("target");
+            }
+
+            var last_pos = 0;
+            if (Object.keys(data[li_name]).length > 0) {
+                var last_pos = Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")]));
+            }
+
+            if (checkAll) {
+                var checkSum = [];
+                for (var i = 0; i < inputKeys.length; i++) {
+                    try {
+                        var val = data[li_name][last_pos][inputKeys[i]]
+                        if (val.length > 0)
+                            checkSum.push(val);
+                    } catch (x) {
+                    }
+                }
+
+            }
+
+            for (var i = 0; i < inputKeys.length; i++) {
+
+                if (!(data[li_name][last_pos][inputKeys[i]] && data[li_name][last_pos][inputKeys[i]].trim().length > 0)) {
+
+                    if (checkAll) {
+                        if (checkSum.length > 0) {
+                            returnValue = false;
+                            break;
+                        }
+                    }else{
+                        returnValue = false;
+                    }
+                }
+            }
+        }catch(e){}
+        return returnValue;
     }
 
     function updateInput(){
@@ -355,8 +426,24 @@
         document.body.appendChild(ele);
     }
 
+    function customAlert(msg) {
+
+        if (__$('popup'))
+            __$('popup').parentNode.removeChild(__$('popup'));
+
+        var ele = document.createElement('div')
+        ele.id = "popup";
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + msg + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 55px;" onmousedown="reset()">Ok</button></div>'
+        html += "</div></div></div></div>";
+        ele.innerHTML = html;
+        document.body.appendChild(ele);
+    }
+
     function reset(){
-        ele = document.getElementById('popup')
+        ele = document.getElementById('popup');
         ele.style.display = "none";
         ele.parentNode.removeChild(ele);
     }
@@ -453,7 +540,7 @@
         border-radius: 15px 15px 15px 15px;
         color: #9F6000;
         font-size: 28px;
-        height: 159px;
+        height: 165px;
         left: 30%;
         padding: 5px;
         position: absolute;
@@ -616,6 +703,9 @@
        border-bottom: 1px dotted rgb(52, 101, 164);
        border-left: 0.5px dotted rgb(52, 101, 164);
    }
-
+   .gray{
+       background: gray !important;
+       backgroundColor: gray  !important;
+   }
 
 </style>

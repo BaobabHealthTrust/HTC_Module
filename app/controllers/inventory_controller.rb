@@ -18,4 +18,8 @@ class InventoryController < ApplicationController
                                            "min" => @session_date}]]
     render layout: false
   end
+
+  def create
+    
+  end
 end

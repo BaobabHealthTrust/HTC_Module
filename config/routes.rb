@@ -52,8 +52,9 @@ HTCModule::Application.routes.draw do
 
   get "inventory" => "inventory#options"
   get "new_batch" => "inventory#new_batch"
+  post "create_batch" => "inventory#create"
   post "edit_batch" => "inventory#edit"
-  post "ditribute_batch" => "inventory#edit"
+  post "ditribute_batch" => "inventory#distribute"
 
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
