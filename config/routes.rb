@@ -47,6 +47,11 @@ HTCModule::Application.routes.draw do
 	get "new_protocol" => "admins#new_protocol"
 	post "new_protocol" => "admins#new_protocol"
 
+  get "inventory" => "inventory#options"
+  get "new_batch" => "inventory#new_batch"
+  post "edit_batch" => "inventory#edit"
+  post "ditribute_batch" => "inventory#edit"
+
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
 

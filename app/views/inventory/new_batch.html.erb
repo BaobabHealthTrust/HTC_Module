@@ -1,0 +1,621 @@
+<html>
+<head>
+  <script>
+      var cancelDestination = "/htcs?tab=admin";
+      var imgUnTick = 'data:image/png;base64,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';
+      var pencil = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAaCAYAAABGiCfwAAAFEUlEQVRIic3V+U/TBxjH8S9Mo3H7YWbOLM6Z6dREzeaRZXG/7HQHS1h2uUUlHgzEC1LAYwWmFRURRAVEKWyAqMghYhGwyFELyFFaWm6kw3IoAtWh9G7B937YL/thCcj4YZ8/4HnleZ7keQRhCvIUFtvsT5TYR9qxPr04FTX/NTYbCxkbzbK36MyG1N9pSpJCjwFGndIphXDy3piVrJ76BvPFn7dRscmLgcgoGiKjGL3XDc4pAgcYeHHY5copUWnMipsFFIYFU7Lxe9oOBNOZcAbl6UTGDD0w5gjJJvuFSUMSCe6MjJ2qrFKQWZyHrKSUalkRZeFhKHw38jBsP/eiomg6dZpnhi4cjIVOTkJwczKy5VxWsDk1PYby4jK0Wi2tbToe6+9yLVhM1Q5/Wg4E0RYuoT4hHpxm8yQg3KwYN5y7Gjz4qWgGosOeaGuq0NTr6Bp8QOMfHVTlFZAjDkcVvJP6oABqJYfBauJ5JTcLI97J+aGD68Wv4imeydajy1F2ZDNkNtHc2oNMlset4gLaW9vQpSdwS3yAmoiTYLFjMpnmThiyYxQlFwSbt0a8xQ+S2WyMmEXglRUEpH3IjYbLFBUUoiqrRqttRNXZjkpTTW1+ISONnWAbLdXr9TPGZSQSibuVkaAr1RKz76k5bD49m+0JKwktWEJA5gL8Ly0hNO0jpBkhtDa30drcjaZRR1ZlBVU1DeCi1A6LxoUUCsU0K0bR5eoj5l2JK/BNmkNQxnIi5d8Rlr+WkOvvIspcyJ7U+exLXkt+rZQ63W2UlXLK1WpsjtEUnjB7/MEpmAam8BvqaPPei6vxS30Tcf7HxNVsIrr8C07keRMm+4zgwrfxuTKPb45OxzNwBqJj6yiruQZ22zn6+2eNDxmYaYeoguYYJDfWEJi5lMjir0lT7+Z81RbiK7w4U+rJyZL17M/+AK+41/jqV4GfwmZyKf8AOIkFpk9gR7hbx4yBio7U4YQSHyLkHpy940VG4y/kNktIq/NHWuNDbPkWIuVfsi1+Ed+Gv4TX0dlcKA41uXCIs7MneDHssE7bnTd8sW47CUpvUtRByLoiuNERRXbdEdJrxKTUByCt34V/ymq2xr6Cb/R8shTHTS7YNyHk7/nhZrR0Fco1EjI1InJajlHUE8ftgTiKO08ga4jmelME6boAJEXr2Jm0BN+Y15HVHjU5YcfEIUEQsFjmPRwqNjfpw9HcT0EzeJU7AxmU9SZQpo+nXJ9IXlsop5Xr8Et+g93nF1DSEo8NW9hzQYIgCDiNosGueIa7TvBw4Br3BmWo+q6iuHeZyt4MyrvPIr3zI4EZcxGnLeNmUwwOLCHPD0lwx6JTPdbthcYYHPdzGXqQi/6RHK1RjrL/Aun1/oRkvc/ey6tQNktxYAkXwO35MYdjGQNybBo/aEyCPhlPe3Po+7MIjTGX3I6DHC/6hHCZB0XdiWZchILEfXJd8eh4T0c0ZsMZ6C3FdV+Oq/MS9J6nt+sQvyk2EF3iR1WfzAzGQ8DkHiI41wz03NXv8/PE1icDYw7P7kbi1IXhbAqhv+0gqvZIdA/l5hHXk2gMzJwUJAiC4GIo33vzJkQ+QVxPO0OL6hiPa7wZUYtxtqdi7a5wPB0yPLJYTXHDw8MvTxoSBEGoVZcPr1y1nD3bg3hn6WJiY3YwqC2gR1tMq/q2o766Mr+sTPn5f0L+GW+fbXh4eKBr0GIwdDbcbTaI6+o6Fkql6vFv3P8xfwEMm+ridcKfkQAAAABJRU5ErkJggg==";
+      var data = {};
+  </script>
+
+  <%= stylesheet_link_tag 'panel' %>
+</head>
+<body>
+
+<%= form_tag new_location_path do %>
+    <fieldset>
+      <legend>Testkit delivery</legend>
+
+      <br/>
+      <label for="id"> </label>
+      <select id="id" name="id">
+        <option></option>
+        <%= @kits.each do |kit| %>
+            <option id="<%= kit.name %>" value="<%= kit.name %>"> <%= kit.name %></option>
+        <% end %>
+      </select>
+      <br/>
+    </fieldset>
+    <%= submit_tag "Finish" %>
+
+<% end %>
+</body>
+
+<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+<%= javascript_include_tag 'custom_date' %>
+<script>
+
+    var sidePanelData = {<%= @side_panel_data.html_safe rescue ""%>};
+    //Highlist list object
+    function highlightList(obj) {
+        if (obj.getAttribute("target") != null) {
+            if (__$(obj.getAttribute("target"))) {
+                var opts = __$(obj.getAttribute("target")).children;
+
+                for (var i = 0; i < opts.length; i++) {
+                    if (opts[i].getAttribute("selecttag") != null) {
+                        opts[i].removeAttribute("selecttag");
+                        opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+                    }
+                }
+            }
+
+            obj.setAttribute("selecttag", true);
+            obj.style.backgroundColor = "lightblue";
+            obj.style.color = "black";
+        }
+    }
+
+    __$("row1").style.display = "none";
+    __$("buttons").style.verticalAlign = "bottom";
+    __$("buttons").style.width = "100%";
+    __$("buttons").style.height = "100%";
+
+    btnNext.style.width = "250px";
+    btnCancel.style.width = "250px";
+
+    var display = "inline-table";
+
+    btnDivs = __$('buttons').children[0].children;
+
+    btnDivs[1].style.display = "none";
+    btnDivs[2].style.display = "none";
+
+    btnDivs[0].style.display = "inline-table";
+    btnDivs[3].style.display = "inline-table";
+
+    btnDivs[3].style.cssFloat = "right";
+
+    var dsp = document.createElement("div");
+    dsp.id = "dsp";
+    dsp.style.display = "table-cell";
+    dsp.style.border = "1px solid #3465a4";
+    dsp.style.overflow = "hidden";
+    dsp.style.borderRadius = "10px";
+    dsp.style.width = "70%";
+    dsp.style.height = "100%";
+    dsp.style.verticalAlign = "top";
+    dsp.innerHTML = "&nbsp";
+
+    __$('textForid').style.height = "100%";
+    __$('textForid').style.width = "100%";
+    var inputKeys = [];
+    var inputControls = {};
+
+    //build a javascript hash defining entry controls
+    //All defintitions in controllers
+    <% @input_controls.each do |control|%>
+    inputKeys.push("<%= control[0].strip%>")
+    inputControls["<%= control[0].strip%>"] = {};
+        <% control[1].each do |key, value| %>
+    inputControls["<%= control[0].strip%>"]["<%= key.strip%>"] = "<%= value%>"
+    <%end%>
+    <% end %>
+
+    var lst = __$('ul1').children;
+    for (var i = 0; i < lst.length; i++) {
+
+        data[lst[i].getAttribute("value")] = {};
+
+        lst[i].onmousedown = function () {
+            highlightList(this);
+            loadControls(this, undefined, true);
+        }
+    }
+
+    function setInputTable() {
+        var table = document.createElement("div");
+        table.className = "table";
+        table.id = "inputTable";
+        dsp.appendChild(table);
+
+        var holder = document.createElement("div");
+        holder.className = "holder";
+        holder.innerHTML = "<table id='controls-holder'><tr><td id='keyboard-data'></td><td id='done-data'></td></tr></table>"
+        dsp.appendChild(holder);
+        var keyboard = document.createElement("div");
+        keyboard.id = "keyBoard";
+        keyboard.className = "row keyboard";
+
+        __$("keyboard-data").appendChild(keyboard);
+       __$("done-data").appendChild(doneButton());
+    }
+
+    function doneButton(){
+
+        var done = document.createElement("div");
+        done.className = "done blue";
+        done.innerHTML = "Done"
+        done.onmousedown = function(){
+            loadList();
+        }
+        return done
+    }
+
+    function addBatchButton(){
+
+        var addbut = document.createElement("div");
+        addbut.className = "addbatch blue";
+        addbut.innerHTML = "New " + dsp.getAttribute("target") + " batch";
+        addbut.onmousedown = function(){
+
+            var max = 0;
+            if (Object.keys(data[dsp.getAttribute("target")]).length > 0){
+                var max = Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")]));
+            }
+            loadControls(__$(dsp.getAttribute("target")), (max + 1));
+        }
+        return addbut;
+    }
+
+    function loadList(){
+
+        var kit_name = dsp.getAttribute("target");
+        dsp.removeAttribute("pos")
+        dsp.innerHTML = "<div id='summary-header'>Batch Summary for "  + kit_name +
+                "</div> <table id='list'></table>";
+
+        var heada = document.createElement("div");
+        heada.className = "row";
+        __$("list").appendChild(heada);
+        var iKeys = inputKeys.concat(["&nbsp", "&nbsp"]);
+
+        for (var i = 0; i < iKeys.length; i ++){
+
+            var td = document.createElement("div");
+            td.className = "td"
+            if(iKeys[i] != "&nbsp")
+                td.className += " heada";
+            td.innerHTML = iKeys[i];
+            heada.appendChild(td);
+        }
+
+        var batches = data[kit_name];
+        var keys = Object.keys(batches);
+
+        for(var i = 0; i < keys.length; i ++){
+
+            var r = document.createElement("div");
+            r.id = keys[i];
+            r.className = "row";
+            __$("list").appendChild(r);
+
+            for (var j = 0; j < inputKeys.length; j ++){
+                var td = document.createElement("div");
+                td.className = "td s-data";
+                if(typeof( data[kit_name][keys[i]][inputKeys[j]]) != "undefined" &&
+                        data[kit_name][keys[i]][inputKeys[j]].length > 0) {
+                    td.innerHTML = data[kit_name][keys[i]][inputKeys[j]];
+                }else{
+                    td.innerHTML = "?";
+                }
+                r.appendChild(td);
+            }
+
+            var td = document.createElement("div");
+            td.className = "td edit blue";
+            td.innerHTML = "<img id = 'img-edit' height='30' width='30'/>";
+            td.onmousedown = function(){
+                loadControls(__$(dsp.getAttribute("target")), this.parentNode.id)
+            }
+            r.appendChild(td);
+            td.getElementsByTagName("img")[0].src = pencil;
+
+            var td = document.createElement("div");
+            td.className = "td del blue";
+            td.innerHTML = "<img id = 'img-del' height='30' width='30'/>";
+            td.onmousedown = function(){
+                confirm(this.parentNode);
+            }
+            r.appendChild(td);
+            td.getElementsByTagName("img")[0].src = imgUnTick;
+        }
+        dsp.appendChild(addBatchButton());
+    }
+
+    function createRow(key, options) {
+
+        var kit_name = dsp.getAttribute("target");
+        var pos = dsp.getAttribute("pos");
+
+        var row = document.createElement("div");
+        row.className = key + " row";
+
+        __$("inputTable").appendChild(row);
+        var label = document.createElement("label")
+        label.className = "label td";
+        label.innerHTML = key;
+        row.appendChild(label);
+
+        var input = document.createElement("input")
+        input.id = key;
+        input.setAttribute("type", options["type"])
+        input.className = "input td";
+
+        if(kit_name && data[kit_name] &&
+                data[kit_name][pos] && data[kit_name][pos][key]){
+            input.value  = data[kit_name][pos][key];
+        }
+        input.onmousedown = function () {
+            updateTicks(this);
+            __$("keyBoard").innerHTML = "";
+            if (this.getAttribute("type") == "number") {
+                showFixedKeyboard(this, __$("keyBoard"), {"/": true, ":": true, "abc": true}, true, false);
+            } else if (this.getAttribute("type") == "date") {
+                showDate(__$("keyBoard"), this);
+            } else {
+                showFixedKeyboard(this, __$("keyBoard"), {}, false, true);
+            }
+        }
+        row.appendChild(input);
+
+        var tick = document.createElement("div")
+        tick.className = "tick td tick_" + key;
+        tick.innerHTML = "";
+        row.appendChild(tick);
+    }
+
+    function updateTicks(node){
+        var ticks = document.getElementsByClassName("tick");
+        for (var i in ticks){
+            ticks[i].innerHTML = "";
+        }
+        document.getElementsByClassName("tick_" + node.id)[0].innerHTML = "*";
+    }
+
+    function loadControls(node, pos, checkWindowSwitch) {
+        dsp.innerHTML = "&nbsp";
+        dsp.setAttribute("target", node.getAttribute("value"))
+
+        if(checkWindowSwitch){
+            if (Object.keys(data[dsp.getAttribute("target")]).length > 1) {
+                loadList();
+                return
+            }
+        }
+
+        if (typeof(pos) == "undefined"){
+            if (Object.keys(data[dsp.getAttribute("target")]).length > 0) {
+                dsp.setAttribute("pos", Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")])));
+            }else{
+                dsp.setAttribute("pos", 1);
+            }
+        } else {
+            dsp.setAttribute("pos", pos);
+        }
+
+        setInputTable();
+
+        for (var n in inputKeys) {
+            var buildRow = createRow(inputKeys[n], inputControls[inputKeys[n]]);
+        }
+        __$(inputKeys[0]).onmousedown();
+        __$(inputKeys[0]).focus();
+    }
+
+    function updateInput(){
+
+        var check = dsp.getAttribute("target");
+        var pos = dsp.getAttribute("pos");
+        var max = 0;
+
+        try {
+            var max = Math.max.apply(Math, Object.keys(data[check]));
+        }catch(e){}
+
+        if (max > 0 && parseInt(pos) < parseInt(max) && typeof(data[check][pos]) == "undefined"){
+            //this key was voided dont recreate it in hash
+            setTimeout("updateInput()", 150);
+            return;
+        }
+
+        if (typeof(check) != "undefined" && typeof(pos) != "undefined" &&
+                check.length > 0 && parseInt(pos) > 0){
+
+            if (!data[check]){
+                data[check] = {};
+            }
+
+            if (!data[check][pos]){
+                data[check][pos] = {};
+            }
+
+            for (var i = 0; i < inputKeys.length; i++){
+                if (__$(inputKeys[i]))
+                    data[check][pos][inputKeys[i]] = __$(inputKeys[i]).value;
+            }
+        }
+
+        setTimeout("updateInput()", 150);
+    }
+
+    function confirm(node){
+
+        if (__$('popup'))
+            __$('popup').parentNode.removeChild(__$('popup'));
+
+        var ele = document.createElement('div')
+        ele.id = "popup";
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>Continue removing batch?</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="voiding(' + node.id + ')">Yes</button></div>'
+        html += "</div></div></div></div></div>"
+        ele.innerHTML =  html;
+        document.body.appendChild(ele);
+    }
+
+    function reset(){
+        ele = document.getElementById('popup')
+        ele.style.display = "none";
+        ele.parentNode.removeChild(ele);
+    }
+
+    function voiding(node_id){
+        var kit_name = dsp.getAttribute("target");
+        var row = __$(node_id);
+        row.style.display = "none";
+        row.parentNode.removeChild(row);
+        delete data[kit_name][node_id];
+        reset();
+    }
+
+    __$('textForid').value = -1;
+    row.insertBefore(dsp, row.firstChild);
+    __$("row0").parentNode.appendChild(__$('buttons'));
+
+    btnCancel.parentNode.parentNode.parentNode.style.backgroundColor = "grey";
+
+    if (__$('ul1')) {
+        __$('ul1').children[0].onmousedown();
+    }
+
+    setTimeout("updateInput()", 100);
+</script>
+</html>
+<style>
+
+    * {
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: -moz-none;
+        -o-user-select: none;
+        user-select: none;
+    }
+    .red_cancel {
+        background-color: #a90329;
+        background-image: linear-gradient(to bottom, #a90329, #6d0019);
+        border: 1px solid #72021c;
+        border-radius: 3px;
+        color: #ffffff;
+        display: inline-block;
+        font-family: arial,helvetica,sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 10px;
+        text-decoration: none;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    }
+    .blue {
+        background-color: #a7cfdf;
+        background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+        border: 1px solid #7eb9d0;
+        border-radius: 3px;
+        color: #ffffff;
+        display: inline-block;
+        font-family: arial,helvetica,sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 10px;
+        text-decoration: none;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    button {
+        border-radius: 10px !important;
+        cursor: pointer;
+        font-size: 0.5em;
+        margin: 3px;
+        min-height: 50px;
+        min-width: 50px;
+        padding: 15px;
+    }
+    #text, #confirm, #cancel{
+        display: table-cell;
+    }
+    #confirm{
+        float: right;
+        width:50%;
+    }
+    #cancel{
+        float: left;
+        width:50%;
+    }
+    #text{
+        height: 70px;
+        width:100%;
+    }
+
+    #popup{
+        -moz-user-select: none;
+        background-color: #FEEFB3;
+        border: 4px solid #C6C6C6;
+        border-radius: 15px 15px 15px 15px;
+        color: #9F6000;
+        font-size: 28px;
+        height: 159px;
+        left: 30%;
+        padding: 5px;
+        position: absolute;
+        text-align: center;
+        top: 3%;
+        width: 319px;
+        z-index: 991;
+    }
+
+   .edit img, .del img{
+       margin: auto;
+       margin-left: 25px;
+   }
+   .del, .edit{
+       border-radius: 10px;
+   }
+   #summary-header{
+       width: 100%;
+       text-align: center;
+       font-size: 26px;
+       font-weight: bold;
+       margin-top: 1%;
+       margin-bottom: 0.5%;
+   }
+    #done-data{
+        width: 15%;
+        margin: auto;
+    }
+    #keyboard-data{
+        width: 85%;
+        margin: auto;
+    }
+   .done{
+       margin-left: 20px;
+       margin-top: 100% !important;
+       border-radius: 12px;
+       float: right;
+   }
+   .addbatch{
+       margin-top: 20px;
+       margin-right: 36%;
+       border-radius: 12px;
+       font-size: 20px;
+       float: right;
+   }
+   #controls-holder{
+       width: 90%;
+       margin: auto;
+   }
+
+   #keyBoard{
+       margin: auto;
+       float: right;
+   }
+    #dateTable {
+        margin: auto;
+        margin-top: 25px;
+    }
+
+    .holder {
+        margin: auto;
+        width: 93%;
+        max-height: 290px;
+        min-height: 250px;
+        border-radius: 10px;
+        padding-top: 5px;
+        border: 1px solid rgb(52, 101, 164);
+    }
+
+    .input {
+        font-size: 24px;
+        padding: 10px;
+        border: 1px solid rgb(52, 101, 164);
+        border-radius: 10px;
+        width: 70%;
+        vertical-align: middle;
+        margin: auto;
+        text-align: center;
+    }
+
+    .label {
+        padding: 10px;
+        color: rgb(51, 51, 51);
+        font-size: 24px;
+        width: 35%;
+        vertical-align: middle;
+    }
+
+    .tick{
+        padding: 10px;
+        color: red;
+        font-size: 26px;
+        font-weight: bold;
+        width: 20%;
+        margin: auto;
+        vertical-align: middle;
+        float: right;
+    }
+
+    .table {
+        display: table;
+        padding: 0px;
+        padding-left: 10%;
+    }
+
+    .row {
+        display: table-row;
+        width: 97%;
+        margin: auto;
+    }
+
+    .td {
+        display: table-cell;
+        margin: auto;
+    }
+
+    #inputTable {
+        width: 89%;
+        height: 260px;
+        max-height: 260px;
+    }
+
+    #delete {
+        background-image: url(<%= asset_path 'delete.jpeg' %>);
+        background-size: cover;
+        border-style: none;
+    }
+
+    #print {
+        background-image: url(<%= asset_path 'printer2.png' %>);
+        background-size: cover;
+    }
+
+    .txt {
+        color: #000000;
+        display: block;
+        font-size: 19px;
+        position: relative;
+        text-align: center;
+        top: 80px;
+    }
+    #list{
+        width: 96%;
+        margin: auto;
+        font-size: 24px;
+        color: rgb(51, 51, 51);
+    }
+    #list .heada{
+        color: black;
+        text-align: center;
+        border-radius: 5px;
+        border: 1px solid rgb(52, 101, 164);
+        background: lightgray;
+    }
+   #list .s-data{
+       color: rgb(51, 51, 51);
+       font-size: 22px;
+       text-align: center;
+       vertical-align: middle;
+       border-bottom: 1px dotted rgb(52, 101, 164);
+       border-left: 0.5px dotted rgb(52, 101, 164);
+   }
+
+
+</style>
