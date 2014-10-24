@@ -10,6 +10,7 @@ class ClientsController < ApplicationController
   end
 
   def show
+    
       @task = next_task(@client)
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
@@ -19,10 +20,19 @@ class ClientsController < ApplicationController
 			@status  = @client.current_state(current_date) 
 			@firststatus  = @client.first_state rescue "NaN"
 			@age = person.age(current_date)
-
+      spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+      @relation = Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          @client.id, @client.id, spouse).first rescue []
+       @string = ""
+       if ! @relation.blank?
+           @relation = Client.find(@relation.person_a) if @relation.person_a != @client.id
+           @relation = Client.find(@relation.person_b) if @relation.person_b != @client.id rescue @relation
+           @string = "Partner: #{@relation.person.names.first.given_name rescue ''} #{@relation.person.names.first.family_name rescue ''}"
+       end
+         
       @all_encounters = {}
       state_encounters = ['IN WAITING', 'IN SESSION','Counseling',
-												'HIV Testing', 'Referral Consent Confirmation',
+												'HIV Testing', 'Referral Consent Confirmation','ASSESSMENT',"UPDATE HIV STATUS",
 												'Appointment']
       state_encounters.each{|encounter|
         @all_encounters[encounter.upcase] = ""
@@ -62,9 +72,9 @@ class ClientsController < ApplicationController
 			current = session[:datetime].to_date rescue Date.today
     
       if current.month >= 7
-         string = "#{current.year.to_s}-#{(current.year + 1).to_s}"
+         string = "#{(current.year + 1).to_s}"
       else
-        string = "#{(current.year - 1).to_s}-#{current.year.to_s}"
+        string = "#{(current.year - 1).to_s}"
       end
 
 			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
@@ -116,6 +126,10 @@ class ClientsController < ApplicationController
 											gender: @person.gender, date_of_birth: @person.birthdate
   end
 
+  def search_couple
+
+  end
+
   def edit
   end
 
@@ -124,21 +138,25 @@ class ClientsController < ApplicationController
   end
   
 	def demographics
-		 		@client = Client.find(params[:client_id])
+        @id = params[:client_id]
+        if params[:partner_id]
+          @id = params[:partner_id]
+        end
+		 		@client = Client.find(@id)
         address = PersonAddress.find_by_person_id(@client.id)
 		 		@residence = address.address1
         @ta = address.county_district
         @home_district = address.address2
          type = PersonAttributeType.where("name = 'occupation'").first.id rescue ""
-         @occupation = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         @occupation = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
          type = PersonAttributeType.where("name = 'Home Phone Number'").first.id rescue ""
-         @home_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         @home_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
           type = PersonAttributeType.where("name = 'Office Phone Number'").first.id rescue ""
-         @office_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         @office_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
           type = PersonAttributeType.where("name = 'Cell Phone Number'").first.id rescue ""
-         @cell_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         @cell_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
          type = PersonAttributeType.where("name = 'Landmark Or Plot Number'").first.id rescue ""
-         @land_mark = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:client_id], type).first.value rescue ""
+         @land_mark = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
 	end
 
   def demographics_edit
@@ -532,7 +550,7 @@ class ClientsController < ApplicationController
 
 			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
-                      
+        
 				if @accession.blank?
 					flash[:notice] = "Invalid accession number...."
 					redirect_to "/search" and return
@@ -549,8 +567,41 @@ class ClientsController < ApplicationController
 						redirect_to "/search" and return
 					end
 				end
+      
+
+
+				if params[:client]
+           session[:partner] = @scanned.patient_id
+           
+           session[:client_id] = params[:client]
+           relationship_type = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+           @relation = Relationship.create(person_a: params[:client], person_b: @scanned.patient_id,
+                              relationship: relationship_type, creator: current_user.id)
+            concept_id = ConceptName.find_by_name("partner or spouse").concept_id
+            answer =  ConceptName.find_by_name("yes").concept_id
+            p_session = encounter_done(@scanned.patient_id, 'IN SESSION')
+            if p_session.blank?
+                encounter = p_session.first
+            else
+                encounter = write_encounter("IN SESSION", @scanned)
+            end
+            c_session = encounter_done(Client.find(params[:client]), 'IN SESSION').first rescue []
+            if c_session.blank?
+               c_session = write_encounter("IN SESSION", Client.find(params[:client]))
+            end
+           
+            obs = Observation.create(person_id: encounter.patient_id, concept_id: concept_id,encounter_id: encounter.encounter_id,
+                      obs_datetime: encounter.encounter_datetime,
+                      creator: current_user.id, value_coded: answer)
+             obs = Observation.create(person_id: c_session.patient_id, concept_id: concept_id,encounter_id: c_session.encounter_id,
+                      obs_datetime: c_session.encounter_datetime,
+                      creator: current_user.id, value_coded: answer)
+            
+           redirect_to "/client_demographics?partner_id=#{@scanned.patient_id}&client_id=#{params[:client]}" and return
+        else
+           redirect_to "/client_demographics?client_id=#{@scanned.patient_id}" and return
+        end
 				
-				redirect_to "/client_demographics?client_id=#{@scanned.patient_id}" and return
 		 else
 		 		
 			

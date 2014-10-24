@@ -11,6 +11,8 @@
 <%= yield %>
 
 <%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+  <%= stylesheet_link_tag 'custom' %>
+  <%= javascript_include_tag 'custom' %>
 
 <script>
     if (typeof btnCancel != 'undefined'){

@@ -1,0 +1,120 @@
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs?tab=admin";
+	</script>
+		<%= stylesheet_link_tag 'panel' %>
+	</head>
+<body onLoad="setDimension()">
+
+<%= form_tag quiz_path do %>
+            <fieldset>
+						<legend>Proficiency Test</legend>
+
+						<input type='hidden' name='new_protocol' value='true' />
+						<br />
+                <label for="id">  </label>
+								<select id="id" name="id">
+										<option></option>
+										<% @tests.each do |p, k| %>
+											<option value="<%= p %>" > Name: <%= k[0] %>; <%= k[1] %> </option>
+										
+                                                                                <%  end %>
+									</select>
+                <br />
+							</fieldset>
+	<%= submit_tag "Finish" %>
+
+<%end%>
+</body>
+
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+</html>
+
+<script>
+  tests = JSON.parse('<%= @tests.to_json.html_safe %>')
+  
+  function setDimension(){
+          __$('row1').style.display = "none";
+          __$("buttons").style.verticalAlign = "bottom";
+          __$("buttons").style.width = "100%";
+          __$("buttons").style.height = "100%";
+          var display = "inline-table";
+          var btnDivs = __$('buttons').children[0].children;
+
+          btnDivs[1].style.display = "none";
+          btnDivs[2].style.display = "none";
+
+          btnDivs[0].style.display  = "inline-table";
+          btnDivs[3].style.display  = "inline-table";
+
+          btnDivs[3].style.cssFloat = "right";
+
+          var dsp = document.createElement("div");
+          dsp.id = "dsp";
+          dsp.style.display = "table-cell";
+          dsp.style.border = "1px solid #3465a4";
+          dsp.style.overflow = "hidden";
+          dsp.style.borderRadius = "10px";
+          dsp.style.width = "50%";
+          dsp.style.height = "100%";
+          dsp.style.verticalAlign = "top";
+          dsp.innerTHML = "none";
+
+          __$('textForid').style.height = "100%";
+          __$('textForid').style.width = "100%";
+
+          var lst = __$('ul1').children;
+          for (var i=0; i < lst.length ; i++) {
+                lst[i].onmousedown = function() {
+                   highlightList(this);
+                    var html = "<span class='d dL'> Name </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + tests[this.getAttribute("value")][0]  + "</span>";
+
+                     html += "<span class='d dL'> Description </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + tests[this.getAttribute("value")][1]  + "</span>";
+                      html += "<span class='d dL'> Shortname  </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + this.getAttribute("value")  + "</span>";
+                    for (x = 1; x <= 5; x++){
+                     var textFordates = document.createElement("input");
+
+                     var inPos = '<input id="textFortype" type="text"' +
+                        'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                        'target="type" fieldtype="text" pos="2" section="0">'
+
+
+		  html += "<span class='d dL'> Sample " + x + " </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + inPos  + "</span>";
+                    }
+
+                __$('dsp').innerHTML = html;
+                }
+          }
+          row.insertBefore(dsp, row.firstChild);
+          
+          __$("row0").parentNode.appendChild(__$('buttons'));
+  }
+  	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
+
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+
+</script>

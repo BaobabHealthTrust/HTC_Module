@@ -1,7 +1,12 @@
 <html>
     <head>
 	<script>
-                var cancelDestination = "/client_demographics?client_id=<%=  params[:id] %>";
+              <% if session[:partner] %>
+                    var cancelDestination = "/client_demographics?client_id=<%=  session[:client_id] %>&partner_id=<%= session[:partner] %>";
+                <% else %>
+                    var cancelDestination = "/client_demographics?client_id=<%=  params[:id] %>";
+                  <% end %>
+              
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   for (i = 1; i <= list.length; i ++){
