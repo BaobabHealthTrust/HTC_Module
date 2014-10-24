@@ -12,6 +12,27 @@
                          monthNumber[list[i]] = i
                       }
 
+                      function partner(){
+                             var ele = document.getElementById('cover')
+                            ele.style.display = "inline";
+                            document.body.appendChild(ele);
+
+                            var ele = document.getElementById('popup')
+                            ele.style.display = "inline";
+                            str = "'Loading Couples Procedure'"
+                            url = "'/search_couple/<%= params[:id] %>?tag=couples'"
+                            html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+                            html += "<div id='text'>Partner Available?</div></div><div style='display:table-row;width:100%;'>"
+                            html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
+                            html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="loadMessage(' + str + ',' + url+ ')">Yes</button></div>'
+                            html += "</div></div></div></div></div>"
+                            ele.innerHTML =  html;
+                            document.body.appendChild(ele);
+                      }
+
+                      function checkPartner(){
+                         partner()
+                      }
                         function verify(id){
                          if (__$(id).value.length > 0){
                           if ( !  (__$(id).value.match(/\?/)) ){
@@ -99,7 +120,7 @@
             }
   </style>
 </head>
-<body onload="verify('test_date')" >
+<body onload="verify('test_date');checkPartner();" >
 
 		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>

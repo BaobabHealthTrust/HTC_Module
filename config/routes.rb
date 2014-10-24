@@ -1,4 +1,9 @@
 HTCModule::Application.routes.draw do
+  get "couple/status"
+  get "couple/testing"
+  get "couple/counseling"
+  get "couple/assessment"
+  get "couple/appointment"
   get "reports/index"
 	get "/login" => "sessions#attempt_login"
 	post "/login" => "sessions#login", as: :log_in
@@ -34,6 +39,11 @@ HTCModule::Application.routes.draw do
 
   #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
   get "client_assessment/:id" => "clients#assessment"
+  
+  get "search_couple/:id" => "clients#search_couple"
+
+  post "search_couple/:id" => "clients#search_couple"
+
   get "client_status/:id" => "clients#status"
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"

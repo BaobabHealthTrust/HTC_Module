@@ -10,24 +10,42 @@ class ApplicationController < ActionController::Base
                           "HIV TESTING","APPOINTMENT","REFERRAL CONSENT CONFIRMATION"]
      current_date = session[:datetime].to_date rescue Date.today
      conselled = encounter_done(client.patient_id, "COUNSELING")
+     partner = ActionView::Base.full_sanitizer.sanitize(encounter_done(client.patient_id, "IN SESSION").first.to_s.upcase) rescue ""
+     
     htc_tasks.each { |encounter|
               case encounter
               when "UPDATE HIV STATUS"
                    if encounter_done(client.patient_id, encounter).blank?
+                      if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Update Status",
+                        "url" => "/couple/status?#{client.patient_id}"}
+                      else
                         link = { "name" =>  "Update Status",
                         "url" => "/client_status/#{client.patient_id}"}
-                        return link
+
+                      end
+                      return link
                     end
               when "ASSESSMENT"
                    if encounter_done(client.patient_id, encounter).blank?
+                     if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Update Status",
+                        "url" => "/couple/assessment?#{client.patient_id}"}
+                      else
                         link = { "name" =>  "Assessment",
                         "url" => "/client_assessment/#{client.patient_id}"}
+                     end
                         return link
                     end
               when "COUNSELING"
                    if encounter_done(client.patient_id, encounter).blank?
+                      if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Update Status",
+                        "url" => "/couple/counseling?#{client.patient_id}"}
+                      else
                         link = { "name" =>  "Counseling",
                         "url" => "/client_counseling?client_id=#{client.patient_id}"}
+                      end
                         return link
                     end
               when "HIV TESTING"
@@ -38,8 +56,13 @@ class ApplicationController < ActionController::Base
                         end
                    end
                    if encounter_done(client.patient_id, encounter).blank?
+                     if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Update Status",
+                        "url" => "/couple/testing?#{client.patient_id}"}
+                      else
                         link = { "name" =>  "HIV Testing",
                         "url" => "/client_testing?client_id=#{client.patient_id}"}
+                     end
                         return link
                     end
               when "APPOINTMENT"
@@ -50,8 +73,13 @@ class ApplicationController < ActionController::Base
                         end
                    end
                   if encounter_done(client.patient_id, encounter).blank?
+                    if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Update Status",
+                        "url" => "/couple/appointment?#{client.patient_id}"}
+                      else
                         link = { "name" =>  "Appointment",
                         "url" => "/appointment/#{client.patient_id}"}
+                    end
                         return link
                     end
               when "REFERRAL CONSENT CONFIRMATION"
