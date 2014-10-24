@@ -8,6 +8,7 @@ class InventoryController < ApplicationController
     @user = current_user
     @location = Location.current_location
     @kits = Kit.find_all_by_status("active")
+
     @session_date = session[:datetime].to_date rescue Date.today
 
     @input_controls = [["Date of delivery", {"type" => "date",
@@ -20,6 +21,31 @@ class InventoryController < ApplicationController
   end
 
   def create
-    
+    captured_data = params[:data];
+    type = InventoryType.find_by_name("Delivery").id
+    session_date = session[:datetime].to_date rescue Date.today
+
+    captured_data.each do |kit_name, opts|
+      kit_type = Kit.find_by_name(kit_name).id;
+
+      opts.each do |value|
+        encounter_date = value["Date of delivery"].to_date
+        lot_number = value["Lot number"]
+        qty = value["Quantity"].to_i
+        exp_date = value["Date of expiry"].to_date
+
+        Inventory.create(lot_no: lot_number,
+                         kit_type: kit_type,
+                         value_date: encounter_date,
+                         value_numeric: qty,
+                         inventory_type: type,
+                         date_of_expiry: exp_date,
+                         encounter_date: session_date,
+                         voided: false,
+                         creator: current_user.id
+        )
+      end
+    end
+    redirect_to htcs_path
   end
 end

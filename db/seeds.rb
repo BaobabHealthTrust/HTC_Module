@@ -13,3 +13,9 @@ puts "Loading default tesk kits"
    next if !Kit.find_by_name(test[0]).blank?
    Kit.create(name: test[0], description: test[1], creator: 1, flow_order: (i + 1), status: "active")
  }
+
+puts "Loading default inventory types"
+[["Delivery", "Type for creating new kit deliveries"]].each_with_index{|test, i|
+  next if !InventoryType.find_by_name(test[0]).blank?
+  InventoryType.create(name: test[0], description: test[1], creator: 1)
+}
