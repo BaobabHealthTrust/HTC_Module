@@ -1,0 +1,122 @@
+<html>
+<head>
+  <script>
+      var cancelDestination = "/htcs?tab=admin";
+  </script>
+
+  <%= stylesheet_link_tag 'panel' %>
+</head>
+<body>
+
+<%= form_tag "" do %>
+    <fieldset>
+      <legend>Inventory Options</legend>
+
+      <br />
+      <label for="id">  </label>
+      <select id="id" name="id">
+        <option></option>
+
+            <option value="icons">Inventory Data</option>
+
+      </select>
+      <br />
+    </fieldset>
+    <%= submit_tag "Finish" %>
+
+<%end%>
+</body>
+
+<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+<script>
+
+
+    __$("row1").style.display="none";
+    __$("stage").style.display="none";
+    __$("buttons").style.verticalAlign = "bottom";
+    __$("buttons").style.width = "100%";
+    __$("buttons").style.height = "100%";
+
+    btnNext.style.width = "250px";
+    btnNext.onclick = function(){
+        btnCancel.onmousedown.apply(btnCancel);
+    }
+    btnCancel.style.width = "250px";
+
+    var display = "inline-table";
+
+    btnDivs = __$('buttons').children[0].children;
+
+    btnDivs[1].style.display = "none";
+    btnDivs[2].style.display = "none";
+
+    btnDivs[0].style.display  = "inline-table";
+    btnDivs[3].style.display  = "inline-table";
+
+    btnDivs[3].style.cssFloat = "right";
+
+    var dsp = document.createElement("div");
+    dsp.id = "dsp";
+    dsp.style.display = "table-cell";
+    dsp.style.padding = "25px";
+    dsp.style.border = "1px solid #3465a4";
+    dsp.style.overflow = "hidden";
+    dsp.style.borderRadius = "10px";
+    dsp.style.width = "50%";
+    dsp.style.height = "100%";
+    dsp.style.verticalAlign = "top";
+    dsp.innerHTML = '<a href="new_batch" id="addbatch"' +
+            ' class="blue"><span class="txt">New batch</span></a>' +
+    '<a href="distribute" id="distbatch"' +
+    ' class="blue"><span class="txt">Distribute</span></a>' +
+    '<a href="edit" id="editbatch"' +
+    ' class="blue"><span class="txt">Edit batch</span></a>';
+    ;
+
+    __$('textForid').style.height = "100%";
+    __$('textForid').style.width = "100%";
+
+    var lst = __$('ul1').children;
+
+    //__$('textForid').value = -1;
+    row.insertBefore(dsp, row.firstChild);
+    __$("row0").parentNode.appendChild(__$('buttons'));
+
+    btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+
+    //if (__$('ul1')) {
+      //  __$('ul1').children[0].onmousedown();
+   // }
+</script>
+</html>
+<style>
+    .txt {
+        color: #000000;
+        display: block;
+        font-size: 17px;
+        position: relative;
+        text-align: center;
+        top: 100px;
+    }
+    .blue {
+        border-radius: 35px;
+        display: block;
+        float: left;
+        height: 90px;
+        margin-right: 35px;
+        vertical-align: baseline;
+        width: 90px;
+        background-repeat: no-repeat;
+        background-size: 80px 80px;
+        background-size: cover;
+    }
+    #addbatch {
+        background-image: url(<%= asset_path 'inv.png' %>);
+    }
+    #distbatch {
+        background-image: url(<%= asset_path 'inv.png' %>);
+    }
+    #editbatch {
+        background-image: url(<%= asset_path 'inv.png' %>);
+    }
+</style>
