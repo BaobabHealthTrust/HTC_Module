@@ -34,6 +34,8 @@
 
 <%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 <%= javascript_include_tag 'custom_date' %>
+<%= javascript_include_tag 'jquery-1.3.2.min' %>
+
 <script>
 
     var sidePanelData = {<%= @side_panel_data.html_safe rescue ""%>};
@@ -63,11 +65,11 @@
     __$("buttons").style.height = "100%";
 
     btnNext.style.width = "250px";
-    btnNext.onclick = function(){
+    btnNext.onclick = function () {
 
-        for (var i in kit_names){
+        for (var i in kit_names) {
 
-            if (!validateCompleteness(kit_names[i], true)){
+            if (!validateCompleteness(kit_names[i], true)) {
                 customAlert("Cannot proceed, <span style=\"color: gray;\">'" + kit_names[i] + "'</span> entries incomplete!")
                 return;
             }
@@ -133,16 +135,16 @@
         }
     }
 
-    function buildParams(){
+    function buildParams() {
 
         var captured = Object.keys(data);
-        for (var k in captured){
+        for (var k in captured) {
             var counts = Object.keys(data[captured[k]]);
-            for (var n in counts){
+            for (var n in counts) {
                 var fields = Object.keys(data[captured[k]][counts[n]]);
-                for (var i in fields){
+                for (var i in fields) {
                     var info = document.createElement("input");
-                    info.setAttribute("name",  "data[" +captured[k] + "][]" + fields[i]);
+                    info.setAttribute("name", "data[" + captured[k] + "][]" + fields[i]);
                     info.setAttribute("value", data[captured[k]][counts[n]][fields[i]]);
                     document.forms[0].appendChild(info);
                 }
@@ -169,57 +171,113 @@
         __$("done-data").appendChild(doneButton());
     }
 
-    function doneButton(){
+    function doneButton() {
 
         var done = document.createElement("div");
         done.className = "done blue";
         done.innerHTML = "Done"
-        done.onmousedown = function(){
+        done.onmousedown = function () {
             loadList();
         }
         return done
     }
 
-    function addBatchButton(){
+    function addBatchButton() {
 
         var addbut = document.createElement("div");
         addbut.id = "addbatch";
         addbut.className = "addbatch blue";
         addbut.innerHTML = "New " + dsp.getAttribute("target") + " batch";
-        addbut.onmousedown = function(){
+        addbut.onmousedown = function () {
+
             if (validateCompleteness()) {
+
+                if (__$("img-min") && __$("img-min").style.display == "block") {
+                    __$("img-min").onmousedown();
+                }
+
                 var max = 0;
                 if (Object.keys(data[dsp.getAttribute("target")]).length > 0) {
                     var max = Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")]));
                 }
                 loadControls(__$(dsp.getAttribute("target")), (max + 1));
-            }else{
+            } else {
                 customAlert("Cannot proceed, incomplete batch!");
             }
         }
         return addbut;
     }
 
-    function loadList(){
+    function loadList() {
 
+        var collS = inputKeys.length;
         var kit_name = dsp.getAttribute("target");
         dsp.removeAttribute("pos")
-        dsp.innerHTML = "<table  id='summary-header'><tr><td> <img id='img-max' width = '45' height='40'></td><td id='summary-label'>Batch Summary for "
-                + kit_name +  "</td><td><div id='add-batch'> </div></td><tr></table> <div class='scrollable' id='scrollable'> <table id='list'></table></div>";
+        dsp.innerHTML = "<table  id='summary-header'><tr><td> <img style='display: none' id='img-min' width = '45' height='40'> <img id='img-max' width = '45' height='40'></td><td id='summary-label'>Batch Summary for "
+                + kit_name + "</td><td><div id='add-batch'> </div></td><tr></table> <div class='scrollable' id='scrollable'> <table id='list-h'></table> <table id='list'></table></div>";
+
 
         __$("img-max").src = imgMax;
+        __$("img-min").src = imgMin;
+
+        __$("img-max").onmousedown = function () {
+
+            __$("ul1").parentNode.style.display = "none";
+            jQuery("#row0").hide();
+            jQuery("#dsp").css({
+                position: "absolute",
+                "z-index": "100",
+                top: "5px",
+                left: "5px",
+                width: "100%",
+                height: screen.height + "px"
+            })
+
+            __$("scrollable").style.height = 0.15 * window.innerHeight + "px";
+            jQuery(jQuery(".red")[0]).parent().parent().parent().hide();
+            __$("img-max").style.display = "none";
+            __$("img-min").style.display = "block";
+        }
+
+        __$("img-min").onmousedown = function () {
+
+            __$("ul1").parentNode.style.display = "block";
+
+            jQuery("#row0").show();
+
+            jQuery("#dsp").css({
+                position: "relative",
+                "z-index": "50",
+                top: "5px",
+                left: "5px",
+                width: "70%",
+                height: "100%"
+            })
+
+            __$("scrollable").style.height = 0.63 * window.innerHeight + "px";
+            jQuery(jQuery(".red")[0]).parent().parent().parent().show();
+            __$("img-max").style.display = "block";
+            __$("img-min").style.display = "none";
+        }
+
         var heada = document.createElement("div");
         heada.className = "row";
-        __$("list").appendChild(heada);
-        __$("scrollable").style.height = "100px";
+        __$("list-h").appendChild(heada);
+        __$("scrollable").style.height = 0.63 * window.innerHeight + "px";
         var iKeys = inputKeys.concat(["&nbsp", "&nbsp"]);
+        var h80w = (160 / screen.width)  * 100;
 
-        for (var i = 0; i < iKeys.length; i ++){
+        for (var i = 0; i < iKeys.length; i++) {
 
             var td = document.createElement("div");
-            td.className = "td"
-            if(iKeys[i] != "&nbsp")
+            td.className = "td";
+
+            if (iKeys[i] != "&nbsp") {
                 td.className += " heada";
+            }else{
+                td.style.width = "80px !important";
+                td.style.minWidth = "80px !important";
+            }
             td.innerHTML = iKeys[i];
             heada.appendChild(td);
         }
@@ -227,20 +285,21 @@
         var batches = data[kit_name];
         var keys = Object.keys(batches);
 
-        for(var i = (keys.length - 1); i >= 0; i --){
+        for (var i = (keys.length - 1); i >= 0; i--) {
 
             var r = document.createElement("div");
             r.id = keys[i];
             r.className = "row";
             __$("list").appendChild(r);
 
-            for (var j = 0; j < inputKeys.length; j ++){
+            for (var j = 0; j < inputKeys.length; j++) {
                 var td = document.createElement("div");
                 td.className = "td s-data";
-                if(typeof( data[kit_name][keys[i]][inputKeys[j]]) != "undefined" &&
+                td.style.width =  Math.floor((100 -h80w)/collS) + "%";
+                if (typeof( data[kit_name][keys[i]][inputKeys[j]]) != "undefined" &&
                         data[kit_name][keys[i]][inputKeys[j]].length > 0) {
                     td.innerHTML = data[kit_name][keys[i]][inputKeys[j]];
-                }else{
+                } else {
                     td.innerHTML = "?";
                 }
                 r.appendChild(td);
@@ -249,7 +308,12 @@
             var td = document.createElement("div");
             td.className = "td edit blue";
             td.innerHTML = "<img id = 'img-edit' height='30' width='30'/>";
-            td.onmousedown = function(){
+            td.onmousedown = function () {
+
+                if (__$("img-min") && __$("img-min").style.display == "block") {
+                    __$("img-min").onmousedown();
+                }
+
                 loadControls(__$(dsp.getAttribute("target")), this.parentNode.id)
             }
             r.appendChild(td);
@@ -258,12 +322,13 @@
             var td = document.createElement("div");
             td.className = "td del blue";
             td.innerHTML = "<img id = 'img-del' height='30' width='30'/>";
-            td.onmousedown = function(){
+            td.onmousedown = function () {
                 confirm(this.parentNode);
             }
             r.appendChild(td);
             td.getElementsByTagName("img")[0].src = imgUnTick;
         }
+
         __$("add-batch").appendChild(addBatchButton());
     }
 
@@ -286,9 +351,9 @@
         input.setAttribute("type", options["type"])
         input.className = "input td";
 
-        if(kit_name && data[kit_name] &&
-                data[kit_name][pos] && data[kit_name][pos][key]){
-            input.value  = data[kit_name][pos][key];
+        if (kit_name && data[kit_name] &&
+                data[kit_name][pos] && data[kit_name][pos][key]) {
+            input.value = data[kit_name][pos][key];
         }
         input.onmousedown = function () {
             updateTicks(this);
@@ -309,9 +374,9 @@
         row.appendChild(tick);
     }
 
-    function updateTicks(node){
+    function updateTicks(node) {
         var ticks = document.getElementsByClassName("tick");
-        for (var i in ticks){
+        for (var i in ticks) {
             ticks[i].innerHTML = "";
         }
         document.getElementsByClassName("tick_" + node.id)[0].innerHTML = "*";
@@ -321,17 +386,17 @@
         dsp.innerHTML = "&nbsp";
         dsp.setAttribute("target", node.getAttribute("value"));
 
-        if(checkWindowSwitch){
+        if (checkWindowSwitch) {
             if (Object.keys(data[dsp.getAttribute("target")]).length > 1) {
                 loadList();
                 return;
             }
         }
 
-        if (typeof(pos) == "undefined"){
+        if (typeof(pos) == "undefined") {
             if (Object.keys(data[dsp.getAttribute("target")]).length > 0) {
                 dsp.setAttribute("pos", Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")])));
-            }else{
+            } else {
                 dsp.setAttribute("pos", 1);
             }
         } else {
@@ -347,7 +412,7 @@
         __$(inputKeys[0]).focus();
     }
 
-    function validateCompleteness(li_name, checkAll){
+    function validateCompleteness(li_name, checkAll) {
         var returnValue = true;
         try {
             if (!li_name) {
@@ -356,7 +421,7 @@
 
             var last_pos = 0;
             if (Object.keys(data[li_name]).length > 0) {
-                var last_pos = Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")]));
+                var last_pos = Math.max.apply(Math, Object.keys(data[li_name]));
             }
 
             if (checkAll) {
@@ -374,59 +439,85 @@
 
             for (var i = 0; i < inputKeys.length; i++) {
 
-                if (!(data[li_name][last_pos][inputKeys[i]] && data[li_name][last_pos][inputKeys[i]].trim().length > 0)) {
+
+                if (!(data[li_name][last_pos] && data[li_name][last_pos][inputKeys[i]] && data[li_name][last_pos][inputKeys[i]].trim().length > 0)) {
 
                     if (checkAll) {
                         if (checkSum.length > 0) {
                             returnValue = false;
                             break;
                         }
-                    }else{
+                    } else {
                         returnValue = false;
                     }
+                } else {
+
                 }
             }
-        }catch(e){}
+        } catch (e) {
+            console.log(e)
+        }
         return returnValue;
     }
 
-    function updateInput(){
+    function updateInput() {
 
         var check = dsp.getAttribute("target");
         var pos = dsp.getAttribute("pos");
         var max = 0;
 
+        checkHeaderPlacement();
+
         try {
             var max = Math.max.apply(Math, Object.keys(data[check]));
-        }catch(e){}
+        } catch (e) {
+        }
 
-        if (max > 0 && parseInt(pos) < parseInt(max) && typeof(data[check][pos]) == "undefined"){
+        if (max > 0 && parseInt(pos) < parseInt(max) && typeof(data[check][pos]) == "undefined") {
             //this key was voided dont recreate it in hash
-            setTimeout("updateInput()", 150);
+            setTimeout("updateInput()", 50);
             return;
         }
 
         if (typeof(check) != "undefined" && typeof(pos) != "undefined" &&
-                check.length > 0 && parseInt(pos) > 0){
+                check.length > 0 && parseInt(pos) > 0) {
 
-            if (!data[check]){
+            if (!data[check]) {
                 data[check] = {};
             }
 
-            if (!data[check][pos]){
+            if (!data[check][pos]) {
                 data[check][pos] = {};
             }
 
-            for (var i = 0; i < inputKeys.length; i++){
+            for (var i = 0; i < inputKeys.length; i++) {
                 if (__$(inputKeys[i]))
                     data[check][pos][inputKeys[i]] = __$(inputKeys[i]).value;
             }
         }
 
-        setTimeout("updateInput()", 150);
+        setTimeout("updateInput()", 50);
     }
 
-    function confirm(node){
+    function checkHeaderPlacement(){
+
+        var hnodes = document.getElementsByClassName("heada");
+        var snodes = document.getElementsByClassName("s-data");
+
+        if(snodes.length >= inputKeys.length && hnodes.length == inputKeys.length) {
+            for (var i = 0; i < inputKeys.length; i++) {
+
+                if ([i] != "&nbsp") {
+                    hnodes[i].style.width = jQuery(snodes[i]).width() + "px";
+
+                }
+            }
+        }
+
+        jQuery("#list-h, #list").show();
+    }
+
+    function confirm(node) {
 
         if (__$('popup'))
             __$('popup').parentNode.removeChild(__$('popup'));
@@ -439,7 +530,7 @@
         html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
         html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="voiding(' + node.id + ')">Yes</button></div>'
         html += "</div></div></div></div></div>"
-        ele.innerHTML =  html;
+        ele.innerHTML = html;
         document.body.appendChild(ele);
     }
 
@@ -459,13 +550,13 @@
         document.body.appendChild(ele);
     }
 
-    function reset(){
+    function reset() {
         ele = document.getElementById('popup');
         ele.style.display = "none";
         ele.parentNode.removeChild(ele);
     }
 
-    function voiding(node_id){
+    function voiding(node_id) {
         var kit_name = dsp.getAttribute("target");
         var row = __$(node_id);
         row.style.display = "none";
@@ -484,7 +575,7 @@
         __$('ul1').children[0].onmousedown();
     }
 
-    setTimeout("updateInput()", 100);
+    setTimeout("updateInput()", 5);
 </script>
 </html>
 <style>
@@ -496,6 +587,7 @@
         -o-user-select: none;
         user-select: none;
     }
+
     .red_cancel {
         background-color: #a90329;
         background-image: linear-gradient(to bottom, #a90329, #6d0019);
@@ -503,13 +595,14 @@
         border-radius: 3px;
         color: #ffffff;
         display: inline-block;
-        font-family: arial,helvetica,sans-serif;
+        font-family: arial, helvetica, sans-serif;
         font-size: 28px;
         font-weight: bold;
         padding: 10px;
         text-decoration: none;
         text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
     }
+
     .blue {
         background-color: #a7cfdf;
         background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
@@ -517,7 +610,7 @@
         border-radius: 3px;
         color: #ffffff;
         display: inline-block;
-        font-family: arial,helvetica,sans-serif;
+        font-family: arial, helvetica, sans-serif;
         font-size: 28px;
         font-weight: bold;
         padding: 10px;
@@ -536,25 +629,26 @@
         border: none;
     }
 
-
-
-    #text, #confirm, #cancel{
+    #text, #confirm, #cancel {
         display: table-cell;
     }
-    #confirm{
+
+    #confirm {
         float: right;
-        width:50%;
-    }
-    #cancel{
-        float: left;
-        width:50%;
-    }
-    #text{
-        height: 70px;
-        width:100%;
+        width: 50%;
     }
 
-    #popup{
+    #cancel {
+        float: left;
+        width: 50%;
+    }
+
+    #text {
+        height: 70px;
+        width: 100%;
+    }
+
+    #popup {
         -moz-user-select: none;
         background-color: #FEEFB3;
         border: 4px solid #C6C6C6;
@@ -571,14 +665,18 @@
         z-index: 991;
     }
 
-    .edit img, .del img{
+    .edit img, .del img {
         margin: auto;
-        margin-left: 25px;
+        margin-left: 20px;
+        margin-right: 20px
     }
-    .del, .edit{
+
+    .del, .edit {
         border-radius: 10px;
+        width: 100px !important;
     }
-    #summary-header{
+
+    #summary-header {
         width: 100%;
         text-align: center;
         font-size: 26px;
@@ -586,21 +684,25 @@
         margin-top: 0.2%;
         margin-bottom: 0.4%;
     }
-    #done-data{
+
+    #done-data {
         width: 15%;
         margin: auto;
     }
-    #keyboard-data{
+
+    #keyboard-data {
         width: 85%;
         margin: auto;
     }
-    .done{
+
+    .done {
         margin-left: 20px;
         margin-top: 100% !important;
         border-radius: 12px;
         float: right;
     }
-    .addbatch{
+
+    .addbatch {
         width: 90%;
         margin-top: 20px;
         margin-right: 6%;
@@ -610,20 +712,23 @@
         font-size: 20px;
         float: right;
     }
-    .add-batch{
+
+    .add-batch {
         margin-left: 10px;
         float: right;
         width: 15%;
     }
-    #controls-holder{
+
+    #controls-holder {
         width: 90%;
         margin: auto;
     }
 
-    #keyBoard{
+    #keyBoard {
         margin: auto;
         float: right;
     }
+
     #dateTable {
         margin: auto;
         margin-top: 25px;
@@ -658,7 +763,7 @@
         vertical-align: middle;
     }
 
-    .tick{
+    .tick {
         padding: 10px;
         color: red;
         font-size: 26px;
@@ -712,39 +817,44 @@
         top: 80px;
     }
 
-    #list{
+    #list, #list-h {
         width: 96%;
         margin: auto;
-        max-height: 30px !important;
         overflow: auto;
         font-size: 24px;
         color: rgb(51, 51, 51);
     }
-    #list .heada{
+
+    #list-h .heada {
         color: black;
         text-align: center;
+        height: 30px !important;
         border-radius: 5px;
         border: 1px solid rgb(52, 101, 164);
         background: lightgray;
     }
-    #list .s-data{
+
+    #list .s-data {
         color: rgb(51, 51, 51);
         font-size: 22px;
+        height: 40px !important;
         text-align: center;
         vertical-align: middle;
         border-bottom: 1px dotted rgb(52, 101, 164);
         border-left: 0.5px dotted rgb(52, 101, 164);
     }
-    .gray{
+
+    .gray {
         background: gray !important;
-        backgroundColor: gray  !important;
+        backgroundColor: gray !important;
     }
-    #summary-label{
+
+    #summary-label {
         width: 70%;
     }
 
-    .scrollable{
-        overflow:auto;
+    .scrollable {
+        overflow: auto;
     }
 
 </style>
