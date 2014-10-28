@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141021134122) do
+ActiveRecord::Schema.define(version: 20141028094620) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -466,6 +466,22 @@ ActiveRecord::Schema.define(version: 20141021134122) do
   add_index "concept_word", ["concept_name_id"], name: "word_for_name", using: :btree
   add_index "concept_word", ["weight"], name: "concept_word_weight_index", using: :btree
   add_index "concept_word", ["word"], name: "word_in_concept_name", using: :btree
+
+  create_table "councillor_inventory", force: true do |t|
+    t.string   "lot_no"
+    t.integer  "councillor_id"
+    t.string   "value_text"
+    t.integer  "value_numeric"
+    t.datetime "value_date"
+    t.datetime "encounter_date"
+    t.integer  "inventory_type"
+    t.text     "comments"
+    t.integer  "creator"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "counseling_answer", primary_key: "answer_id", force: true do |t|
     t.integer  "question_id"

@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<%= form_tag create_batch_path do %>
+<%= form_tag distribute_batch_path do %>
     <fieldset>
       <legend>Testkit distribution</legend>
 
@@ -125,6 +125,7 @@
 
     var kit_names = [];
     var kit_types = [];
+    var checkTime = 0
 
     <%  @users.each do |kit|%>
     kit_names.push("<%= kit.username%>");
@@ -392,7 +393,16 @@
         var tick = document.createElement("div")
         tick.className = "tick td tick_" + key;
         tick.innerHTML = "";
+
+        var tick = document.createElement("div")
+        tick.className = "tick td tick_" + key;
+        tick.innerHTML = "";
         row.appendChild(tick);
+
+        var msg = document.createElement("div")
+        msg.className = "msg td msg_" + key;
+        msg.innerHTML = "<span class='warning' span></span><br /> <span class='info'></span>";
+        row.appendChild(msg);
     }
 
     function showList(target){
@@ -501,7 +511,7 @@
     }
 
     function updateInput() {
-
+        checkTime += 50;
         var check = dsp.getAttribute("target");
         var pos = dsp.getAttribute("pos");
         var max = 0;
@@ -536,6 +546,43 @@
             }
         }
 
+        if (checkTime % 500 == 0){
+
+            try {
+                jQuery.ajax(
+                        {
+                            url: "/inventory/validate_dist?kit_type=" +
+                                    __$("Kit type").value + "&qty=" +
+                                    __$("Quantity").value
+                                    + "&lot_number=" + __$("Lot number").value,
+                            success: function (result) {
+                                result = JSON.parse(result)
+
+                                if (result["Lot number"]) {
+                                    var nodes = document.getElementsByClassName("msg_Lot number")
+                                    if (nodes.length > 0) {
+                                        try {
+                                            nodes[0].getElementsByClassName("info")[0].innerHTML = result["Lot number"]["info"]
+                                            nodes[0].getElementsByClassName("warning")[0].innerHTML = result["Lot number"]["warning"]
+                                        } catch (e) {
+                                        }
+                                    }
+                                }
+
+                                if (result["Quantity"]) {
+                                    var nodes = document.getElementsByClassName("msg_Quantity")
+                                    if (nodes.length > 0) {
+                                        try {
+                                            nodes[0].getElementsByClassName("info")[0].innerHTML = result["Quantity"]["info"]
+                                            nodes[0].getElementsByClassName("warning")[0].innerHTML = result["Quantity"]["warning"]
+                                        } catch (e) {
+                                        }
+                                    }
+                                }
+                            }
+                        })
+            }catch(e){}
+        }
         setTimeout("updateInput()", 50);
     }
 
@@ -644,6 +691,9 @@
         user-select: none;
     }
 
+    #shield{
+        z-index: 900;
+    }
     .red_cancel {
         background-color: #a90329;
         background-image: linear-gradient(to bottom, #a90329, #6d0019);
@@ -828,9 +878,10 @@
     .input {
         font-size: 24px;
         padding: 10px;
+        padding-right: 0px;
         border: 1px solid rgb(52, 101, 164);
         border-radius: 10px;
-        width: 70%;
+        width: 80%;
         vertical-align: middle;
         margin: auto;
         text-align: center;
@@ -849,10 +900,24 @@
         color: red;
         font-size: 26px;
         font-weight: bold;
-        width: 20%;
+        width: 5%;
         margin: auto;
         vertical-align: middle;
         float: right;
+    }
+
+    .msg .warning{
+        color: red;
+    }
+
+    .msg{
+        font-style: italic;
+        font-size: 18px;
+        width: 25% !important;
+    }
+
+    .msg .info{
+        color: gray;
     }
 
     .table {

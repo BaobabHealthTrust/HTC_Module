@@ -15,7 +15,11 @@ puts "Loading default tesk kits"
  }
 
 puts "Loading default inventory types"
-[["Delivery", "Type for creating new kit deliveries"]].each_with_index{|test, i|
+[["Delivery", "Type for creating new batch deliveries"],
+ ["Distribution", "For councillor batch assignment"],
+ ["Losses", "For recording damaged batches"],
+ ["Expires", "For verifying expired kits"]
+].each_with_index{|test, i|
   next if !InventoryType.find_by_name(test[0]).blank?
   InventoryType.create(name: test[0], description: test[1], creator: 1)
 }

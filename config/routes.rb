@@ -65,6 +65,8 @@ HTCModule::Application.routes.draw do
   post "create_batch" => "inventory#create"
   post "edit_batch" => "inventory#edit"
   get "distribute_batch" => "inventory#distribute"
+  post "distribute_batch" => "inventory#distribute"
+  get "inventory/validate_dist" => "inventory#validate_dist"
 
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
