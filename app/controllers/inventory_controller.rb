@@ -48,4 +48,22 @@ class InventoryController < ApplicationController
     end
     redirect_to htcs_path
   end
+
+  def distribute
+
+      @users = User.all.collect{|user|
+        user if !user.person.blank?
+      }.compact
+
+      @session_date = session[:datetime].to_date rescue Date.today
+      @kit_types = Kit.find_all_by_status("active").map(&:name)
+
+      @input_controls = [["Kit type", {"type" => "list",
+                                      "options" => @kit_types}],
+                         ["Lot number", {"type" => "text"}],
+                         ["Quantity", {"type" => "number", "min" => 1}]
+                         ]
+
+    render layout: false
+  end
 end

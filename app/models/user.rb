@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
 
 	def name
 		name = self.person.names.first
-		"#{name.given_name} #{name.family_name}"
+		"#{name.given_name} #{name.family_name}" rescue ""
 	end
 	
 	def self.current_user_id

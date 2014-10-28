@@ -15,14 +15,14 @@
 
 <%= form_tag create_batch_path do %>
     <fieldset>
-      <legend>Testkit delivery</legend>
+      <legend>Testkit distribution</legend>
 
       <br/>
       <label for="id"> </label>
       <select id="id" name="id">
         <option></option>
-        <%= @kits.each do |kit| %>
-            <option id="<%= kit.name %>" value="<%= kit.name %>"> <%= kit.name %></option>
+        <%= @users.each do |user| %>
+            <option id="<%= user.username%>" value="<%= user.username %>"> <%= user.name %></option>
         <% end %>
       </select>
       <br/>
@@ -58,6 +58,21 @@
             obj.style.color = "black";
         }
     }
+
+    function highlight(item) {
+
+        var opts = item.parentNode.children;
+
+        for (var i = 0; i < opts.length; i++) {
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "rgb(238, 238, 238)" : "");
+        }
+
+        __$(item.getAttribute("target")).value = item.innerHTML;
+        item.style.backgroundColor = "lightblue";
+        item.style.background = "lightblue !important";
+        item.style.color = "black";
+    }
+
 
     __$("row1").style.display = "none";
     __$("buttons").style.verticalAlign = "bottom";
@@ -109,9 +124,14 @@
     var inputControls = {};
 
     var kit_names = [];
+    var kit_types = [];
 
-    <%  @kits.each do |kit|%>
-    kit_names.push("<%= kit.name%>");
+    <%  @users.each do |kit|%>
+    kit_names.push("<%= kit.username%>");
+    <% end %>
+
+    <%  @kit_types.each do |kit|%>
+            kit_types.push("<%= kit%>");
     <% end %>
 
     //build a javascript hash defining entry controls
@@ -187,7 +207,7 @@
         var addbut = document.createElement("div");
         addbut.id = "addbatch";
         addbut.className = "addbatch blue";
-        addbut.innerHTML = "New " + dsp.getAttribute("target") + " batch";
+        addbut.innerHTML = "New  batch for " + dsp.getAttribute("target");
         addbut.onmousedown = function () {
 
             if (validateCompleteness()) {
@@ -213,9 +233,8 @@
         var collS = inputKeys.length;
         var kit_name = dsp.getAttribute("target");
         dsp.removeAttribute("pos")
-        dsp.innerHTML = "<table  id='summary-header'><tr><td> <img style='display: none' id='img-min' width = '45' height='40'> <img id='img-max' width = '45' height='40'></td><td id='summary-label'>Batch Summary for "
+        dsp.innerHTML ="<table  id='summary-header'><tr><td> <img style='display: none' id='img-min' width = '45' height='40'> <img id='img-max' width = '45' height='40'></td><td id='summary-label'>Batches assigned to "
                 + kit_name + "</td><td><div id='add-batch'> </div></td><tr></table> <table id='list-h'> </table> <div class='scrollable' id='scrollable'>  <table id='list'></table></div>";
-
 
         __$("img-max").src = imgMax;
         __$("img-min").src = imgMin;
@@ -362,6 +381,8 @@
                 showFixedKeyboard(this, __$("keyBoard"), {"/": true, ":": true, "abc": true}, true, false);
             } else if (this.getAttribute("type") == "date") {
                 showDate(__$("keyBoard"), this);
+            } else if (this.getAttribute("type") == "list"){
+                showList(this.id);
             } else {
                 showFixedKeyboard(this, __$("keyBoard"), {}, false, true);
             }
@@ -372,6 +393,25 @@
         tick.className = "tick td tick_" + key;
         tick.innerHTML = "";
         row.appendChild(tick);
+    }
+
+    function showList(target){
+
+        __$("keyBoard").innerHTML = "<ul id='listing'> </ul>"
+        for (var i in kit_types){
+            var li = document.createElement("li");
+            li.className = "li-item";
+            li.setAttribute("tag",  (i % 2 == 0 ? "even" : "odd"));
+            li.setAttribute("target", target);
+            if (i % 2 == 1)
+                li.style.backgroundColor = "rgb(238, 238, 238)";
+
+            li.innerHTML = kit_types[i];
+            li.onmousedown = function(){
+                highlight(this);
+            }
+            __$("listing").appendChild(li);
+        }
     }
 
     function updateTicks(node) {
@@ -519,7 +559,7 @@
 
     function showBlockShield(){
 
-        showShield()
+        showShield();
 
         __$("shield").onclick = function(){
 
@@ -528,7 +568,7 @@
 
     function confirm(node) {
 
-        showBlockShield()
+        showBlockShield();
 
         if (__$('popup'))
             __$('popup').parentNode.removeChild(__$('popup'));
@@ -547,7 +587,7 @@
 
     function customAlert(msg) {
 
-        showBlockShield()
+        showBlockShield();
 
         if (__$('popup'))
             __$('popup').parentNode.removeChild(__$('popup'));
@@ -564,7 +604,6 @@
     }
 
     function reset() {
-
         if (__$("shield"))
             __$("shield").parentNode.removeChild(__$("shield"))
         ele = document.getElementById('popup');
@@ -719,6 +758,31 @@
         float: right;
     }
 
+    #listing{
+        width: 98%;
+        padding: 0px;
+        border: 3px lightgray;
+    }
+
+    .li-item{
+        list-style: none outside none;
+        color: #000;
+        cursor: pointer;
+        font-family: "Nimbus Sans L", Arial "Arial Narrow", sans-serif;
+        font-size: 1.7em;
+        margin-bottom: 2px;
+        margin-top: 2px;
+        padding: 10px;
+        padding-left: 0px;
+        text-align: left;
+        border-spacing: 5px;
+    }
+
+    .li-item:hover{
+        background: rgb(153, 153, 153) !important;
+        color: rgb(238, 238, 238);
+    }
+
     .addbatch {
         width: 90%;
         margin-top: 20px;
@@ -869,7 +933,7 @@
         width: 70%;
     }
 
-    #scrollable {
+    .scrollable {
         overflow: auto;
     }
 
