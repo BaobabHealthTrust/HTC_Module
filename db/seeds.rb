@@ -17,6 +17,7 @@ puts "Loading default tesk kits"
 puts "Loading default inventory types"
 [["Delivery", "Type for creating new batch deliveries"],
  ["Distribution", "For councillor batch assignment"],
+ ["Usage", "To record used kits"],
  ["Losses", "For recording damaged batches"],
  ["Expires", "For verifying expired kits"]
 ].each_with_index{|test, i|

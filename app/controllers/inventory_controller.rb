@@ -57,22 +57,25 @@ class InventoryController < ApplicationController
       type = InventoryType.find_by_name("Distribution").id
 
       captured_data.each do |username, opts|
+
         assignee_id = User.find_by_username(username).id;
 
         opts.each do |value|
           type_name = value["Kit type"]
           lot_number = value["Lot number"]
-          qty = value["Quantity"].to_i
+          qty = value["Quantity"].blank??  "" : value["Quantity"].to_i
 
-          CouncillorInventory.create(lot_no: lot_number,
-                           value_numeric: qty,
-                           value_text: type_name,
-                           councillor_id: assignee_id,
-                           inventory_type: type,
-                           encounter_date: @session_date,
-                           voided: false,
-                           creator: current_user.id
-          )
+          if(!type_name.blank? && !lot_number.blank? && !qty.blank?)
+            CouncillorInventory.create(lot_no: lot_number,
+                             value_numeric: qty,
+                             value_text: type_name,
+                             councillor_id: assignee_id,
+                             inventory_type: type,
+                             encounter_date: @session_date,
+                             voided: false,
+                             creator: current_user.id
+            )
+          end
         end
       end
 
@@ -104,6 +107,10 @@ class InventoryController < ApplicationController
     result = {}
     result["Lot number"] = {}
     result["Quantity"] = {}
+    result["Kit type"] = {}
+
+    result["Kit type"]["warning"] = ""
+    result["Kit type"]["info"] = ""
 
     result["Lot number"]["warning"] = ""
     result["Lot number"]["info"] = ""
@@ -111,26 +118,51 @@ class InventoryController < ApplicationController
     result["Quantity"]["warning"] = ""
     result["Quantity"]["info"] = ""
 
-    if !params[:kit_type].blank? && !params[:lot_number].blank?
-      kit_name = params[:kit_type]
-      lot_number = params[:lot_number]
-      qty = params[:qty].to_i
+    plus_types = ["Delivery"].collect{|iv_name| InventoryType.find_by_name(iv_name).id}
+    minus_types = ["Distribution", "Expires", "Losses", "Usage", ].collect{|iv_name| InventoryType.find_by_name(iv_name).id}
 
-      ivs = Inventory.where(kit_type: Kit.find_by_name(kit_name).id,
-                            lot_no: lot_number)
+    user = User.find_by_username(params[:username]) rescue nil
+    session_date = session[:datetime].to_date rescue Date.today
+    kit_name = params[:kit_type]
+    lot_number = params[:lot_number]
+    qty = params[:qty].to_i
+    ui_sum = params[:ui_sum].to_i
+    ui_sum_exc = ui_sum - qty
+    qty_sum = 0
+    user_sum = 0
+
+    if !user.blank?
+      user_sum = user.remaining_stock_by_type(kit_name, session_date)
+    end
+    result["Kit type"]["warning"] = ""
+    result["Kit type"]["info"] = " #{user.username} already has #{user_sum} #{kit_name.downcase} kits in stock"
+
+    if !params[:kit_type].blank? && !params[:lot_number].blank?
+
+      ivs = Inventory.find_by_sql(["SELECT value_numeric, inventory_type FROM inventory
+                WHERE kit_type = ? AND lot_no = ?", Kit.find_by_name(kit_name).id, lot_number])
+
+      ivs2 = CouncillorInventory.find_by_sql(["SELECT ci.id, ci.value_numeric, ci.inventory_type FROM councillor_inventory ci
+             JOIN inventory iv ON  iv.lot_no = ci.lot_no
+          WHERE iv.voided = 0 AND ci.voided =0 AND iv.kit_type = ? AND iv.lot_no = ? GROUP BY ci.id", Kit.find_by_name(kit_name).id, lot_number])
 
       if ivs.blank?
+
         result["Lot number"]["warning"] = "Does not exist!"
-        result["Quantity"]["warning"] = "N/A"
+        result["Quantity"]["warning"] = "N/A!"
       else
-        qty_sum = 0
-        ivs.each do |iv|
-          qty_sum = qty_sum + iv.value_numeric.to_i
+
+        (ivs + ivs2).each do |iv|
+          if plus_types.include?(iv.inventory_type)
+            qty_sum = qty_sum + iv.value_numeric.to_i
+          elsif minus_types.include?(iv.inventory_type)
+            qty_sum = qty_sum - iv.value_numeric.to_i
+          end
         end
 
-        result["Quantity"]["info"] = "#{qty_sum} available"
+        result["Quantity"]["info"] = "#{qty_sum - ui_sum_exc} unassigned"
 
-        if qty_sum < qty
+        if (qty_sum - ui_sum_exc) < qty
           result["Quantity"]["warning"] = "Limited stock!"
         else
           result["Quantity"]["warning"] = ""
