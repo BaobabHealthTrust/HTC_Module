@@ -60,12 +60,20 @@ HTCModule::Application.routes.draw do
 	get "new_protocol" => "admins#new_protocol"
 	post "new_protocol" => "admins#new_protocol"
 
+  get "stock_levels" => "inventory#stock_levels"
+  get "kit_loss" => "users#kit_loss"
+
   get "inventory" => "inventory#options"
   get "new_batch" => "inventory#new_batch"
+
   post "create_batch" => "inventory#create"
-  post "edit_batch" => "inventory#edit"
+  get "edit_batch" => "inventory#edit"
+
   get "distribute_batch" => "inventory#distribute"
   post "distribute_batch" => "inventory#distribute"
+
+  post "losses" => "inventory#losses"
+
   get "inventory/validate_dist" => "inventory#validate_dist"
 
 	get "client_testing" => "clients#testing"
@@ -107,6 +115,7 @@ HTCModule::Application.routes.draw do
 	post "admins/set_date" => "admins#set_date"
 	
 	get "htcs/dashboard" => "htcs#dashboard"
+  get "htcs/account" => "users#my_account"
 
 	get "locations/destroy/:id" => "locations#destroy"
 

@@ -100,6 +100,10 @@ class UsersController < ApplicationController
   	@user.save rescue flash[:alert] = "Error: retire value cannot be updated"
   	redirect_to users_path and return
   end
+
+  def my_account
+
+  end
   
 	
 	private

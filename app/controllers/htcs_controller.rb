@@ -234,6 +234,6 @@ class HtcsController < ApplicationController
 			WHERE todays_bookings.value_datetime > lastest_encounter_date.encounter_datetime
 		")
 		booking_list.count
-	end
+  end
 
 end

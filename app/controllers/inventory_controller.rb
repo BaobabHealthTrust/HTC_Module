@@ -5,18 +5,20 @@ class InventoryController < ApplicationController
   end
 
   def new_batch
-    @user = current_user
-    @location = Location.current_location
     @kits = Kit.find_all_by_status("active")
 
-    @session_date = session[:datetime].to_date rescue Date.today
-
-    @input_controls = [["Date of delivery", {"type" => "date",
-                                             "min" => @session_date}],
+    @input_controls = [["Date of delivery", {"type" => "date"}],
                        ["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number", "min" => 1}],
-                       ["Date of expiry", {"type" => "date",
-                                           "min" => @session_date}]]
+                       ["Date of expiry", {"type" => "date"}]]
+    render layout: false
+  end
+
+  def edit
+    @kits = Kit.find_all_by_status("active")
+
+    @input_controls = [["Lot number", {"type" => "text"}],
+                       ["Quantity", {"type" => "number"}]]
     render layout: false
   end
 
@@ -46,7 +48,7 @@ class InventoryController < ApplicationController
         )
       end
     end
-    redirect_to htcs_path
+    redirect_to '/htcs?tab=admin'
   end
 
   def distribute
@@ -79,7 +81,7 @@ class InventoryController < ApplicationController
         end
       end
 
-      redirect_to htcs_path and return
+      redirect_to '/htcs?tab=admin' and return
     end
 
       @users = User.all.collect{|user|
@@ -89,13 +91,10 @@ class InventoryController < ApplicationController
       @kit_types = Kit.find_all_by_status("active").map(&:name)
 
       @input_controls = [["Kit type", {"type" => "list",
-                                      "options" => @kit_types,
-                                      "validation_link" => "/inventory/validate?type=distribution?type=ktype"}],
-                         ["Lot number", {"type" => "text", "validation_link" => "/inventory/validate_dist?type=lot"
-                         }],
+                                      "options" => @kit_types}],
+                         ["Lot number", {"type" => "text"}],
                          ["Quantity", {"type" => "number",
-                                       "min" => 1,
-                                       "validation_link" => "/inventory/validate?type=distribution?type=qty"}]
+                                       "min" => 1}]
                          ]
 
     render layout: false
@@ -135,7 +134,12 @@ class InventoryController < ApplicationController
       user_sum = user.remaining_stock_by_type(kit_name, session_date)
     end
     result["Kit type"]["warning"] = ""
-    result["Kit type"]["info"] = " #{user.username} already has #{user_sum} #{kit_name.downcase} kits in stock"
+
+    if user_sum.to_i > 0
+      result["Kit type"]["info"] = " #{user.username rescue ''} already has <span style='color: blue; font-weight: bold; '>#{user_sum}</span> #{kit_name.downcase} kits in stock"
+    else
+      result["Kit type"]["info"] = " #{user.username rescue ''} has <span style='color: blue; font-weight: bold; '> no </span> assigned  #{kit_name.downcase} stock"
+    end
 
     if !params[:kit_type].blank? && !params[:lot_number].blank?
 
@@ -160,7 +164,7 @@ class InventoryController < ApplicationController
           end
         end
 
-        result["Quantity"]["info"] = "#{qty_sum - ui_sum_exc} unassigned"
+        result["Quantity"]["info"] = "<span style='color: blue; font-weight: bold; '> #{qty_sum - ui_sum_exc}</span> unassigned"
 
         if (qty_sum - ui_sum_exc) < qty
           result["Quantity"]["warning"] = "Limited stock!"
@@ -171,5 +175,36 @@ class InventoryController < ApplicationController
     end
 
     render text: result.to_json
+  end
+
+  def losses
+    @session_date = session[:datetime].to_date rescue Date.today
+    captured_data = params[:data] || []
+    type = InventoryType.find_by_name("Losses").id
+
+    captured_data.each do |kit_name, opts|
+
+        opts.each do |value|
+          lot_number = value["Lot number"]
+          qty = value["Quantity"].blank??  "" : value["Quantity"].to_i
+
+          if(!lot_number.blank? && !qty.blank? && qty > 0)
+            Inventory.create(lot_no: lot_number,
+                                       value_numeric: qty,
+                                       inventory_type: type,
+                                       encounter_date: @session_date,
+                                       voided: false,
+                                       creator: current_user.id
+            )
+          end
+      end
+    end
+
+    redirect_to '/htcs?tab=admin'
+  end
+
+  def stock_levels
+    @location = Location.current_location;
+    @user = current_user
   end
 end
