@@ -21,6 +21,8 @@ HTCModule::Application.routes.draw do
   
   get "referral_consent/:id" => "clients#referral_consent"
 
+  get "extended_testing/:id" => "clients#extended_testing"
+
   get "appointment/:id" => "clients#appointment"
   get "clients/appointment" => "clients#appointment"
 	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
