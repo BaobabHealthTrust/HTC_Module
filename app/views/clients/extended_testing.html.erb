@@ -1,0 +1,195 @@
+<html>
+  <head>
+    <style>
+      #cover {
+        display: none;
+      }
+    </style>
+    <%= javascript_include_tag 'jquery-1.3.2.min' %>
+    <script>
+      var cancelDestination = "clients/<%= params[:client_id] %>?tab=task";
+
+
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+      function loadCustom(){
+
+        if(__$("main-content-area")){
+
+          __$("main-content-area").innerHTML = "";
+
+          var table = document.createElement("div");
+          table.style.display = "table";
+          table.style.margin = "auto";
+          // table.style.border = "1px solid #000";
+          __$("main-content-area").appendChild(table);
+
+          var row1 = document.createElement("div");
+          row1.style.display = "table-row";
+          table.appendChild(row1);
+
+          var cell1_1 = document.createElement("div");
+          cell1_1.style.display = "table-cell";
+          cell1_1.id = "timer1";
+          row1.appendChild(cell1_1);
+
+          var timer1 = addTimer(cell1_1, 10, "Rapid Test Timer", 0.55)
+          timer1.style.marginLeft = "40px";
+          timer1.style.marginRight = "40px";
+
+        var cell1_2 = document.createElement("div");
+          cell1_2.style.display = "table-cell";
+          cell1_2.id = "timer2";
+          cell1_2.style.textAlign = "right";
+          row1.appendChild(cell1_2);
+
+          var timer2 = addTimer(cell1_2, 15, "Gold Test Timer", 0.55);
+          timer2.style.marginLeft = "40px";
+          timer2.style.marginRight = "40px";
+
+          var row2 = document.createElement("div");
+          row2.style.display = "table-row";
+          table.appendChild(row2);
+
+          var cell2_1 = document.createElement("div");
+          cell2_1.style.display = "table-cell";
+          cell2_1.id = "label1";
+          cell2_1.style.textAlign = "right";
+          cell2_1.style.padding = "10px";
+          row2.appendChild(cell2_1);
+          addLabel(cell2_1, "Rapid Test Result", "32px", "black");
+
+          var cell2_2 = document.createElement("div");
+          cell2_2.style.display = "table-cell";
+          cell2_2.id = "text1";
+          cell2_2.style.padding = "10px";
+          row2.appendChild(cell2_2);
+
+          var text = addTextbox(cell2_2, "text", document.getElementById("customresult"));
+          text.id = "resultdisplay";
+          text.style.fontSize = "28px";
+
+          var div = document.createElement("div");
+          div.style.width = "100%";
+          div.style.height = "100%";
+          div.style.overflow = "auto";
+
+          var combo = addCombo(__$("stage"), {"Unknown":"Uknown","Positive":"Reactive","Negative":"Non-Reactive"}, "single", document.getElementById("resultdisplay"), document.getElementById("customresult"));
+          combo.style.fontSize = "28px";
+          combo.style.textAlign = "left";
+
+
+          var row3 = document.createElement("div");
+          row3.style.display = "table-row";
+          table.appendChild(row3);
+
+          var cell3_1 = document.createElement("div");
+          cell3_1.style.display = "table-cell";
+          cell3_1.id = "label2";
+          cell3_1.style.textAlign = "right";
+          cell3_1.style.padding = "10px";
+          row3.appendChild(cell3_1);
+          addLabel(cell3_1, "Golt Test Result", "32px", "black");
+
+          var cell3_2 = document.createElement("div");
+          cell3_2.style.display = "table-cell";
+          cell3_2.id = "text2";
+          cell3_2.style.padding = "10px";
+          row3.appendChild(cell3_2);
+
+          var text = addTextbox(cell3_2, "text", document.getElementById("customresult1"));
+          text.id = "resultdisplay1";
+          text.style.fontSize = "28px";
+
+          var div = document.createElement("div");
+          div.style.width = "100%";
+          div.style.height = "100%";
+          div.style.overflow = "auto";
+
+          var combo = addCombo(__$("stage"), {"Unknown":"Uknown","Positive":"Reactive","Negative":"Non-Reactive"}, "single", document.getElementById("resultdisplay1"), document.getElementById("customresult1"));
+          combo.style.fontSize = "28px";
+          combo.style.textAlign = "left";
+
+
+          if(btnClear){
+            btnClear.onclick = function(){
+              document.getElementById("resultdisplay").value = "";
+              document.getElementById("customresult").value = "";
+
+              document.getElementById("resultdisplay1").value = "";
+              document.getElementById("customresult1").value = "";
+
+              clearUl("ul2");
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body >
+
+<%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
+
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+      <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
+
+      <fieldset custom=true fs_onLoad="loadCustom();">
+        <legend>HIV Testing (Extended)</legend>
+
+        <input type="hidden" id="give_concent" name="giveconcent" value="" />
+        <input id="customresult" name="observations[][value_text]" type="hidden" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="Rapid Test Result" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+        <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="Gold Test Result" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+        <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" />
+
+        <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+      </fieldset>
+
+       <fieldset>
+				<legend>HIV Testing (Extended)</legend>
+                               <label for="type">Client Risk Category</label>
+
+                                <select id="type" name="observations[][value_coded_or_text]">
+					<option></option>
+					<option value="Low Risk">Low Risk</option>
+					<option value="AVD+ or High Risk">On-going Risk</option>
+                                       <option value="High risk event in last 3 months">High risk event in last 3 months</option>
+                                       <option value="Risk assessment not done">Risk assessment not done</option>
+
+				</select>
+                            <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
+                            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                            <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        </fieldset>
+      <input type="submit" value="Submit" />
+
+<%end%>
+  </body>
+</html>
+<div id="cover">
+</div>
+<script>
+  $(window).unload(function(){
+    __$('rapidtimer').value = __$('timetimer1').innerHTML.toString()
+    __$('goldtimer').value = __$('timetimer2').innerHTML.toString()
+    if(__$("customresult").value == "Positive"){
+      __$("give_concent").value = "YES"
+    }
+  });
+</script>
