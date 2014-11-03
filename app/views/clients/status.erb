@@ -1,5 +1,5 @@
 <html>
-<head>
+<head> 
 		<script>
 			var cancelDestination = "/clients/<%= params[:id] %>";
 
@@ -31,7 +31,9 @@
                       }
 
                       function checkPartner(){
-                         partner()
+                         <% unless params[:config] %>
+                                partner()
+                         <% end %>
                       }
                         function verify(id){
                          if (__$(id).value.length > 0){

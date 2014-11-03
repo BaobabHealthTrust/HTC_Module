@@ -104,10 +104,14 @@ class EncountersController < ApplicationController
     if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
     		redirect_to waiting_list_path and return
     end
-    
+   # raise "here".to_yaml
+    if params["all timers request"].upcase == "YES"
+        redirect_to  "/extended_testing/#{person.person_id}" and return
+    end
     #if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
     #   redirect_to  "/referral_consent/#{params[:id]}"
    # else
+
       	redirect_to next_task(patient)["url"] and return
    # end
   end

@@ -12,6 +12,7 @@ class ClientsController < ApplicationController
   def show
     
       @task = next_task(@client)
+      #raise @task.to_yaml
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
@@ -311,8 +312,25 @@ class ClientsController < ApplicationController
       redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
+  def extended_testing
+
+  end
+  
 	def testing
+      current_date = (session[:datetime].to_date rescue Date.today)
   		@client = Client.find(params[:client_id])
+      type = EncounterType.find_by_name("HIV testing").encounter_type_id
+      last =  Encounter.where("DATE(encounter_datetime) < ? AND encounter_type = ?", current_date, type)
+      @last_date = 0
+      unless last.blank?
+         if (current_date.to_date.mjd - last.last.encounter_datetime.to_date.mjd) > 28
+            @last_date = 1
+         elsif (current_date.to_date.mjd - last.last.encounter_datetime.to_date.mjd) > 0
+             @last_date = 2
+         end
+      end
+      concept = ConceptName.where("name = 'last HIV test'").first.concept_id
+      @last_test = Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).first.to_s.split(':')[1].squish rescue ""         
   end
 	
 	def referral_consent
@@ -539,6 +557,7 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
+   
 		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
@@ -567,7 +586,7 @@ class ClientsController < ApplicationController
 						redirect_to "/search" and return
 					end
 				end
-      
+        
 
 
 				if params[:client]
