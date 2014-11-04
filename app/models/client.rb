@@ -128,4 +128,20 @@ class Client < ActiveRecord::Base
 				GROUP BY person_id
 		").first rescue nil
 	end
+
+  def get_recent_partner
+       spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+        Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          self.id, self.id, spouse).order(relationship_id: :desc).limit(1)
+  end
+
+  def get_all_partners
+       spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+       client = []
+        Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          self.id, self.id, spouse).each {|p|
+                          client << Client.find(p.person_a) if p.person_a != self.id
+                          client << Client.find(p.person_b) if p.person_b != self.id }
+      return client
+  end
 end

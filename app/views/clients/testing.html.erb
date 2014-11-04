@@ -9,6 +9,7 @@
 		<script>
 			var cancelDestination = "clients/<%= params[:client_id] %>?tab=task";
                         var age = '<%= @client.person.age rescue 0 %>'
+                       var motherStatus = '<%=  @mother_status.upcase %>'
                         var rapidValue = "";
                         var goldValue = "";
                         var motherStatus = "";
@@ -16,7 +17,7 @@
                         var result2 = "";
 
                          function setValues(){
-                                  if (__$('timetimer1')){
+                                if (__$('timetimer1')){
                                       rapidValue = __$('timetimer1').innerHTML.toString()
                                   }
                                   __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"));
@@ -25,25 +26,27 @@
                                  }
                                   __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"));
                                   __$("allresults").value  = "";
-                                  if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && __$("mother").value != "Yes"){
+                                  if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus != "YES"){
                                       __$("allresults").value = "Positive"
                                       clearTimeout("setValues()")
                                       confirm()
                                   }
+                                  else if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus == "YES"){
+                                      __$("allresults").value = "Exposed Infant"
+                                      clearTimeout("setValues()")
+                                      confirm()
+                                  }
 
-                                  if((__$("customresult1").value == "Positive" && __$("customresult2").value == "Negative") || (__$("customresult1").value == "Negative" && __$("customresult2").value == "Positive")){
+                                  else if((__$("customresult1").value == "Positive" && __$("customresult2").value == "Negative") || (__$("customresult1").value == "Negative" && __$("customresult2").value == "Positive")){
                                      __$("alltimers").value = "YES"
                                      __$("allresults").value = "Inconclusive"
                                       clearTimeout("setValues()")
                                       confirm()
                                   }
-
-
-                                  if(__$("mother").value == "Yes"){
-                                    clearTimeout("setValues()")
-                                    confirm()
-                                     __$("allresults").value = "Exposed Infant"
+                                  else{
+                                     __$("allresults").value = "Negative"
                                   }
+
                                    setTimeout("setValues()", 500);
                         }
 
@@ -75,15 +78,102 @@
               function deny(){
                       document.forms[0].submit();
               }
-              
+                
+                function addData(parent){
+                    var tbl = document.createElement("div");
+                    tbl.style.display = "table";
+                    tbl.style.width = "100%";
+
+                    tbl.style.border = "1px solid #3465a4";
+                    tbl.style.borderRadius = "25px";
+
+                    parent.appendChild(tbl);
+
+                    attributes = [["Test 1", __$("customresult1").value], ["Test 2","Not Done"],["Risk Assessment", '<%= @message %>']]
+                     for (i = 0; i < attributes.length; i ++) {
+                        row = document.createElement("div");
+                        row.style.display = "table-row";
+
+                        tbl.appendChild(row);
+
+                        var cell1 = document.createElement("div");
+                        cell1.style.display = "table-cell";
+                        cell1.style.textAlign = "left";
+                        cell1.style.verticalAlign = "left";
+                        cell1.style.fontSize = "25px";
+                        cell1.innerHTML = attributes[i][0]
+                        row.appendChild(cell1);
+
+                        var cell2 = document.createElement("div");
+                        cell2.style.display = "table-cell";
+                        cell2.style.textAlign = "middle";
+                        cell2.style.verticalAlign = "right";
+                        cell2.innerHTML = attributes[i][1]
+
+                        row.appendChild(cell2);
+                     }
+                }
+               function createSummary(){
+                  __$("main-content-area").innerHTML = "";
+                      adjust()
+                      var node =  document.getElementById('row2').childNodes[0].childNodes[0];
+                      node.style.width = "100%";
+                      node.style.height = "92px";
+                 // var node =  document.getElementById('row2').childNodes[0].childNodes[0]
+                 //node.style.width = "100% ! important";
+                  //__$("row0").style.display = "none";
+                   __$("stage").style.display = "none";
+                   __$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+
+                      btnDivs = __$('buttons').children[0].children;
+
+                      btnDivs[0].style.display = "none";
+                      btnDivs[1].style.display = "none";
+
+                      btnDivs[2].style.display  = "inline-table";
+                      btnDivs[3].style.display  = "inline-table";
+
+                      btnDivs[3].style.cssFloat = "right";
+
+                  
+                  var table = document.createElement("div");
+                  table.style.display = "table";
+                  table.style.margin = "auto";
+                   table.style.width = "100%";
+                   table.style.backgroundColor = "lightblue"
+                  __$("main-content-area").appendChild(table);
+
+                  var row1 = document.createElement("div");
+                  row1.style.display = "table-row";
+                  row1.style.width = "100%"
+                  table.appendChild(row1);
+
+
+                  var cell1_1 = document.createElement("div");
+                  cell1_1.style.display = "table-cell";
+                  cell1_1.style.width = "90%"
+                  cell1_1.id = "testsummary";
+                  
+
+                  row1.appendChild(cell1_1);
+                  addData(cell1_1)
+                  btnDivs[3].innerHTML = "Finish"
+                  btnDivs[3].setAttribute("class", "button blue")
+                  btnDivs[3].onclick = function(){
+                      document.forms[0].submit();
+                  }
+               }
+
 		function loadCustom(message){
-                               if (message == "timer2"){
-                                   if (__$("customresult1").value != "Positive"){
-                                      document.forms[0].submit()
-                                   }
-                                 }
+                               
 				if(__$("main-content-area")){
-					
+                                        if (message == "timer2"){
+                                           if (__$("customresult1").value != "Positive"){
+                                             createSummary()
+                                             return
+                                           }
+                                         }
 					__$("main-content-area").innerHTML = "";
 					
 					var table = document.createElement("div");					
@@ -213,7 +303,7 @@
 				<input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
 				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
 				<input type="hidden" name="observations[][obs_datetime]"  value="" />
-		 
+
 		<fieldset custom=true fs_onLoad="loadCustom('timer1');">
 				<legend>HIV Testing</legend>
 			
@@ -246,26 +336,6 @@
 				<input type="hidden" name="observations[][obs_datetime]"  value="" />
 
 		</fieldset>
-
-                 <fieldset>
-				<legend>HIV Testing</legend>
-
-                                <% if @client.person.age < 1 %>
-                               <label for="mother">Mother HIV positive</label>
-
-                               <select id="mother" name="observations[][value_coded_or_text]" condition="">
-					<option></option>
-					<option value="Yes">Yes</option>
-					<option value="No">No</option>
-				</select>
-                                <%= hidden_field_tag("observations[][concept_name]",        "Mother HIV status") %>
-                                <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-                                <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-                                 <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-                                 <% else %>
-                                <input type="hidden" id="mother"  value="" />
-                               <% end %>
-                </fieldset>
 
 			<input type="submit" value="Submit" />
 

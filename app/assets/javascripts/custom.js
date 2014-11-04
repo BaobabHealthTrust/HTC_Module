@@ -38,3 +38,17 @@ function subtractMinutes(limit, minutes){
         var newtime = subbed.getHours() + ':' + subbed.getMinutes();
         return newtime;
 }
+
+  function adjust(){
+    var node =  document.getElementById('row2').childNodes[0].childNodes[0];
+    node.style.width = "6%";
+    node.style.height = "92px";
+    document.getElementById('row2').childNodes[0].style.height = "92px";
+    document.getElementById('row2').style.height = "92px";
+    document.getElementById('row2').childNodes[0].style.backgroundColor = "grey";
+    document.getElementById('row2').childNodes[0].style.MozBorderRadius = '1em';
+    document.getElementById('row2').childNodes[0].style.borderRadius = '1em';
+    button =  document.getElementById('buttons');
+    button.style.removeProperty('border')
+    button.style.backgroundColor = "grey";
+  }
