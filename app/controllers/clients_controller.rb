@@ -12,6 +12,7 @@ class ClientsController < ApplicationController
   def show
     
       @task = next_task(@client)
+      #raise @task.to_yaml
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
@@ -311,8 +312,47 @@ class ClientsController < ApplicationController
       redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
+  def extended_testing
+
+  end
+  
 	def testing
+      current_date = (session[:datetime].to_date rescue Date.today)
   		@client = Client.find(params[:client_id])
+      type = EncounterType.find_by_name("HIV testing").encounter_type_id
+      result = ConceptName.where("name = 'Result of hiv test'").first.concept_id
+      obs =   Observation.where("concept_id = ? AND person_id = ? AND DATE(obs_datetime) <", result, params[:client_id], current_date).order(obs_datetime: :desc).first rescue []
+      last = obs.to_s.split(':')[1].squish rescue []
+      @last_date = 0
+      unless last.blank?
+         if (current_date.to_date.mjd - obs.obs_datetime.to_date.mjd) > 28 || last.to_s.match(/Inconclusive/i) || last.to_s.match(/Positive/i) || last.to_s.match(/Exposed Infant/i)
+             redirect_to  "/extended_testing/#{@client.id}" and return
+         end
+      end
+      concept = ConceptName.where("name = 'last HIV test'").first.concept_id
+      last_test = Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue []
+      unless last_test.blank?
+         if last_test.match(/Last Positive/i) || last_test.match(/Last Exposed Infant/i) || last_test.match(/Last Inconclusive/i)
+              redirect_to  "/extended_testing/#{@client.id}" and return
+         end
+      end
+    concept = ConceptName.where("name = 'Mother HIV status'").first.concept_id
+    @mother_status =  Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
+    concept = ConceptName.where("name = 'Client Risk Category'").first.concept_id
+    @risk = Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
+
+    unless @risk.blank?
+        if @risk.upcase =="AVD+ OR HIGH RISK"
+            @message = "#{@risk}<br>Advise re-test every 12 months".to_s.html_safe
+        elsif @risk.upcase == "HIGH RISK EVENT IN LAST 3 MONTHS"
+            @message = "#{@risk}<br>Check event in last 72 hours".to_s.html_safe
+        elsif @risk.upcase == "LOW RISK"
+            @message = "#{@risk}<br>Patient Negative".to_s.html_safe
+        else
+            @message = "#{@risk}<br>Re-test in 4 weeks to rule out New infection".to_s.html_safe
+        end
+    end
+       
   end
 	
 	def referral_consent
@@ -539,6 +579,7 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
+   
 		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
@@ -567,7 +608,7 @@ class ClientsController < ApplicationController
 						redirect_to "/search" and return
 					end
 				end
-      
+        
 
 
 				if params[:client]

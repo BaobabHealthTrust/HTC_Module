@@ -1,5 +1,5 @@
 <html>
-<head>
+<head> 
 		<script>
 			var cancelDestination = "/clients/<%= params[:id] %>";
 
@@ -31,7 +31,9 @@
                       }
 
                       function checkPartner(){
-                         partner()
+                         <% unless params[:config] %>
+                                partner()
+                         <% end %>
                       }
                         function verify(id){
                          if (__$(id).value.length > 0){
@@ -176,6 +178,22 @@
             <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
             <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
             
+            <% if @client.person.age < 1 %>
+                   <label for="mother">Mother HIV positive</label>
+
+                   <select id="mother" name="observations[][value_coded_or_text]" condition="">
+                            <option></option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                    </select>
+                    <%= hidden_field_tag("observations[][concept_name]",        "Mother HIV status") %>
+                    <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                    <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                     <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+                     <% else %>
+                    <input type="hidden" id="mother"  value="" />
+              <% end %>
+                                
 </fieldset>
 <%= link_to "Cancel" , "/clients/#{params[:id]}" %>
 <%= submit_tag "Finish" %>

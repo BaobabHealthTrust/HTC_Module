@@ -1,0 +1,187 @@
+<html>
+  <head>
+    <style>
+      #cover {
+        display: none;
+      }
+    </style>
+    <%= javascript_include_tag 'jquery-1.3.2.min' %>
+    <script>
+      var cancelDestination = "/clients/<%= params[:id] %>";
+
+      var rapidValue = "";
+      var goldValue = "";
+      var motherStatus = "";
+      var result1 = "";
+      var result2 = "";
+
+      function doLogin(id){
+
+                            if(__$(id) && __$(id).value.trim().match(/\$/)){
+
+                               __$(id).value =  __$(id).value.trim().replace(/\$/, "");
+
+                                    clearTimeout(id)
+                                      document.forms[0].submit();
+
+                                    return;
+                            }
+
+                      setTimeout("doLogin('" + id + "')", 500);
+            }
+
+      function setValues(){
+        if (__$('timetimer1')){
+          rapidValue = __$('timetimer1').innerHTML.toString()
+        }
+        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"));
+        if(__$('timetimer2')){
+          goldValue = __$('timetimer2').innerHTML.toString()
+        }
+        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"));
+        __$("allresults").value  = "";
+        if(__$("Rapid Test Result").value == "Positive" && __$("Gold Test Result").value == "Positive"){
+          __$("allresults").value = "Positive"
+          clearTimeout("setValues()")
+         // confirm("HIV positive")
+        }
+
+        else if((__$("Rapid Test Result").value == "Positive" && __$("Gold Test Result").value == "Negative") || (__$("Rapid Test Result").value == "Negative" && __$("Gold Test Result").value == "Positive")){
+          __$("allresults").value = "Inconclusive"
+          clearTimeout("setValues()")
+          //confirm("Inconclusive")
+        }
+        else {
+          __$("allresults").value = "Inconclusive"
+        }
+
+        setTimeout("setValues()", 500);
+      }
+
+      function confirm(message){
+        var ele = document.getElementById('cover')
+        ele.style.display = "inline";
+        document.body.appendChild(ele);
+
+        var ele = document.getElementById('popup')
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">OK</button></div>'
+        html += "</div></div></div></div></div>"
+        ele.innerHTML =  html;
+        document.body.appendChild(ele);
+      }
+
+      function reset(){
+            ele = document.getElementById('cover')
+            ele.style.display = "none";
+            ele = document.getElementById('popup')
+            ele.style.display = "none";
+        }
+              
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+      function loadCustom(){
+
+        if(__$("main-content-area")){
+
+          __$("main-content-area").innerHTML = "";
+
+          var table = document.createElement("div");
+          table.style.display = "table";
+          table.style.margin = "auto";
+          // table.style.border = "1px solid #000";
+          __$("main-content-area").appendChild(table);
+
+          var row1 = document.createElement("div");
+          row1.style.display = "table-row";
+          table.appendChild(row1);
+
+          var cell1_1 = document.createElement("div");
+          cell1_1.style.display = "table-cell";
+          cell1_1.id = "timer1";
+          row1.appendChild(cell1_1);
+
+          var timer1 = addTimer(cell1_1, 10, "Rapid Test Timer", 0.55)
+          timer1.style.marginLeft = "40px";
+          timer1.style.marginRight = "40px";
+
+          var cell1_2 = document.createElement("div");
+          cell1_2.style.display = "table-cell";
+          cell1_2.id = "timer2";
+          cell1_2.style.textAlign = "right";
+          row1.appendChild(cell1_2);
+
+          var timer2 = addTimer(cell1_2, 15, "Gold Test Timer", 0.55);
+          timer2.style.marginLeft = "40px";
+          timer2.style.marginRight = "40px";
+        }
+      }
+    </script>
+  </head>
+  <body  onLoad="setValues()">
+
+	<form action='/encounters/new/<%= params[:id] %>' method='post'>
+
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+      <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
+
+      <fieldset custom=true fs_onLoad="loadCustom();">
+        <legend>HIV Testing (Extended)</legend>
+
+        <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" />
+
+        <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+      </fieldset>
+
+      <fieldset>
+        <legend>HIV Testing (Extended)</legend>
+        <% tests = ["Rapid Test Result", "Gold Test Result"]
+        results = [["Unknown","Uknown"],["Positive","Reactive"],["Negative","Non-Reactive"]]
+        tests.each { |test| %>
+          <label for="<%= test %>"><%= test %></label>
+
+          <select id="<%= test %>" name="observations[][value_coded_or_text]">
+            <option></option>
+            <% results.each {|result| %>
+              <option value="<%= result[0] %>"><%= result[1] %></option>
+            <% } %>
+          </select>
+          <%= hidden_field_tag("observations[][concept_name]",        test) %>
+          <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+          <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+          <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        <% } %>
+
+        <label for="scan_accession_number" >Acknowledging Counselor Accession Number </label>
+        <input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />
+        <%= hidden_field_tag("observations[][concept_name]",        'Provider') %>
+        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+
+        <input type="hidden" name="observations[][value_text]" id="allresults" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
+      </fieldset>
+      <input type="submit" value="Submit" />
+
+        </form>
+  </body>
+</html>
+  <div id="cover" align="center">
+  </div>
+  <div id="popup" style="display:none">
+  </div>

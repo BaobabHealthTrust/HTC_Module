@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
                    if encounter_done(client.patient_id, encounter).blank?
                       if partner.match(/PARTNER OR SPOUSE/i)
                         link = { "name" =>  "Update Status",
-                        "url" => "/couple/status?#{client.patient_id}"}
+                        "url" => "/couple/status?client_id=#{client.patient_id}"}
                       else
                         link = { "name" =>  "Update Status",
                         "url" => "/client_status/#{client.patient_id}"}
@@ -29,8 +29,8 @@ class ApplicationController < ActionController::Base
               when "ASSESSMENT"
                    if encounter_done(client.patient_id, encounter).blank?
                      if partner.match(/PARTNER OR SPOUSE/i)
-                        link = { "name" =>  "Update Status",
-                        "url" => "/couple/assessment?#{client.patient_id}"}
+                        link = { "name" =>  "Assessment",
+                        "url" => "/couple/assessment?client_id=#{client.patient_id}"}
                       else
                         link = { "name" =>  "Assessment",
                         "url" => "/client_assessment/#{client.patient_id}"}
@@ -40,8 +40,8 @@ class ApplicationController < ActionController::Base
               when "COUNSELING"
                    if encounter_done(client.patient_id, encounter).blank?
                       if partner.match(/PARTNER OR SPOUSE/i)
-                        link = { "name" =>  "Update Status",
-                        "url" => "/couple/counseling?#{client.patient_id}"}
+                        link = { "name" =>  "Counseling",
+                        "url" => "/couple/counseling?client_id=#{client.patient_id}"}
                       else
                         link = { "name" =>  "Counseling",
                         "url" => "/client_counseling?client_id=#{client.patient_id}"}
@@ -57,8 +57,8 @@ class ApplicationController < ActionController::Base
                    end
                    if encounter_done(client.patient_id, encounter).blank?
                      if partner.match(/PARTNER OR SPOUSE/i)
-                        link = { "name" =>  "Update Status",
-                        "url" => "/couple/testing?#{client.patient_id}"}
+                        link = { "name" =>  "HIV Testing",
+                        "url" => "/couple/testing?client_id=#{client.patient_id}"}
                       else
                         link = { "name" =>  "HIV Testing",
                         "url" => "/client_testing?client_id=#{client.patient_id}"}
@@ -74,8 +74,8 @@ class ApplicationController < ActionController::Base
                    end
                   if encounter_done(client.patient_id, encounter).blank?
                     if partner.match(/PARTNER OR SPOUSE/i)
-                        link = { "name" =>  "Update Status",
-                        "url" => "/couple/appointment?#{client.patient_id}"}
+                        link = { "name" =>  "Appointment",
+                        "url" => "/clients/#{client.patient_id}"}
                       else
                         link = { "name" =>  "Appointment",
                         "url" => "/appointment/#{client.patient_id}"}
@@ -90,8 +90,14 @@ class ApplicationController < ActionController::Base
                         end
                    end
                     if encounter_done(client.patient_id, encounter).blank?
+                       if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Referral",
+                        "url" => "/couple/referral_consent?client_id=#{client.patient_id}"}
+                      else
                         link = { "name" =>  "Referral",
                         "url" => "/referral_consent/#{client.patient_id}"}
+
+                       end
                         return link
                     end
               end
