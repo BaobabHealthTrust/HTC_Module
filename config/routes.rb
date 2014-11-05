@@ -63,7 +63,8 @@ HTCModule::Application.routes.draw do
 	post "new_protocol" => "admins#new_protocol"
 
   get "stock_levels" => "inventory#stock_levels"
-  get "kit_loss" => "users#kit_loss"
+  get "kit_loss" => "inventory#kit_loss"
+  post "kit_loss" => "inventory#kit_loss"
 
   get "inventory" => "inventory#options"
   get "new_batch" => "inventory#new_batch"

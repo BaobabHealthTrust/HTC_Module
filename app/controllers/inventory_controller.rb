@@ -229,4 +229,45 @@ class InventoryController < ApplicationController
     @stock_info = Inventory.stock_levels #rescue {}
     render layout: false
   end
+
+  def kit_loss
+    @user = current_user
+    @kit_names = Kit.all.map(&:name)
+    @session_date = session[:datetime].to_date rescue Date.today
+
+    if request.post?
+      captured_data = params[:data] || []
+      type = InventoryType.find_by_name("Losses").id
+
+      captured_data.each do |kit_name, opts|
+        opts.each do |value|
+          lot_number = value["Lot number"]
+          qty = value["Quantity"].blank??  "" : value["Quantity"].to_i
+          reason = value["Reason"]
+
+          if(!lot_number.blank? && !qty.blank? && qty > 0 && !reason.blank?)
+            CouncillorInventory.create(lot_no: lot_number,
+                             value_numeric: qty,
+                             inventory_type: type,
+                             value_text: reason,
+                             encounter_date: @session_date,
+                             voided: false,
+                             creator: current_user.id
+            )
+          end
+        end
+      end
+
+      redirect_to '/htcs?tab=admin' and return
+    end
+
+    @input_controls = [["Lot number", {"type" => "text"}],
+                       ["Quantity", {"type" => "number",
+                                     "min" => 1}
+                       ],
+                       ["Reason", {"type" => "list"}],
+    ]
+    @reasons = ['Damaged', 'Other use'];
+    render layout: false
+  end
 end

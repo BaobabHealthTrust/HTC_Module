@@ -9,6 +9,7 @@ class CouncillorInventory < ActiveRecord::Migration
       t.datetime :encounter_date
       t.integer :inventory_type
       t.text :comments
+      t.integer :location_id
       t.integer :creator
       t.boolean :voided
       t.string :void_reason

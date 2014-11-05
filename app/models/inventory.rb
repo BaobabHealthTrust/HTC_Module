@@ -1,5 +1,6 @@
 class Inventory < ActiveRecord::Base
 	self.table_name = 'inventory'
+  before_create :set_location
 
   include Openmrs
 	
@@ -30,5 +31,9 @@ class Inventory < ActiveRecord::Base
         end
     end
     result
+  end
+
+  def set_location
+    self.location_id = Location.current_location.id if self.location_id.blank?
   end
 end

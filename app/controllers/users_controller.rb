@@ -104,8 +104,8 @@ class UsersController < ApplicationController
   def my_account
 
   end
-  
-	
+
+
 	private
 
   def set_user
