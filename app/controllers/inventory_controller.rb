@@ -204,7 +204,29 @@ class InventoryController < ApplicationController
   end
 
   def stock_levels
-    @location = Location.current_location;
+    @session_date = session[:datetime].to_date rescue Date.today
+
+    @cur_month = @session_date.strftime("%B")
+    @cur_year = @session_date.year
+
+    @current_location = Location.current_location;
+    @locations = all_htc_facility_locations.map{|l| [l.id, l.name]}
     @user = current_user
+    @users = User.all.map.map{|user| [user.username, user.name] rescue nil}.compact
+
+    @kit_names = Kit.all.map(&:name)
+    @site_name = Settings.facility_name
+
+    @years = []
+    i = @session_date.year
+    min = User.find_by_sql("SELECT min(date_created) e FROM users LIMIT 1")[0][:e].to_date.year - 1  rescue (Date.today.year - 1)
+    while (i >= min)
+ 	    @years << i
+	    i -= 1
+    end
+    @years.reverse!
+
+    @stock_info = Inventory.stock_levels #rescue {}
+    render layout: false
   end
 end
