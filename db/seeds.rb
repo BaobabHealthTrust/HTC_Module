@@ -9,9 +9,9 @@
 
 #Creating Default Test Kits
 puts "Loading default tesk kits"
- [["Determine", "HIV-1/2 rapid test kit"], ["UniGold", "HIV Test kit"]].each_with_index{|test, i|
+ [["Determine", "HIV-1/2 rapid test kit", 10], ["UniGold", "HIV Test kit", 10]].each_with_index{|test, i|
    next if !Kit.find_by_name(test[0]).blank?
-   Kit.create(name: test[0], description: test[1], creator: 1, flow_order: (i + 1), status: "active")
+   Kit.create(name: test[0], description: test[1], creator: 1, flow_order: (i + 1), status: "active", duration: test[2])
  }
 
 puts "Loading default inventory types"

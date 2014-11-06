@@ -5,6 +5,7 @@ class CreateKits < ActiveRecord::Migration
       t.text :description
       t.integer :creator
       t.string :status
+      t.integer :duration
       t.integer :flow_order
       t.timestamps
     end

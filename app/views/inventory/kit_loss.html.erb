@@ -13,16 +13,16 @@
 </head>
 <body>
 
-<%= form_tag distribute_batch_path do %>
+<%= form_tag kit_loss_path do %>
     <fieldset>
-      <legend>Testkit distribution</legend>
+      <legend>Record kit losses</legend>
 
       <br/>
       <label for="id"> </label>
       <select id="id" name="id">
         <option></option>
-        <%= @users.each do |user| %>
-            <option id="<%= user.username%>" value="<%= user.username %>"> <%= user.name %></option>
+        <%= @kit_names.each do |name| %>
+            <option id="<%= name%>" value="<%= name %>"> <%= name %></option>
         <% end %>
       </select>
       <br/>
@@ -124,15 +124,15 @@
     var inputControls = {};
 
     var kit_names = [];
-    var kit_types = [];
-    var checkTime = 0
+    var reasons = [];
+    var checkTime = 0;
 
-    <%  @users.each do |kit|%>
-    kit_names.push("<%= kit.username%>");
+    <%  @kit_names.each do |name|%>
+            kit_names.push("<%= name%>");
     <% end %>
 
-    <%  @kit_types.each do |kit|%>
-            kit_types.push("<%= kit%>");
+    <%  @reasons.each do |kit|%>
+            reasons.push("<%= kit%>");
     <% end %>
 
     //build a javascript hash defining entry controls
@@ -350,6 +350,7 @@
         }
 
         __$("add-batch").appendChild(addBatchButton());
+
     }
 
     function createRow(key, options) {
@@ -413,7 +414,7 @@
     function showList(target){
 
         __$("keyBoard").innerHTML = "<ul id='listing'> </ul>"
-        for (var i in kit_types){
+        for (var i in reasons){
             var li = document.createElement("li");
             li.className = "li-item";
             li.setAttribute("tag",  (i % 2 == 0 ? "even" : "odd"));
@@ -421,7 +422,7 @@
             if (i % 2 == 1)
                 li.style.backgroundColor = "rgb(238, 238, 238)";
 
-            li.innerHTML = kit_types[i];
+            li.innerHTML = reasons[i];
             li.onmousedown = function(){
                 highlight(this);
             }
@@ -558,10 +559,10 @@
                 jQuery.ajax(
                         {
                             url: "/inventory/validate_dist?kit_type=" +
-                                    __$("Kit type").value + "&qty=" +
+                                    check + "&qty=" +
                                     __$("Quantity").value + "&ui_sum=" + qty_sum +
                                     "&lot_number=" + __$("Lot number").value +
-                                    "&username=" + dsp.getAttribute("target"),
+                                    "&username=<%=@user.username%>",
                             success: function (result) {
                                 result = JSON.parse(result)
 
@@ -612,9 +613,9 @@
 
                 var kys = Object.keys(data[dtKeys[i]])
                 for (var j = 0; j < kys.length; j ++){
-                    var k_type = __$("Kit type") ? __$("Kit type").value : "";
+                    var k_type = dsp.getAttribute("target");
                     var lot_no = __$("Lot number") ? __$("Lot number").value : "";
-                    if (k_type && lot_no && k_type == data[dtKeys[i]][kys[j]]["Kit type"] &&
+                    if (k_type && lot_no && k_type == dtKeys[i] &&
                              lot_no == data[dtKeys[i]][kys[j]]["Lot number"] &&
                              data[dtKeys[i]][kys[j]]["Quantity"]){
                         try{
