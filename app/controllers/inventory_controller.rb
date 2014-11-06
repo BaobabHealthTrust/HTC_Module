@@ -5,7 +5,7 @@ class InventoryController < ApplicationController
   end
 
   def new_batch
-    @kits = Kit.find_all_by_status("active")
+    @kits = Kit.where(status: "active")
 
     @input_controls = [["Date of delivery", {"type" => "date"}],
                        ["Lot number", {"type" => "text"}],
@@ -262,12 +262,32 @@ class InventoryController < ApplicationController
     end
 
     @input_controls = [["Lot number", {"type" => "text"}],
-                       ["Quantity", {"type" => "number",
-                                     "min" => 1}
-                       ],
+                       ["Quantity", {"type" => "number"}],
                        ["Reason", {"type" => "list"}],
     ]
     @reasons = ['Damaged', 'Other use'];
+    render layout: false
+  end
+
+  def quality_control_tests
+    @user = current_user
+    @location = Location.current_location
+    @kits = Kit.where(status: "active")
+
+    if request.post?
+      captured_data = params[:data]
+      s = {}
+
+    end
+
+    @side_lists = {}
+
+    @serum_types = ["Negative serum", "Positive serum"]
+    @input_controls = [["Serum lot number", {"type" => "text"}],
+                       ["Testkit lot number", {"type" => "text"}],
+                       ["Control line seen", {"type" => "list"}],
+                       ["Result", {"type" => "list"}]]
+
     render layout: false
   end
 end
