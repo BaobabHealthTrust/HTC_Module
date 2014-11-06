@@ -75,6 +75,9 @@ HTCModule::Application.routes.draw do
   get "distribute_batch" => "inventory#distribute"
   post "distribute_batch" => "inventory#distribute"
 
+  get "quality_control_tests" => "inventory#quality_control_tests"
+  post "quality_control_tests" => "inventory#quality_control_tests"
+
   post "losses" => "inventory#losses"
 
   get "inventory/validate_dist" => "inventory#validate_dist"
