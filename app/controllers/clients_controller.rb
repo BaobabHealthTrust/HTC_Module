@@ -292,8 +292,13 @@ class ClientsController < ApplicationController
   
   def status
      @client = Client.find(params[:id])
-     if @client.partner_present == true and ! session[:partner].blank?
-       redirect_to next_task(@client)["url"] if ! encounter_done(@client.patient_id, "UPDATE HIV STATUS").blank?
+     if @client.partner_present == true #and ! session[:partner].blank?
+       #raise @task.to_yaml
+       @task = next_task(@client)
+        if @task["name"]== "Update Status"
+            @task["url"] = "/client_status/#{@client.patient_id}?config=couple"
+        end
+       redirect_to @task["url"] if ! encounter_done(@client.patient_id, "UPDATE HIV STATUS").blank?
      end
   end
 

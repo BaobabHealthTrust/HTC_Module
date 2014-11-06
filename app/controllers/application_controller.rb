@@ -61,12 +61,12 @@ class ApplicationController < ActionController::Base
                         end
                    end
                   if encounter_done(client.patient_id, encounter).blank?
-                    if partner.match(/PARTNER OR SPOUSE/i)
-                        next
-                      else
+                    #if partner.match(/PARTNER OR SPOUSE/i)
+                       # next
+                      #else
                         link = { "name" =>  "Appointment",
                         "url" => "/appointment/#{client.patient_id}"}
-                    end
+                    #end
                         return link
                     end
               when "REFERRAL CONSENT CONFIRMATION"
