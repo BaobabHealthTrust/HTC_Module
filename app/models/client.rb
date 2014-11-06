@@ -131,8 +131,8 @@ class Client < ActiveRecord::Base
 
   def get_recent_partner
        spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
-        Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
-                          self.id, self.id, spouse).order(relationship_id: :desc).limit(1)
+       Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          self.id, self.id, spouse).order(relationship_id: :desc).first
   end
 
   def get_all_partners
@@ -143,5 +143,20 @@ class Client < ActiveRecord::Base
                           client << Client.find(p.person_a) if p.person_a != self.id
                           client << Client.find(p.person_b) if p.person_b != self.id }
       return client
+  end
+
+  def partner_present
+    partner = ActionView::Base.full_sanitizer.sanitize(encounter_done(self.id, "IN SESSION").first.to_s.upcase) rescue ""
+    present = false
+    if partner.match(/PARTNER OR SPOUSE/i)
+       present = true
+     end
+     return present
+  end
+
+    def encounter_done(patient_id, encounter)
+      current_date = session[:datetime].to_date rescue Date.today
+      type = EncounterType.where("name = ?", encounter).first.encounter_type_id
+      return Encounter.where("patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?", patient_id, type, current_date  ).order("encounter_datetime desc")
   end
 end

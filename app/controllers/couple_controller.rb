@@ -1,7 +1,7 @@
 class CoupleController < ApplicationController
   def status
-     @client = Client.find(params[:client_id])
-     @task = next_task(@client)["url"]
+     client = Client.find(params[:client_id])
+     @partner = client.get_recent_partner
   end
 
   def testing

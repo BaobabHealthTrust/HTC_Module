@@ -292,6 +292,9 @@ class ClientsController < ApplicationController
   
   def status
      @client = Client.find(params[:id])
+     if @client.partner_present == true and ! session[:partner].blank?
+       redirect_to next_task(@client)["url"] if ! encounter_done(@client.patient_id, "UPDATE HIV STATUS").blank?
+     end
   end
 
   def assessment
@@ -313,10 +316,13 @@ class ClientsController < ApplicationController
 	end
 
   def extended_testing
-
+      @kits, @remaining, @testing = Kit.kits_available(current_user)
   end
   
 	def testing
+    
+     @kits, @remaining, @testing = Kit.kits_available(current_user)
+
       current_date = (session[:datetime].to_date rescue Date.today)
   		@client = Client.find(params[:client_id])
       type = EncounterType.find_by_name("HIV testing").encounter_type_id
@@ -356,7 +362,7 @@ class ClientsController < ApplicationController
   end
 	
 	def referral_consent
-			
+					@client = Client.find(params[:id])
 	end
 
   def appointment
@@ -511,6 +517,11 @@ class ClientsController < ApplicationController
 	def current_visit
 		current_date = session[:datetime].to_date rescue Date.today
 		@client = Client.find(params[:client_id])
+    @show_name = " For #{@client.name.humanize}" if @client.partner_present == true
+    @task = next_task(@client)
+    if @task["name"]== "Update Status"
+       @task["url"] = "/client_status/#{@client.patient_id}?config=couple"
+    end
 		@status  = @client.current_state(current_date) rescue "NaN"
 		@firststatus  = @client.first_state rescue []
 		@finalstatus = @client.final_state
@@ -616,8 +627,14 @@ class ClientsController < ApplicationController
            
            session[:client_id] = params[:client]
            relationship_type = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
-           @relation = Relationship.create(person_a: params[:client], person_b: @scanned.patient_id,
-                              relationship: relationship_type, creator: current_user.id)
+           @relation = Relationship.where("(person_a = ? AND person_b = ?)
+                                                                  OR (person_a = ? AND person_b = ?)",
+                                                                  params[:client], @scanned.patient_id, @scanned.patient_id, 
+                                                                  params[:client]).order(relationship_id: :desc).first
+            if @relation.blank?
+               @relation = Relationship.create(person_a: params[:client], person_b: @scanned.patient_id,
+                                  relationship: relationship_type, creator: current_user.id)
+            end
             concept_id = ConceptName.find_by_name("partner or spouse").concept_id
             answer =  ConceptName.find_by_name("yes").concept_id
             p_session = encounter_done(@scanned.patient_id, 'IN SESSION')

@@ -1,5 +1,8 @@
 
-function loadMessage(message, location){
+function loadMessage(message, location, delay){
+    if (delay == null){
+        delay = 1000;
+    }
       if (__$('cover')){
           var ele = document.getElementById('cover');
           ele.style.display = "inline";
@@ -22,7 +25,7 @@ function loadMessage(message, location){
       ele.innerHTML =  html;
       document.body.appendChild(ele);
 
-      setTimeout('redirect("' + location + '")', 1000);
+      setTimeout('redirect("' + location + '")', delay);
 }
 
 function redirect(location){

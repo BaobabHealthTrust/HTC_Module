@@ -51,6 +51,16 @@
 
 <a href= '/client_testing?client_id=<%= @client.id -%>' id="test" class=" blue">
   <span class="txt">Testing</span></a>
+  
+  <a href= '/extended_testing/<%= @client.id -%>' id="test" class=" blue">
+  <span class="txt">Extended Testing</span></a>
+
+  <a href= '/client_status/<%= @client.id -%>' id="test" class=" blue">
+  <span class="txt">Status History</span></a>
+
+  <a href= '/client_assessment/<%= @client.id -%>' id="test" class=" blue">
+  <span class="txt">Update Risk</span></a>
+
 
   <a href= '/referral_consent/<%= @client.id -%>' id="hospital" class=" blue">
     <span class="txt">Referral</span></a>

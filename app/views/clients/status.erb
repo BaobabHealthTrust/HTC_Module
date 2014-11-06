@@ -1,7 +1,11 @@
 <html>
 <head> 
 		<script>
+                     <% if params[:config] == "couple" %>
+                        var cancelDestination = "/client_current_visit?client_id=<%= params[:id] %>"
+                       <%else%>
 			var cancelDestination = "/clients/<%= params[:id] %>";
+                        <% end %>
 
                       function __$(id){
                             return document.getElementById(id);
@@ -120,6 +124,9 @@
     #popupkeyboard{
                 height: 255px ! important;
             }
+    #lower{
+    display: none;
+}
   </style>
 </head>
 <body onload="verify('test_date');checkPartner();" >
@@ -128,7 +135,7 @@
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="Update HIV status" name="ENCOUNTER"/>
 				<fieldset>
-				<legend>Update Status</legend>
+				<legend>Update Status for <%= @client.name.humanize %></legend>
 				<label for="patient">Client Pregnant?</label>
 				<label for="patient.1">Yes</label>
 				<input type="radio" name="patient" id="patient.1" value="YES" >

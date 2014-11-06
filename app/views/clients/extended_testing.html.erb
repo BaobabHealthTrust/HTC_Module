@@ -12,6 +12,7 @@
       var rapidValue = "";
       var goldValue = "";
       var motherStatus = "";
+      var testing = parseInt('<%= @testing %>')
       var result1 = "";
       var result2 = "";
 
@@ -40,13 +41,13 @@
         }
         __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"));
         __$("allresults").value  = "";
-        if(__$("Rapid Test Result").value == "Positive" && __$("Gold Test Result").value == "Positive"){
+        if(__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive"){
           __$("allresults").value = "Positive"
           clearTimeout("setValues()")
          // confirm("HIV positive")
         }
 
-        else if((__$("Rapid Test Result").value == "Positive" && __$("Gold Test Result").value == "Negative") || (__$("Rapid Test Result").value == "Negative" && __$("Gold Test Result").value == "Positive")){
+        else if((__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Negative") || (__$("HTC Test 1 result").value == "Negative" && __$("HTC Test 2 result").value == "Positive")){
           __$("allresults").value = "Inconclusive"
           clearTimeout("setValues()")
           //confirm("Inconclusive")
@@ -106,7 +107,7 @@
           cell1_1.id = "timer1";
           row1.appendChild(cell1_1);
 
-          var timer1 = addTimer(cell1_1, 10, "Rapid Test Timer", 0.55)
+          var timer1 = addTimer(cell1_1, 10, "<%= @kits[0][1] rescue "none" %> Test Timer", 0.55)
           timer1.style.marginLeft = "40px";
           timer1.style.marginRight = "40px";
 
@@ -116,37 +117,61 @@
           cell1_2.style.textAlign = "right";
           row1.appendChild(cell1_2);
 
-          var timer2 = addTimer(cell1_2, 15, "Gold Test Timer", 0.55);
+          var timer2 = addTimer(cell1_2, 15, "<%= @kits[1][1] rescue "none" %> Test Timer", 0.55);
           timer2.style.marginLeft = "40px";
           timer2.style.marginRight = "40px";
         }
       }
+  function checkKits(){
+      if (testing == 0){
+                loadMessage('You do not have one of the test kits ','clients/<%= params[:id] %> ', 1500);
+      }
+  }
+
     </script>
   </head>
-  <body  onLoad="setValues()">
+  <body  onLoad="checkKits();setValues()">
 
 	<form action='/encounters/new/<%= params[:id] %>' method='post'>
 
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
       <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
 
+      <input type="hidden" name="observations[][value_coded_or_text]" id="allresults" fieldtype="number" />
+      <input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
+      <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+      <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
+       <input type="hidden" name="observations[][value_coded_or_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] %>" />
+      <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
+      <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+      <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
+      <input type="hidden" name="observations[][value_coded_or_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] %>" />
+      <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
+      <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+      <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
       <fieldset custom=true fs_onLoad="loadCustom();">
         <legend>HIV Testing (Extended)</legend>
 
-        <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number" />
-        <input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
+        <input type="hidden" name="observations[][value_coded_or_text]" id="rapidtimer" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" />
 
-        <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
-        <input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
+
+        <input type="hidden" name="observations[][value_coded_or_text]" id="goldtimer" fieldtype="number" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+
       </fieldset>
 
       <fieldset>
         <legend>HIV Testing (Extended)</legend>
-        <% tests = ["Rapid Test Result", "Gold Test Result"]
+        <% tests = ["HTC Test 1 result", "HTC Test 2 result"]
         results = [["Unknown","Uknown"],["Positive","Reactive"],["Negative","Non-Reactive"]]
         tests.each { |test| %>
           <label for="<%= test %>"><%= test %></label>
@@ -160,7 +185,6 @@
           <%= hidden_field_tag("observations[][concept_name]",        test) %>
           <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
           <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-          <%= hidden_field_tag("observations[][value_datetime]",       "") %>
         <% } %>
 
         <label for="scan_accession_number" >Acknowledging Counselor Accession Number </label>
@@ -168,12 +192,6 @@
         <%= hidden_field_tag("observations[][concept_name]",        'Provider') %>
         <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-
-        <input type="hidden" name="observations[][value_text]" id="allresults" fieldtype="number" />
-        <input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
-        <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
-        <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
       </fieldset>
       <input type="submit" value="Submit" />

@@ -1,7 +1,12 @@
 <html>
 <head>
 		<script>
-			var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
+                  <% if @client.partner_present == true %>
+                    var cancelDestination = "/client_current_visit?client_id=<%= params[:id] %>"
+                  <% else %>
+                     var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
+                <% end %>
+			
 
                       function __$(id){
                             return document.getElementById(id);

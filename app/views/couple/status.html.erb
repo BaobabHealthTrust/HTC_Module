@@ -1,7 +1,7 @@
 <html>
   <head>
     <script>
-       __$("iframe").remove()
+       //__$("iframe").remove()
     </script>
     <style>
       #outer{
@@ -10,26 +10,48 @@
 }
 #letfpanel{
   width:50%;
-  height:100% ! important;
+  height:80% ! important;
   float: left;
 }
 #rightpanel{
   width: 50%;
-  height:100% ! important;
+  height:80% ! important;
   float: right;
 }
+#bottom{
+  width: 100%;
+  border-radius: 10px;
+  background-color: grey;
+}
+.div2{
+  background-color: rgba(73, 93,135,0.3);
+  border-radius: 60px;
+  bottom: 2px;
+  height: 80px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 120;
+}
+
     </style>
   </head>
   <body>
     <div id="outer">
    
     <div id="letfpanel">
-          <iframe src="<%= @task %>&config=couple" width="100%" height="800px ! important" ></iframe>
+      <iframe src="/client_status/<%= @partner.person_a %>?config=couple" width="100%" height="800px ! important" ></iframe>
     </div>
    
     <div id="rightpanel">
-          <iframe src="<%= @task %>&config=couple" width="100%" height="800px ! important"></iframe>
+          <iframe src="/client_status/<%= @partner.person_b %>?config=couple" width="100%" height="800px ! important"></iframe>
+    </div>
+     <div id="lower">
+      <div id="uinav" class="div2">
+          <button class="button green" style="margin: 10px 20px 10px 10px; float: right; height: 25px; font-size: 18px;" onmousedown="window.location = '/htcs'">Finish</button>
+       </div>
     </div>
     </div>
+    
   </body>
 </html>

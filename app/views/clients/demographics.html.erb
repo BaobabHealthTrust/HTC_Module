@@ -1,7 +1,11 @@
 <html>
     <head>
 	<script>
+                  <% if @client.partner_present == true %>
+                    var cancelDestination = "/client_current_visit?client_id=<%= params[:client_id] %>"
+                  <% else %>
                 var cancelDestination = "clients/<%= params[:client_id] %>";
+                <% end %>
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   for (i = 1; i <= list.length; i ++){
@@ -360,14 +364,20 @@ table{
       </style>
      </head>
 <body onload="adjust()" >
-		<%= form_tag show_client_path(:id => params[:client_id]) do %>
+                 <% if @client.partner_present != true %>
+                      <form action="/client_show/<%=  params[:client_id] %>" method="get">
+                  <% else %>
+                        <form action="/client_current_visit?client_id=<%=  params[:client_id] %>" method="get">
+                          <input type='hidden' name='client_id' value=<%= params[:client_id] %> />
+                <% end %>
 			<input type='hidden' name='name_id' value=<%= params[:client_id] %> />
 			<fieldset  custom=true fs_onLoad="loadCustom();">
 			<legend>Update Demographics</legend>
 			
 			</fieldset>
-			<%= submit_tag "Finish" %>
-		<%end%>
+			<input type="submit" value="Finish">
+		</form>
+
 </body>
 </html>
 <script>
