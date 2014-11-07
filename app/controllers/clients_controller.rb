@@ -660,7 +660,7 @@ class ClientsController < ApplicationController
                       obs_datetime: c_session.encounter_datetime,
                       creator: current_user.id, value_coded: answer)
             
-           redirect_to "/client_demographics?partner_id=#{@scanned.patient_id}&client_id=#{params[:client]}" and return
+           redirect_to "/couple/status?client_id=#{params[:client]}" and return
         else
            redirect_to "/client_demographics?client_id=#{@scanned.patient_id}" and return
         end

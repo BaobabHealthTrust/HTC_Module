@@ -6,76 +6,15 @@
                             return document.getElementById(id);
                       }
 
-                        function verify(){
-                         if (btnNext){
-                              if(btnNext.innerHTML.toLowerCase() == "finish"){
-                                         btnNext.onclick = function(){
-                                                  confirm()
-                                                  clearTimeout()
-                                      };
-                              }
-                              else {
-                                         btnNext.onclick = function(){
-
-                                        var pos = parseInt(this.getAttribute("pos")) + 1;
-
-                                        var section = parseInt(this.getAttribute("section"));
-
-                                        navigateTo(pos, section);
-
-                                      };
-                              }
-                         }
-                            setTimeout("verify()", 50);
-                        }
-
-               function confirm(){
-                     var ele = document.getElementById('cover')
-                      ele.style.display = "inline";
-                      document.body.appendChild(ele);
-
-                      var ele = document.getElementById('popup')
-                      ele.style.display = "inline";
-                      html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
-                      html += "<div id='text'>Continue With Testing?</div></div><div style='display:table-row;width:100%;'>"
-                      html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="deny()">No</button></div>'
-                      html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Yes</button></div>'
-                      html += "</div></div></div></div></div>"
-                      ele.innerHTML =  html;
-                      document.body.appendChild(ele);
-                  }
-
-              function allow(){
-                __$("continue_testing").value = "Yes"
-                document.forms[0].submit();
-              }
-
-              function deny(){
-                 __$("continue_testing").value = "No"
-                   document.forms[0].submit();
-              }
-
-              function reset(){
-                            ele = document.getElementById('cover')
-                            ele.style.display = "none";
-                            ele = document.getElementById('popup')
-                            ele.style.display = "none";
-                        }
-
 		</script>
             <style>
 
   </style>
 	</head>
-<body  onload="verify()">
+<body >
 	<form action='/encounters/new/<%= params[:client_id] %>' method='post'>
 	<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 	<input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
-        <input type="hidden" value="" id="continue_testing" name="observations[][value_coded_or_text]"/>
-        <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
-        <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
-        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
 
 		<% x = 0
 		y = 1
@@ -139,7 +78,21 @@ y = y + 1
 x = x + 1
 end %>
 <% end %>
-	</fieldset>			
+	</fieldset>
+        <fieldset>
+          <legend>Referral Consent Confirmation</legend>
+					<label for="continue_testing">Continue Testing? </label>
+					<select name="observations[][value_coded_or_text]" id="continue_testing" >
+						<option></option>
+						<option value="Yes">Yes</option>
+						<option value="No">No</option>
+					</select>
+				<%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
+				<%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+				<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        </fieldset>
+
 	<button type='submit'>Finish</button>
 			
 	</form>

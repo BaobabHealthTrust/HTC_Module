@@ -30,7 +30,7 @@
         if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus != "YES"){
           __$("allresults").value = "Positive"
           clearTimeout("setValues()")
-          confirm("Positive")
+          confirm("Positive <br> Results")
         }
         else if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus == "YES"){
           __$("allresults").value = "Exposed Infant"
@@ -42,7 +42,7 @@
           __$("alltimers").value = "YES"
           __$("allresults").value = "Inconclusive"
           clearTimeout("setValues()")
-          confirm("Inconclusive")
+          confirm("Inconclusive <br> Results")
         }
         else{
           __$("allresults").value = "Negative"
@@ -66,7 +66,7 @@
         html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
         html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
         html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
-        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Yes</button></div>'
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>'
         html += "</div></div></div></div></div>"
         ele.innerHTML =  html;
         document.body.appendChild(ele);
