@@ -278,15 +278,63 @@ class InventoryController < ApplicationController
     render layout: false
   end
 
+  def get_exp_date
+
+    lot_number = params[:lot_number]
+    inv_type = params[:type] == "kit" ? "Delivery" : "Serum Delivery"
+    result = {td_id: params[:td_id]}
+    result["tt"] = inv_type;
+    date = Inventory.where(inventory_type: InventoryType.where(name: inv_type).first.id,
+                    lot_no: lot_number).first.date_of_expiry.strftime("%d %b, %Y") rescue nil
+
+    result[:out_text] = date || "&nbsp"
+    render text: result.to_json
+  end
+
   def quality_control_tests
     @user = current_user
     @location = Location.current_location
     @kits = Kit.where(status: "active")
 
+    kmap = {}
+
     if request.post?
       captured_data = params[:data]
-      s = {}
+      if !captured_data.blank?
+        kmap = {"Serum lot number" => "Serum lot number",
+                "Testkit lot number" => "kit lot number",
+                "Control line seen" => "Control line seen",
+                "Result" => "Quality test result"
+          }
 
+        encounter_type = TestEncounterType.where(name: 'Testkit Quality Control').first
+        encounter = TestEncounter.create(
+            test_encounter_type: encounter_type.id,
+            encounter_datetime: (@session_date[:to_date].to_datetime rescue DateTime.now),
+            location_id: @location.id,
+            creator: @user.id,
+            voided: false
+        )
+      end
+
+      captured_data.each do |key, opts|
+        kit_name = key.split(/\-/)[0].strip
+        kit_type = key.split(/\-/)[1].scan(/Positive|Negative/i).first.strip
+
+        opts.each do |values|
+          values.each do |k, v|
+               TestObservation.create(
+                  encounter_id: encounter.id,
+                  concept_id: (ConceptName.where(name: kmap[k]).first.concept_id),
+                  value_text: v,
+                  obs_datetime: encounter.encounter_datetime,
+                  location_id: encounter.location_id,
+                  voided: false
+              )
+          end
+        end
+      end
+      redirect_to htcs_path and return
     end
 
     @side_lists = {}
