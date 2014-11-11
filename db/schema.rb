@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141028094620) do
+ActiveRecord::Schema.define(version: 20141107125559) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -966,6 +966,8 @@ ActiveRecord::Schema.define(version: 20141028094620) do
     t.integer  "creator"
     t.string   "status"
     t.integer  "duration"
+    t.integer  "min_temp"
+    t.integer  "max_temp"
     t.integer  "flow_order"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1998,6 +2000,40 @@ ActiveRecord::Schema.define(version: 20141028094620) do
   add_index "serialized_object", ["creator"], name: "serialized_object_creator", using: :btree
   add_index "serialized_object", ["retired_by"], name: "serialized_object_retired_by", using: :btree
   add_index "serialized_object", ["uuid"], name: "serialized_object_uuid_index", unique: true, using: :btree
+
+  create_table "test_encounter", force: true do |t|
+    t.string   "test_encounter_type"
+    t.integer  "creator"
+    t.datetime "encounter_datetime"
+    t.integer  "location_id"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "test_encounter_type", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.integer  "creator"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "test_observation", force: true do |t|
+    t.string   "encounter_id"
+    t.integer  "concept_id"
+    t.integer  "value_numeric"
+    t.string   "value_text"
+    t.datetime "value_date"
+    t.datetime "obs_datetime"
+    t.integer  "location_id"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "traditional_authorities", force: true do |t|
     t.datetime "created_at"

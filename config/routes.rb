@@ -81,6 +81,7 @@ HTCModule::Application.routes.draw do
   post "losses" => "inventory#losses"
 
   get "inventory/validate_dist" => "inventory#validate_dist"
+  get "inventory/get_exp_date" => "inventory#get_exp_date"
 
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"

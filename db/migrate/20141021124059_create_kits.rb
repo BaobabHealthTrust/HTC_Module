@@ -6,6 +6,8 @@ class CreateKits < ActiveRecord::Migration
       t.integer :creator
       t.string :status
       t.integer :duration
+      t.integer :min_temp
+      t.integer :max_temp
       t.integer :flow_order
       t.timestamps
     end
