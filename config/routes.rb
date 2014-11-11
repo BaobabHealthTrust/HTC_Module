@@ -21,6 +21,8 @@ HTCModule::Application.routes.draw do
   
   get "referral_consent/:id" => "clients#referral_consent"
 
+  get "inventory/batch_available" => "inventory#batch_available"
+
   get "extended_testing/:id" => "clients#extended_testing"
 
   get "appointment/:id" => "clients#appointment"
