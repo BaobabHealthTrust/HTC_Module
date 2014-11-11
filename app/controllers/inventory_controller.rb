@@ -100,6 +100,15 @@ class InventoryController < ApplicationController
     render layout: false
   end
 
+  def batch_available
+     lot = params[:lot_number]
+     user = current_user.id
+     name = params[:name]
+     lot_no = CouncillorInventory.where("councillor_id = ? AND lot_no = ? AND value_text = ? ",
+                                                   user, lot, name).first.lot_no rescue "none"
+    render text: lot_no.to_json
+  end
+
   def validate_dist
 
    #initialize default messages

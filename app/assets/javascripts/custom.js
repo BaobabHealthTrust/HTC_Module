@@ -42,3 +42,35 @@ function subtractMinutes(limit, minutes){
         return newtime;
 }
 
+      function showListItems(target, parent, options){
+
+        parent.innerHTML = "<ul id='listing'> </ul>"
+        for (var i in options){
+          var li = document.createElement("li");
+          li.className = "li-item";
+          li.setAttribute("tag",  (i % 2 == 0 ? "even" : "odd"));
+          li.setAttribute("target", target);
+          if (i % 2 == 1)
+            li.style.backgroundColor = "rgb(238, 238, 238)";
+
+          li.innerHTML = options[i];
+          li.onmousedown = function(){
+            highlight(this);
+          }
+          __$("listing").appendChild(li);
+        }
+      }
+
+    function highlight(item) {
+
+        var opts = item.parentNode.children;
+
+        for (var i = 0; i < opts.length; i++) {
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "rgb(238, 238, 238)" : "");
+        }
+
+        __$(item.getAttribute("target")).value = item.innerHTML;
+        item.style.backgroundColor = "lightblue";
+        item.style.background = "lightblue !important";
+        item.style.color = "black";
+    }

@@ -37,23 +37,25 @@
 							xmlhttp.onreadystatechange=function() {                                     
 								if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
 								  var results = xmlhttp.responseText;
-                                                                  <% if @client.partner_present == true %>
-                                                                      window.location.href = "/client_current_visit?client_id=<%= @client.id %>"
-                                                                  <% else %>
-                                                                      window.top.location.href = "/clients/<%= @client.id %>"
-                                                                  <% end %>
+                  <% if @client.partner_present == true %>
+                      window.location.href = "/client_current_visit?client_id=<%= @client.id %>"
+                  <% else %>
+                      window.top.location.href = "/clients/<%= @client.id %>"
+                  <% end %>
 								  }                                                                     
 								}                                                                         
 							                                                                         
 							xmlhttp.open("GET","/encounters/void/" + node, true); 
 							xmlhttp.send();
 				}
-                        function reset(){
-                            ele = document.getElementById('cover')
-                            ele.style.display = "none";
-                            ele = document.getElementById('popup')
-                            ele.style.display = "none";
-                        }
+
+        function reset(){
+            ele = document.getElementById('cover')
+            ele.style.display = "none";
+            ele = document.getElementById('popup')
+            ele.style.display = "none";
+        }
+
 		</script>
 		<style>
 			.arrow-right {
