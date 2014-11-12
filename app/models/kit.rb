@@ -1,7 +1,6 @@
 class Kit < ActiveRecord::Base
 	self.table_name = 'kits'
 
-
   def self.kits_available(user)
     remaining = {}
     testing = 1

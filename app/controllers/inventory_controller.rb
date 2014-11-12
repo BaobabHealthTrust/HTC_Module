@@ -14,6 +14,46 @@ class InventoryController < ApplicationController
     render layout: false
   end
 
+  def new_serum_batch
+    @kits = ["Positive serum", "Negative serum"]
+
+    if request.post?
+      captured_data = params[:data]
+      type = InventoryType.find_by_name("Serum Delivery").id
+      session_date = session[:datetime].to_date rescue Date.today
+
+      captured_data.each do |serum_type, opts|
+        next if serum_type.blank?
+        opts.each do |value|
+          encounter_date = value["Date of delivery"].to_date
+          lot_number = value["Lot number"]
+          qty = value["Quantity"].to_i
+          exp_date = value["Date of expiry"].to_date
+
+          next if (encounter_date.blank? || lot_number.blank? || exp_date.blank? || qty.blank?)
+          Inventory.create(lot_no: lot_number,
+                           value_date: encounter_date,
+                           value_numeric: qty,
+                           value_text: serum_type.match(/Positive|Negative/i)[0],
+                           inventory_type: type,
+                           date_of_expiry: exp_date,
+                           encounter_date: session_date,
+                           voided: false,
+                           creator: current_user.id
+          )
+        end
+      end
+
+      redirect_to htcs_path and return
+    end
+
+    @input_controls = [["Date of delivery", {"type" => "date"}],
+                       ["Lot number", {"type" => "text"}],
+                       ["Quantity", {"type" => "number", "min" => 1}],
+                       ["Date of expiry", {"type" => "date"}]]
+    render layout: false
+  end
+
   def edit
     @kits = Kit.find_all_by_status("active")
 
@@ -23,7 +63,7 @@ class InventoryController < ApplicationController
   end
 
   def create
-    captured_data = params[:data];
+    captured_data = params[:data]
     type = InventoryType.find_by_name("Delivery").id
     session_date = session[:datetime].to_date rescue Date.today
 
@@ -36,6 +76,7 @@ class InventoryController < ApplicationController
         qty = value["Quantity"].to_i
         exp_date = value["Date of expiry"].to_date
 
+        next if (encounter_date.blank? || lot_number.blank? || exp_date.blank? || qty.blank?)
         Inventory.create(lot_no: lot_number,
                          kit_type: kit_type,
                          value_date: encounter_date,
