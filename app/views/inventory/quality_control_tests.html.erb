@@ -68,8 +68,8 @@
         for (var i in kit_names) {
 
             if (!validateCompleteness(kit_names[i], false)) {
-                //customAlert("<span style=\"color: gray;\">'" + kit_names[i] + "'</span> entries incomplete!")
-                //return;
+                customAlert("<span style=\"color: gray;\">'" + kit_names[i] + "'</span> entries incomplete!")
+                return;
             }
         }
         showSummary();
@@ -195,7 +195,7 @@
                                    result = JSON.parse(result)
 
                                  if (__$(result['td_id']))
-                                     __$(result['td_id']).innerHTML = result["out_text"]
+                                    __$(result['td_id']).innerHTML = result["out_text"]
                                }
                            }
                    )
@@ -501,6 +501,15 @@
         tick.className = "tick td tick_" + key;
         tick.innerHTML = "";
         row.appendChild(tick);
+
+        var msg = document.createElement("div")
+        msg.className = "msg td msg_" + key;
+
+        if(key.match(/lot number|result/i)) {
+            msg.innerHTML = "<span class='warning' span></span><br /> <span class='info'></span>";
+        }
+
+        row.appendChild(msg);
     }
 
     function showList(target){
@@ -608,7 +617,6 @@
 
             for (var i = 0; i < inputKeys.length; i++) {
 
-
                 if (!(data[li_name][last_pos] && data[li_name][last_pos][inputKeys[i]] && data[li_name][last_pos][inputKeys[i]].trim().length > 0)) {
 
                     if (checkAll) {
@@ -631,6 +639,7 @@
 
     function updateInput() {
 
+        checkTime += 50;
         var check = dsp.getAttribute("target");
         var pos = dsp.getAttribute("pos");
         var max = 0;
@@ -665,9 +674,53 @@
             }
         }
 
-       
+        if (checkTime % 500 == 0) {
+            try {
+                jQuery.ajax(
+                        {
+                            url: "/inventory/check_presence?kit_lot_number=" +
+                                    __$("Testkit lot number").value + "&serum_lot_number=" +
+                                    __$("Serum lot number").value,
+                            success: function (result) {
+                                result = JSON.parse(result)
 
+                                if (result["Serum lot number"]) {
+                                    var nodes = document.getElementsByClassName("msg_Serum lot number")
+                                    if (nodes.length > 0) {
+                                        try {
+                                            nodes[0].getElementsByClassName("info")[0].innerHTML = result["Serum lot number"]["info"];
+                                            nodes[0].getElementsByClassName("warning")[0].innerHTML = result["Serum lot number"]["warning"]
+                                        } catch (e) {
+                                        }
+                                    }
+                                }
 
+                                if (result["Testkit lot number"]) {
+                                    var nodes = document.getElementsByClassName("msg_Testkit lot number")
+                                    if (nodes.length > 0) {
+                                        try {
+                                            nodes[0].getElementsByClassName("info")[0].innerHTML = result["Testkit lot number"]["info"]
+                                            nodes[0].getElementsByClassName("warning")[0].innerHTML = result["Testkit lot number"]["warning"]
+                                        } catch (e) {
+                                        }
+                                    }
+                                }
+
+                                var nodes = document.getElementsByClassName("msg_Result")
+
+                                if ((__$("Result").value.match(/Positive/i) && dsp.getAttribute("target").match(/Positive/i)) ||
+                                        (__$("Result").value.match(/Negative/i) && dsp.getAttribute("target").match(/Negative/i))){
+                                    nodes[0].getElementsByClassName("warning")[0].innerHTML ="";
+                                    nodes[0].getElementsByClassName("info")[0].innerHTML = "Acceptable";
+                                }else if (__$("Result").value.length > 0){
+                                    nodes[0].getElementsByClassName("info")[0].innerHTML = ""
+                                    nodes[0].getElementsByClassName("warning")[0].innerHTML = "Not acceptable!"
+                                }
+                            }
+                        })
+            } catch (e) {
+            }
+        }
 
         setTimeout("updateInput()", 50);
     }
@@ -1106,10 +1159,11 @@
 
     #summary-div{
         position: absolute;
-        top: 0.5%;
+        top: 1%;
         height: 99%;
         width: 99%;
         left: 0.5%;
+        font-size: 20px;
         background: white;
     }
 
@@ -1122,7 +1176,7 @@
 
     .summary-header{
         display: table-row;
-        font-size: 22px;
+        font-size: 20px;
         width: 100%;
         margin: auto;
     }
@@ -1130,9 +1184,10 @@
     .summary-cell{
         display: table-cell;
         width: 10% !important;
-        border: 0.5px dotted black;
+        border: 0.5px dotted gray;
         padding-left: 10px;
-        background: lightgray;
+        background: lightblue;
+        border-radius: 3px;
         text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
     }
 
@@ -1144,7 +1199,7 @@
     .summary-cell-plain{
         display: table-cell;
         padding-left: 10px;
-        font-size: 20px;
+        font-size: 18px;
         height: 50px;
         border: 1px dotted;
         vertical-align: middle;
@@ -1165,5 +1220,18 @@
     height: 60px !important;
     max-height: 60px !important;
 }
+    .msg .warning{
+        color: red;
+        padding: 10px;
+    }
 
+    .msg{
+        font-style: italic;
+        font-size: 18px;
+        width: 25% !important;
+    }
+
+    .msg .info{
+        color: gray;
+    }
 </style>
