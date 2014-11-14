@@ -74,3 +74,10 @@ function subtractMinutes(limit, minutes){
         item.style.background = "lightblue !important";
         item.style.color = "black";
     }
+
+     function reset(){
+            ele = document.getElementById('cover')
+            ele.style.display = "none";
+            ele = document.getElementById('popup')
+            ele.style.display = "none";
+     }

@@ -416,14 +416,14 @@
               <label for="rapid_lot"><%= @kits[0][1] %> Lot Number</label>
               <input type='text' id="rapid_lot" name="observations[][value_text]"
               onload="checkLot()" fieldtype="number" />
-              <%= hidden_field_tag("observations[][concept_name]",        "rapit lot number") %>
+              <%= hidden_field_tag("observations[][concept_name]",        "test 1 lot number") %>
               <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 
-							<label for="gold_lot"><%= @kits[1][1] %> Lot Number</label>
+	      <label for="gold_lot"><%= @kits[1][1] %> Lot Number</label>
               <input type='text' id="gold_lot" name="observations[][value_text]"
               onload="checkSecondLot()" fieldtype="number" />
-              <%= hidden_field_tag("observations[][concept_name]",        "gold lot number") %>
+              <%= hidden_field_tag("observations[][concept_name]",        "test 2 lot number") %>
               <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
       </fieldset>

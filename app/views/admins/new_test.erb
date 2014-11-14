@@ -15,30 +15,61 @@
       }
     </style>
     <script>
-      var cancelDestination = "/htcs?tab=admin";
+      var cancelDestination = "/htcs";
+      var currentList = "";
+      var headerTaken = false;
+      var testEncounter = null;
+      var list;
+      var sample = {};
       tests = JSON.parse('<%= @tests.to_json.html_safe %>')
       function __$(id){
         return document.getElementById(id)
       }
 
       function highlightList(obj) {
-        if(obj.getAttribute("target") != null){
-          if(__$(obj.getAttribute("target"))){
-            var opts = __$(obj.getAttribute("target")).children;
-            
-            for(var i = 0; i < opts.length; i++){
-              if(opts[i].getAttribute("selecttag") != null){
-                opts[i].removeAttribute("selecttag");
-                opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
-              }
-            }
-          }
+           var opts = document.getElementsByClassName("serum-li");
 
-          obj.setAttribute("selecttag", true);
-          obj.style.backgroundColor = "lightblue";
-          obj.style.color = "black";
-        }
+                for (var i = 0; i < opts.length; i++) {
+                    if (opts[i].getAttribute("selecttag") != null) {
+                        opts[i].removeAttribute("selecttag");
+                        opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+                    }
+                }
+
+            obj.setAttribute("selecttag", true);
+            obj.style.backgroundColor = "lightblue";
+            obj.style.color = "black";
       }
+
+    function loadControls(node, pos, checkWindowSwitch) {
+        dsp.innerHTML = "&nbsp";
+        dsp.setAttribute("target", node.getAttribute("value"));
+
+        if (checkWindowSwitch) {
+            if (validateCompleteness(node.getAttribute("target"), false) && Object.keys(data[dsp.getAttribute("target")]).length > 0) {
+                loadList();
+                return;
+            }
+        }
+
+        if (typeof(pos) == "undefined") {
+            if (Object.keys(data[dsp.getAttribute("target")]).length > 0) {
+                dsp.setAttribute("pos", Math.max.apply(Math, Object.keys(data[dsp.getAttribute("target")])));
+            } else {
+                dsp.setAttribute("pos", 1);
+            }
+        } else {
+            dsp.setAttribute("pos", pos);
+        }
+
+        setInputTable();
+
+        for (var n in inputKeys) {
+            var buildRow = createRow(inputKeys[n], inputControls[inputKeys[n]]);
+        }
+        __$(inputKeys[0]).onmousedown();
+        __$(inputKeys[0]).focus();
+    }
 
       function loadCustom(){
         __$('row1').style.display = "none";
@@ -62,7 +93,7 @@
         dsp.style.border = "1px solid #3465a4";
         dsp.style.overflow = "auto";
         dsp.style.borderRadius = "10px";
-        dsp.style.width = "50%";
+        dsp.style.width = "80%";
         dsp.style.height = "100%";
         dsp.style.verticalAlign = "top";
         dsp.innerTHML = "none";
@@ -72,18 +103,162 @@
 
         var lst = __$('ul1').children;
         for (var i=0; i < lst.length ; i++) {
-          lst[i].onmousedown = function() {
-            highlight(this);
+           if (lst[i].getAttribute("value") == "test details"){
+              lst[i].onmousedown = function (){
+                 recreateView(this)
+              }
+             
+           }else{
+          lst[i].innerHTML = "<span class='lst-label'>" + lst[i].innerHTML + "</span>"
+          lst[i].className = "lst-li";
+          loadSubOptions(lst[i]);
+           }
+        }
+        row.insertBefore(dsp, row.firstChild);
+        __$("row0").parentNode.appendChild(__$('buttons'));
+      }
 
+      function rebuildHeader(result){
+
+            list.onmousedown = function (){
+            highlightList(this);
             if (this.getAttribute("value").toLowerCase() == "test details"){
               var html = "";
               var textFornumber = document.createElement("input");
+              currentList = this.getAttribute("value").toLowerCase()
+
+              var inPos = "<input type='input' id='txtYearFortextFornumber' " +
+                "target='textFornumber' value='" + result["pt number"] + "' " +
+                " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"), {\"/\": true, \":\": true, \"abc\": true}, true, false);' class='input_cell'" +
+                " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
+
+
+              html += "<span class='d dL'> PT Panel Lot Number </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+              var textForptdate = document.createElement("input");
+              var inPos = "<input type='date' id='txtYearFortextForptdate' " +
+                "target='textForptdate' value='" + result["pt date"] + "' " +
+                "fieldtype= 'date' onmousedown='showDate(__$(\"keyboard-data\"), this);' class='input_cell'" +
+                " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
+
+
+              html += "<span class='d dL'> Date PT done </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+
+            }
+            else{
+              var html = "";
+
+              var textFordates = document.createElement("input");
+
+              currentList = this.getAttribute("value").toLowerCase()
+
+              if ( ! currentList.match(/official result/i)){
+              var inPos = '<input id="textFor'  + currentList.replace(/\s/g, '') +  ' typeExpire" value="' + result["expiry date"] + '" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="typeExpire" onmousedown="showDate(__$(\'keyboard-data\'), this);" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL'> Expiry Date " + currentList .replace(/\s/g, '') +  "</span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+              var textFordates = document.createElement("input");
+
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' typeLot" value="' + result["lot number"] + '" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'),{\'/\': true, \':\': true, \'abc\': true}, true, false)" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL'>Lot Number</span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+              var textFordates = document.createElement("input");
+
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' result"  value="' + result["final result"] + '" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="type" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+              }else{
+
+               var textFordates = document.createElement("input");
+
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '"  value="' + result["official result"] + '" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weak Positive\', \'Strong Positive\']);" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL' style='font-weight:light ! important;'>Official Result </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+              }
+            }
+            __$('dsp').innerHTML = html;
+            addKeyboard(__$('dsp'));
+            }
+      }
+
+      function saveResult(name, lot, expiry, result){
+                        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                              xmlhttp=new XMLHttpRequest();
+                      }else{// code for IE6, IE5
+                              xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                      }
+                      xmlhttp.onreadystatechange=function() {
+                              if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                                var results = JSON.parse(xmlhttp.responseText);
+                                  headerTaken = true
+                                  
+                                      rebuildHeader(results)
+                                  
+                                }
+                              }
+
+                      xmlhttp.open("GET","/counselor/final_result?encounter_id=" + testEncounter +  "&lot_number=" + lot + "&date=" + expiry + "&sample=" + name +  "&result=" + result, true);
+                      xmlhttp.send();
+      }
+
+      function createSample(lot, date) {
+              if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                              xmlhttp=new XMLHttpRequest();
+                      }else{// code for IE6, IE5
+                              xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                      }
+                      xmlhttp.onreadystatechange=function() {
+                              if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                                var results = JSON.parse(xmlhttp.responseText);
+                                  headerTaken = true
+                                  testEncounter = results["encounter_id"]
+                                  rebuildHeader(results)
+                                }
+                              }
+
+                      xmlhttp.open("GET","/counselor/test_details?lot_number=" + lot + "&date=" + date , true);
+                      xmlhttp.send();
+      }
+
+      function recreateView(lst){
+         ///alert(this.getAttribute("value").toLowerCase())
+            list = lst;
+            if (lst.getAttribute("value").toLowerCase() == "test details"){
+              var html = "";
+              var textFornumber = document.createElement("input");
+              currentList = lst.getAttribute("value").toLowerCase()
 
               var inPos = "<input type='input' id='txtYearFortextFornumber' " +
                 "target='textFornumber' value='' " +
                 " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"), {\"/\": true, \":\": true, \"abc\": true}, true, false);' class='input_cell'" +
                 " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
-
+                
 
               html += "<span class='d dL'> PT Panel Lot Number </span>" +
                 "<span class='d dC'> : </span>" +
@@ -107,18 +282,21 @@
 
               var textFordates = document.createElement("input");
 
-              var inPos = '<input id="textFortypeExpire" type="text"' +
+              currentList = lst.getAttribute("value").toLowerCase()
+              
+              if ( ! currentList.match(/official result/i)){
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  ' typeExpire" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="typeExpire" onmousedown="showDate(__$(\'keyboard-data\'), this);" fieldtype="text" pos="2" section="0">'
 
 
-              html += "<span class='d dL'> Expiry Date </span>" +
+              html += "<span class='d dL'> Expiry Date " + currentList .replace(/\s/g, '') +  "</span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
 
               var textFordates = document.createElement("input");
 
-              var inPos = '<input id="textFortypeLot" type="text"' +
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' typeLot" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'),{\'/\': true, \':\': true, \'abc\': true}, true, false)" fieldtype="text" pos="2" section="0">'
 
@@ -129,7 +307,7 @@
 
               var textFordates = document.createElement("input");
 
-              var inPos = '<input id="textFortype" type="text"' +
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' result" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="type" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
 
@@ -137,10 +315,11 @@
               html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
+              }else{
 
                var textFordates = document.createElement("input");
 
-              var inPos = '<input id="textForofficial" type="text"' +
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weak Positive\', \'Strong Positive\']);" fieldtype="text" pos="2" section="0">'
 
@@ -148,17 +327,56 @@
               html += "<span class='d dL' style='font-weight:light ! important;'>Official Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
-                                               
-                                               
-                    
+              }
+
             }
             __$('dsp').innerHTML = html;
-            addKeyboard(__$('dsp'))
-          }
-        }
-        row.insertBefore(dsp, row.firstChild);
-        __$("row0").parentNode.appendChild(__$('buttons'));
+            addKeyboard(__$('dsp'));
       }
+      
+       function confirm(message){
+        var ele = document.getElementById('cover')
+        ele.style.display = "inline";
+        document.body.appendChild(ele);
+
+        var ele = document.getElementById('popup')
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">Ok</button></div>'
+        html += "</div></div></div></div></div>"
+        ele.innerHTML =  html;
+        document.body.appendChild(ele);
+      }
+
+      function doneButton() {
+
+        var done = document.createElement("div");
+        done.className = "done blue";
+        done.innerHTML = "Done"
+        done.onmousedown = function () {
+            if ( currentList == "test details" ){
+               lotNumber = __$('txtYearFortextFornumber').value
+               ptDate = __$("txtYearFortextForptdate").value
+               createSample(lotNumber, ptDate)
+            }
+            else {
+              lotNumber = __$('textFor ' + currentList.replace(/\s/g, '') + ' typeLot').value;
+              ptExpiryDate = __$('textFor ' + currentList.replace(/\s/g, '') + ' typeExpire').value;
+              result = __$('textFor ' + currentList.replace(/\s/g, '') + ' result').value;
+
+              if (testEncounter != null){
+                saveResult(currentList, lotNumber, ptExpiryDate, result)
+              }else{
+                confirm("Enter Test Details First")
+              }
+              
+            }
+            //loadList();
+        }
+        return done
+    }
 
       function addKeyboard(target){
         var table = document.createElement("div");
@@ -177,26 +395,55 @@
 
         __$("keyboard-data").appendChild(keyboard);
         table.appendChild(keyboard)
-        //  __$("done-data").appendChild(doneButton());
+          __$("done-data").appendChild(doneButton());
 
-        //alert(target)
       }
 
-      function highlightList(obj) {
-        if(obj.getAttribute("target") != null){
-          if(__$(obj.getAttribute("target"))){
-            var opts = __$(obj.getAttribute("target")).children;
+      function loadSubOptions(node){
+        jQuery("node").css({
+            "hover" : "none"
+        })
+        var select = document.createElement("ul");
+        select.className = "serum-ul";
+        var target = node.getAttribute("value");
+        node.setAttribute("target", target)
+        node.appendChild(select);
 
-            for(var i = 0; i < opts.length; i++){
-              if(opts[i].getAttribute("selecttag") != null){
-                opts[i].removeAttribute("selecttag");
-                opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
-              }
+        <% @tests.each_with_index do |level, i|%>
+            var level = '<%= level %>';
+            var i = parseInt('<%= i %>');
+            var li = document.createElement("li");
+            li.className = "serum-li";
+            if (i % 2 == 1)
+                li.className += " serum-even"
+            li.innerHTML = level;
+            li.setAttribute("value", (target + " - <%= level %>"));
+            li.setAttribute("target", (target + " - <%= level %>"));
+            li.id = li.getAttribute("target");
+            sample[li.getAttribute("target")] = {}
+            sample[li.getAttribute("target")] = {};
+
+            li.onmousedown = function () {
+                highlightList(this);
+                recreateView(this);
             }
-          }
+            select.appendChild(li)
+        <% end %>
+    }
 
+    function highlight(item) {
+
+        var opts = item.parentNode.children;
+
+        for (var i = 0; i < opts.length; i++) {
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "rgb(238, 238, 238)" : "");
         }
-      }
+
+        __$(item.getAttribute("target")).value = item.innerHTML;
+        item.style.backgroundColor = "lightblue";
+        item.style.background = "lightblue !important";
+        item.style.color = "black";
+    }
     </script>
 
   </head>
@@ -232,7 +479,29 @@
     width: 85%;
     margin: auto;
   }
+    .lst-li:hover, .lst-li {
+        background: #ffffff !important;
+        color: black  !important;
+        cursor: default !important;
+        border: 2px dotted lightblue;
+        border-radius: 5px;
+        margin: 5px !important;
+    }
 
+    .lst-label{
+        text-shadow: gray 2px 0px 0px;
+    }
+
+    .serum-li{
+       list-style-type: none;
+        cursor: pointer;
+        border-radius: 3px;
+        padding: 8px;
+    }
+
+    .serum-even{
+        background: rgb(238, 238, 238);
+    }
   .done {
     margin-left: 20px;
     margin-top: 100% !important;
@@ -441,3 +710,7 @@
     overflow: auto;
   }
 </style>
+<div id="cover" align="center">
+</div>
+<div id="popup" style="display:none">
+</div>

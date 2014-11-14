@@ -31,9 +31,9 @@
 			<input type="text" id="facility" value= '<%= facility_name %>' />
 			
 			<div id="buttons">
-				
+				<% if ! is_supervisor %>
 				<button onmousedown="window.location = '<%= search_path %>'">Find or Register Client</button>
-				
+				<% end %>
 				<button onmousedown="window.location = '<%= log_out_path %>'">Logout</button>
 
 				<% if !session[:datetime].blank? %>
@@ -43,11 +43,11 @@
 					<button onmousedown="window.location = '/admins/set_date'">
 					Set Date</button>
 				<% end %>
-				
+				<% if ! is_supervisor %>
 				<button onmousedown="window.location = '<%= swap_desk_path %>'">Swap Desk</button>
 				
 				<button onmousedown="window.location = '<%= waiting_list_path %>'"> Waiting list </button>
-				
+				<% end %>
 <%# if @show_counselling_room %>
        <%#= link_to 'Room Clients', @current_location %>        
 <%# end %>
@@ -59,7 +59,11 @@
 			
 			<select id="tabs">
 				<option value= <%= htcs_dashboard_path %> >Rooms Allocation</option>
-                <option value= <%= htcs_account_path %> >My Account</option>
+                        <% if is_supervisor %>
+                                <option value= <%= htcs_account_path %> >Manage Account</option>
+                        <%  else %>
+                                <option value= <%= htcs_account_path %> >My Account</option>
+                        <% end %>
 			<% if @is_counselor %>
 				<option value= <%= reports_index_path %> >Reports</option>
 				<option value= <%= admins_path + '/index/' %> >Administration</option>

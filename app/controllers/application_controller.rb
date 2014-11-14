@@ -144,6 +144,12 @@ class ApplicationController < ActionController::Base
 		
 	end
 
+  def is_supervisor
+    is_current = @current_user.user_roles.map(&:role).include?('Supervisor')
+    return is_current
+  end
+
+  helper_method :is_supervisor
 	helper_method :current_user
 	helper_method :current_location
 	helper_method :show_counselling_room
