@@ -4,7 +4,7 @@ class CounselorController < ApplicationController
     details = {}
     if params[:user_id]
         proficiency_tests = TestEncounter.where("creator = ? and test_encounter_type = ? and voided = 0",
-                                      params[:user_id], test_id )
+                                      params[:user_id], test_id ).order(id: :desc)
 
         proficiency_tests.each{|test|
         details[test.id] = {}
@@ -32,6 +32,75 @@ class CounselorController < ApplicationController
                  
                 }
         }
+    elsif ! params[:encounter_id].blank?
+
+      details["encounter_id"] = params[:encounter_id]
+			details["disabled"] = ""
+      name = params[:name]
+
+      if name.match(/Sample/i)
+
+         sample = name.split('-')[0].squish
+         test = name.split('-')[1].squish
+
+				 obs_sample = TestObservation.where("encounter_id = ? and concept_id = ?
+											and voided = 0", params[:encounter_id], get_id(sample)).order(id: :desc).first.id rescue []
+				 if ! obs_sample.blank?
+						concepts = [{"name" => 'Expiry Date',
+                            "storage" => "expiry date",
+                            "type" => "value_date"},
+                          {"name" => 'Final Result',
+                            "storage" => "final result",
+                            "type" => "value_coded"},
+                          {"name" => 'Kit Lot Number',
+                            "storage" => "lot number",
+                            "type" => "value_text"},
+                          {"name" => 'Official Result',
+                            "storage" => "official result",
+                            "type" => "value_coded"}]
+
+						value_group = get_id(test)
+						concepts.each{|concept|
+						
+							obs = TestObservation.where("encounter_id = ? AND concept_id = ? 
+															and value_group_id = ? and obs_group_id = ? and voided = 0",
+											 params[:encounter_id], get_id(concept["name"]), value_group, 
+											 obs_sample).order(id: :desc).first[:"#{concept['type']}"] rescue []
+							if obs.blank?
+								obs = ""
+							elsif concept["type"] == "value_coded"
+								obs = get_name(obs) rescue "invalid"
+							elsif concept["type"] == "value_date"
+								obs = obs.strftime("%d/%m/%Y") rescue ""
+							end
+
+							details["#{concept["storage"]}"] = obs
+
+						}
+						if ! details["official result"].blank?
+							details["disabled"] = "disabled"
+						else
+							details["encounter_id"] = ""
+						end
+				 end
+      else
+       concepts = [{"name" => 'Proficiency Test Date',
+                      "storage" => "pt date",
+                      "type" => "value_date"},
+                    {"name" => 'Proficiency Test Panel Lot Number',
+                      "storage" => "pt number",
+                      "type" => "value_text"}]
+        concepts.each{|concept|
+            obs = TestObservation.where("encounter_id = ? AND concept_id = ?",
+                       params[:encounter_id], get_id(concept["name"])).order(id: :desc).first[:"#{concept['type']}"]
+
+						if concept["type"] == "value_date"
+								obs = obs.strftime("%d/%m/%Y") rescue ""
+						end
+
+            details["#{concept["storage"]}"] = obs
+        }
+       end
     else
         user_id = current_user.id
          date = params[:date].to_date
@@ -83,44 +152,69 @@ class CounselorController < ApplicationController
   end
 
   def sample
+      @encounter = TestEncounter.find(params[:encounter_id])
+      @counselor = User.find(@encounter.creator)
+      
+       @kits, @remaining, @testing = Kit.kits_available(current_user)
+      # raise @kits[0][1].to_yaml
+      @tests = ["Test 1", "Test 2", "Test 3", "Official Result"]
   end
 
   def final_result
     sample = params[:sample].split("-")[0].squish
     test = params[:sample].split("-")[1].squish
     details = {}
-    details["lot number"] = params[:lot_number]
-    details["final result"] = params[:result]
-    details["expiry date"] = params[:date]
 
-    values = [["Expiry Date",params[:date].to_date],["Final Result", params[:result]]]
-    encounter = TestEncounter.find(params[:encounter_id])
+		encounter = TestEncounter.find(params[:encounter_id])
 
-    obs_group = TestObservation.where("concept_id = ? AND encounter_id = ?",
-                         get_concept(sample), params[:encounter_id]).first rescue []
-    if obs_group.blank?
-       obs_group = TestObservation.create(encounter_id: params[:encounter_id], concept_id: get_id(sample),
-                            obs_datetime: encounter.encounter_datetime, voided: 0)
-    end
+		obs_group = TestObservation.where("concept_id = ? AND encounter_id = ?",
+				                 get_id(sample), params[:encounter_id]).first #rescue []
 
-    concepts = [{"name" => 'Expiry Date',
-                            "value" => params[:date],
-                            "type" => "value_date"},
-                          {"name" => 'Final Result',
-                            "value" => params[:result],
-                            "type" => "value_coded"},
-                          {"name" => 'Kit Lot Number',
-                            "value" => params[:lot_number],
-                            "type" => "value_text"}]
+		if ! params[:official_result].blank?
+				details["official result"] = ""
+				unless obs_group.blank?
+					obs = TestObservation.create(encounter_id: params[:encounter_id], concept_id: get_id("Official result"),
+				                        obs_datetime: encounter.encounter_datetime, voided: 0, 
+																value_coded:  get_id(params[:official_result]), value_group_id: get_id(test), 
+																obs_group_id: obs_group.id)
+					details["official result"] = params[:official_result]
+					details["disabled"] = "disabled"
+				end
+		else
 
-    concepts.each{|concept|
-        if concept['type'] == "Final Result"
-          concept['value'] = get_id(params[:result])
-        end
-        obs = TestObservation.create(encounter_id: params[:encounter_id], concept_id: get_id(concept["name"]),
-                            obs_datetime: encounter.encounter_datetime, voided: 0, concept['type'] => concept['value'],
-                          value_group_id: get_id(test), obs_group_id: obs_group.id)
-    }
+				details["lot number"] = params[:lot_number]
+				details["final result"] = params[:result]
+				details["expiry date"] = params[:date]
+
+				values = [["Expiry Date",params[:date].to_date],["Final Result", params[:result]]]
+				
+				if obs_group.blank?
+					obs_group = TestObservation.create(encounter_id: params[:encounter_id], concept_id: get_id(sample),
+								        obs_datetime: encounter.encounter_datetime, voided: 0)
+				end
+
+				concepts = [{"name" => 'Expiry Date',
+				                        "value" => params[:date],
+				                        "type" => "value_date"},
+				                      {"name" => 'Final Result',
+				                        "value" => params[:result],
+				                        "type" => "value_coded"},
+				                      {"name" => 'Kit Lot Number',
+				                        "value" => params[:lot_number],
+				                        "type" => "value_text"}]
+
+				concepts.each{|concept|
+				    if concept['type'] == "Final Result"
+				      concept['value'] = get_id(params[:result])
+				    end
+				    obs = TestObservation.create(encounter_id: params[:encounter_id], concept_id: get_id(concept["name"]),
+				                        obs_datetime: encounter.encounter_datetime, voided: 0, 
+																concept['type'] => concept['value'], value_group_id: get_id(test), 
+																obs_group_id: obs_group.id)
+				}
+
+		end
+
     render text: details.to_json
   end
 
