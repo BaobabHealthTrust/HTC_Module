@@ -67,11 +67,12 @@
     dsp.style.verticalAlign = "top";
     dsp.innerHTML = '<a href="new_batch" id="addbatch"' +
             ' class="blue"><span class="txt">New deliveries</span></a>' +
+    '<a href="new_serum_batch" id="new_s_batch"' +
+    ' class="blue"><span class="txt">Serum Delivery</span></a>' +
     '<a href="distribute_batch" id="distbatch"' +
-    ' class="blue"><span class="txt">Distribute</span></a>' +
+    ' class="blue"><span class="txt">Distribute Testkits</span></a>' +
     '<a href="edit_batch" id="editbatch"' +
     ' class="blue"><span class="txt">Capture damages</span></a>';
-    ;
 
     __$('textForid').style.height = "100%";
     __$('textForid').style.width = "100%";
@@ -111,6 +112,10 @@
         background-size: cover;
     }
     #addbatch {
+        background-image: url(<%= asset_path 'new.png' %>);
+    }
+
+    #new_s_batch {
         background-image: url(<%= asset_path 'new.png' %>);
     }
     #distbatch {

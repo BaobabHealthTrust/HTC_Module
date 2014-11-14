@@ -75,6 +75,9 @@ HTCModule::Application.routes.draw do
   get "inventory" => "inventory#options"
   get "new_batch" => "inventory#new_batch"
 
+  get "new_serum_batch" => "inventory#new_serum_batch"
+  post "new_serum_batch" => "inventory#new_serum_batch"
+
   post "create_batch" => "inventory#create"
   get "edit_batch" => "inventory#edit"
 
@@ -88,6 +91,7 @@ HTCModule::Application.routes.draw do
 
   get "inventory/validate_dist" => "inventory#validate_dist"
   get "inventory/get_exp_date" => "inventory#get_exp_date"
+  get "inventory/check_presence" => "inventory#check_presence"
 
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
