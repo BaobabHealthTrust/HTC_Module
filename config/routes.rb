@@ -1,7 +1,7 @@
 HTCModule::Application.routes.draw do
   get "counselor/test_details"
   get "list_tests" => "counselor#list_tests"
-  get "counselor/sample"
+  get "sample" => "counselor#sample"
   get "counselor/final_result"
   get "couple/status"
   get "couple/testing"
