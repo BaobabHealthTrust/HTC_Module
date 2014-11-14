@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141107125559) do
+ActiveRecord::Schema.define(version: 20141113095414) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -476,7 +476,6 @@ ActiveRecord::Schema.define(version: 20141107125559) do
     t.datetime "encounter_date"
     t.integer  "inventory_type"
     t.text     "comments"
-    t.integer  "location_id"
     t.integer  "creator"
     t.boolean  "voided"
     t.string   "void_reason"
@@ -944,7 +943,6 @@ ActiveRecord::Schema.define(version: 20141107125559) do
     t.datetime "date_of_expiry"
     t.datetime "encounter_date"
     t.text     "comments"
-    t.integer  "location_id"
     t.integer  "creator"
     t.boolean  "voided"
     t.string   "void_reason"
@@ -965,9 +963,6 @@ ActiveRecord::Schema.define(version: 20141107125559) do
     t.text     "description"
     t.integer  "creator"
     t.string   "status"
-    t.integer  "duration"
-    t.integer  "min_temp"
-    t.integer  "max_temp"
     t.integer  "flow_order"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -2033,6 +2028,9 @@ ActiveRecord::Schema.define(version: 20141107125559) do
     t.string   "void_reason"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "value_group_id"
+    t.float    "obs_group_id"
+    t.float    "value_coded"
   end
 
   create_table "traditional_authorities", force: true do |t|

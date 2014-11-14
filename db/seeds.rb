@@ -20,7 +20,8 @@ puts "Loading default tesk kits"
 
 puts "Loading quality test encounter types"
 [["Testkit Quality control", "For testing actual test kit if usable"],
- ["Temperature quality control",  "For checking the right temp for tests"]
+ ["Temperature quality control",  "For checking the right temp for tests"],
+ ["Proficiency Test",  "For checking accurency of counselors"]
 ].each_with_index{|test, i|
   next if !TestEncounterType.find_by_name(test[0]).blank?
   TestEncounterType.create(name: test[0], description: test[1], creator: 1, status: "active")
