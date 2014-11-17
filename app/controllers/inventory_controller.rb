@@ -275,9 +275,11 @@ class InventoryController < ApplicationController
     @cur_year = @session_date.year
 
     @current_location = Location.current_location;
-    @locations = all_htc_facility_locations.map { |l| [l.id, l.name] }
+    locs = all_htc_facility_locations
+    @locations = locs.map { |l| [l.id, l.name] }
     @user = current_user
-    @users = User.all.map.map { |user| [user.username, user.name] rescue nil }.compact
+    users =  User.all
+    @users = users.map { |user| [user.username, user.name] rescue nil }.compact
 
     @kit_names = Kit.all.map(&:name)
     @site_name = Settings.facility_name
@@ -291,7 +293,6 @@ class InventoryController < ApplicationController
     end
     @years.reverse!
 
-    @stock_info = Inventory.stock_levels #rescue {}
     render layout: false
   end
 
@@ -313,6 +314,7 @@ class InventoryController < ApplicationController
           if (!lot_number.blank? && !qty.blank? && qty > 0 && !reason.blank?)
             CouncillorInventory.create(lot_no: lot_number,
                                        value_numeric: qty,
+                                       councillor_id: @user.id,
                                        inventory_type: type,
                                        value_text: reason,
                                        encounter_date: @session_date,
@@ -402,5 +404,64 @@ class InventoryController < ApplicationController
                        ["Result", {"type" => "list"}]]
 
     render layout: false
+  end
+
+  def record_temp
+    if request.post?
+      unless params[:temperature].blank?
+        encounter_type = TestEncounterType.where(name: 'Temperature Quality Control').first
+
+        encounter = TestEncounter.create(
+            test_encounter_type: encounter_type.id,
+            encounter_datetime: (@session_date[:to_date].to_datetime rescue DateTime.now),
+            location_id: (Location.current_location).id,
+            creator: current_user,
+            voided: false
+        )
+
+        TestObservation.create(
+            encounter_id: encounter.id,
+            concept_id: (ConceptName.where(name: 'Temperature').first.concept_id),
+            value_numeric: params[:temperature].to_f,
+            obs_datetime: encounter.encounter_datetime,
+            location_id: encounter.location_id,
+            voided: false
+        )
+      end
+      redirect_to htcs_path and return
+    end
+  end
+
+
+  def ajax_stock_levels
+    result = {}
+    user = User.find_by_username(params[:user])
+    date = Date.new(params[:year].to_i, params[:month].to_i)
+    i = date.end_of_month
+    dates = []
+    opening_stock = {}
+    closing_stock = {}
+    while i >= date.beginning_of_month
+      dates << i.to_date
+      opening_stock[i.to_s] = user.remaining_stock_by_type(params[:kit_name], i.to_date,
+                                                           [], "opening", [params[:location].to_i])
+      closing_stock[i.to_s] = user.remaining_stock_by_type(params[:kit_name], i.to_date, [],
+                                                           "closing", [params[:location].to_i])
+      i -= 1.day
+    end
+    dates.reverse!
+
+    result["dates"] = dates
+    result["opening_stock"] = opening_stock
+    result["closing_stock"] = closing_stock
+    result["receipts"] = user.receipts(params[:kit_name], date.beginning_of_month, date.end_of_month,
+                                       [params[:location].to_i])
+    result["damaged"] = user.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
+                                   [params[:location].to_i], ["Damaged"])
+    result["other_use"] = user.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
+                                           [params[:location].to_i], ["Other use"])
+    result["client_tests"] =  user.client_tests(params[:kit_name], date.beginning_of_month, date.end_of_month,
+                                          [params[:location].to_i])
+    render text: result.to_json
   end
 end

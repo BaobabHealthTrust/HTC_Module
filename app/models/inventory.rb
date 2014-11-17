@@ -4,7 +4,7 @@ class Inventory < ActiveRecord::Base
 
   include Openmrs
 	
-  def self.stock_levels(year= Date.today.year, month = Date.today.month)
+  def self.stock_levels(users, locs, year= Date.today.year, month = Date.today.month)
 
     date = Date.new(year, month)
     i = date.end_of_month
@@ -16,7 +16,7 @@ class Inventory < ActiveRecord::Base
     end
     dates.reverse!
 
-    @users = User.all
+    @users = users
     @tests = Kit.where(status: 'active')
 
     result = {}
@@ -26,7 +26,12 @@ class Inventory < ActiveRecord::Base
           result[date][user.username] = {} if result[date][user.username].blank?
           @tests.each do |test|
             result[date][user.username][test.name] = {} if result[date][user.username][test.name].blank?
-            result[date][user.username][test.name]["opening_stock"] = user.remaining_stock_by_type(test.name, date)
+              locs.each do |l|
+                result[date][user.username][test.name][l.name] = {} if result[date][user.username][test.name][l.name].blank?
+                result[date][user.username][test.name][l.name]["opening_stock"] = user.remaining_stock_by_type(test.name, date, [], 'opening', l.id)
+                result[date][user.username][test.name][l.name]["closing_stock"] = user.remaining_stock_by_type(test.name, date, [], "closing",  l.id)
+                result[date][user.username][test.name][l.name]["receipts"] = user.receipts( test.name, date, Location.current_location.id)
+              end
           end
         end
     end
