@@ -7,7 +7,12 @@
     </style>
     <%= javascript_include_tag 'jquery-1.3.2.min' %>
     <script>
-      var cancelDestination = "clients/<%= params[:client_id] %>?tab=task";
+
+      <% if @client.partner_present == true %>
+        var cancelDestination = "/client_current_visit?client_id=<%= params[:client_id] %>"
+      <% else %>
+         var cancelDestination = "/clients/<%= params[:client_id] %>?tab=task";
+      <% end %>
       var age = '<%= @client.person.age rescue 0 %>'
       var motherStatus = '<%=  @mother_status.upcase %>'
       var rapidValue = "";
@@ -16,7 +21,78 @@
       var motherStatus = "";
       var result1 = "";
       var result2 = "";
-      
+			
+      function activateNext(){
+        if (btnNext){
+                              if(__$("valid_rapid").value == "no" || __$("valid_gold").value == "no"){
+                                         btnNext.onclick = function(){
+
+                                      };
+                              }
+                              else {
+                                         btnNext.onclick = function(){
+
+                                        var pos = parseInt(this.getAttribute("pos")) + 1;
+
+                                        var section = parseInt(this.getAttribute("section"));
+
+                                        clearTimeout()
+
+                                        navigateTo(pos, section);
+
+                                      };
+                              }
+                         }
+      }
+
+      function checkLot() {	
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                        xmlhttp=new XMLHttpRequest();
+                }else{// code for IE6, IE5
+                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange=function() {
+                        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                          var results = xmlhttp.responseText;														
+													if (eval(results) == "none"){
+														 __$("valid_rapid").value = "no"
+														}
+													 else {
+														 __$("valid_rapid").value = "yes"
+														}
+                                                                                                         activateNext()
+                          }
+                        }
+
+                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + "<%= @kits[0][1] %>", true);
+                xmlhttp.send();
+
+                 setTimeout("checkLot()", 500);
+}
+
+	function checkSecondLot() {
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                        xmlhttp=new XMLHttpRequest();
+                }else{// code for IE6, IE5
+                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange=function() {
+                        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                          var results = xmlhttp.responseText;
+													  if (eval(results.toUpperCase()) == 'NONE'){																
+															__$("valid_gold").value = "no"	
+														}else {
+															__$("valid_gold").value = "yes"
+														}
+                                                                                                         activateNext()
+                          }
+                        }
+
+                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + "<%= @kits[1][1] %>", true);
+                xmlhttp.send();
+                 setTimeout("checkSecondLot()", 500);
+}	
+
       function setValues(){
         if (__$('timetimer1')){
           rapidValue = __$('timetimer1').innerHTML.toString()
@@ -30,7 +106,7 @@
         if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus != "YES"){
           __$("allresults").value = "Positive"
           clearTimeout("setValues()")
-          confirm("Positive")
+          confirm("Positive <br> Results")
         }
         else if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus == "YES"){
           __$("allresults").value = "Exposed Infant"
@@ -42,7 +118,7 @@
           __$("alltimers").value = "YES"
           __$("allresults").value = "Inconclusive"
           clearTimeout("setValues()")
-          confirm("Inconclusive")
+          confirm("Inconclusive <br> Results")
         }
         else{
           __$("allresults").value = "Negative"
@@ -66,7 +142,7 @@
         html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
         html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
         html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
-        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Yes</button></div>'
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>'
         html += "</div></div></div></div></div>"
         ele.innerHTML =  html;
         document.body.appendChild(ele);
@@ -309,11 +385,19 @@
                         
                      
     </script>
+		<style>
+			#error{
+				color: #DC143C;
+				float: right;			
+			}	
+		</style>
   </head>
-  <body onLoad="checkKits();setValues()">
+  <body onLoad="checkKits();setValues();checkLot();checkSecondLot();">
 
     <%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+			<input type="hidden" value="" id="valid_rapid"/>
+			<input type="hidden" value="" id="valid_gold"/>
       <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
       <input type="hidden" value="" name="all timers request" id="alltimers"/>
 
@@ -327,6 +411,22 @@
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
+      <fieldset>
+        <legend>HIV Testing</legend>
+              <label for="rapid_lot"><%= @kits[0][1] %> Lot Number</label>
+              <input type='text' id="rapid_lot" name="observations[][value_text]"
+              onload="checkLot()" fieldtype="number" />
+              <%= hidden_field_tag("observations[][concept_name]",        "test 1 lot number") %>
+              <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+              <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+
+	      <label for="gold_lot"><%= @kits[1][1] %> Lot Number</label>
+              <input type='text' id="gold_lot" name="observations[][value_text]"
+              onload="checkSecondLot()" fieldtype="number" />
+              <%= hidden_field_tag("observations[][concept_name]",        "test 2 lot number") %>
+              <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+              <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+      </fieldset>
       <fieldset custom=true fs_onLoad="loadCustom('timer1');">
         <legend>HIV Testing</legend>
 
@@ -388,6 +488,7 @@
 <% else %>
     __$("test_type").value = "Return before four weeks"
 <% end %>
+
 
 function checkKits(){
       if (testing == 0){

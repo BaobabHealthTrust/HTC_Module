@@ -130,12 +130,13 @@
   </style>
 </head>
 <body onload="verify('test_date');checkPartner();" >
-
+                 
 		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="Update HIV status" name="ENCOUNTER"/>
 				<fieldset>
 				<legend>Update Status for <%= @client.name.humanize %></legend>
+                                <% if  @client.person.gender.upcase == "FEMALE" %>
 				<label for="patient">Client Pregnant?</label>
 				<label for="patient.1">Yes</label>
 				<input type="radio" name="patient" id="patient.1" value="YES" >
@@ -148,7 +149,7 @@
 				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
                                 <%= hidden_field_tag("observations[][value_coded_or_text]",       "") %>
 				<br />
-                               
+                               <% end %>
        <label for="type">HTC Access Type</label>
         <select id="type" name="observations[][value_coded_or_text]">
 					<option></option>

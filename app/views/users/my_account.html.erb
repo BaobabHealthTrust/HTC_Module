@@ -56,7 +56,12 @@
 <base target="_parent">
 
 <%= link_to '<span class="txt"> Stock levels </span>'.html_safe, stock_levels_path, :class=>'blue', :id => "levels" %>
+<% if ! is_supervisor %>
 <%= link_to '<span class="txt"> Record kit loss </span>'.html_safe, kit_loss_path, :class=>'blue', :id => "kls" %>
 <%= link_to '<span class="txt"> QC tests </span>'.html_safe, quality_control_tests_path, :class=>'blue', :id => "qct" %>
+<%= link_to '<span class="txt"> Test </span>'.html_safe, tests_path, :class=>'blue', :id => "pro" %>
+<% else %>
+<%= link_to '<span class="txt"> Tests </span>'.html_safe, list_tests_path, :class=>'blue', :id => "pro" %>
+<% end %>
 
 

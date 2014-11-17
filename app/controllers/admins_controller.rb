@@ -18,7 +18,9 @@ class AdminsController < ApplicationController
   end
 
   def new_test
-      @tests = ["Unigold", "Determine"]
+       @kits, @remaining, @testing = Kit.kits_available(current_user)
+      # raise @kits[0][1].to_yaml
+      @tests = ["Test 1", "Test 2", "Test 3", "Official Result"]
   end
 
 	def protocols

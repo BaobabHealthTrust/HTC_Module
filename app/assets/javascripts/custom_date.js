@@ -2,7 +2,11 @@ function showDate(parent, target, date){
   if(parent == undefined || target == undefined){
     return;
   }  
-  
+
+  if (parent != undefined){
+   parent.innerHTML = "";
+  }
+
   var currentdate;
   
   if(date == undefined || date == null || date.trim().length == 0){

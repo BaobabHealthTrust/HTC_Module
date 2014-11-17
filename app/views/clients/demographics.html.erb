@@ -365,11 +365,19 @@ table{
      </head>
 <body onload="adjust()" >
                  <% if @client.partner_present != true %>
-                      <form action="/client_show/<%=  params[:client_id] %>" method="get">
+
+                  <%= form_tag show_client_path(:id => @client.id) do %>
+                    <input type='hidden' name='name_id' value=<%= @client.id %> />
+                    <fieldset custom=true fs_onLoad="loadCustom();">
+                    <legend>Update Demographics</legend>
+                    </fieldset>
+                    <%= submit_tag "Finish" %>
+                    <%end%>
+
                   <% else %>
                         <form action="/client_current_visit?client_id=<%=  params[:client_id] %>" method="get">
                           <input type='hidden' name='client_id' value=<%= params[:client_id] %> />
-                <% end %>
+               
 			<input type='hidden' name='name_id' value=<%= params[:client_id] %> />
 			<fieldset  custom=true fs_onLoad="loadCustom();">
 			<legend>Update Demographics</legend>
@@ -377,6 +385,7 @@ table{
 			</fieldset>
 			<input type="submit" value="Finish">
 		</form>
+                  <% end %>
 
 </body>
 </html>

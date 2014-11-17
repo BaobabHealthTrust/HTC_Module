@@ -2,6 +2,11 @@ class CoupleController < ApplicationController
   def status
      client = Client.find(params[:client_id])
      @partner = client.get_recent_partner
+      a_complete = next_task(Client.find(@partner.person_a))
+      b_complete = next_task(Client.find(@partner.person_b))
+      if a_complete["url"] == "none" and b_complete["url"] == "none"
+         @complete = true
+      end
   end
 
   def testing

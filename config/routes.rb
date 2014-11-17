@@ -1,4 +1,8 @@
 HTCModule::Application.routes.draw do
+  get "counselor/test_details"
+  get "list_tests" => "counselor#list_tests"
+  get "sample" => "counselor#sample"
+  get "counselor/final_result"
   get "couple/status"
   get "couple/testing"
   get "couple/counseling"
@@ -20,6 +24,8 @@ HTCModule::Application.routes.draw do
   post "clients/modify_field/:id" => "clients#modify_field"
   
   get "referral_consent/:id" => "clients#referral_consent"
+
+  get "inventory/batch_available" => "inventory#batch_available"
 
   get "extended_testing/:id" => "clients#extended_testing"
 

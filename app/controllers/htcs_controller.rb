@@ -30,7 +30,7 @@ class HtcsController < ApplicationController
   def swap
 		name = params[:location]
 
-  	htc_tags = ["HTC Counseling Room","Other HTC Room"] 
+  	htc_tags = ["HTC Counseling Room","Other HTC Room","Counselor Supervision Room"]
   	htc_tags = htc_tags.map{|l| LocationTag.find_by_name(l).location_tag_id}
   	
   	location = Location.joins(:location_tag_maps).where(:location_tag_map => {:location_tag_id => htc_tags},

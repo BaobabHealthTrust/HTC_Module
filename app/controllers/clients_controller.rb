@@ -12,7 +12,6 @@ class ClientsController < ApplicationController
   def show
     
       @task = next_task(@client)
-      #raise @task.to_yaml
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
@@ -73,7 +72,7 @@ class ClientsController < ApplicationController
 			current = session[:datetime].to_date rescue Date.today
     
       if current.month >= 7
-         string = "#{(current.year + 1).to_s}"
+         string = "#{current.year.to_s}"
       else
         string = "#{(current.year - 1).to_s}"
       end
@@ -119,7 +118,6 @@ class ClientsController < ApplicationController
 			
 			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
-      #print_new_accession(@client.patient_id)
 		end
 		
 		session[:show_new_client_button] = false
@@ -321,6 +319,7 @@ class ClientsController < ApplicationController
 	end
 
   def extended_testing
+      @client = Client.find(params[:id])
       @kits, @remaining, @testing = Kit.kits_available(current_user)
   end
   
@@ -454,21 +453,19 @@ class ClientsController < ApplicationController
      label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
      label.draw_line(25,120,800,5)
     if ! confirmed.blank?
-      if confirmed.to_s.split(':')[1].squish.upcase == "CONFIRMATORY HIV TEST"
           test_result = ConceptName.find_by_name("RESULT OF HIV TEST").concept_id
           result = Observation.where("encounter_id = ? AND concept_id = ?", confirmed.encounter_id, test_result).first.to_s.split(':')[1].squish
           result = "Test Result : #{result}"
-          test_location = "Confirmed at #{Settings.facility_name}"
-          test_date = "Confirmed on #{confirmed.obs_datetime.strftime('%d/%m/%Y')}"
+          test_location = "Facility name: #{Settings.facility_name}"
+          date = "Date: #{Date.today.strftime('%d-%m-%Y')}"
+          issued_date = "Issued On: #{(session[:datetime].to_date  rescue Date.today).strftime('%d-%m-%Y')}"
+          test_date = "Visit Date: #{confirmed.obs_datetime.strftime('%d/%m/%Y') rescue ''}"
           user = "Confirmed by #{User.find(confirmed.creator).username}"
   
           label.draw_text(test_location,75, 130, 0, 3, 1, 1, false)        
           label.draw_text(result,75, 160, 0, 3, 1, 1, false)
           label.draw_text(user,75, 190, 0, 3, 1, 1, false)
           label.draw_text(test_date,75, 220, 0, 3, 1, 1, false)
-      else
-         label.draw_text("Tested But not confirmed",75, 130, 0, 3, 1, 1, false)
-      end
     else
        label.draw_text("Never Tested",75, 130, 0, 3, 1, 1, false)
     end
@@ -660,7 +657,7 @@ class ClientsController < ApplicationController
                       obs_datetime: c_session.encounter_datetime,
                       creator: current_user.id, value_coded: answer)
             
-           redirect_to "/client_demographics?partner_id=#{@scanned.patient_id}&client_id=#{params[:client]}" and return
+           redirect_to "/couple/status?client_id=#{params[:client]}" and return
         else
            redirect_to "/client_demographics?client_id=#{@scanned.patient_id}" and return
         end
