@@ -113,7 +113,8 @@ class User < ActiveRecord::Base
                   AND (DATE(ci.encounter_date) BETWEEN ? AND ?)
                   AND ci.councillor_id = ? AND ci.location_id IN (?)
               GROUP BY date",
-     lot_numbers, type.id, start_date.to_date, end_date.to_date, self.user_id, locs]).collect{|v| {v.date.to_date => v.sum}}
+     lot_numbers, type.id, start_date.to_date, end_date.to_date, self.user_id, locs]
+    ).collect{|v| {v.date.to_date.strftime("%d %B") => v.sum}}
   end
 
   def losses(kit_type, start_date, end_date, locs, loss_categories)
@@ -141,7 +142,7 @@ class User < ActiveRecord::Base
                   AND ci.councillor_id = ? AND ci.location_id IN (?)
                   AND ci.value_text IN (?)
               GROUP BY date", lot_numbers, type.id, start_date.to_date, end_date.to_date, self.user_id, locs, loss_categories]
-    ).collect{|v| {v.date.to_date => v.sum}}
+    ).collect{|v| {v.date.to_date.strftime("%d %B") => v.sum}}
   end
 
   def client_tests(kit_type, start_date, end_date, locs)
@@ -165,7 +166,7 @@ class User < ActiveRecord::Base
                   AND (DATE(ci.encounter_date) BETWEEN ? AND ?)
                   AND ci.councillor_id = ? AND ci.location_id IN (?)
               GROUP BY date", lot_numbers, type.id, start_date.to_date, end_date.to_date, self.user_id, locs]
-    ).collect{|v| {v.date.to_date => v.sum}}
+    ).collect{|v| {v.date.to_date.strftime("%d %B") => v.sum}}
   end
 end
 

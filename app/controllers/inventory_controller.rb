@@ -283,9 +283,9 @@ class InventoryController < ApplicationController
     @cur_month = @session_date.strftime("%B")
     @cur_year = @session_date.year
 
-    @current_location = Location.current_location;
+    @current_location = Location.current_location
     locs = all_htc_facility_locations
-    @locations = locs.map { |l| [l.id, l.name] }
+    @locations = [["", "All"]] + locs.map { |l| [l.id, l.name] }
     @user = current_user
     users =  User.all
     @users = users.map { |user| [user.username, user.name] rescue nil }.compact
@@ -441,7 +441,6 @@ class InventoryController < ApplicationController
     end
   end
 
-
   def ajax_stock_levels
     result = {}
     user = User.find_by_username(params[:user])
@@ -451,10 +450,10 @@ class InventoryController < ApplicationController
     opening_stock = {}
     closing_stock = {}
     while i >= date.beginning_of_month
-      dates << i.to_date
-      opening_stock[i.to_s] = user.remaining_stock_by_type(params[:kit_name], i.to_date,
+      dates << i.to_date.strftime("%d %B")
+      opening_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date,
                                                            [], "opening", [params[:location].to_i])
-      closing_stock[i.to_s] = user.remaining_stock_by_type(params[:kit_name], i.to_date, [],
+      closing_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date, [],
                                                            "closing", [params[:location].to_i])
       i -= 1.day
     end
