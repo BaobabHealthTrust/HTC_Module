@@ -118,27 +118,30 @@
         __$("row0").parentNode.appendChild(__$('buttons'));
       }
 
-      function rebuildHeader(result, lst){
-            list = lst
-            highlightList(list);
-            if (list.getAttribute("value").toLowerCase() == "test details"){
+      function rebuildHeader(result){
+           if (__$("error") != null){
+                  __$("error").innerHTML = result["error"]
+           }
+            list.onmousedown = function (){
+            highlightList(this);
+            if (this.getAttribute("value").toLowerCase() == "test details"){
               var html = "";
               var textFornumber = document.createElement("input");
-              currentList = list.getAttribute("value").toLowerCase()
+              currentList = this.getAttribute("value").toLowerCase()
 
               var inPos = "<input type='input' id='txtYearFortextFornumber' " +
-                "target='textFornumber' disabled='disabled' value='" + result["pt number"] + "' " +
+                "target='textFornumber' value='" + result["pt number"] + "' " +
                 " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"),{}, false, true);' class='input_cell'" +
                 " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
 
 
               html += "<span class='d dL'> PT Panel Lot Number </span>" +
                 "<span class='d dC'> : </span>" +
-                "<span class='d dR'>" + inPos  + "</span> <span  id='error' class='warning'></span>";
+                "<span class='d dR' id='error'>" + inPos  + "</span>";
 
               var textForptdate = document.createElement("input");
               var inPos = "<input type='date' id='txtYearFortextForptdate' " +
-                "target='textForptdate'  disabled='disabled'  value='" + result["pt date"] + "' " +
+                "target='textForptdate' value='" + result["pt date"] + "' " +
                 "fieldtype= 'date' onmousedown='showDate(__$(\"keyboard-data\"), this);' class='input_cell'" +
                 " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
 
@@ -147,100 +150,53 @@
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
 
-            __$('dsp').innerHTML = html;
+
             }
             else{
               var html = "";
 
               var textFordates = document.createElement("input");
 
-              currentList = list.getAttribute("value").toLowerCase()
-
-              if ( ! currentList.match(/official result/i)){
-              var inPos = '<input id="textFor'  + currentList.replace(/\s/g, '') +  ' typeExpire" value="' + result["expiry date"] + '" type="text"' +
-                'disabled="disabled" style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="typeExpire" onmousedown="showDate(__$(\'keyboard-data\'), this);" fieldtype="text" pos="2" section="0">'
-
-
-              html += "<span class='d dL'> Expiry Date </span>" +
-                "<span class='d dC'> : </span>" +
-                "<span class='d dR'>" + inPos  + "</span>";
-
-              var textFordates = document.createElement("input");
-
-              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' typeLot" value="' + result["lot number"] + '" type="text"' +
-                'disabled="disabled"  style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'),{}, false, true)" fieldtype="text" pos="2" section="0">'
-
-
-              html += "<span class='d dL'>Lot Number</span>" +
-                "<span class='d dC'> : </span>" +
-                "<span class='d dR'>" + inPos  + "</span>";
-
-              var textFordates = document.createElement("input");
-
-              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' result"  value="' + result["final result"] + '" type="text"' +
-                'disabled="disabled" style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="type" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
-
-
-              html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
-                "<span class='d dC'> : </span>" +
-                "<span class='d dR'>" + inPos  + "</span>";
-
-              __$('dsp').innerHTML = html;
-              }else{
+              currentList = this.getAttribute("value").toLowerCase();
 
                var textFordates = document.createElement("input");
-							if (result["disabled"] == "disabled"){ 
-              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '"  value="' + result["official result"] + '" type="text"' +
-                'disabled="' + result["disabled"] + '" style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weakly Positive\', \'Strongly Positive\']);" fieldtype="text" pos="2" section="0">'
 
-							}else{
-             var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '"  value="' + result["official result"] + '" type="text"' +
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '"  value="' + result["official result"] + '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weakly Positive\', \'Strongly Positive\']);" fieldtype="text" pos="2" section="0">'
-							}
+
+
               html += "<span class='d dL' style='font-weight:light ! important;'>Official Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
-
-              __$('dsp').innerHTML = html;
-              if (result["disabled"] != "disabled"){
-                    addKeyboard(__$('dsp'));
-                  }
-              }
+              
             }
-            
-            
+            __$('dsp').innerHTML = html;
+            addKeyboard(__$('dsp'));
+            }
       }
 
-      function saveResult(lst, value){
-						var  name = lst.getAttribute("value").toLowerCase()
-						if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-									xmlhttp=new XMLHttpRequest();
-						}else{// code for IE6, IE5
-									xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-						}
-            xmlhttp.onreadystatechange=function() {
-                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                      var results = JSON.parse(xmlhttp.responseText);
-                        headerTaken = true
-                             if (__$("error") != null){
-                                    __$("error").innerHTML = results["error"]
-                             }
-                            rebuildHeader(results, lst)
-
+      function saveResult(name,result){
+                        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                              xmlhttp=new XMLHttpRequest();
+                      }else{// code for IE6, IE5
+                              xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
                       }
-                    }
+                      xmlhttp.onreadystatechange=function() {
+                              if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                                var results = JSON.parse(xmlhttp.responseText);
+                                  headerTaken = true
 
-            xmlhttp.open("GET","/counselor/final_result?encounter_id=" + <%= params[:encounter_id]%> + "&official_result=" + value + "&sample=" + name, true);
-            xmlhttp.send();
+                                      rebuildHeader(results)
+                                      confirm( capitalise(currentList) + " saved successfuly!")
+                                }
+                              }
+
+                      xmlhttp.open("GET","/counselor/final_result?encounter_id=" + testEncounter +   "&sample=" + name +  "&official_result=" + result, true);
+                      xmlhttp.send();
       }
 
-      function createSample(lst) {
-              var  name = lst.getAttribute("value").toLowerCase()
+      function createSample(lot, date) {
               if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                               xmlhttp=new XMLHttpRequest();
                       }else{// code for IE6, IE5
@@ -251,21 +207,105 @@
                                 var results = JSON.parse(xmlhttp.responseText);
                                   headerTaken = true
                                   testEncounter = results["encounter_id"]
-                                   if (__$("error") != null){
-                                          __$("error").innerHTML = results["error"]
-                                   }
-                                  rebuildHeader(results, lst)
+                                  rebuildHeader(results)
+                                  confirm( capitalise(currentList) + " saved successfuly!")
                                 }
                               }
 
-                      xmlhttp.open("GET","/counselor/test_details?encounter_id=" + <%= params[:encounter_id] %> + "&name=" + name , true);
+                      xmlhttp.open("GET","/counselor/test_details?lot_number=" + lot + "&date=" + date , true);
                       xmlhttp.send();
       }
+
+      function capitalise(string){
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
 
       function recreateView(lst){
          ///alert(this.getAttribute("value").toLowerCase())
             list = lst;
-            createSample(list);
+            if (lst.getAttribute("value").toLowerCase() == "test details"){
+              var html = "";
+              var textFornumber = document.createElement("input");
+              currentList = lst.getAttribute("value").toLowerCase()
+
+              var inPos = "<input type='input' id='txtYearFortextFornumber' " +
+                "target='textFornumber' value='' " +
+                " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"), {}, false, true);' class='input_cell'" +
+                " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
+
+
+              html += "<span class='d dL'> PT Panel Lot Number </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span> <span  id='error' class='warning'></span>";
+
+              var textForptdate = document.createElement("input");
+              var inPos = "<input type='date' id='txtYearFortextForptdate' " +
+                "target='textForptdate' value='' " +
+                "fieldtype= 'date' onmousedown='showDate(__$(\"keyboard-data\"), this);' class='input_cell'" +
+                " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
+
+
+              html += "<span class='d dL'> Date Created </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+
+            }
+            else{
+              var html = "";
+
+              var textFordates = document.createElement("input");
+
+              currentList = lst.getAttribute("value").toLowerCase()
+
+              if ( ! currentList.match(/official result/i)){
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  ' typeExpire" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="typeExpire" onmousedown="showDate(__$(\'keyboard-data\'), this);" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL'> Expiry Date " + currentList .replace(/\s/g, '') +  "</span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+              var textFordates = document.createElement("input");
+
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' typeLot" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'),{\'/\': true, \':\': true, \'abc\': true}, true, false)" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL'>Lot Number</span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+
+              var textFordates = document.createElement("input");
+
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' result" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="type" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+              }else{
+
+               var textFordates = document.createElement("input");
+
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '" type="text"' +
+                'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
+                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weakly Positive\', \'Strongly Positive\']);" fieldtype="text" pos="2" section="0">'
+
+
+              html += "<span class='d dL' style='font-weight:light ! important;'>" + currentList.split('-')[0] + "  Official Result </span>" +
+                "<span class='d dC'> : </span>" +
+                "<span class='d dR'>" + inPos  + "</span>";
+              }
+
+            }
+            __$('dsp').innerHTML = html;
+            addKeyboard(__$('dsp'));
       }
 
        function confirm(message){
@@ -290,12 +330,23 @@
         done.className = "done blue";
         done.innerHTML = "Done"
         done.onmousedown = function () {
-              result = __$('textFor ' + currentList.replace(/\s/g, '')).value;
-							
-              saveResult(list, result)
+            if ( currentList == "test details" ){
+               lotNumber = __$('txtYearFortextFornumber').value
+               ptDate = __$("txtYearFortextForptdate").value
+               createSample(lotNumber, ptDate)
+            }
+            else {
+              result = __$('textFor ' + currentList.replace(/\s/g, '') + '').value;
+
+              if (testEncounter != null){
+                saveResult(currentList,result)
+              }else{
+                confirm("Enter Test Details First")
+              }
 
             }
-        
+            //loadList();
+        }
         return done
     }
 
@@ -369,9 +420,9 @@
 
   </head>
   <body onload="loadCustom()">
-    <form action="list_tests" method="get">
+    <%= form_tag tests_path do %>
       <fieldset fs_onLoad="loadCustom();" id="tests">
-        <legend>Proficiency Tests Results for counselor <%= @counselor.name + '  (' + @counselor.username + ')' %></legend>
+        <legend>Add/Edit Proficiency Tests for counselors</legend>
         <label for="samples"></label>
         <select id="samples" >
           <option></option>
@@ -385,7 +436,7 @@
         </select>
       </fieldset>
       <%= submit_tag "Finish" %>
-    </form>
+    <% end %>
   </body>
   <%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 </html>
