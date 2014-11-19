@@ -37,7 +37,7 @@ class CounselorController < ApplicationController
                     elsif name == "LAB TEST RESULT"
                       value = get_name(obs.value_coded) rescue "Invalid"
                     end
-                    details[test.id]["Sample #{int}"]["#{get_name(obs.value_group_id)}"]["#{name}"] = value
+                    details[test.id]["Sample #{int}"]["#{get_name(obs.value_group_id)}"]["#{name.humanize}"] = value
                  }
 
                   name = ["OFFICIAL RESULT", "FINAL RESULT"]
@@ -49,7 +49,7 @@ class CounselorController < ApplicationController
                       official = TestObservation.where("voided = 0 and concept_id = ? and value_group_id = ? and  value_text = ?",
                       get_id(n), get_id(concept), "#{lot}" ).first.value_coded rescue ""
                       value = get_name(official) rescue "Not available"
-                       details[test.id]["Sample #{int}"]["resulsts"]["#{n}"] = value
+                       details[test.id]["Sample #{int}"]["resulsts"]["#{n.humanize}"] = value
                   }
                             
                 }

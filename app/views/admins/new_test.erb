@@ -25,7 +25,7 @@
       function __$(id){
         return document.getElementById(id)
       }
-
+        
       function highlightList(obj) {
            var opts = document.getElementsByClassName("serum-li");
 
@@ -116,6 +116,11 @@
         }
         row.insertBefore(dsp, row.firstChild);
         __$("row0").parentNode.appendChild(__$('buttons'));
+
+        btnNext.onmousedown = function (){
+          window.location = '<%= tests_path %>';
+        }
+
       }
 
       function rebuildHeader(result){

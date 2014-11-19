@@ -123,13 +123,13 @@
         for (var encounter in data){
 
           var row = document.createElement("div");
-          row.className = "row main-row";
+          row.className = "main-row";
 
 
           var cell = document.createElement("div");
-          cell.className = "td data-td";
+          cell.className = "main-td";
           cell.colSpan = "7";
-          cell.innerHTML = data[encounter]["date"];
+          cell.innerHTML = " Date : " + data[encounter]["date"];
           row.appendChild(cell);
 
           available = 1
@@ -144,7 +144,7 @@
              table.appendChild(row);
 
               var innerrow = document.createElement("div");
-              innerrow.className = "row data-row results";
+              innerrow.className = "results";
               table.appendChild(innerrow);
 
               var innercell = document.createElement("div");
@@ -153,16 +153,22 @@
               innerrow.appendChild(innercell);
 
               for (var h = 1; h <= 6; h++){
+                    count = 0
                     for (var test in data[encounter]["Sample " + h]){
                       var innercell = document.createElement("div");
                       innercell.className = "td data-td";
-                      innercell.innerHTML = "Sample " + h + " - " + test;
+                      if (count == 0){
+                        innercell.innerHTML = "Sample " + h + " - " + test;
+                      }else{
+                        innercell.innerHTML =  test;
+                      }
                       innerrow.appendChild(innercell);
-
+                      count += 1;
 
                       var innertable = document.createElement("div");
                       innertable.className = "sample-table";
                       innercell.appendChild(innertable);
+
                       if (test.toUpperCase() != "RESULTS"){
                         for (var outcome in data[encounter]["Sample " + h][test]){
                             var outcomerow = document.createElement("div");
@@ -306,14 +312,12 @@
         r.className = "row";
         headerTable.appendChild(r);
 
-        var headers = ["Date", "Results Entered"];
+        var headers = ["Results Entered"];
         for(var i in headers){
             var td = document.createElement("div");
             td.className = "topic";
             td.innerHTML = headers[i];
-            if (i == 0){
-              td.id = "date";
-            }
+           
             r.appendChild(td);
         }
         dsp.appendChild(headerTable);
@@ -362,20 +366,10 @@
     }
 
       .results {
-      display: block;
+      display: table-row;
       height: 100%;
       width: 100%;
-			font-size: 28px;
 }
-    #date{
-      float: left ! important;
-}
-    .sum{
-        font-weight: normal;
-        width: 100px;
-        height: 32px;
-        border-right: 1px dotted;
-    }
 
     .site-label{
       font-weight: bold;
@@ -385,17 +379,27 @@
 		 width: 100%;
 }
 
+  .response-data{
+    
+}
   .main-row{
+      display: table-row;
       border-style: solid;
       width: 100%;
-      font-size: 25px;
+      text-align: center;
+      margin:auto;
 }
 
-  .data-td{
-     font-size: 18px;
-      /*width: 23%; */
+.main-td{
+      display: table-cell;
+      border-style: solid;
+      border-color: lightblue;
+      border-radius: 15px;
+      width: 100%;
+      font-size: 25px ! important;
+      text-align: center;
+      vertical-align: middle;
 }
-
   .left-td{
       width: 5%;
 }
@@ -417,7 +421,7 @@
     .data-table{ display: table;width:99%;margin:auto;padding:5px;padding-top: 0px;border-radius:4px;}
     .table{ display: table;width:99%;margin:auto;padding:5px;padding-top: 0px;border-radius:4px;
            background:lightblue;}
-    .row{display: table-row;width:100%;margin:auto}
+    .row{display: table-row;width:100%;margin:auto;}
     .topic {display: table-cell;
            vertical-align: middle;
     }
