@@ -196,6 +196,16 @@
         for (var i in hash["totals"]){
             __$(i).innerHTML = hash["totals"][i];
         }
+
+        var options = jQuery("#month").find("option").show();
+
+        if (session_date.getFullYear() == __$("year").value) {
+            for (var i in options) {
+                if (parseInt(options[i].value) > (parseInt(session_date.getMonth()) + 1)) {
+                    jQuery(options[i]).hide();
+                }
+            }
+        }
         resizeHeaders();
     }
 
@@ -240,10 +250,27 @@
             selects["month"] = month;
             selects["year"] = year;
             selects["kit_name"] = kit_name;
-
         }
 
         setTimeout("checkSelectChanges(true)", 500);
+    }
+
+    function checkMonth(){
+
+        if (session_date.getFullYear() == __$("year").value){
+
+            var options = jQuery("#month").find("option");
+            for (var i in options) {
+                try {
+                    if (parseInt(options[i].value) == (parseInt(session_date.getMonth()) + 1) &&
+                            parseInt(__$("month").value) > parseInt(options[i].value)) {
+                        options[i].selected = true;
+                    }
+                }catch(e){}
+            }
+        }
+
+        loadTableData();
     }
 
     function buildTable(){
@@ -315,7 +342,7 @@
         td.colSpan = "3";
         td.innerHTML = "<table class='selects' style='width: 100%;'><tr><td><label id ='date-label'> Date: </label></td>" +
                 "<td><select id ='month'  onchange='loadTableData()'></select> " +
-                "</td><td><select id ='year'  onchange='loadTableData()'> </select></td>  " +
+                "</td><td><select id ='year'  onchange='checkMonth()'> </select></td>  " +
                 "<td><label id ='kit_name-label'> Kit name: </label></td> " +
                 "<td> <select id ='kit_name-select'  onchange='loadTableData()'> </select></td>" +
                 "<td></td></tr></table>"
