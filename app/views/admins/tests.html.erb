@@ -194,6 +194,10 @@
                       }
                     }
             }
+        btnNext.onmousedown = function (){
+          window.location = '<%= new_test_path %>';
+        }
+
     }
 
     function getCounselor(id){
@@ -285,7 +289,7 @@
             opt.setAttribute("value", months[i]);
             opt.innerHTML = months[i];
             opt.setAttribute("onmousedown", "getData()");
-            if (months[i] == "<%=@cur_month%>"){
+            if (months[i] == "<%=@cur_month[0,3] %>"){
                 opt.selected = true;
             }
             monthSelect.appendChild(opt);
@@ -334,7 +338,7 @@
         dataHolder.appendChild(dataTable);
 
         //load data in table
-        getCounselor(<%= @user.id %>)
+        getData();
         
         btnNext.innerHTML = "New Test"
         btnNext.onmousedown = function (){

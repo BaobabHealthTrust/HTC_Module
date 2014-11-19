@@ -29,6 +29,22 @@
  	background-image: url(<%= asset_path 'schedule.png' %>);
 	background-size: cover;
 }
+
+#history{
+ 	background-image: url(<%= asset_path 'status_history.png' %>);
+	background-size: cover;
+}
+
+#risk{
+ 	background-image: url(<%= asset_path 'risk_assessment.png' %>);
+	background-size: cover;
+}
+
+#extend{
+ 	background-image: url(<%= asset_path 'extended.jpg' %>);
+	background-size: cover;
+}
+
 .txt {
   color: #000000;
   display: block;
@@ -52,14 +68,14 @@
 <a href= '/client_testing?client_id=<%= @client.id -%>' id="test" class=" blue">
   <span class="txt">Testing</span></a>
   
-  <a href= '/extended_testing/<%= @client.id -%>' id="test" class=" blue">
+  <a href= '/extended_testing/<%= @client.id -%>' id="extend" class=" blue">
   <span class="txt">Extended Testing</span></a>
 
-  <a href= '/client_status/<%= @client.id -%>' id="test" class=" blue">
+  <a href= '/client_status/<%= @client.id -%>' id="history" class=" blue">
   <span class="txt">Status History</span></a>
 
-  <a href= '/client_assessment/<%= @client.id -%>' id="test" class=" blue">
-  <span class="txt">Update Risk</span></a>
+  <a href= '/client_assessment/<%= @client.id -%>' id="risk" class=" blue">
+  <span class="txt">Assessment</span></a>
 
 
   <a href= '/referral_consent/<%= @client.id -%>' id="hospital" class=" blue">

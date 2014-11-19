@@ -192,7 +192,8 @@ class CounselorController < ApplicationController
   def list_tests
     @session_date = session[:datetime].to_date rescue Date.today
 
-    @cur_month = @session_date.strftime("%B")
+    @cur_month = @session_date.strftime("%B")[0,3]
+    
     @cur_year = @session_date.year
 
     @user = current_user
