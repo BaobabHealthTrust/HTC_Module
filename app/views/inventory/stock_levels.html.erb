@@ -9,6 +9,11 @@
       var data = {};
       var selects = {};
       var spinner;
+      var session_date = new Date();
+      session_date.setYear("<%= @session_date.year%>");
+      session_date.setMonth("<%= @session_date.month - 1%>");
+      session_date.setDate("<%= @session_date.day%>");
+
   </script>
 
   <%= stylesheet_link_tag 'panel' %>
@@ -167,6 +172,7 @@
         for (var i = 0; i < dates.length; i ++){
             var row = document.createElement("div");
             row.className = "row data-row";
+            row.className += (i % 2 == 0 ? " even" : " odd")
             row.id = "r_" + i;
             table.appendChild(row);
             var values = ["dates[i]",
@@ -178,12 +184,17 @@
                 "hash['closing_stock'][dates[i]]"];
 
             for (var k in values){
+
                 var td = document.createElement("div");
                 td.className = "td data-td";
                 td.innerHTML = (eval(values[k]) || 0);
                 td.style.width = Math.ceil(jQuery(row).width()/values.length) + "px";
                 row.appendChild(td)
             }
+        }
+
+        for (var i in hash["totals"]){
+            __$(i).innerHTML = hash["totals"][i];
         }
         resizeHeaders();
     }
@@ -229,7 +240,7 @@
             selects["month"] = month;
             selects["year"] = year;
             selects["kit_name"] = kit_name;
-            console.log(selects)
+
         }
 
         setTimeout("checkSelectChanges(true)", 500);
@@ -311,10 +322,19 @@
         row2.appendChild(td);
 
         var kitSelect = __$("kit_name-select");
-        <% @kit_names.each do |kit|%>
+
+        var opt = document.createElement("option");
+        opt.setAttribute("value", "");
+        opt.innerHTML = "All";
+        kitSelect.appendChild(opt);
+
+        <% @kit_names.each_with_index do |kit, i|%>
             var opt = document.createElement("option");
             opt.setAttribute("value", "<%= kit%>");
             opt.innerHTML = "<%= kit%>";
+            <% if i == 0%>
+                opt.selected = true;
+            <% end %>
             kitSelect.appendChild(opt);
         <% end %>
 
@@ -384,11 +404,15 @@
         r.className = "row";
         footerTable.appendChild(r);
 
-        var headers = ["Summary", "2", '2', "23", "0", '0', '0'];
+        var headers = ["Total", "opening_stock", "receipts", "client_tests", "other_use", "damaged", "closing_stock"];
         for(var i in headers){
             var td = document.createElement("div");
             td.className = "td bhd";
-            td.innerHTML = headers[i];
+            td.id = headers[i];
+            td.innerHTML = "&nbsp";
+            if(i == 0)
+                td.innerHTML = headers[i];
+
             r.appendChild(td);
         }
         dsp.appendChild(footerTable);
@@ -490,7 +514,7 @@
         border-radius: 5px;
      }
 
-     .thd, .bhd, .data-td{
+     .thd, .bhd{
          border-radius: 4px;
          border: 0.5px dotted white;
          border-top: none; border-bottom: none;
@@ -499,7 +523,10 @@
      .data-td{
          text-align: center;
          color: black;
-
+         font-size: 17px;
+         height: 27px;
+         margin: 0px;
+         padding: 0px;
      }
      .selects select{
          min-width: 120px;
@@ -534,6 +561,9 @@
          font-size: 18px;
          padding: 10px;
          color: black;
+     }
+     .odd, .even{
+        background: #cfe4cd !important;
      }
 
 </style>

@@ -282,6 +282,10 @@ class InventoryController < ApplicationController
 
     @cur_month = @session_date.strftime("%B")
     @cur_year = @session_date.year
+    @month_limit = 13
+    if (@session_date.year == @session_date.year && @session_date.month == @session_date.month)
+      @month_limit = @session_date.month
+    end
 
     @current_location = Location.current_location
     locs = all_htc_facility_locations
@@ -445,16 +449,21 @@ class InventoryController < ApplicationController
     result = {}
     user = User.find_by_username(params[:user])
     date = Date.new(params[:year].to_i, params[:month].to_i)
+    session_date = (session[:datetime].to_date rescue Date.today)
+
     i = date.end_of_month
     dates = []
     opening_stock = {}
     closing_stock = {}
+
     while i >= date.beginning_of_month
-      dates << i.to_date.strftime("%d %B")
-      opening_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date,
-                                                           [], "opening", [params[:location].to_i])
-      closing_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date, [],
+      unless i.to_date > session_date
+        dates << i.to_date.strftime("%d %B")
+        opening_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date,
+                                                             [], "opening", [params[:location].to_i])
+        closing_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date, [],
                                                            "closing", [params[:location].to_i])
+      end
       i -= 1.day
     end
     dates.reverse!
@@ -462,6 +471,7 @@ class InventoryController < ApplicationController
     result["dates"] = dates
     result["opening_stock"] = opening_stock
     result["closing_stock"] = closing_stock
+
     result["receipts"] = user.receipts(params[:kit_name], date.beginning_of_month, date.end_of_month,
                                        [params[:location].to_i])
     result["damaged"] = user.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
@@ -470,6 +480,9 @@ class InventoryController < ApplicationController
                                            [params[:location].to_i], ["Other use"])
     result["client_tests"] =  user.client_tests(params[:kit_name], date.beginning_of_month, date.end_of_month,
                                           [params[:location].to_i])
+
+    result['totals'] = result.reject{|k, v| k == "dates"}.inject({}){|r, h| r[h[0]] = h[1].values.sum; r}
+
     render text: result.to_json
   end
 end
