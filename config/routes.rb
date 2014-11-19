@@ -36,6 +36,9 @@ HTCModule::Application.routes.draw do
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
   get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
   post "htcs/swap" => "htcs#swap", as: :swap
+
+  get "htcs/record_temp" => "inventory#record_temp", as: :record_temp
+  post "htcs/record_temp" => "inventory#record_temp"
   
   #get "clients/remove_from_waiting_list" => "clients#remove_from_waiting_list", as: :remove_from_waiting_list
   post "clients/remove_from_waiting_list" => "clients#remove_from_waiting_list", as: :remove_from_waiting_list
@@ -75,6 +78,8 @@ HTCModule::Application.routes.draw do
 
   get "inventory" => "inventory#options"
   get "new_batch" => "inventory#new_batch"
+
+  get "ajax_stock_levels" => "inventory#ajax_stock_levels"
 
   get "new_serum_batch" => "inventory#new_serum_batch"
   post "new_serum_batch" => "inventory#new_serum_batch"

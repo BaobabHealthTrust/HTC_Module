@@ -3,7 +3,7 @@ class TestObservation < ActiveRecord::Migration
     create_table :test_observation do |t|
       t.string :encounter_id
       t.integer :concept_id 
-      t.integer :value_numeric
+      t.float :value_numeric
       t.string :value_text
       t.datetime :value_date
       t.datetime :obs_datetime
