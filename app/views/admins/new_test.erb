@@ -25,7 +25,7 @@
       function __$(id){
         return document.getElementById(id)
       }
-
+        
       function highlightList(obj) {
            var opts = document.getElementsByClassName("serum-li");
 
@@ -116,6 +116,11 @@
         }
         row.insertBefore(dsp, row.firstChild);
         __$("row0").parentNode.appendChild(__$('buttons'));
+
+        btnNext.onmousedown = function (){
+          window.location = '<%= tests_path %>';
+        }
+
       }
 
       function rebuildHeader(result){
@@ -129,13 +134,13 @@
 
               var inPos = "<input type='input' id='txtYearFortextFornumber' " +
                 "target='textFornumber' value='" + result["pt number"] + "' " +
-                " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"), {\"/\": true, \":\": true, \"abc\": true}, true, false);' class='input_cell'" +
+                " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"), {}, false, true);' class='input_cell'" +
                 " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
 
 
               html += "<span class='d dL'> PT Panel Lot Number </span>" +
                 "<span class='d dC'> : </span>" +
-                "<span class='d dR'>" + inPos  + "</span>";
+                "<span class='d dR'>" + inPos  + "</span> <span  id='error' class='warning'></span>";
 
               var textForptdate = document.createElement("input");
               var inPos = "<input type='date' id='txtYearFortextForptdate' " +
@@ -157,7 +162,7 @@
 
               currentList = this.getAttribute("value").toLowerCase()
 
-              if ( ! currentList.match(/official result/i)){
+              if ( ! currentList.match(/final result/i)){
               var inPos = '<input id="textFor'  + currentList.replace(/\s/g, '') +  ' typeExpire" value="' + result["expiry date"] + '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="typeExpire" onmousedown="showDate(__$(\'keyboard-data\'), this);" fieldtype="text" pos="2" section="0">'
@@ -171,7 +176,7 @@
 
               var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' typeLot" value="' + result["lot number"] + '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'),{\'/\': true, \':\': true, \'abc\': true}, true, false)" fieldtype="text" pos="2" section="0">'
+                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'), {}, false, true)" fieldtype="text" pos="2" section="0">'
 
 
               html += "<span class='d dL'>Lot Number</span>" +
@@ -180,24 +185,24 @@
 
               var textFordates = document.createElement("input");
 
-              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' result"  value="' + result["final result"] + '" type="text"' +
+              var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' result"  value="' + result["result"] + '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="type" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
 
 
-              html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
+              html += "<span class='d dL' style='font-weight:light ! important;'>Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
               }else{
 
                var textFordates = document.createElement("input");
 
-              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '"  value="' + result["official result"] + '" type="text"' +
+              var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '"  value="' + result["final result"] + '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weak Positive\', \'Strong Positive\']);" fieldtype="text" pos="2" section="0">'
+                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
 
 
-              html += "<span class='d dL' style='font-weight:light ! important;'>Official Result </span>" +
+              html += "<span class='d dL' style='font-weight:light ! important;'>Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
               }
@@ -217,7 +222,9 @@
                               if (xmlhttp.readyState==4 && xmlhttp.status==200) {
                                 var results = JSON.parse(xmlhttp.responseText);
                                   headerTaken = true
-                                  
+                                        if (__$("error") != null){
+                                              __$("error").innerHTML = results["error"]
+                                       }
                                       rebuildHeader(results)
                                   
                                 }
@@ -238,6 +245,9 @@
                                 var results = JSON.parse(xmlhttp.responseText);
                                   headerTaken = true
                                   testEncounter = results["encounter_id"]
+                                    if (__$("error") != null){
+                                    __$("error").innerHTML = results["error"]
+                                     }
                                   rebuildHeader(results)
                                 }
                               }
@@ -256,13 +266,13 @@
 
               var inPos = "<input type='input' id='txtYearFortextFornumber' " +
                 "target='textFornumber' value='' " +
-                " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"), {\"/\": true, \":\": true, \"abc\": true}, true, false);' class='input_cell'" +
+                " onmousedown='showFixedKeyboard(this, __$(\"keyboard-data\"),  {}, false, true);' class='input_cell'" +
                 " style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
                 
 
               html += "<span class='d dL'> PT Panel Lot Number </span>" +
                 "<span class='d dC'> : </span>" +
-                "<span class='d dR'>" + inPos  + "</span>";
+                "<span class='d dR'>" + inPos  + "</span> <span  id='error' class='warning'></span>";
 
               var textForptdate = document.createElement("input");
               var inPos = "<input type='date' id='txtYearFortextForptdate' " +
@@ -284,7 +294,7 @@
 
               currentList = lst.getAttribute("value").toLowerCase()
               
-              if ( ! currentList.match(/official result/i)){
+              if ( ! currentList.match(/final result/i)){
               var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  ' typeExpire" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
                 'target="typeExpire" onmousedown="showDate(__$(\'keyboard-data\'), this);" fieldtype="text" pos="2" section="0">'
@@ -298,7 +308,7 @@
 
               var inPos = '<input id="textFor '  + currentList .replace(/\s/g, '') +  ' typeLot" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'),{\'/\': true, \':\': true, \'abc\': true}, true, false)" fieldtype="text" pos="2" section="0">'
+                'target="typeLot" onmousedown="showFixedKeyboard(this, __$(\'keyboard-data\'), {}, false, true)" fieldtype="text" pos="2" section="0">'
 
 
               html += "<span class='d dL'>Lot Number</span>" +
@@ -312,7 +322,7 @@
                 'target="type" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
 
 
-              html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
+              html += "<span class='d dL' style='font-weight:light ! important;'>Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
               }else{
@@ -321,10 +331,10 @@
 
               var inPos = '<input id="textFor '  + currentList.replace(/\s/g, '') +  '" type="text"' +
                 'style="font-size: 24px; padding: 10px; border: 1px solid rgb(52, 101, 164); border-radius: 10px; width: 98.5%; margin: auto;" ' +
-                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'), [\'Negative\', \'Weak Positive\', \'Strong Positive\']);" fieldtype="text" pos="2" section="0">'
+                'target="official" onmousedown="showListItems(this.id, __$(\'keyboard-data\'),[\'Negative\', \'Positive\']);" fieldtype="text" pos="2" section="0">'
 
 
-              html += "<span class='d dL' style='font-weight:light ! important;'>Official Result </span>" +
+              html += "<span class='d dL' style='font-weight:light ! important;'>Final Result </span>" +
                 "<span class='d dC'> : </span>" +
                 "<span class='d dR'>" + inPos  + "</span>";
               }
@@ -349,6 +359,29 @@
         ele.innerHTML =  html;
         document.body.appendChild(ele);
       }
+      
+    function saveFinalResult(lst, value, encounter){
+        		var  name = lst.getAttribute("value").toLowerCase()
+						if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+									xmlhttp=new XMLHttpRequest();
+						}else{// code for IE6, IE5
+									xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+						}
+            xmlhttp.onreadystatechange=function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                      var results = JSON.parse(xmlhttp.responseText);
+                        headerTaken = true
+                             if (__$("error") != null){
+                                    __$("error").innerHTML = results["error"]
+                             }
+                            rebuildHeader(results)
+
+                      }
+                    }
+
+            xmlhttp.open("GET","/counselor/final_result?encounter_id=" + encounter + "&final_result=" + value + "&sample=" + name, true);
+            xmlhttp.send();
+      }
 
       function doneButton() {
 
@@ -356,22 +389,30 @@
         done.className = "done blue";
         done.innerHTML = "Done"
         done.onmousedown = function () {
+           
             if ( currentList == "test details" ){
                lotNumber = __$('txtYearFortextFornumber').value
                ptDate = __$("txtYearFortextForptdate").value
                createSample(lotNumber, ptDate)
             }
-            else {
+            else 
+              {
+
+              if (testEncounter != null){
+                if (currentList.match(/final result/i)){
+                      result = __$('textFor ' + currentList.replace(/\s/g, '')).value;
+
+                      saveFinalResult(list, result, testEncounter)
+                    }else{
+
               lotNumber = __$('textFor ' + currentList.replace(/\s/g, '') + ' typeLot').value;
               ptExpiryDate = __$('textFor ' + currentList.replace(/\s/g, '') + ' typeExpire').value;
               result = __$('textFor ' + currentList.replace(/\s/g, '') + ' result').value;
-
-              if (testEncounter != null){
                 saveResult(currentList, lotNumber, ptExpiryDate, result)
+                    }
               }else{
                 confirm("Enter Test Details First")
               }
-              
             }
             //loadList();
         }
@@ -448,7 +489,7 @@
 
   </head>
   <body onload="loadCustom()">
-    <%= form_tag tests_path do %>
+    <%= form_tag htcs_path do %>
       <fieldset fs_onLoad="loadCustom();" id="tests">
         <legend>Proficiency Tests for counselor <%= current_user.username.humanize %></legend>
         <label for="samples"></label>

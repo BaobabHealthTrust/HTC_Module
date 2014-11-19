@@ -48,11 +48,13 @@ class EncountersController < ApplicationController
 										value_datetime: value_datetime)
 				end
 		end 
-		
+
+    test_kit = {}
     (params[:observations] || []).each do |observation|
 
               next if observation[:concept_name].blank?
 
+             # if observation[:concept_name] ==
               # Check to see if any values are part of this observation
               # This keeps us from saving empty observations
               if params["ENCOUNTER"].upcase == "UPDATE HIV STATUS"  and observation[:concept_name].upcase == "PATIENT PREGNANT"
@@ -116,6 +118,10 @@ class EncountersController < ApplicationController
   end
 
   def edit
+  end
+
+  def create_inventory(name, lot_number)
+     
   end
 
   def create
