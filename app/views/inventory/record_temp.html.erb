@@ -20,15 +20,15 @@
     <script>
       setTimeout(function(){
           btnNext.onmousedown = function(){
+              btnNext.onclick = "";
               if (document.getElementById("textFortemperature").value.length > 0) {
                    document.forms[0].submit()
               }else{
                    console.log("Failed: no input")
               }
           }
-
       }, 500)
 
-      btnNext.onclick = "";
+
     </script>
 </html>

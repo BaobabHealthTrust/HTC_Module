@@ -17,9 +17,10 @@
 <script>
     if (typeof btnCancel != 'undefined'){
       btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
-        __$('Space').style.width = "80px";
-    }	
-     
+        try {
+            __$('Space').style.width = "80px";
+        }catch(e){}
+    }
 </script>
 
 </body>
