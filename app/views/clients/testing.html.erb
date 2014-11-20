@@ -17,16 +17,17 @@
       var motherStatus = '<%=  @mother_status.upcase %>'
       var rapidValue = "";
       var goldValue = "";
+      var kits = JSON.parse('<%= @kits.to_json.html_safe %>');
       var testing = parseInt('<%= @testing %>')
       var motherStatus = "";
       var result1 = "";
       var result2 = "";
-			
+
       function activateNext(){
         if (btnNext){
                               if(__$("valid_rapid").value == "no" || __$("valid_gold").value == "no"){
                                          btnNext.onclick = function(){
-
+                                         confirm("Enter correct lot numbers");
                                       };
                               }
                               else {
@@ -45,7 +46,8 @@
                          }
       }
 
-      function checkLot() {	
+      function checkLot() {
+
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                         xmlhttp=new XMLHttpRequest();
                 }else{// code for IE6, IE5
@@ -53,24 +55,24 @@
                 }
                 xmlhttp.onreadystatechange=function() {
                         if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                          var results = xmlhttp.responseText;														
+                          var results = xmlhttp.responseText;
 													if (eval(results) == "none"){
 														 __$("valid_rapid").value = "no"
 														}
 													 else {
-														 __$("valid_rapid").value = "yes"
+														 __$("valid_rapid").value = eval(results)
 														}
                                                                                                          activateNext()
                           }
                         }
 
-                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + "<%= @kits[0][1] %>", true);
+                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
                 xmlhttp.send();
 
-                 setTimeout("checkLot()", 500);
+                 setTimeout("checkLot()", 100);
 }
 
-	function checkSecondLot() {
+	function checkSecondLots() {
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                         xmlhttp=new XMLHttpRequest();
                 }else{// code for IE6, IE5
@@ -82,15 +84,18 @@
 													  if (eval(results.toUpperCase()) == 'NONE'){																
 															__$("valid_gold").value = "no"	
 														}else {
-															__$("valid_gold").value = "yes"
+															__$("valid_gold").value = eval(results)
 														}
-                                                                                                         activateNext()
+                                                                                      
+                                                                                           activateNext();
+                                                                                        
+                                                                                                         
                           }
                         }
 
-                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + "<%= @kits[1][1] %>", true);
+                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
                 xmlhttp.send();
-                 setTimeout("checkSecondLot()", 500);
+                 setTimeout("checkSecondLots()", 100);
 }	
 
       function setValues(){
@@ -142,7 +147,11 @@
         html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
         html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
         html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
-        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>'
+        if (message == "Enter correct lot numbers"){
+          html += '<div id="confirm"><button class="button red" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">Ok</button></div>';
+        }else{
+          html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>';
+        }
         html += "</div></div></div></div></div>"
         ele.innerHTML =  html;
         document.body.appendChild(ele);
@@ -295,7 +304,7 @@
 					
             row1.appendChild(cell1_1);
 					
-            var timer1 = addTimer(cell1_1, 10, "<%= @kits[0][1] rescue "none" %> Test Timer", 0.55)
+            var timer1 = addTimer(cell1_1, 10, kits[0][1] + " Test Timer", 0.55)
 
             timer1.style.marginLeft = "40px";
 					
@@ -309,7 +318,7 @@
 					
             row1.appendChild(cell1_2);
 					
-            var timer2 = addTimer(cell1_2, 15, "<%= @kits[1][1] rescue 'none' %> Test Timer", 0.55);
+            var timer2 = addTimer(cell1_2, 15, kits[1][1] + "  Test Timer", 0.55);
 					
             timer2.style.marginLeft = "40px";
 					
@@ -392,12 +401,12 @@
 			}	
 		</style>
   </head>
-  <body onLoad="checkKits();setValues();checkLot();checkSecondLot();">
+  <body onLoad="checkKits();setValues();checkLot();checkSecondLots();">
 
     <%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
-			<input type="hidden" value="" id="valid_rapid"/>
-			<input type="hidden" value="" id="valid_gold"/>
+			<input type="hidden" value="" id="valid_rapid" name="test1 done"/>
+			<input type="hidden" value="" id="valid_gold" name="test2 done"/>
       <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
       <input type="hidden" value="" name="all timers request" id="alltimers"/>
 
@@ -413,16 +422,16 @@
 
       <fieldset>
         <legend>HIV Testing</legend>
-              <label for="rapid_lot"><%= @kits[0][1] %> Lot Number</label>
+              <label for="rapid_lot"><%= @kits[0][1] rescue "" %> Lot Number</label>
               <input type='text' id="rapid_lot" name="observations[][value_text]"
-              onload="checkLot()" fieldtype="number" />
+               />
               <%= hidden_field_tag("observations[][concept_name]",        "test 1 lot number") %>
               <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 
-	      <label for="gold_lot"><%= @kits[1][1] %> Lot Number</label>
+	      <label for="gold_lot"><%= @kits[1][1] rescue "" %> Lot Number</label>
               <input type='text' id="gold_lot" name="observations[][value_text]"
-              onload="checkSecondLot()" fieldtype="number" />
+              />
               <%= hidden_field_tag("observations[][concept_name]",        "test 2 lot number") %>
               <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
@@ -442,7 +451,7 @@
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" />
 
-        <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] %>" />
+        <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
@@ -463,7 +472,7 @@
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
-        <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] %>" />
+        <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue "" %>" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
@@ -491,8 +500,14 @@
 
 
 function checkKits(){
+     __$("gold_lot").value = "";
+     __$("rapid_lot").value = "";
+     __$("customresult1").value = "";
+     __$("customresult2").value = "";
+     reset();
       if (testing == 0){
                 loadMessage('You do not have one of the test kits ','clients/<%= params[:client_id] %> ', 1500);
       }
+      
   }
 </script>

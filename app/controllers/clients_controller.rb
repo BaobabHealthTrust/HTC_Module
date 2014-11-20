@@ -326,7 +326,7 @@ class ClientsController < ApplicationController
 	def testing
     
      @kits, @remaining, @testing = Kit.kits_available(current_user)
-
+     
       current_date = (session[:datetime].to_date rescue Date.today)
   		@client = Client.find(params[:client_id])
       type = EncounterType.find_by_name("HIV testing").encounter_type_id

@@ -9,7 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
-    
+
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])
@@ -54,7 +54,13 @@ class EncountersController < ApplicationController
 
               next if observation[:concept_name].blank?
 
-             # if observation[:concept_name] ==
+              if params["ENCOUNTER"].upcase == "HIV TESTING"
+                  (1..2).each{|i|
+                     if observation[:concept_name] ==  "HTC Test #{i} name"
+                        used = CouncillorInventory.create_used_testkit(observation[:value_text], params["test#{i} done"], current, current_user)
+                     end
+                  }
+              end
               # Check to see if any values are part of this observation
               # This keeps us from saving empty observations
               if params["ENCOUNTER"].upcase == "UPDATE HIV STATUS"  and observation[:concept_name].upcase == "PATIENT PREGNANT"
@@ -100,9 +106,7 @@ class EncountersController < ApplicationController
                 Observation.create(observation) rescue []
               end
               
-             
             end
-    
     if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
     		redirect_to waiting_list_path and return
     end
