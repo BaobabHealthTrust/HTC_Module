@@ -1,11 +1,8 @@
 <html>
     <head>
+		<%= javascript_include_tag 'custom' %>
 	<script>
-                  <% if @client.partner_present == true %>
-                    var cancelDestination = "/client_current_visit?client_id=<%= params[:client_id] %>"
-                  <% else %>
-                var cancelDestination = "clients/<%= params[:client_id] %>";
-                <% end %>
+								 var cancelDestination = addLink(window, <%=params[:client_id] %>)
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   for (i = 1; i <= list.length; i ++){

@@ -6,13 +6,11 @@
       }
     </style>
     <%= javascript_include_tag 'jquery-1.3.2.min' %>
+		<%= javascript_include_tag 'custom' %>
     <script>
 
-      <% if @client.partner_present == true %>
-        var cancelDestination = "/client_current_visit?client_id=<%= params[:client_id] %>"
-      <% else %>
-         var cancelDestination = "/clients/<%= params[:client_id] %>?tab=task";
-      <% end %>
+      var cancelDestination = addLink(window, <%=params[:client_id] %>)
+
       var age = '<%= @client.person.age rescue 0 %>'
       var motherStatus = '<%=  @mother_status.upcase %>'
       var rapidValue = "";
@@ -506,7 +504,7 @@ function checkKits(){
      __$("customresult2").value = "";
      reset();
       if (testing == 0){
-                loadMessage('You do not have one of the test kits ','clients/<%= params[:client_id] %> ', 1500);
+                loadMessage('You do not have one of the test kits ', addLink(window, <%=params[:client_id] %>), 1500);
       }
       
   }

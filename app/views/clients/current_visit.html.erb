@@ -2,38 +2,21 @@
 <html>
 	<head>
 		<title>Current Visit</title>
+		<%= javascript_include_tag 'custom' %>
 		<script>
 								  function __$(id){
 										return document.getElementById(id)
 									}
+									
+								 function logout(){
+									
+								}
 
-									function pos(obj) {
-										 var obj2 = obj;
-										 var curtop = 0;
-										 var curleft = 0;
-										 if (document.getElementById || document.all) {
-											do  {
-											 curleft += obj.offsetLeft-obj.scrollLeft;
-											 curtop += obj.offsetTop-obj.scrollTop;
-											 obj = obj.offsetParent;
-											 obj2 = obj2.parentNode;
-											 while (obj2!=obj) {
-												curleft -= obj2.scrollLeft;
-												curtop -= obj2.scrollTop;
-												obj2 = obj2.parentNode;
-											 }
-											} while (obj.offsetParent)
-										 } else if (document.layers) {
-											curtop += obj.y;
-											curleft += obj.x;
-										 }
-										 return [curtop, curleft];
-										}
 
                   function loadTasks(){
-											coordinates = pos(__$("tasks"))
+											coordinates = position(__$("tasks"))
                       var htcTasks = [["Assessment", "/client_assessment/<%= @client.id %>", "assessment"],[ "Counseling", "/client_counseling?client_id=<%= @client.id %>", "counseling"],
-                          ["HIV Testing", "/client_testing?client_id=<%= @client.id -%>","testing"],["Extended Testing", "/extended_testing/<%= @client.id -%>","extend"],["Schedule", "/appointment/<%= @client.id %>","appointment"],["Referral","/referral_consent/<%= @client.id %>","confirm"]]
+                          ["HIV Testing", "/client_testing?client_id=<%= @client.id -%>","testing"],["Extended Testing", "/extended_testing/<%= @client.id -%>","extend"],["Schedule", "/appointment/<%= @client.id %>","appointment"],["Referral","/referral_consent/<%= @client.id %>","confirmation"]]
                      var ele = document.getElementById('cover');
                       ele.style.display = "inline";
                       document.body.appendChild(ele);
@@ -89,6 +72,7 @@
 								}
 
 										function createButtons(){
+													  
 														var covers =  document.getElementById("frame_data");
 														html = '<button class="blue" style="width:120px;" onmousedown="window.location = ' + "'/client_demographics?client_id=<%= @client.id -%>'" + '">';
 														html +=  'Demo..</button>';
@@ -217,7 +201,7 @@
 	background-size: cover;
 }
 
-#confirm {
+#confirmation {
 	background-image: url(<%= asset_path 'hospital.png' %>);
 	background-size: cover;
 }

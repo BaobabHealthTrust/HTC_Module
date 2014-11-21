@@ -1,12 +1,9 @@
 <html>
 <head>
+		<%= javascript_include_tag 'custom' %>
 		<script>
-                  <% if @client.partner_present == true %>
-                    var cancelDestination = "/client_current_visit?client_id=<%= params[:id] %>"
-                  <% else %>
-                     var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
-                <% end %>
-			
+                var cancelDestination = addLink(window, <%=params[:id] %>)
+								
 
                       function __$(id){
                             return document.getElementById(id);

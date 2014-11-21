@@ -6,13 +6,10 @@
       }
     </style>
     <%= javascript_include_tag 'jquery-1.3.2.min' %>
+		<%= javascript_include_tag 'custom' %>
     <script>
 
-      <% if @client.partner_present == true %>
-        var cancelDestination = "/client_current_visit?client_id=<%= params[:id] %>"
-      <% else %>
-         var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
-      <% end %>
+			var cancelDestination = addLink(window, <%=params[:id] %>)
 
       var rapidValue = "";
       var goldValue = "";
@@ -210,7 +207,7 @@
      __$("customresult2").value = "";
      reset();
       if (testing == 0){
-                loadMessage('You do not have one of the test kits ','clients/<%= params[:id] %> ', 1500);
+                loadMessage('You do not have one of the test kits ',addLink(window, <%=params[:id] %>), 1500);
       }
   }
 

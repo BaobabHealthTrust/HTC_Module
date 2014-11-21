@@ -1,7 +1,7 @@
 class HtcsController < ApplicationController
   before_action :set_htc, only: [:show, :edit, :update, :destroy]
 
-  def index
+  def index		
   	tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
 		@date = (session[:datetime].to_date rescue Date.today.to_date)

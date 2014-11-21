@@ -42,7 +42,7 @@ function subtractMinutes(limit, minutes){
         return newtime;
 }
 
-      function showListItems(target, parent, options){
+function showListItems(target, parent, options){
 
         parent.innerHTML = "<ul id='listing'> </ul>"
         for (var i in options){
@@ -61,7 +61,7 @@ function subtractMinutes(limit, minutes){
         }
       }
 
-    function highlight(item) {
+ function highlight(item) {
 
         var opts = item.parentNode.children;
 
@@ -81,3 +81,40 @@ function subtractMinutes(limit, minutes){
             ele = document.getElementById('popup')
             ele.style.display = "none";
      }
+
+	 function addLink(page, id){
+		 path =  "/clients/" + id;
+		 if (page != page.top) {     
+						 if (page.top.location.href.match(/couple/g)){
+								path = "/client_current_visit?client_id=" + id; 
+						 }
+						 else {
+								path = "/clients/" + id;
+							} 
+					
+			} 
+		return path;
+	}
+
+function position(obj) {
+	 var obj2 = obj;
+	 var curtop = 0;
+	 var curleft = 0;
+	 if (document.getElementById || document.all) {
+		do  {
+		 curleft += obj.offsetLeft-obj.scrollLeft;
+		 curtop += obj.offsetTop-obj.scrollTop;
+		 obj = obj.offsetParent;
+		 obj2 = obj2.parentNode;
+		 while (obj2!=obj) {
+			curleft -= obj2.scrollLeft;
+			curtop -= obj2.scrollTop;
+			obj2 = obj2.parentNode;
+		 }
+		} while (obj.offsetParent)
+	 } else if (document.layers) {
+		curtop += obj.y;
+		curleft += obj.x;
+	 }
+	 return [curtop, curleft];
+	}
