@@ -265,9 +265,11 @@
         <script type="text/javascript">
 						<% if !@waiting_list.blank? %>
 							var cancelDestination = "<%= waiting_list_path %>";
-						<% else %>
-							var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
-						<% end %>
+						<% elsif @client.partner_present == true %>
+                                                var cancelDestination = "/client_current_visit?client_id=<%= params[:id] %>"
+                                              <% else %>
+                                                 var cancelDestination = "/clients/<%= params[:id] %>?tab=task";
+                                              <% end %>
 						
         
             var sel = {};

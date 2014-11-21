@@ -33,6 +33,10 @@
 			function loadCustom(){
 				if(__$("main-content-area")){
                                       __$('stage').style.display = "none"
+                                      <% if @client.partner_present == true %>
+                                            __$("main-content-area").style.height = (screen.height - 250) + "px";
+                                            __$('row1').parentNode.style.height = (screen.height - 70) + "px";
+                                      <%  end %>
                                        __$("buttons").style.verticalAlign = "bottom";
                                         btnNext.id = "newBtn";
                                         btnNext.style.width = "250px";
@@ -267,52 +271,6 @@
                                         cell3.id = "links"
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
-/*
-                                         var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-                                        row1.id = "demographics"
-					table.appendChild(row1);
-                                       
-                                        var cell1 = document.createElement("div");
-					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Office Phone Number"
-                                        row1.appendChild(cell1)
-
-                                        var cell2 = document.createElement("div");
-					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
-                                        cell2.innerHTML = '<%= @office_phone_number rescue "" %>' ;
-                                        row1.appendChild(cell2)
-
-                                         var cell3 = document.createElement("div");
-					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'office_phone_number' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
-
-                                         var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-                                        row1.id = "demographics"
-					table.appendChild(row1);
-
-                                        var cell1 = document.createElement("div");
-					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Home Phone Number"
-                                        row1.appendChild(cell1)
-
-                                        var cell2 = document.createElement("div");
-					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
-                                        cell2.innerHTML = '<%= @home_phone_number rescue "" %>' ;
-                                        row1.appendChild(cell2)
-
-                                         var cell3 = document.createElement("div");
-					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'home_phone_number' + "' class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3) */
                                 }
                         }
 	</script>
@@ -321,6 +279,7 @@
    pointer-events: none;
    cursor: default;
 }
+
 table{
   width: 100%;
 }
@@ -358,9 +317,11 @@ table{
 #buttons{
   height: 20px ! important;
 }
+<% if @client.partner_present != true %>
 #main-content-area{
-   height: 576px ! important;
+   height: 576px ! important; 
 }
+<% end %>
       </style>
      </head>
 <body onload="adjust()" >
@@ -390,10 +351,15 @@ table{
 </body>
 </html>
 <script>
-   function adjust(){
-          node =  document.getElementById('row2').childNodes[0].childNodes[0]
+    function adjust(){
+           node =  document.getElementById('row2').childNodes[0].childNodes[0]
            node.style.height = "92px"
            document.getElementById('row2').childNodes[0].style.height = "92px"
            document.getElementById('row2').style.height = "92px"
+
+           <% if @client.partner_present == true %>
+                  __$("main-content-area").style.height = (screen.height - 250) + "px";
+                  __$('row1').parentNode.style.height = (screen.height - 70) + "px";
+          <%  end %>
   }
 </script>

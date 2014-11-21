@@ -370,6 +370,7 @@ class ClientsController < ApplicationController
 	end
 
   def appointment
+			@client = Client.find(params[:id])
   		today = (session[:datetime].to_date rescue Date.today)
   		@start_week_date = today - 1.week
   		@initial_date =  today + 1.day
@@ -640,7 +641,7 @@ class ClientsController < ApplicationController
             concept_id = ConceptName.find_by_name("partner or spouse").concept_id
             answer =  ConceptName.find_by_name("yes").concept_id
             p_session = encounter_done(@scanned.patient_id, 'IN SESSION')
-            if p_session.blank?
+            if ! p_session.blank?
                 encounter = p_session.first
             else
                 encounter = write_encounter("IN SESSION", @scanned)
@@ -649,7 +650,7 @@ class ClientsController < ApplicationController
             if c_session.blank?
                c_session = write_encounter("IN SESSION", Client.find(params[:client]))
             end
-           
+            
             obs = Observation.create(person_id: encounter.patient_id, concept_id: concept_id,encounter_id: encounter.encounter_id,
                       obs_datetime: encounter.encounter_datetime,
                       creator: current_user.id, value_coded: answer)
