@@ -4,9 +4,7 @@ class CounselorController < ApplicationController
     details = {}
     if params[:user_id]
 				if params[:month]
-				month = params[:month].to_i + 1
-        start_day = "#{params[:year]}-#{month}-01".to_date
-				end_day = start_day.end_of_month
+        start_day, end_day = build_date(params[:month], params[:year])
         proficiency_tests = TestEncounter.where("creator = ? and test_encounter_type = ? and voided = 0 
 														AND DATE(encounter_datetime) >= ? AND  DATE(encounter_datetime) <= ?",
                                       params[:user_id], test_id, start_day, end_day ).order(id: :desc)
@@ -298,8 +296,39 @@ class CounselorController < ApplicationController
     render text: details.to_json
   end
 
+  def monthly_details
+    details = {}
+    start_day, end_day = build_date(params[:month], params[:year])
+
+    cats = {"Sex and Pregnancy" => [["2", "Males Tested"],["3","Females (Non-Pregnant) Tested"],["4","Females (Pregnant) Tested"],["4a","Total Tested"],["4b","Percent Males"]],
+            "Age Group" => [["5","Age group A (0-11 Months)"], ["6", "Age group B (12m - 14 years)"],["7","Age group C (15 - 24 years)"],["8","Age group D (25+years)"],["8a","Proportion Age Goup C" ]],
+            "HTC Access Type" => [["9","PITC (Routine HTC within Health Service)"], ["10","FRS (Comes with HTC Family Referral Slip)"],["11","Other (VCT, etc)"],
+            ["12", "Proportion of PITC"]
+            ], "Partner Present" => [["14","Individuals Counselled with Partner"]],
+            "Last HIV Test" => [["15","Never Tested"],["16","Last Negative"],["17","Last Positive"],["18","Last Exposed Infant"],["19","Last Inconclusive"],["18","Proportion First Time Clients"]],
+            "Test Kit Results" => [["21","Single Test Negative"],["22","Single Test Positive"],["23","Test 1&2 Negative"],["24","Test 1&2 Positive"], ["25","Test 1&2 Discordant"], ["26","Proportion Discordant"]],
+            "Results to Client" => [["27","New Negative"],["28","New Positive"],["29","New Exposed"],["30","Confirmatory - Positive"],["31","New Inconclusive"],["32","Confirmatory - Inconclusive"],["33a","Proportion Positive"]],
+            "Partner HIV Status" => [["34","No Partner"],["35","HIV Unknown"],["36","Partner Never"],["37","Partner Positive"],["38","Proportion with Partner Unknown HIV Status"]],
+            "Client Risk Category" => [["40","Low Risk"],["41","On-going Risk"]]
+            }
+
+    render text: cats.to_json
+  end
+
+  def moh_details
+      details = {}
+      details["Sex / Pregnancy"] = [["1", "Male"],["2","Female Non-Pregnant"],["3","Female Pregnant"]]
+      render text: details.to_json
+  end
+
   def new_test
       @tests = ["Official Result"]
+  end
+
+  def build_date(mon, yr)
+        month = mon.to_i + 1
+        start_day = "#{yr}-#{month}-01".to_date
+				return start_day,  start_day.end_of_month
   end
 
   def get_id(concept)
