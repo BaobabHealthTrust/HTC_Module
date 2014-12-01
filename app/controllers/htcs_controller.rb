@@ -6,6 +6,12 @@ class HtcsController < ApplicationController
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
 		@date = (session[:datetime].to_date rescue Date.today.to_date)
 
+    @temp = TestObservation.find_by_sql(["SELECT e.encounter_datetime, o.obs_datetime, o.value_numeric FROM test_encounter e
+          INNER JOIN test_observation o ON o.encounter_id = e.id AND e.test_encounter_type = ?
+          WHERE o.concept_id = ? ORDER BY o.obs_datetime DESC LIMIT 1",
+                                         encounter_type = TestEncounterType.where(name: 'Temperature Quality Control').first,
+    ConceptName.where(name: 'Temperature').first.concept_id])
+
 		if session[:location_id].nil?
 			session[:user_id] = nil
 			redirect_to "/login" and return

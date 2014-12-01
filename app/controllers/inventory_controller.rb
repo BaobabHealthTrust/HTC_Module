@@ -257,7 +257,9 @@ class InventoryController < ApplicationController
     type = InventoryType.find_by_name("Losses").id
 
     captured_data.each do |kit_name, opts|
-
+      kit_text = nil
+      kit_type = Kit.where(name: kit_name).first.id rescue nil
+      kit_text = kit_name if kit_type.blank?
       opts.each do |value|
         lot_number = value["Lot number"]
         qty = value["Quantity"].blank? ? "" : value["Quantity"].to_i
@@ -265,6 +267,8 @@ class InventoryController < ApplicationController
         if (!lot_number.blank? && !qty.blank? && qty > 0)
           Inventory.create(lot_no: lot_number,
                            value_numeric: qty,
+                           kit_type: kit_type,
+                           value_text: kit_text,
                            inventory_type: type,
                            encounter_date: @session_date,
                            voided: false,
@@ -354,7 +358,7 @@ class InventoryController < ApplicationController
     lot_number = params[:lot_number]
     inv_type = params[:type] == "kit" ? "Delivery" : "Serum Delivery"
     result = {td_id: params[:td_id]}
-    result["tt"] = inv_type;
+    result["tt"] = inv_type
     date = Inventory.where(inventory_type: InventoryType.where(name: inv_type).first.id,
                            lot_no: lot_number).first.date_of_expiry.strftime("%d %b, %Y") rescue "?"
 
