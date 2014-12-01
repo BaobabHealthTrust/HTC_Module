@@ -14,4 +14,4 @@
 15. Added couples testing
 16. added HTC workflow for automated next task
 17. separated dashcoards for couples and single client
-
+18. Added the inventory stock report
