@@ -331,9 +331,30 @@
       cell.appendChild(gTable)
 
       for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
+        addKits(gender[i], gTable)
       }
     }
+
+     function addKits(d, t){
+       var row = document.createElement("div");
+       row.className = "data-row";
+       t.appendChild(row);
+
+      var cell = document.createElement("div");
+      cell.className = "kit-number-td";
+      cell.innerHTML = d[0];
+      row.appendChild(cell);
+
+       var cell = document.createElement("div");
+      cell.className = "kit-name-td";
+      cell.innerHTML = d[1];
+      row.appendChild(cell);
+
+       var cell = document.createElement("div");
+      cell.className = "kit-result-td";
+      cell.innerHTML = d[2];
+      row.appendChild(cell);
+     }
 
     function addRow(d, t){
        var row = document.createElement("div");
@@ -503,6 +524,21 @@
 
 }
 
+.kit-number-td{
+  display: table-cell;
+  float: left ! important;
+  width: 50%;
+
+}
+
+  .kit-result-td {
+  display: table-cell;
+  float: right;
+}
+.kit-name-td{
+  display: table-cell;
+  float: left;
+}
 .category{
   width:30%;
 }
@@ -514,6 +550,8 @@
   display: table-cell;
   float: left;
 }
+
+
     .site-label{
       font-weight: bold;
       font-size: 25px;
@@ -528,7 +566,6 @@
       display: table-row;
       border-style: solid;
       width: 100%;
-      text-align: center;
       margin:auto;
 }
 

@@ -380,14 +380,22 @@ class CounselorController < ApplicationController
       details["Partner Present"] = [["18","Partner",get_value("14", "monthly", start_day, end_day)],
                                                 ["19","Partner not",get_value("14a", "monthly", start_day, end_day)],
                                                 ["20","Discordant Couples",get_value("14b", "monthly", start_day, end_day)],
-                                                ["21","Disc +ve(female)",get_value("14c", "monthly", start_day, end_day)]]
-      details["Result Given to Client"] = [["27","New Negative"],["28","Positive"],["29","New exposed infant"],["30","New inconclusive"],
-                                                            ["31","Confirmatory positive"],["32","Conf. inconclusive"]
+                                                ["21","Disc +ve(female)", get_value("14c", "monthly", start_day, end_day)]]
+      details["Result Given to Client"] = [["27","New Negative", get_value("27", "monthly", start_day, end_day)],
+                                                ["28","Positive", get_value("28", "monthly", start_day, end_day)],
+                                                ["29","New exposed infant", get_value("29", "monthly", start_day, end_day)],
+                                                ["30","New inconclusive", get_value("30", "monthly", start_day, end_day)],
+                                                ["31","Confirmatory positive", get_value("31", "monthly", start_day, end_day)],
+                                                ["32","Conf. inconclusive", get_value("32", "monthly", start_day, end_day)]
                                                           ]
-      details["HTC Access Type"] = [["10","PITC"],["11","FRS"],["12","Other (VCT, etc)"]]
+      details["HTC Access Type"] = [["10","PITC", get_value("9", "monthly", start_day, end_day)],
+                                                ["11","FRS", get_value("10", "monthly", start_day, end_day)],
+                                                ["12","Other (VCT, etc)", get_value("11", "monthly", start_day, end_day)]]
       details["Partner HTC Slips Given"] = [["33","Sum of all slips"]]
 
       details["Test Kit Use Summary"] = {}
+
+
       details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name"],
         ["Total tests in stock at start of 1st day of reporting month","Opening"],
                                                                                   ["Total tests received at this location during this month","Receipts"],
@@ -501,15 +509,18 @@ class CounselorController < ApplicationController
       when "14"
           ids = (@@males + @@non_preg_females + @@preg_females)
           get_results("partner or spouse", "YES", start, end_day, ids.join(',') )
-
+      when "14a"
+            ids = (@@males + @@non_preg_females + @@preg_females)
+           get_results("partner or spouse", "NO", start, end_day, ids.join(',') )
       when "14b"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("spouse/partner", "couple", start, end_day, ids.join(',') )
-
-      when "14b"
-          ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("partner or spouse", "NO", start, end_day, ids.join(',') )
-
+         disc = get_results("spouse/partner", "couple", start, end_day, ids.join(',') )[0]
+         return disc
+      when "14c"
+         ids = (@@males + @@non_preg_females + @@preg_females)
+         positive = get_results("spouse/partner", "couple", start, end_day, ids.join(',') )[1]
+         
+         return positive
       when "15"
           ids = (@@males + @@non_preg_females + @@preg_females)
           get_results("last HIV test", "Never tested", start, end_day, ids.join(',') )
@@ -535,27 +546,27 @@ class CounselorController < ApplicationController
 
       when "21"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[0]
 
 
       when "22"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[1]
 
 
       when "23"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[2]
 
 
       when "24"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[3]
 
 
       when "25"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[4]
 
 
       when "26"
@@ -565,32 +576,32 @@ class CounselorController < ApplicationController
 
       when "27"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Negative", start, end_day, ids.join(',') )[0]
 
 
       when "28"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Positive", start, end_day, ids.join(',') )[1]
 
 
       when "29"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Exposed Infant", start, end_day, ids.join(',') )[2]
 
 
       when "30"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("Confirmatory Positive", start, end_day, ids.join(',') )[3]
 
 
       when "31"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Inconclusive", start, end_day, ids.join(',') )[4]
 
 
       when "32"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("Inconclusive", start, end_day, ids.join(',') )[5]
 
 
       when "33a"
@@ -645,7 +656,8 @@ class CounselorController < ApplicationController
                               (SELECT DISTINCT(o.person_id) FROM obs o
                               WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
                               AND o.concept_id = #{concept_id} AND o.value_coded = #{value_coded} AND o.person_id IN (#{ids}))").map{|p| p.person_id }.uniq.length rescue 0
-   elsif concept == "spouse/partner" and answer == "couple"
+
+    elsif concept == "spouse/partner" and answer == "couple"
               concept_id = get_id("partner or spouse")
                 value_coded= get_id("YES")
 
@@ -659,19 +671,118 @@ class CounselorController < ApplicationController
                                                                   OR (person_a = (#{encounter}) AND person_b = (#{encounter}))
                                                                   AND relationship = ?", relationship_type).order(relationship_id: :desc).collect { |p|
                                                                   [p.person_a, p.person_b]} rescue []
-              concept_id = get_id("partner or spouse")
-              relation.each { |r|
-                    r_1 = encounter = Encounter.find_by_sql("SELECT DISTINCT(o.person_id) FROM obs o
-                              WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
-                              AND o.concept_id = #{concept_id} AND o.value_coded = #{value_coded} AND o.person_id IN (#{ids})")
 
+             concept_id = get_id("Result of hiv test")
+              discordant = 0
+              positive = 0
+              relation.each { |r|
+                    r_1 = spouse_result(start, end_day, r[0], concept_id)
+                    r_2 = spouse_result(start, end_day, r[1], concept_id)
+                    if r_1 != r_2
+                      discordant += 1
+                       if Person.find(r[0]).gender.upase == "FEMALE" and r_1.upcase == "NEGATIVE"
+                          positive += 1
+                       end
+                       if Person.find(r[1]).gender.upase == "FEMALE" and r_2.upcase == "NEGATIVE"
+                           positive += 1
+                       end
+                    end
+            
               }
-              raise  relation.to_yaml
+           
+             return [discordant , positive]
     else
          encounter = Encounter.find_by_sql("SELECT DISTINCT(o.person_id) FROM obs o
                               WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
                               AND o.concept_id = #{concept_id} AND o.value_coded = #{value_coded} AND o.person_id IN (#{ids})").map{|p| p.person_id }.uniq.length rescue 0
        end
+  end
+
+  def outcomes( start, end_day, ids)
+       type = "HIV Testing"
+       et = EncounterType.where(name: type).take.id
+
+      single_neg = 0
+      single_pos = 0
+      t1_t2_neg = 0
+      t1_t2_pos = 0
+      t1_t2_disc = 0
+
+      test_1 = get_id("HTC Test 1 result")
+      test_2 = get_id("HTC Test 2 result")
+    (ids.split(',') || []).each { |p|
+        latest = Encounter.where("encounter_type = #{et} AND patient_id = #{p}
+          AND DATE(encounter_datetime) >= ? AND DATE(encounter_datetime) <= ?",
+          start, end_day).order(encounter_datetime: :desc).pluck(:encounter_id).max
+
+       first_result = Encounter.find(latest).observations.where(concept_id: test_1).first.answer_string.squish rescue ""
+       second_result = Encounter.find(latest).observations.where(concept_id: test_2).first.answer_string.squish rescue ""
+
+       if first_result.blank? or second_result.blank?
+          if first_result.upcase == "NEGATIVE" or second_result.upcase == "NEGATIVE"
+              single_neg += 1
+          elsif first_result.upcase == "POSITIVE" or second_result.upcase == "POSITIVE"
+              single_pos += 1
+          end
+       elsif first_result.upcase == "POSITIVE" and second_result.upcase == "POSITIVE"
+          t1_t2_pos += 1
+        elsif first_result.upcase == "NEGATIVE" and second_result.upcase == "NEGATIVE"
+           t1_t2_neg += 1
+       else
+           t1_t2_disc += 1
+       end     
+    }
+
+    return [single_neg, single_pos, t1_t2_neg, t1_t2_pos, t1_t2_disc]
+  end
+
+  def results_given(cat, start, end_day, ids)
+    concept_id = get_id("last hiv test")
+    value_coded =  get_id("Never Tested")
+    new_patients = Observation.find_by_sql("SELECT DISTINCT(person_id) FROM obs o
+                              WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
+                              AND o.concept_id = #{concept_id} AND value_coded = #{value_coded} AND o.person_id IN (#{ids}) ORDER BY obs_datetime DESC LIMIT 1").map{|p| p.person_id }
+   
+    concept_id = get_id("Result of hiv test")
+    new_pos = 0
+    new_neg = 0
+    new_exposed = 0
+    new_inc = 0
+    positive = 0
+    inc = 0
+    if cat == "New Positive" or cat == "New Negative" or cat == "New Exposed Infant" or cat == "New Inconclusive"
+      (new_patients || []).each{|p|
+           result = spouse_result(start, end_day, p, concept_id)
+
+           if result.upcase == "NEGATIVE"
+             new_neg += 1
+           elsif result.upcase == "POSITIVE"
+             new_pos += 1
+           elsif result.upcase == "EXPOSED INFANT"
+             new_exposed += 1
+           elsif result.upcase == "INCONCLUSIVE"
+             new_inc += 1
+           end
+      }
+    else
+      (ids.split(',') || []).each { |p|
+          result = spouse_result(start, end_day, p, concept_id)
+          if result.upcase == "INCONCLUSIVE"
+             inc += 1
+          elsif result.upcase == "POSITIVE"
+             positive += 1
+          end
+
+      }
+    end
+    return [new_neg, new_pos,  new_exposed, positive, new_inc, inc]
+  end
+
+  def spouse_result(start, end_day, r, concept_id)
+      e = Observation.find_by_sql("SELECT * FROM obs o
+                              WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
+                              AND o.concept_id = #{concept_id} AND o.person_id = #{r} ORDER BY obs_datetime DESC LIMIT 1").first.answer_string.squish
+
   end
 
   def get_access_type(ids, segment, start, end_day)
