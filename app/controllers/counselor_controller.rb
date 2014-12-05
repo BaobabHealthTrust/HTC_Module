@@ -365,18 +365,19 @@ class CounselorController < ApplicationController
                                                  ["16","Prev Exposed infant",get_value("18", "monthly", start_day, end_day)],
                                                  ["17","Prev Inconclusive",get_value("19a", "monthly", start_day, end_day)]]
       details["Outcome Summary (HIV Test)"] = [["22","Single negative",get_value("21", "monthly", start_day, end_day)],
-                                                 ["23","Single Negative",get_value("22", "monthly", start_day, end_day)],
+                                                 ["23","Single Positive",get_value("22", "monthly", start_day, end_day)],
                                                  ["24","Test 1&2 negative",get_value("23", "monthly", start_day, end_day)],
                                                  ["25","Test 1&2 positive",get_value("24", "monthly", start_day, end_day)],
                                                  ["26","Test 1&2 discodant",get_value("25", "monthly", start_day, end_day)]]
       details["Age groups"] = {}
-      details["Age groups"]["Sections"] = ["M","FNP","FP","M+","FNP+","FP+"]
-      details["Age groups"]["Values"]= [["4","0-11 months",get_value("5", "monthly", start_day, end_day)],
-                                                ["5", "1-9 years",get_value("6", "monthly", start_day, end_day)],
-                                                ["6","10-14 years",get_value("7", "monthly", start_day, end_day)],
-                                                ["7","15-19 years",get_value("8", "monthly", start_day, end_day)],
-                                                ["8","20-24 years",get_value("", "monthly", start_day, end_day)],
-                                                ["9","25 years above",get_value("25", "monthly", start_day, end_day)]]
+      details["Age groups"]["Sections 1"] = ["M","FNP","FP"]
+      details["Age groups"]["Sections 2"] = ["M+","FNP+","FP+"]
+      details["Age groups"]["Values"]= [["4","0-11 months",get_value("5c", "monthly", start_day, end_day)],
+                                                ["5", "1-9 years",get_value("6c", "monthly", start_day, end_day)],
+                                                ["6","10-14 years",get_value("7c", "monthly", start_day, end_day)],
+                                                ["7","15-19 years",get_value("10a", "monthly", start_day, end_day)],
+                                                ["8","20-24 years",get_value("10b", "monthly", start_day, end_day)],
+                                                ["9","25 years above",get_value("8c", "monthly", start_day, end_day)]]
       details["Partner Present"] = [["18","Partner",get_value("14", "monthly", start_day, end_day)],
                                                 ["19","Partner not",get_value("14a", "monthly", start_day, end_day)],
                                                 ["20","Discordant Couples",get_value("14b", "monthly", start_day, end_day)],
@@ -394,15 +395,25 @@ class CounselorController < ApplicationController
       details["Partner HTC Slips Given"] = [["33","Sum of all slips"]]
 
       details["Test Kit Use Summary"] = {}
+      
+      tests = FacilityStock.kits_available
 
+      opening =[ FacilityStock.remaining_stock_by_type(tests[0],start_day, 'opening'), FacilityStock.remaining_stock_by_type(tests[1],start_day, 'opening')]
+      closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+      recepts =[ FacilityStock.receipts(tests[0],start_day, end_day), FacilityStock.receipts(tests[1],start_day, end_day)]
+     client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
+     pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
+     losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
+      closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
 
-      details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name"],
-        ["Total tests in stock at start of 1st day of reporting month","Opening"],
-                                                                                  ["Total tests received at this location during this month","Receipts"],
-                                                                                    ["Total tests used for testing clients","Clients"],
-                                                                                    ["Total tests used for other purposes","Other"],
-                                                                                  ["Total tests expired / disposed, etc","Losses"],["Epected remaining Balance","Balance"],
-                                                                                  ["Physical tests in stock at end of last day of month","closing"],
+      details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],
+        ["Total tests in stock at start of 1st day of reporting month","Opening", opening],
+                                                                                  ["Total tests received at this location during this month","Receipts", recepts],
+                                                                                    ["Total tests used for testing clients","Clients", client_tests],
+                                                                                    ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
+                                                                                  ["Total tests expired / disposed, etc","Losses",losses],
+                                                                                  ["Epected remaining Balance","Balance", closing],
+                                                                                  ["Physical tests in stock at end of last day of month","closing", ["",""]],
                                                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"
                                                                                   ]]
       details["Test Kit Use Summary"]["Test 1"] = {}
@@ -456,7 +467,7 @@ class CounselorController < ApplicationController
             return  (@@males + @@non_preg_females + @@preg_females).length
 
           when "4b"
-               return "#{((@@males.length / (@@males.length + @@non_preg_females.length + @@preg_females.length)) * 100)}  %"
+               return "#{((@@males.length / (@@males.length + @@non_preg_females.length + @@preg_females.length)) * 100)}  %" rescue "0 %"
       when "5"
          @@age_a = get_age(start, end_day, 0, 1)
       when  "5a"
@@ -465,10 +476,16 @@ class CounselorController < ApplicationController
       when "5b"
            get_age(start, end_day, 0, 1, "female" )
 
+      when "5c"
+           get_age_diff(start, end_day, 0, 1 )
+
        when "6"
          @@age_b = get_age(start, end_day, 1, 15)
       when  "6a"
           get_age(start, end_day, 1, 15, "male" )
+
+      when  "6c"
+          get_age_diff(start, end_day, 1, 10 )
 
       when "6b"
            get_age(start, end_day, 1, 15, "female" )
@@ -481,15 +498,25 @@ class CounselorController < ApplicationController
       when "7b"
            get_age(start, end_day, 15, 25, "female" )
 
+      when  "7c"
+          get_age_diff(start, end_day, 10, 15 )
+      when "10a"
+           get_age_diff(start, end_day, 15, 20 )
+      when "10b"
+           get_age_diff(start, end_day, 20, 25)
+
       when "8"
          @@age_d = get_age(start, end_day, 25, 1000)
       when  "8a"
           get_age(start, end_day, 25, 1000, "male" )
 
+      when  "8c"
+          get_age_diff(start, end_day, 25, 1000 )
+
       when "8b"
            get_age(start, end_day, 25, 1000, "female" )
       when "9a"
-        return (@@age_c / (@@age_a + @@age_b + @@age_c + @@age_d))
+        return (@@age_c / (@@age_a + @@age_b + @@age_c + @@age_d)) rescue 0
       when "9"
           ids =  (@@males + @@non_preg_females + @@preg_females) rescue []
           get_access_type(ids, "9", start, end_day).length
@@ -698,6 +725,39 @@ class CounselorController < ApplicationController
        end
   end
 
+  def get_age_diff(start, end_day, min, max)
+       m = 0
+       fnp = 0
+       fp = 0
+       m_pos = 0
+       fnp_pos = 0
+       fp_pos = 0
+       concept_id = get_id("Result of hiv test")
+       type = "HIV Testing"
+       et = EncounterType.where(name: type).take.id
+       Encounter.find_by_sql("SELECT DISTINCT(p.person_id) FROM person p
+                              INNER JOIN encounter e ON e.patient_id = p.person_id
+                              WHERE  COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) >= #{min}
+                              AND COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) < #{max} 
+                               AND e.voided = 0 AND DATE(encounter_datetime) >= '#{start}' AND DATE(encounter_datetime) <= '#{end_day}'
+                              AND e.encounter_type = #{et}").each{|p|
+                                    if @@preg_females.include?(p.person_id)
+                                      fp += 1
+                                      fp_pos += 1 if spouse_result(start, end_day, p.person_id, concept_id).upcase == "POSITIVE"
+                                    end
+                                    if @@non_preg_females.include?(p.person_id)
+                                      fnp += 1
+                                      fnp_pos += 1 if spouse_result(start, end_day, p.person_id, concept_id).upcase == "POSITIVE"
+                                    end
+                                    if @@males.include?(p.person_id)
+                                       m += 1
+                                       m_pos += 1 if spouse_result(start, end_day, p.person_id, concept_id).upcase == "POSITIVE"
+                                    end
+                                    p.person_id
+                              }# rescue []
+       return [m, fnp, fp, m_pos, fnp_pos, fp_pos]
+      
+  end
   def outcomes( start, end_day, ids)
        type = "HIV Testing"
        et = EncounterType.where(name: type).take.id
@@ -741,7 +801,7 @@ class CounselorController < ApplicationController
     value_coded =  get_id("Never Tested")
     new_patients = Observation.find_by_sql("SELECT DISTINCT(person_id) FROM obs o
                               WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
-                              AND o.concept_id = #{concept_id} AND value_coded = #{value_coded} AND o.person_id IN (#{ids}) ORDER BY obs_datetime DESC LIMIT 1").map{|p| p.person_id }
+                              AND o.concept_id = #{concept_id} AND value_coded = #{value_coded} AND o.person_id IN (#{ids}) ORDER BY obs_datetime DESC LIMIT 1").map{|p| p.person_id } rescue []
    
     concept_id = get_id("Result of hiv test")
     new_pos = 0
@@ -811,12 +871,13 @@ class CounselorController < ApplicationController
          end
          type = "HIV Testing"
          et = EncounterType.where(name: type).take.id
-         encounter = Encounter.find_by_sql("SELECT * FROM person p
+         encounter = Encounter.find_by_sql("SELECT DISTINCT(p.person_id) FROM person p
                               INNER JOIN encounter e ON e.patient_id = p.person_id
                               WHERE  COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) >= #{min}
                               AND COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) < #{max} #{condition}
                                AND e.voided = 0 AND DATE(encounter_datetime) >= '#{start}' AND DATE(encounter_datetime) <= '#{end_day}'
                               AND e.encounter_type = #{et}").map{|p| p.person_id }.length rescue 0
+
   end
 
   def new_test
