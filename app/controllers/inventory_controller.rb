@@ -61,7 +61,7 @@ class InventoryController < ApplicationController
   end
 
   def edit
-    @kits = Kit.find_all_by_status("active")
+    @kit_names = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum"]
 
     @input_controls = [["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number"}]]
@@ -278,8 +278,9 @@ class InventoryController < ApplicationController
     captured_data.each do |kit_name, opts|
       kit_text = nil
       kit_type = Kit.where(name: kit_name).first.id rescue nil
-      kit_text = kit_name if kit_type.blank?
+      kit_text = kit_name.match(/Negative|Positive/i)[0] rescue nil if kit_type.blank?
       opts.each do |value|
+
         lot_number = value["Lot number"]
         qty = value["Quantity"].blank? ? "" : value["Quantity"].to_i
 
