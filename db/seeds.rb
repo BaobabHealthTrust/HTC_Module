@@ -21,7 +21,7 @@ puts "Loading default tesk kits"
 puts "Loading quality test encounter types"
 [["Testkit Quality control", "For testing actual test kit if usable"],
  ["Temperature quality control",  "For checking the right temp for tests"],
- ["Proficiency Test",  "For checking accurency of counselors"]
+ ["Proficiency Test",  "For checking accurancy of counselors"]
 ].each_with_index{|test, i|
   next if !TestEncounterType.find_by_name(test[0]).blank?
   TestEncounterType.create(name: test[0], description: test[1], creator: 1, status: "active")
@@ -34,6 +34,7 @@ puts "Loading default inventory types"
  ["Losses", "For recording damaged batches"],
  ["Expires", "For verifying expired kits"],
  ["Serum Delivery", "Type for creating new serum batch deliveries"],
+ ["Physical Count", "Entering of physical stock details as counted by supervisor"]
 ].each_with_index{|test, i|
   next if !InventoryType.find_by_name(test[0]).blank?
   InventoryType.create(name: test[0], description: test[1], creator: 1)

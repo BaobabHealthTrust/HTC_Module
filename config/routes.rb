@@ -83,8 +83,8 @@ HTCModule::Application.routes.draw do
 
   get "ajax_stock_levels" => "inventory#ajax_stock_levels"
 
-  get "new_serum_batch" => "inventory#new_serum_batch"
-  post "new_serum_batch" => "inventory#new_serum_batch"
+  get "physical_count" => "inventory#physical_count"
+  post "physical_count" => "inventory#physical_count"
 
   post "create_batch" => "inventory#create"
   get "edit_batch" => "inventory#edit"
