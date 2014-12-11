@@ -16,3 +16,4 @@
 17. separated dashcoards for couples and single client
 18. Added the inventory stock report
 19. Removed Changes_log.txt and added change_log.txt
+20. Implemented temperature changes chart => reports => temperature changes
