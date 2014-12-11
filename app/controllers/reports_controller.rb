@@ -121,4 +121,26 @@ class ReportsController < ApplicationController
     result['dates'] = result.reject { |r, v| r == "totals" }.keys.sort
     render text: result.to_json
   end
+
+  def temp_changes
+    @session_date = session[:datetime].to_date rescue Date.today
+    render layout: false
+  end
+
+  def ajax_temp_changes
+
+    @session_date = session[:datetime].to_date rescue Date.today
+    start_date = TestObservation.where("obs_datetime = (SELECT MIN(obs_datetime) FROM test_observation)"
+    ).first.obs_datetime rescue Date.today
+    end_date = TestObservation.where("obs_datetime = (SELECT MAX(obs_datetime) FROM test_observation)"
+    ).first.obs_datetime rescue Date.today
+
+    data = TestEncounter.temperatures(start_date, end_date)
+
+    @result = {}
+    data.each do |d|
+      @result[d.obs_datetime.strftime("%Y-%m-%d-%H-%M-%S")] = d.value_numeric
+    end
+    render layout: false
+  end
 end

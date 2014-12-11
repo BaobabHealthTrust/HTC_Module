@@ -11,6 +11,8 @@ HTCModule::Application.routes.draw do
   get "couple/appointment"
   get "reports/index"
   get "reports/stock_report"
+  get "reports/temp_changes"
+  get "reports/ajax_temp_changes"
   get "reports/ajax_stock_levels_report"
 	get "/login" => "sessions#attempt_login"
 	post "/login" => "sessions#login", as: :log_in
