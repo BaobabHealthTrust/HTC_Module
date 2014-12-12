@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script-->
+  <%=javascript_include_tag "Charts/Highcharts/jquery.min"%>
+
+  <script type="text/javascript">
+
+
+      function plotGraph() {
+
+          jQuery(function () {
+
+              results = {};
+              <% @result.each do |time, value|%>
+                results["<%= time%>"] = "<%= value%>"
+              <%end%>
+              console.log(results)
+              // Create the chart
+
+              jQuery('#container-chart').highcharts('StockChart', {
+
+                  rangeSelector: {
+                      inputEnabled: true,
+                      selected: 1
+                  },
+
+                  title: {
+                      text: '<span style="font-size: 25px;">Temperature changes</span>'
+                  },
+                  xAxis: {
+
+                  },
+                  yAxis: {
+
+                      title: { text: "<sup>o</sup>C" },
+                      labels: {
+                          align: 'left'
+                      }
+                  },
+                  tooltip: {
+                      shared: true,
+                      useHTML: true,
+                      valueSuffix: ' ',
+                      formatter: function() {
+                        return (("<b>" + Highcharts.dateFormat('%b %d, %Y  %H:%M:%S', new Date(this.x))) + ":</b>   " + this.y + " <sup>o</sup>C")
+                      }
+                  },
+                  series: [
+
+                      {
+                          id: "temp",
+                          name: "temp",
+                          data: dataG(),
+                          negativeColor: 'red',
+                          step: true,
+                          pointInterval: 24 * 3600 * 1000,
+                          marker: {
+                              enabled: true,
+                              symbol: 'circle',
+                              radius: 5
+                          }
+                      }
+                  ],
+                  exporting: { enabled: false },
+                  credits: { enabled: false }
+              });
+
+          });
+      }
+
+      function dataG() {
+          data = []
+          dates = Object.keys(results);
+          for (i = 0; i < dates.length; i++){
+             var  v = dates[i].split("-");
+
+              var dt = Date.UTC(
+                      parseInt(v[0]),
+                      (parseInt(v[1]) - 1),
+                      parseInt(v[2]),
+                      parseInt(v[3]),
+                      parseInt(v[4]),
+                      parseInt(v[5])
+              );
+              console.log(dates[i])
+             data.push([dt, parseFloat(results[dates[i]])])
+          }
+
+          return data.sort(function(a, b) {
+              return a[0] > b[0]?1:-1;
+          });
+      }
+      function sort_results(myCoordinates)
+      {
+          myCoordinates.sort(function(a, b) {
+              return a[1] > b[1]?1:-1;
+          });
+      }
+
+      plotGraph();
+  </script>
+
+
+</head>
+<body>
+<%=javascript_include_tag "Charts/Highcharts/highstock"%>
+<%=javascript_include_tag "Charts/Highcharts/exporting"%>
+<div id="wait" >
+</div>
+<div id="container-chart" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
+
+</body>
+</html>

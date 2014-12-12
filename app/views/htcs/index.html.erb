@@ -86,12 +86,12 @@
             elements[i].className = 'cell normal tab'
     };
     if (currentTab == 'admin'){
-           admin = __$('uitab3')
+           admin = __$('uitab4')
            admin.setAttribute('class', 'cell clicked tab')
            __$("uidisplayiframe").setAttribute("src", admin.getAttribute("path"));
     }
     if (currentTab == 'report'){
-           admin = __$('uitab2')
+           admin = __$('uitab3')
            admin.setAttribute('class', 'cell clicked tab')
            __$("uidisplayiframe").setAttribute("src", admin.getAttribute("path"));
     }
@@ -100,6 +100,11 @@
            admin.setAttribute('class', 'cell clicked tab')
            __$("uidisplayiframe").setAttribute("src", admin.getAttribute("path"));
     }
+  if (currentTab == 'my_account'){
+      admin = __$('uitab2')
+      admin.setAttribute('class', 'cell clicked tab')
+      __$("uidisplayiframe").setAttribute("src", admin.getAttribute("path"));
+  }
   }
   <% params[:tab] = ""  %>
 </script>

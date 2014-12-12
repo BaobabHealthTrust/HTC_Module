@@ -13,9 +13,9 @@
 </head>
 <body>
 
-<%= form_tag new_serum_batch_path do %>
+<%= form_tag physical_count_path do %>
     <fieldset>
-      <legend>Serum delivery</legend>
+      <legend>Physical supervision counts</legend>
 
       <br/>
       <label for="id"> </label>
@@ -187,7 +187,7 @@
         var addbut = document.createElement("div");
         addbut.id = "addbatch";
         addbut.className = "addbatch blue";
-        addbut.innerHTML = "New " + dsp.getAttribute("target") + " batch";
+        addbut.innerHTML = "New " + dsp.getAttribute("target") + " count";
         addbut.onmousedown = function () {
 
             if (validateCompleteness()) {

@@ -15,14 +15,14 @@
 
 <%= form_tag create_batch_path do %>
     <fieldset>
-      <legend>Testkit delivery</legend>
+      <legend>New delivery</legend>
 
       <br/>
       <label for="id"> </label>
       <select id="id" name="id">
         <option></option>
-        <%= @kits.each do |kit| %>
-            <option id="<%= kit.name %>" value="<%= kit.name %>"> <%= kit.name %></option>
+        <%= @kit_names.each do |kit| %>
+            <option id="<%= kit %>" value="<%= kit %>"> <%= kit %></option>
         <% end %>
       </select>
       <br/>
@@ -110,8 +110,8 @@
 
     var kit_names = [];
 
-    <%  @kits.each do |kit|%>
-    kit_names.push("<%= kit.name%>");
+    <%  @kit_names.each do |kit|%>
+    kit_names.push("<%= kit%>");
     <% end %>
 
     //build a javascript hash defining entry controls

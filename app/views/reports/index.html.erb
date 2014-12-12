@@ -42,10 +42,11 @@
 <br />
 <br />
 
-<!-- base target="_parent" -->
+<base target="_parent" -->
 
-<%= link_to '<span class="txt"> Clients </span>'.html_safe, '', :class=>'blue', :id => "clnt" %>
-<%= link_to '<span class="txt"> Counselors </span>'.html_safe, '', :class=>'blue', :id => "csl" %>
 <base target="_parent" >
 <%= link_to '<span class="txt"> LH Monthy </span>'.html_safe, monthly_path, :class=>'blue', :id => "csl" %>
 <%= link_to '<span class="txt"> MOH Report</span>'.html_safe, moh_report_path, :class=>'blue', :id => "csl" %>
+<%= link_to '<span class="txt"> Stock report </span>'.html_safe, 'stock_report', :class=>'blue', :id => "csl" %>
+<%= link_to '<span class="txt"> Temperature changes </span>'.html_safe, 'temp_changes', :class=>'blue', :id => "csl" %>
+

@@ -6,7 +6,7 @@ class InventoryController < ApplicationController
 
   def new_batch
     @kits = Kit.where(status: "active")
-
+    @kit_names = @kits.map(&:name) + ["Positive serum", "Negative serum"]
     @input_controls = [["Date of delivery", {"type" => "date"}],
                        ["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number", "min" => 1}],
@@ -14,27 +14,33 @@ class InventoryController < ApplicationController
     render layout: false
   end
 
-  def new_serum_batch
-    @kits = ["Positive serum", "Negative serum"]
+  def physical_count
+    @kits = Kit.where(status: "active").map(&:name) + ["Positive serum", "Negative serum"]
 
     if request.post?
       captured_data = params[:data]
-      type = InventoryType.find_by_name("Serum Delivery").id
+      type = InventoryType.find_by_name("Physical Count").id
       session_date = session[:datetime].to_date rescue Date.today
 
       captured_data.each do |serum_type, opts|
         next if serum_type.blank?
+
+        kit_type = Kit.find_by_name(serum_type).id rescue nil
+        serum_name = nil
+        if kit_type.blank?
+          serum_name = serum_type.match(/Positive|Negative/i)[0] rescue nil
+        end
+
         opts.each do |value|
-          encounter_date = value["Date of delivery"].to_date
           lot_number = value["Lot number"]
           qty = value["Quantity"].to_i
           exp_date = value["Date of expiry"].to_date
 
-          next if (encounter_date.blank? || lot_number.blank? || exp_date.blank? || qty.blank?)
+          next if (lot_number.blank? || exp_date.blank? || qty.blank?)
           Inventory.create(lot_no: lot_number,
-                           value_date: encounter_date,
                            value_numeric: qty,
-                           value_text: serum_type.match(/Positive|Negative/i)[0],
+                           kit_type: kit_type,
+                           value_text: serum_name,
                            inventory_type: type,
                            date_of_expiry: exp_date,
                            encounter_date: session_date,
@@ -47,7 +53,7 @@ class InventoryController < ApplicationController
       redirect_to htcs_path and return
     end
 
-    @input_controls = [["Date of delivery", {"type" => "date"}],
+    @input_controls = [
                        ["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number", "min" => 1}],
                        ["Date of expiry", {"type" => "date"}]]
@@ -55,7 +61,7 @@ class InventoryController < ApplicationController
   end
 
   def edit
-    @kits = Kit.find_all_by_status("active")
+    @kit_names = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum"]
 
     @input_controls = [["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number"}]]
@@ -64,13 +70,19 @@ class InventoryController < ApplicationController
 
   def create
     captured_data = params[:data]
-    type = InventoryType.find_by_name("Delivery").id
     session_date = session[:datetime].to_date rescue Date.today
 
     captured_data.each do |kit_name, opts|
-      kit_type = Kit.find_by_name(kit_name).id;
+      kit_type = Kit.find_by_name(kit_name).id rescue nil
+      serum_name = nil
+      if kit_type.blank?
+        type = InventoryType.find_by_name("Serum Delivery").id
+        serum_name = kit_name
+      else
+        type = InventoryType.find_by_name("Delivery").id
+      end
 
-      opts.each do |value|
+        opts.each do |value|
         encounter_date = value["Date of delivery"].to_date
         lot_number = value["Lot number"]
         qty = value["Quantity"].to_i
@@ -80,6 +92,7 @@ class InventoryController < ApplicationController
         Inventory.create(lot_no: lot_number,
                          kit_type: kit_type,
                          value_date: encounter_date,
+                         value_text: (serum_name.match(/Positive|Negative/i)[0] rescue nil),
                          value_numeric: qty,
                          inventory_type: type,
                          date_of_expiry: exp_date,
@@ -111,7 +124,7 @@ class InventoryController < ApplicationController
           if (!type_name.blank? && !lot_number.blank? && !qty.blank?)
             CouncillorInventory.create(lot_no: lot_number,
                                        value_numeric: qty,
-                                       value_text: type_name,
+                                       value_text: ((type_name.match(/Positive|Negative/i)[0] rescue type_name) || type_name),
                                        councillor_id: assignee_id,
                                        inventory_type: type,
                                        encounter_date: @session_date,
@@ -129,7 +142,7 @@ class InventoryController < ApplicationController
       user if !user.person.blank?
     }.compact
 
-    @kit_types = Kit.find_all_by_status("active").map(&:name)
+    @kit_types = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum"]
 
     @input_controls = [["Kit type", {"type" => "list",
                                      "options" => @kit_types}],
@@ -191,7 +204,7 @@ class InventoryController < ApplicationController
     result["Quantity"]["warning"] = ""
     result["Quantity"]["info"] = ""
 
-    plus_types = ["Delivery"].collect { |iv_name| InventoryType.find_by_name(iv_name).id }
+    plus_types = ["Delivery", "Serum Delivery"].collect { |iv_name| InventoryType.find_by_name(iv_name).id }
     minus_types = ["Distribution", "Expires", "Losses", "Usage",].collect { |iv_name| InventoryType.find_by_name(iv_name).id }
 
     user = User.find_by_username(params[:username]) rescue nil
@@ -205,7 +218,7 @@ class InventoryController < ApplicationController
     user_sum = 0
 
     if !user.blank?
-      user_sum = user.remaining_stock_by_type(kit_name, session_date)
+      user_sum = user.remaining_stock_by_type(kit_name, session_date) rescue 0
     end
     result["Kit type"]["warning"] = ""
 
@@ -218,11 +231,17 @@ class InventoryController < ApplicationController
     if !params[:kit_type].blank? && !params[:lot_number].blank?
 
       ivs = Inventory.find_by_sql(["SELECT value_numeric, inventory_type FROM inventory
-                WHERE kit_type = ? AND lot_no = ?", Kit.find_by_name(kit_name).id, lot_number])
+                WHERE voided = 0 AND (kit_type = ? OR value_text = ?) AND lot_no = ?",
+                                   (Kit.find_by_name(kit_name).id rescue nil),
+                                   (kit_name.match(/Positive|Negative/i)[0] rescue nil),
+                                   lot_number])
 
       ivs2 = CouncillorInventory.find_by_sql(["SELECT ci.id, ci.value_numeric, ci.inventory_type FROM councillor_inventory ci
              JOIN inventory iv ON  iv.lot_no = ci.lot_no
-          WHERE iv.voided = 0 AND ci.voided =0 AND iv.kit_type = ? AND iv.lot_no = ? GROUP BY ci.id", Kit.find_by_name(kit_name).id, lot_number])
+          WHERE iv.voided = 0 AND ci.voided =0 AND (iv.kit_type = ? OR iv.value_text = ?) AND iv.lot_no = ? GROUP BY ci.id",
+                                              (Kit.find_by_name(kit_name).id rescue nil),
+                                              (kit_name.match(/Positive|Negative/i)[0] rescue nil),
+                                              lot_number])
 
       if ivs.blank?
 
@@ -257,14 +276,19 @@ class InventoryController < ApplicationController
     type = InventoryType.find_by_name("Losses").id
 
     captured_data.each do |kit_name, opts|
-
+      kit_text = nil
+      kit_type = Kit.where(name: kit_name).first.id rescue nil
+      kit_text = kit_name.match(/Negative|Positive/i)[0] rescue nil if kit_type.blank?
       opts.each do |value|
+
         lot_number = value["Lot number"]
         qty = value["Quantity"].blank? ? "" : value["Quantity"].to_i
 
         if (!lot_number.blank? && !qty.blank? && qty > 0)
           Inventory.create(lot_no: lot_number,
                            value_numeric: qty,
+                           kit_type: kit_type,
+                           value_text: kit_text,
                            inventory_type: type,
                            encounter_date: @session_date,
                            voided: false,
@@ -294,7 +318,7 @@ class InventoryController < ApplicationController
     users =  User.all
     @users = users.map { |user| [user.username, user.name] rescue nil }.compact
 
-    @kit_names = Kit.all.map(&:name)
+    @kit_names = Kit.all.map(&:name) + ["Negative serum", "Positive serum"]
     @site_name = Settings.facility_name
 
     @years = []
@@ -329,7 +353,8 @@ class InventoryController < ApplicationController
                                        value_numeric: qty,
                                        councillor_id: @user.id,
                                        inventory_type: type,
-                                       value_text: reason,
+                                       value_text: ((kit_name.match(/Negative|Positive/i)[0] rescue kit_name) || kit_name),
+                                       comments: reason,
                                        encounter_date: @session_date,
                                        voided: false,
                                        creator: current_user.id
@@ -354,7 +379,7 @@ class InventoryController < ApplicationController
     lot_number = params[:lot_number]
     inv_type = params[:type] == "kit" ? "Delivery" : "Serum Delivery"
     result = {td_id: params[:td_id]}
-    result["tt"] = inv_type;
+    result["tt"] = inv_type
     date = Inventory.where(inventory_type: InventoryType.where(name: inv_type).first.id,
                            lot_no: lot_number).first.date_of_expiry.strftime("%d %b, %Y") rescue "?"
 
