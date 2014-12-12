@@ -195,8 +195,61 @@
 
       var cell = document.createElement("div");
       cell.className = "caption";
-      cell.innerHTML = "Age groups"
       row.appendChild(cell);
+
+      cTable = document.createElement("div")
+      cTable.className = "table-inner"
+      cell.appendChild(cTable)
+
+       cRow = document.createElement("div")
+       cRow.className = "main-row"
+       cTable.appendChild(cRow)
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = ""
+       cRow.appendChild(cCell)
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = ""
+       cRow.appendChild(cCell)
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = "Tested"
+       cRow.appendChild(cCell)
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = "Positive"
+       cRow.appendChild(cCell)
+
+       cRow = document.createElement("div")
+       cRow.className = "main-row"
+       cTable.appendChild(cRow)
+
+       cCell = document.createElement("div")
+       cCell.className = "data-td"
+       cCell.innerHTML = ""
+       cRow.appendChild(cCell)
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = "Age Groups"
+       cRow.appendChild(cCell)
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = ""
+       cRow.appendChild(cCell)
+       addHeaders(cCell, data["Age groups"]["Sections 1"])
+
+       cCell = document.createElement("div")
+       cCell.className = "caption"
+       cCell.innerHTML = ""
+       cRow.appendChild(cCell)
+       addHeaders(cCell, data["Age groups"]["Sections 2"])
 
        var cell = document.createElement("div");
       cell.className = "caption";
@@ -221,7 +274,7 @@
       cell.appendChild(gTable)
 
       for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
+        addSplitRow(gender[i], gTable)
       }
 
        gender = data["Partner Present"]
@@ -322,7 +375,7 @@
        table.appendChild(row);
 
       var cell = document.createElement("div");
-      cell.className = "data-td";
+      cell.className = "kit-td";
       cell.colSpan = 3
       row.appendChild(cell);
 
@@ -331,10 +384,132 @@
       cell.appendChild(gTable)
 
       for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
+        addKits(gender[i], gTable)
       }
     }
 
+    function addHeaders(cell, d){
+      gTable = document.createElement("div");
+      gTable.className = "table-inner";
+      cell.appendChild(gTable)
+      
+     var row = document.createElement("div");
+     row.className = "data-row";
+     gTable.appendChild(row);
+     for (i = 0; i < d.length; i++){
+        var cell = document.createElement("div");
+        cell.className = "caption";
+        cell.innerHTML = d[i]
+        row.appendChild(cell);
+     }
+
+    }
+     function addKits(d, t){
+       var row = document.createElement("div");
+       row.className = "data-row";
+       t.appendChild(row);
+
+      var cell = document.createElement("div");
+      cell.className = "kit-number-td";
+      cell.innerHTML = d[0];
+      row.appendChild(cell);
+
+       var cell = document.createElement("div");
+      cell.className = "kit-name-td";
+      cell.innerHTML = d[1];
+      row.appendChild(cell);
+
+      var cell = document.createElement("div");
+      cell.className = "kit-result-td";
+      row.appendChild(cell);
+
+      tb = document.createElement("div")
+      tb.className = "table-inner"
+      cell.appendChild(tb)
+
+      rw = document.createElement("div")
+      rw.style.display = "table-row"
+      tb.appendChild(rw)
+
+      td = document.createElement("div")
+      td.style.display = "table-cell"
+      if (d[2] != undefined){
+        td.innerHTML = d[2][0]
+      }
+      else{
+        td.innerHTML = 0
+      }
+      rw.appendChild(td)
+
+      td = document.createElement("div")
+      td.style.display = "table-cell"
+       if (d[2] != undefined){
+        td.innerHTML = d[2][1]
+      }
+      else{
+        td.innerHTML = 0
+      }
+      rw.appendChild(td)
+
+     }
+
+   function addSplitRow(d, t){
+       var row = document.createElement("div");
+       row.className = "data-row";
+       t.appendChild(row);
+
+      var cell = document.createElement("div");
+      cell.className = "data-td";
+      cell.innerHTML = d[0];
+      row.appendChild(cell);
+
+      var cell = document.createElement("div");
+      cell.className = "data-td";
+      cell.innerHTML = d[1];
+      row.appendChild(cell);
+     
+
+       var cell = document.createElement("div");
+      cell.className = "data-td";
+      cell.innerHTML = "";
+      row.appendChild(cell);
+			 addSplitValue(cell, d[2], 0)
+		
+       var cell = document.createElement("div");
+      cell.className = "data-td";
+      cell.innerHTML = "";
+      row.appendChild(cell);
+			addSplitValue(cell, d[2], 3)
+   }
+
+		function  addSplitValue(t, value, n){
+
+                
+     var table = document.createElement("div");
+     table.className = "table-inner";
+     t.appendChild(table);
+
+		 var row = document.createElement("div");
+     row.className = "main-row";
+     table.appendChild(row);
+
+      var cell = document.createElement("div");
+      cell.className = "caption";
+      cell.innerHTML = value[n];
+      row.appendChild(cell);
+      n += 1;
+       var cell = document.createElement("div");
+      cell.className = "caption";
+			cell.innerHTML = value[n];
+      row.appendChild(cell);
+
+      n += 1;
+       var cell = document.createElement("div");
+      cell.className = "caption";
+      cell.innerHTML = value[n];
+      row.appendChild(cell);
+
+		}
     function addRow(d, t){
        var row = document.createElement("div");
        row.className = "data-row";
@@ -503,6 +678,31 @@
 
 }
 
+.kit-td{
+    display: table-cell;
+    background: none repeat scroll 0 0 #7A8B8B;
+    border-color: lightblue;
+    color: white;
+    border-radius: 25px;
+}
+
+.kit-number-td{
+  display: table-cell;
+  float: left ! important;
+  width: 50%;
+  vertical-align: top;
+
+}
+
+  .kit-result-td {
+  display: table-cell;
+  float: right;
+  width: 30%;
+}
+.kit-name-td{
+  display: table-cell;
+  float: left;
+}
 .category{
   width:30%;
 }
@@ -514,6 +714,8 @@
   display: table-cell;
   float: left;
 }
+
+
     .site-label{
       font-weight: bold;
       font-size: 25px;
@@ -528,7 +730,6 @@
       display: table-row;
       border-style: solid;
       width: 100%;
-      text-align: center;
       margin:auto;
 }
 
@@ -556,6 +757,7 @@
       border-style: solid;
       background: #7A8B8B;
       color: white;
+      border-radius: 25px;
       font-size: 18px ! important;
       text-align: left;
       vertical-align: calc();

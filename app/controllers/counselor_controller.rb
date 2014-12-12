@@ -365,36 +365,55 @@ class CounselorController < ApplicationController
                                                  ["16","Prev Exposed infant",get_value("18", "monthly", start_day, end_day)],
                                                  ["17","Prev Inconclusive",get_value("19a", "monthly", start_day, end_day)]]
       details["Outcome Summary (HIV Test)"] = [["22","Single negative",get_value("21", "monthly", start_day, end_day)],
-                                                 ["23","Single Negative",get_value("22", "monthly", start_day, end_day)],
+                                                 ["23","Single Positive",get_value("22", "monthly", start_day, end_day)],
                                                  ["24","Test 1&2 negative",get_value("23", "monthly", start_day, end_day)],
                                                  ["25","Test 1&2 positive",get_value("24", "monthly", start_day, end_day)],
                                                  ["26","Test 1&2 discodant",get_value("25", "monthly", start_day, end_day)]]
       details["Age groups"] = {}
-      details["Age groups"]["Sections"] = ["M","FNP","FP","M+","FNP+","FP+"]
-      details["Age groups"]["Values"]= [["4","0-11 months",get_value("5", "monthly", start_day, end_day)],
-                                                ["5", "1-9 years",get_value("6", "monthly", start_day, end_day)],
-                                                ["6","10-14 years",get_value("7", "monthly", start_day, end_day)],
-                                                ["7","15-19 years",get_value("8", "monthly", start_day, end_day)],
-                                                ["8","20-24 years",get_value("", "monthly", start_day, end_day)],
-                                                ["9","25 years above",get_value("25", "monthly", start_day, end_day)]]
+      details["Age groups"]["Sections 1"] = ["M","FNP","FP"]
+      details["Age groups"]["Sections 2"] = ["M+","FNP+","FP+"]
+      details["Age groups"]["Values"]= [["4","0-11 months",get_value("5c", "monthly", start_day, end_day)],
+                                                ["5", "1-9 years",get_value("6c", "monthly", start_day, end_day)],
+                                                ["6","10-14 years",get_value("7c", "monthly", start_day, end_day)],
+                                                ["7","15-19 years",get_value("10a", "monthly", start_day, end_day)],
+                                                ["8","20-24 years",get_value("10b", "monthly", start_day, end_day)],
+                                                ["9","25 years above",get_value("8c", "monthly", start_day, end_day)]]
       details["Partner Present"] = [["18","Partner",get_value("14", "monthly", start_day, end_day)],
                                                 ["19","Partner not",get_value("14a", "monthly", start_day, end_day)],
                                                 ["20","Discordant Couples",get_value("14b", "monthly", start_day, end_day)],
-                                                ["21","Disc +ve(female)",get_value("14c", "monthly", start_day, end_day)]]
-      details["Result Given to Client"] = [["27","New Negative"],["28","Positive"],["29","New exposed infant"],["30","New inconclusive"],
-                                                            ["31","Confirmatory positive"],["32","Conf. inconclusive"]
+                                                ["21","Disc +ve(female)", get_value("14c", "monthly", start_day, end_day)]]
+      details["Result Given to Client"] = [["27","New Negative", get_value("27", "monthly", start_day, end_day)],
+                                                ["28","Positive", get_value("28", "monthly", start_day, end_day)],
+                                                ["29","New exposed infant", get_value("29", "monthly", start_day, end_day)],
+                                                ["30","New inconclusive", get_value("30", "monthly", start_day, end_day)],
+                                                ["31","Confirmatory positive", get_value("31", "monthly", start_day, end_day)],
+                                                ["32","Conf. inconclusive", get_value("32", "monthly", start_day, end_day)]
                                                           ]
-      details["HTC Access Type"] = [["10","PITC"],["11","FRS"],["12","Other (VCT, etc)"]]
+      details["HTC Access Type"] = [["10","PITC", get_value("9", "monthly", start_day, end_day)],
+                                                ["11","FRS", get_value("10", "monthly", start_day, end_day)],
+                                                ["12","Other (VCT, etc)", get_value("11", "monthly", start_day, end_day)]]
       details["Partner HTC Slips Given"] = [["33","Sum of all slips"]]
 
       details["Test Kit Use Summary"] = {}
-      details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name"],
-        ["Total tests in stock at start of 1st day of reporting month","Opening"],
-                                                                                  ["Total tests received at this location during this month","Receipts"],
-                                                                                    ["Total tests used for testing clients","Clients"],
-                                                                                    ["Total tests used for other purposes","Other"],
-                                                                                  ["Total tests expired / disposed, etc","Losses"],["Epected remaining Balance","Balance"],
-                                                                                  ["Physical tests in stock at end of last day of month","closing"],
+      
+      tests = FacilityStock.kits_available
+
+      opening =[ FacilityStock.remaining_stock_by_type(tests[0],start_day, 'opening'), FacilityStock.remaining_stock_by_type(tests[1],start_day, 'opening')]
+      closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+      recepts =[ FacilityStock.receipts(tests[0],start_day, end_day), FacilityStock.receipts(tests[1],start_day, end_day)]
+     client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
+     pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
+     losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
+      closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+
+      details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],
+        ["Total tests in stock at start of 1st day of reporting month","Opening", opening],
+                                                                                  ["Total tests received at this location during this month","Receipts", recepts],
+                                                                                    ["Total tests used for testing clients","Clients", client_tests],
+                                                                                    ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
+                                                                                  ["Total tests expired / disposed, etc","Losses",losses],
+                                                                                  ["Epected remaining Balance","Balance", closing],
+                                                                                  ["Physical tests in stock at end of last day of month","closing", ["",""]],
                                                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"
                                                                                   ]]
       details["Test Kit Use Summary"]["Test 1"] = {}
@@ -448,7 +467,7 @@ class CounselorController < ApplicationController
             return  (@@males + @@non_preg_females + @@preg_females).length
 
           when "4b"
-               return "#{((@@males.length / (@@males.length + @@non_preg_females.length + @@preg_females.length)) * 100)}  %"
+               return "#{((@@males.length / (@@males.length + @@non_preg_females.length + @@preg_females.length)) * 100)}  %" rescue "0 %"
       when "5"
          @@age_a = get_age(start, end_day, 0, 1)
       when  "5a"
@@ -457,10 +476,16 @@ class CounselorController < ApplicationController
       when "5b"
            get_age(start, end_day, 0, 1, "female" )
 
+      when "5c"
+           get_age_diff(start, end_day, 0, 1 )
+
        when "6"
          @@age_b = get_age(start, end_day, 1, 15)
       when  "6a"
           get_age(start, end_day, 1, 15, "male" )
+
+      when  "6c"
+          get_age_diff(start, end_day, 1, 10 )
 
       when "6b"
            get_age(start, end_day, 1, 15, "female" )
@@ -473,15 +498,25 @@ class CounselorController < ApplicationController
       when "7b"
            get_age(start, end_day, 15, 25, "female" )
 
+      when  "7c"
+          get_age_diff(start, end_day, 10, 15 )
+      when "10a"
+           get_age_diff(start, end_day, 15, 20 )
+      when "10b"
+           get_age_diff(start, end_day, 20, 25)
+
       when "8"
          @@age_d = get_age(start, end_day, 25, 1000)
       when  "8a"
           get_age(start, end_day, 25, 1000, "male" )
 
+      when  "8c"
+          get_age_diff(start, end_day, 25, 1000 )
+
       when "8b"
            get_age(start, end_day, 25, 1000, "female" )
       when "9a"
-        return (@@age_c / (@@age_a + @@age_b + @@age_c + @@age_d))
+        return (@@age_c / (@@age_a + @@age_b + @@age_c + @@age_d)) rescue 0
       when "9"
           ids =  (@@males + @@non_preg_females + @@preg_females) rescue []
           get_access_type(ids, "9", start, end_day).length
@@ -501,15 +536,18 @@ class CounselorController < ApplicationController
       when "14"
           ids = (@@males + @@non_preg_females + @@preg_females)
           get_results("partner or spouse", "YES", start, end_day, ids.join(',') )
-
+      when "14a"
+            ids = (@@males + @@non_preg_females + @@preg_females)
+           get_results("partner or spouse", "NO", start, end_day, ids.join(',') )
       when "14b"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("spouse/partner", "couple", start, end_day, ids.join(',') )
-
-      when "14b"
-          ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("partner or spouse", "NO", start, end_day, ids.join(',') )
-
+         disc = get_results("spouse/partner", "couple", start, end_day, ids.join(',') )[0]
+         return disc
+      when "14c"
+         ids = (@@males + @@non_preg_females + @@preg_females)
+         positive = get_results("spouse/partner", "couple", start, end_day, ids.join(',') )[1]
+         
+         return positive
       when "15"
           ids = (@@males + @@non_preg_females + @@preg_females)
           get_results("last HIV test", "Never tested", start, end_day, ids.join(',') )
@@ -535,27 +573,27 @@ class CounselorController < ApplicationController
 
       when "21"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[0]
 
 
       when "22"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[1]
 
 
       when "23"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[2]
 
 
       when "24"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[3]
 
 
       when "25"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          outcomes( start, end_day, ids.join(','))[4]
 
 
       when "26"
@@ -565,32 +603,32 @@ class CounselorController < ApplicationController
 
       when "27"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Negative", start, end_day, ids.join(',') )[0]
 
 
       when "28"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Positive", start, end_day, ids.join(',') )[1]
 
 
       when "29"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Exposed Infant", start, end_day, ids.join(',') )[2]
 
 
       when "30"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("Confirmatory Positive", start, end_day, ids.join(',') )[3]
 
 
       when "31"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("New Inconclusive", start, end_day, ids.join(',') )[4]
 
 
       when "32"
           ids = (@@males + @@non_preg_females + @@preg_females)
-          get_results("last HIV test", "Last Exposed Infant", start, end_day, ids.join(',') )
+          results_given("Inconclusive", start, end_day, ids.join(',') )[5]
 
 
       when "33a"
@@ -645,7 +683,8 @@ class CounselorController < ApplicationController
                               (SELECT DISTINCT(o.person_id) FROM obs o
                               WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
                               AND o.concept_id = #{concept_id} AND o.value_coded = #{value_coded} AND o.person_id IN (#{ids}))").map{|p| p.person_id }.uniq.length rescue 0
-   elsif concept == "spouse/partner" and answer == "couple"
+
+    elsif concept == "spouse/partner" and answer == "couple"
               concept_id = get_id("partner or spouse")
                 value_coded= get_id("YES")
 
@@ -659,19 +698,151 @@ class CounselorController < ApplicationController
                                                                   OR (person_a = (#{encounter}) AND person_b = (#{encounter}))
                                                                   AND relationship = ?", relationship_type).order(relationship_id: :desc).collect { |p|
                                                                   [p.person_a, p.person_b]} rescue []
-              concept_id = get_id("partner or spouse")
-              relation.each { |r|
-                    r_1 = encounter = Encounter.find_by_sql("SELECT DISTINCT(o.person_id) FROM obs o
-                              WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
-                              AND o.concept_id = #{concept_id} AND o.value_coded = #{value_coded} AND o.person_id IN (#{ids})")
 
+             concept_id = get_id("Result of hiv test")
+              discordant = 0
+              positive = 0
+              relation.each { |r|
+                    r_1 = spouse_result(start, end_day, r[0], concept_id)
+                    r_2 = spouse_result(start, end_day, r[1], concept_id)
+                    if r_1 != r_2
+                      discordant += 1
+                       if Person.find(r[0]).gender.upase == "FEMALE" and r_1.upcase == "NEGATIVE"
+                          positive += 1
+                       end
+                       if Person.find(r[1]).gender.upase == "FEMALE" and r_2.upcase == "NEGATIVE"
+                           positive += 1
+                       end
+                    end
+            
               }
-              raise  relation.to_yaml
+           
+             return [discordant , positive]
     else
          encounter = Encounter.find_by_sql("SELECT DISTINCT(o.person_id) FROM obs o
                               WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
                               AND o.concept_id = #{concept_id} AND o.value_coded = #{value_coded} AND o.person_id IN (#{ids})").map{|p| p.person_id }.uniq.length rescue 0
        end
+  end
+
+  def get_age_diff(start, end_day, min, max)
+       m = 0
+       fnp = 0
+       fp = 0
+       m_pos = 0
+       fnp_pos = 0
+       fp_pos = 0
+       concept_id = get_id("Result of hiv test")
+       type = "HIV Testing"
+       et = EncounterType.where(name: type).take.id
+       Encounter.find_by_sql("SELECT DISTINCT(p.person_id) FROM person p
+                              INNER JOIN encounter e ON e.patient_id = p.person_id
+                              WHERE  COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) >= #{min}
+                              AND COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) < #{max} 
+                               AND e.voided = 0 AND DATE(encounter_datetime) >= '#{start}' AND DATE(encounter_datetime) <= '#{end_day}'
+                              AND e.encounter_type = #{et}").each{|p|
+                                    if @@preg_females.include?(p.person_id)
+                                      fp += 1
+                                      fp_pos += 1 if spouse_result(start, end_day, p.person_id, concept_id).upcase == "POSITIVE"
+                                    end
+                                    if @@non_preg_females.include?(p.person_id)
+                                      fnp += 1
+                                      fnp_pos += 1 if spouse_result(start, end_day, p.person_id, concept_id).upcase == "POSITIVE"
+                                    end
+                                    if @@males.include?(p.person_id)
+                                       m += 1
+                                       m_pos += 1 if spouse_result(start, end_day, p.person_id, concept_id).upcase == "POSITIVE"
+                                    end
+                                    p.person_id
+                              }# rescue []
+       return [m, fnp, fp, m_pos, fnp_pos, fp_pos]
+      
+  end
+  def outcomes( start, end_day, ids)
+       type = "HIV Testing"
+       et = EncounterType.where(name: type).take.id
+
+      single_neg = 0
+      single_pos = 0
+      t1_t2_neg = 0
+      t1_t2_pos = 0
+      t1_t2_disc = 0
+
+      test_1 = get_id("HTC Test 1 result")
+      test_2 = get_id("HTC Test 2 result")
+    (ids.split(',') || []).each { |p|
+        latest = Encounter.where("encounter_type = #{et} AND patient_id = #{p}
+          AND DATE(encounter_datetime) >= ? AND DATE(encounter_datetime) <= ?",
+          start, end_day).order(encounter_datetime: :desc).pluck(:encounter_id).max
+
+       first_result = Encounter.find(latest).observations.where(concept_id: test_1).first.answer_string.squish rescue ""
+       second_result = Encounter.find(latest).observations.where(concept_id: test_2).first.answer_string.squish rescue ""
+
+       if first_result.blank? or second_result.blank?
+          if first_result.upcase == "NEGATIVE" or second_result.upcase == "NEGATIVE"
+              single_neg += 1
+          elsif first_result.upcase == "POSITIVE" or second_result.upcase == "POSITIVE"
+              single_pos += 1
+          end
+       elsif first_result.upcase == "POSITIVE" and second_result.upcase == "POSITIVE"
+          t1_t2_pos += 1
+        elsif first_result.upcase == "NEGATIVE" and second_result.upcase == "NEGATIVE"
+           t1_t2_neg += 1
+       else
+           t1_t2_disc += 1
+       end     
+    }
+
+    return [single_neg, single_pos, t1_t2_neg, t1_t2_pos, t1_t2_disc]
+  end
+
+  def results_given(cat, start, end_day, ids)
+    concept_id = get_id("last hiv test")
+    value_coded =  get_id("Never Tested")
+    new_patients = Observation.find_by_sql("SELECT DISTINCT(person_id) FROM obs o
+                              WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
+                              AND o.concept_id = #{concept_id} AND value_coded = #{value_coded} AND o.person_id IN (#{ids}) ORDER BY obs_datetime DESC LIMIT 1").map{|p| p.person_id } rescue []
+   
+    concept_id = get_id("Result of hiv test")
+    new_pos = 0
+    new_neg = 0
+    new_exposed = 0
+    new_inc = 0
+    positive = 0
+    inc = 0
+    if cat == "New Positive" or cat == "New Negative" or cat == "New Exposed Infant" or cat == "New Inconclusive"
+      (new_patients || []).each{|p|
+           result = spouse_result(start, end_day, p, concept_id)
+
+           if result.upcase == "NEGATIVE"
+             new_neg += 1
+           elsif result.upcase == "POSITIVE"
+             new_pos += 1
+           elsif result.upcase == "EXPOSED INFANT"
+             new_exposed += 1
+           elsif result.upcase == "INCONCLUSIVE"
+             new_inc += 1
+           end
+      }
+    else
+      (ids.split(',') || []).each { |p|
+          result = spouse_result(start, end_day, p, concept_id)
+          if result.upcase == "INCONCLUSIVE"
+             inc += 1
+          elsif result.upcase == "POSITIVE"
+             positive += 1
+          end
+
+      }
+    end
+    return [new_neg, new_pos,  new_exposed, positive, new_inc, inc]
+  end
+
+  def spouse_result(start, end_day, r, concept_id)
+      e = Observation.find_by_sql("SELECT * FROM obs o
+                              WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
+                              AND o.concept_id = #{concept_id} AND o.person_id = #{r} ORDER BY obs_datetime DESC LIMIT 1").first.answer_string.squish
+
   end
 
   def get_access_type(ids, segment, start, end_day)
@@ -700,12 +871,13 @@ class CounselorController < ApplicationController
          end
          type = "HIV Testing"
          et = EncounterType.where(name: type).take.id
-         encounter = Encounter.find_by_sql("SELECT * FROM person p
+         encounter = Encounter.find_by_sql("SELECT DISTINCT(p.person_id) FROM person p
                               INNER JOIN encounter e ON e.patient_id = p.person_id
                               WHERE  COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) >= #{min}
                               AND COALESCE(DATEDIFF(NOW(), p.birthdate)/365, 0) < #{max} #{condition}
                                AND e.voided = 0 AND DATE(encounter_datetime) >= '#{start}' AND DATE(encounter_datetime) <= '#{end_day}'
                               AND e.encounter_type = #{et}").map{|p| p.person_id }.length rescue 0
+
   end
 
   def new_test
