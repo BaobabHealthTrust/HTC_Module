@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141113095414) do
+ActiveRecord::Schema.define(version: 20141204093047) do
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -699,6 +699,11 @@ ActiveRecord::Schema.define(version: 20141113095414) do
 
   add_index "external_source", ["creator"], name: "map_ext_creator", using: :btree
   add_index "external_source", ["source"], name: "map_ext_source", using: :btree
+
+  create_table "facility_stocks", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "field", primary_key: "field_id", force: true do |t|
     t.string   "name",                       default: "",                    null: false

@@ -18,8 +18,42 @@
     background-size: 80px 80px;
 }
 
+.plain {
+    border-radius: 35px;
+    border-style: solid;
+    border-color: #ADD8E6;
+    display: block;
+    float: left;
+    height: 90px;
+    font-weight: bold;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 90px;
+    background-repeat: no-repeat;
+    background-size: 80px 80px;
+    text-decoration:none;
+}
+
 #csl {
 	background-image: url(<%= asset_path 'csl.png' %>);
+	background-size: cover;
+	margin-left:35px;
+}
+
+#stock {
+	background-image: url(<%= asset_path 'stock_report.png' %>);
+	background-size: cover;
+	margin-left:35px;
+}
+
+#temperature {
+	background-image: url(<%= asset_path 'temperature.png' %>);
+	background-size: cover;
+	margin-left:35px;
+}
+
+#moh {
+	background-image: url(<%= asset_path 'mw.gif' %>);
 	background-size: cover;
 	margin-left:35px;
 }
@@ -44,7 +78,9 @@
 
 <base target="_parent" -->
 
-<%= link_to '<span class="txt"> Clients </span>'.html_safe, '', :class=>'blue', :id => "clnt" %>
-<%= link_to '<span class="txt"> Counselors </span>'.html_safe, '', :class=>'blue', :id => "csl" %>
-<%= link_to '<span class="txt"> Stock report </span>'.html_safe, 'stock_report', :class=>'blue', :id => "csl" %>
-<%= link_to '<span class="txt"> Temperature changes </span>'.html_safe, 'temp_changes', :class=>'blue', :id => "csl" %>
+<base target="_parent" >
+<%= link_to '<span class="txt"> LH Monthy </span>'.html_safe, monthly_path, :class=>'plain', :id => "csl" %>
+<%= link_to '<span class="txt"> MOH Report</span>'.html_safe, moh_report_path, :class=>'plain', :id => "moh" %>
+<%= link_to '<span class="txt"> Stock report </span>'.html_safe, 'stock_report', :class=>'plain', :id => "stock" %>
+<%= link_to '<span class="txt"> Temperature changes </span>'.html_safe, 'temp_changes', :class=>'plain', :id => "temperature" %>
+

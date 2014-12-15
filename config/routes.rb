@@ -1,6 +1,8 @@
 HTCModule::Application.routes.draw do
   get "counselor/test_details"
   get "list_tests" => "counselor#list_tests"
+  get  "counselor/monthly_details"
+  get  "counselor/moh_details"
   get "add_test" => "counselor#new_test"
   get "sample" => "counselor#sample"
   get "counselor/final_result"
@@ -8,6 +10,9 @@ HTCModule::Application.routes.draw do
   get "couple/testing"
   get "couple/counseling"
   get "couple/assessment"
+  get "monthly" => "reports#monthly_report"
+  get "moh_report" => "reports#moh_report"
+
   get "couple/appointment"
   get "reports/index"
   get "reports/stock_report"
