@@ -60,7 +60,7 @@ class Inventory < ActiveRecord::Base
     end
 
     kit_sum = Inventory.find_by_sql(["SELECT SUM(value_numeric) AS total, DATE(encounter_date) AS date,
-                          lot_no, COALESCE(kit_type, value_text) AS type, DATE(date_of_expiry) AS exp_date FROM inventory
+                          lot_no, COALESCE(kit_type, value_text) AS type, DATE(MAX(date_of_expiry)) AS exp_date FROM inventory
                           WHERE inventory_type IN (?)
                           AND (DATE(encounter_date) BETWEEN ? AND ?)
                           AND voided = 0 AND (kit_type IN (?) OR value_text IN (?))
