@@ -21,6 +21,7 @@ Run migrations by:
   `rake db:migrate RAILS_ENV=development|production`
   
 Run:
+
   ` rake db:seed`
   
 Finally run the application:
