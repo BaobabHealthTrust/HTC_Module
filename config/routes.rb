@@ -122,6 +122,10 @@ HTCModule::Application.routes.draw do
 
 	get "clients/locations/:id" => "clients#locations"
 
+  get "clients/confirm/:id" => "clients#confirm"
+
+  post "clients/confirm/:id" => "clients#confirm"
+
 	get "clients/village/:id" => "clients#village"
 
 	get "clients/print_accession/:id" => "clients#print_accession"

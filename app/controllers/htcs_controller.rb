@@ -205,7 +205,7 @@ class HtcsController < ApplicationController
 				                    .order('encounter_datetime DESC')
 				                    
 		@clients = @clients.reject{|c| c.current_state(date).name != "IN WAITING"} rescue []
-		@clients.count
+		@clients.uniq.count
 	end
 
   def past_waiting_list_total

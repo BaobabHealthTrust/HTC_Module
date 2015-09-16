@@ -10,6 +10,50 @@
 					}, refresh_interval);
 		</script>
 		<style>
+
+            #popup {
+                -moz-user-select: none;
+                background-color: #FEEFB3;
+                border: 4px solid #C6C6C6;
+                border-radius: 15px 15px 15px 15px;
+                color: #9F6000;
+                font-size: 28px;
+                height: 165px;
+                left: 40%;
+                padding: 5px;
+                position: absolute;
+                text-align: center;
+                top: 2%;
+                width: 319px;
+                z-index: 991;
+            }
+
+            .blue {
+                background-color: #a7cfdf;
+                background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+                border: 1px solid #7eb9d0;
+                border-radius: 3px;
+                color: #ffffff;
+                display: inline-block;
+                font-family: arial, helvetica, sans-serif;
+                font-size: 28px;
+                font-weight: bold;
+                padding: 10px;
+                text-decoration: none;
+                text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+            }
+
+            button {
+                border-radius: 10px !important;
+                cursor: pointer;
+                font-size: 0.5em;
+                margin: 3px;
+                min-height: 50px;
+                min-width: 50px;
+                padding: 15px;
+                border: none;
+            }
+
 			.arrow-right {
 				width: 0; 
 				height: 0; 
@@ -178,4 +222,38 @@
 			</div>
 		</div>
 	</body>
+
+<script>
+
+    function customAlert(msg) {
+        if (__$('popup'))
+            __$('popup').parentNode.removeChild(__$('popup'));
+
+        var ele = document.createElement('div')
+        ele.id = "popup";
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + msg + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 55px;" onmousedown="reset()">Ok</button></div>'
+        html += "</div></div></div></div>";
+        ele.innerHTML = html;
+        document.body.appendChild(ele);
+    }
+
+    function reset() {
+        ele = document.getElementById('popup');
+        ele.style.display = "none";
+        ele.parentNode.removeChild(ele);
+    }
+
+    function __$(id){
+        return document.getElementById(id);
+    }
+
+    <% if !flash[:error].blank? %>
+         customAlert("<%= flash[:error]%>");
+    <% elsif !flash[:notice].blank?   %>
+        customAlert("<%= flash[:notice]%>");
+    <% end %>
+</script>
 </html>

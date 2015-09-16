@@ -1,11 +1,16 @@
 <html>
     <head>
 	<script>
+
               <% if session[:partner] %>
                     var cancelDestination = "/client_demographics?client_id=<%=  session[:client_id] %>&partner_id=<%= session[:partner] %>";
                 <% else %>
                     var cancelDestination = "/client_demographics?client_id=<%=  params[:id] %>";
                   <% end %>
+
+              <% if request.referrer.match('/confirm')%>
+                    var cancelDestination = "/clients/confirm/<%= params[:id] || session[:client_id] %>";
+              <% end %>
               
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
@@ -57,6 +62,7 @@
                 <form action='/clients/modify_field/<%= params[:id] %>' method='post'>
                   <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 			<input type='hidden' name='name_id' value=<%= @client.id %> />
+            <input type='hidden' name='request_url' value=<%= request.referrer %> />
 			<fieldset >
 			<legend>Update <%= params[:ref].humanize %></legend>
 			<% if params[:ref] == "surname"  %>

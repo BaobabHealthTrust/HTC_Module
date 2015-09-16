@@ -1,7 +1,7 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy,
                                     :add_to_unallocated, :remove_from_waiting_list,
-                                    :assign_to_counseling_room, :village]
+                                    :assign_to_counseling_room, :village, :confirm]
 
 	#skip_before_action :village
 
@@ -167,6 +167,7 @@ class ClientsController < ApplicationController
   end
 
   def modify_field
+
     client = Client.find(params[:id])
     if  params[:home_phone_number] || params[:cell_phone_number] || params[:office_phone_number] || params[:occupation] || params[:land_mark]
      uuid =  ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
@@ -284,8 +285,13 @@ class ClientsController < ApplicationController
 
        new_address = PersonAddress.create(person_id: params[:id],
                         address1: address1, address2: address2, county_district: county_district, creator: current_user.id)
-     end
-     redirect_to "/client_demographics?client_id=#{params[:id]}"
+    end
+
+    if params[:request_url].blank?
+      redirect_to "/client_demographics?client_id=#{params[:id]}"
+    else
+      redirect_to params[:request_url]
+    end
   end
   
   def status
@@ -593,7 +599,7 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
-   
+
 		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
@@ -605,24 +611,28 @@ class ClientsController < ApplicationController
 
 			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
-        
+
 				if @accession.blank?
-					flash[:notice] = "Invalid accession number...."
-					redirect_to "/search" and return
+					flash[:notice] = "Invalid accession number..."
+					redirect_to "/htcs" and return
 				end
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
-				
+
 				if params[:add_to_session] =="true" || !params[:barcode].blank?
-					if !@scanned.current_state(current_date).blank?
+
+					if !@scanned.current_state(current_date).blank? && !@current_location.name.match(/reception/i)
 						if @scanned.current_state(current_date).name == "IN WAITING"
 						 assign_to_counseling_room(@scanned)
 						end
-					else
+          else
+            redirect_to "/clients/confirm/#{@accession.patient_id}" and return if @current_location.name.match(/reception/i)
+
+            flash[:notice] = "Client not on waiting list"
 						redirect_to "/search" and return
 					end
 				end
-        
+
 
 
 				if params[:client]
@@ -694,7 +704,7 @@ class ClientsController < ApplicationController
 											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
-				
+
 				sp = ""
 				@side_panel_date = ""
 				@client_list = ""
@@ -737,7 +747,36 @@ class ClientsController < ApplicationController
      end
      render layout: false
 	end
-	
+
+
+  def confirm
+
+    if request.post?
+      #Add the confirmed client to waiting list
+      add_to_unallocated
+    end
+
+    current_date = session[:datetime].to_date rescue Date.today.to_date
+    @reception_demographics = Settings.full_demographics_at_reception
+    @current_state = @client.current_state(current_date).name rescue nil
+
+    @id = @client.id
+    address = PersonAddress.find_by_person_id(@client.id)
+    @residence = address.address1
+    @ta = address.county_district
+    @home_district = address.address2
+    type = PersonAttributeType.where("name = 'occupation'").first.id rescue ""
+    @occupation = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Home Phone Number'").first.id rescue ""
+    @home_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Office Phone Number'").first.id rescue ""
+    @office_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Cell Phone Number'").first.id rescue ""
+    @cell_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Landmark Or Plot Number'").first.id rescue ""
+    @land_mark = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+  end
+
 	def waiting_list
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
      encounter_type_id = EncounterType.find_by_name('IN WAITING').id

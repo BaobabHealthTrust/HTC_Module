@@ -1,5 +1,23 @@
 <html>
 	<head>
+      <style>
+          #popup {
+              -moz-user-select: none;
+              background-color: #FEEFB3;
+              border: 4px solid #C6C6C6;
+              border-radius: 15px 15px 15px 15px;
+              color: #9F6000;
+              font-size: 28px;
+              height: 165px;
+              left: 40%;
+              padding: 5px;
+              position: absolute;
+              text-align: center;
+              top: 2%;
+              width: 319px;
+              z-index: 991;
+          }
+      </style>
 	<script>
 					var cancelDestination = "/htcs";
 
@@ -90,6 +108,38 @@
             button.style.backgroundColor = "grey";
       <% end %>
   }
+
+
+    function customAlert(msg) {
+        if (__$('popup'))
+            __$('popup').parentNode.removeChild(__$('popup'));
+
+        var ele = document.createElement('div');
+        ele.id = "popup";
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + msg + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 55px;" onmousedown="resetPopup()">Ok</button></div>'
+        html += "</div></div></div></div>";
+        ele.innerHTML = html;
+        document.body.appendChild(ele);
+    }
+
+    function resetPopup() {
+        var ele = document.getElementById('popup');
+        ele.style.display = "none";
+        ele.parentNode.removeChild(ele);
+    }
+
+    function __$(id){
+        return document.getElementById(id);
+    }
+
+    <% if !flash[:error].blank? %>
+    customAlert("<%= flash[:error]%>");
+    <% elsif !flash[:notice].blank?   %>
+    customAlert("<%= flash[:notice]%>");
+    <% end %>
 </script>
 
 </html>
