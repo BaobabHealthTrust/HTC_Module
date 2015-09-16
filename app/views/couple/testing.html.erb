@@ -110,7 +110,7 @@
 		</script>
 </head>
 <body >
-                
+
 		<%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>

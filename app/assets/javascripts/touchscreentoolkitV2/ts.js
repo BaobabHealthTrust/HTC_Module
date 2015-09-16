@@ -621,7 +621,7 @@ function addTimer(parent, limit, label, scale){
   if(parent == undefined || limit == undefined || label == undefined){
     return;
   }
-  
+
   var tbl = document.createElement("div");
   tbl.style.display = "table";
   tbl.style.borderSpacing = (5 * scale) + "px";
@@ -679,7 +679,7 @@ function addTimer(parent, limit, label, scale){
   disc.style.verticalAlign = "middle";
   disc.style.textAlign = "center";
   disc.style.marginBottom = (-40 * scale) + "px";
-  
+
   cell2.appendChild(disc);
   
   var time = document.createElement("div");
@@ -699,12 +699,12 @@ function addTimer(parent, limit, label, scale){
   row3.appendChild(cell3);
   
   var btn = addButton(cell3, "Start", "green");
-  
+
   btn.style.width = (100 * scale) + "px";
   btn.setAttribute("limit", limit);
   btn.id = "btnTmr" + parent.id;
   btn.setAttribute("target", parent.id);
-  
+
   btn.style.fontSize = (28 * scale) + "px";
   
   btn.style.minWidth = (100 * scale) + "px";
@@ -720,7 +720,7 @@ function addTimer(parent, limit, label, scale){
     countDown(this.getAttribute('target'), this.getAttribute('limit'))
     
   }
-  
+
   return tbl;
   
 }
@@ -756,19 +756,23 @@ function countDown(id, limit){
             }
 
             this.onmousedown = function(){
-              
+
               countDown(this.getAttribute('target'), this.getAttribute('limit'));
               
             }
           
-          } else {
+          }else {
           
             clearTimeout(timerHandles[this.getAttribute("target")]);
           
             delete timers[this.getAttribute("target")];
   
             this.innerHTML = "Reset";
-            
+
+             __$("time" + this.getAttribute("target")).style.color = 'black';
+
+             __$("time" + this.getAttribute("target")).parentNode.style.border = "2px solid  #3465a4";
+
           }
           
         }
@@ -788,13 +792,22 @@ function countDown(id, limit){
   var minutes = (timers[id] - seconds) / (60);
   
   if(__$("time" + id)){
-   
-    __$("time" + id).innerHTML = padZeros(minutes, 2) + ":" + padZeros(seconds, 2); 
+
+     var sign = (minutes < 0 || seconds < 0) ? '-' : '';
+
+    __$("time" + id).innerHTML = sign + padZeros(Math.abs(minutes), 2) + ":" + padZeros(Math.abs(seconds), 2);
     
   }
 
   if(timers[id] <= 0){
-  
+
+      __$("time" + id).style.color = 'red';
+
+      __$("time" + id).parentNode.style.border = "2px solid darkred";
+
+      timerHandles[id] = setTimeout("countDown('" + id + "', '" + limit + "')", 1000);
+
+   /*
     delete timers[id];
     
     if(__$("btnTmr" + id)){
@@ -815,6 +828,7 @@ function countDown(id, limit){
           
         }
     }
+    */
             
   } else {
   
