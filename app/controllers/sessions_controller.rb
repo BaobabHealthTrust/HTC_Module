@@ -24,7 +24,7 @@ class SessionsController < ApplicationController
 		
 			if location_tags.include?(@location.id) && !is_counselor && !is_supervisor
 				@location = nil
-				flash[:alert] = "You are not allow to visit this location"
+				flash[:alert] = "You are not allowed to visit this location"
 			end
 		else
 			flash[:alert] = "Location: #{location} does not exist!"

@@ -41,7 +41,7 @@
 	
 	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
 	<script>
-	
+
 	var sidePanelData = {<%= @side_panel_date.html_safe %>};
 	
 	//Highlist list object
@@ -65,7 +65,8 @@
 	}
 	
 	function create_new_patient() {
-   window.location = '<%= new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>'
+        <% params[:dob] = params[:date_of_birth]%>
+        window.location = '<%= new_client_path(params) %>'
 	}
 
    function printAccession(id){
@@ -125,6 +126,7 @@
 				
 				dspValue = this.innerHTML.split(';');
 				var obj = sidePanelData[this.value];
+
 				var s = "";
 				
 				if (this.innerHTML.trim() != "New client") {
@@ -137,53 +139,55 @@
 				    var button = '<a href="#" id="add" ' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +
 				    						 ' class="blue" pos="0" section="0"><span class="txt">Add to waiting list</span></a>';
-				   	
-						s += "<span class='d dL'> Accession Number</span>" +
+                        s += "<div class = 'list-table'>"
+						s += "<div class = 'row'><span class='d dL'> Accession Number</span>" +
 								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.accession_number  + "</span>";
-								 
-						s += "<span class='d dL'> Gender </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.gender  + "</span>";
+								 "<span class='d dR'>" + obj.accession_number  + "</span></div>";
 
-						s += "<span class='d dL'> Date of Birth </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.birthDate  + "</span>";
 								 
-						s += "<span class='d dL'> Age </span>" +
+						s += "<div class = 'row'><span class='d dL'> Gender </span>" +
 								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.age  + "</span>";					 
+								 "<span class='d dR'>" + obj.gender  + "</span></div>";
 
-						s += "<span class='d dL'> Residence </span>" +
+						s += "<div class = 'row'><span class='d dL'> Date of Birth </span>" +
 								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.residence  + "</span>";
+								 "<span class='d dR'>" + obj.birthDate  + "</span></div>";
 								 
-						s += "<span class='d dL'> Last Visit </span>" +
+						s += "<div class = 'row'><span class='d dL'> Age </span>" +
 								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.last_visit  + "</span>";
+								 "<span class='d dR'>" + obj.age  + "</span></div>";
+
+						s += "<div class = 'row'><span class='d dL'> Residence </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.residence  + "</span></div>";
+								 
+						s += "<div class = 'row'><span class='d dL'> Last Visit </span>" +
+								 "<span class='d dC'> : </span>" +
+								 "<span class='d dR'>" + obj.last_visit  + "</span></div>";
 						
 						if (obj.has_booking) {
-							s += "<span class='d dL' style='color:red'> Booking </span>" +
+							s += "<div class = 'row'><span class='d dL' style='color:red'> Booking </span>" +
 									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + obj.appointment_date  + "</span>";
+									 "<span class='d dR'>" + obj.appointment_date  + "</span></div>";
 						}
 						
 						if (parseInt(obj.days_since_last_visit) > 0) {
-							s += "<span class='d dL'> Period Since Last Visit </span>" +
+							s += "<div class = 'row'><span class='d dL'> Period Since Last Visit </span>" +
 									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
+									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span></div>";
 						}
 
 						var accession_number =  '<a href="#" id="print" ' +
 				    						 'onmousedown="printAccession(' + obj.id + ')"' +
 				    						 ' class="blue" pos="0" section="0"><span class="txt">Accession</span></a>';
 						if (obj.status.trim()=="") {
-							//s+=button;
+							s+= "</div>";
 							s +=  button + accession_number;
 						}else {
-							s += "<span class='d dL'> Work-flow Status </span>" +
+							s += "<div class = 'row'><span class='d dL'> Work-flow Status </span>" +
 									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + humanize(obj.status.toLowerCase())  + "</span>";
+									 "<span class='d dR'>" + humanize(obj.status.toLowerCase())  + "</span></div>";
+                            s += "</div>";
 			        s += accession_number;
 						}
 						
@@ -192,6 +196,7 @@
 				     s = '<br> <br> <a href="#" id="new" onmousedown="create_new_patient()" ' +
 				    						 ' class="blue" pos="0" section="0"><span class="txt">New client</span></a>'				
 					}
+
 				__$('dsp').innerHTML = s;  
 			};
 		}
@@ -251,4 +256,17 @@
   text-align: center;
   top: 85px;
 }
+
+.row {
+    display: table-row;
+}
+
+ .d{
+     display: table-cell;
+ }
+  .list-table{
+      display: table;
+      width: 50%;
+  }
+
 </style>

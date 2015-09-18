@@ -2651,7 +2651,7 @@ function navigateTo(pos, section){
 	timerHandles = {};
 
   if(__$("popupkeyboard")){
-    
+
 	  document.body.removeChild(__$("popupkeyboard"));
 
 	}
@@ -3413,7 +3413,7 @@ function checkValidity(){
         }
         
       } else {
-        
+
         if(fields[i].getAttribute("disabled") == null && __$("textFor" + fields[i].id)){
           if(fields[i].getAttribute("regex") != null){
             
@@ -3509,7 +3509,7 @@ function showShield(action){
 }
 
 function loadAjax(id, target1, target2, url, search){   
-			
+
 	var textfile;
 	if (window.XMLHttpRequest)
 	{ 
@@ -3537,18 +3537,26 @@ function loadAjax(id, target1, target2, url, search){
 				}
 				
 			}
-			
-			if(__$("popupkeyboard")){
-				
-				__$("popupkeyboard").innerHTML = "";
-				
-				addCombo(__$("popupkeyboard"), options, "single", target1, target2, true, id, "clearLookup('" + id + "')");
-				
-			} else {
-				
-				addList(__$(id), options, "single", target1, target2, "clearLookup('" + id + "')", (__$("main-content-area").offsetHeight - 50) + "px", __$(id).offsetWidth + "px");
-				
-			}
+
+			var targetPos = target1.getAttribute("pos");
+            var curPos = btnNext.getAttribute("pos");
+
+            if (targetPos == curPos) {
+                if (__$("popupkeyboard")) {
+
+                    __$("popupkeyboard").innerHTML = "";
+                    if (Object.keys(options).length > 0) {
+                        addCombo(__$("popupkeyboard"), options, "single", target1, target2, true, id, "clearLookup('" + id + "')");
+                    } else {
+                        __$("popupkeyboard").parentNode.removeChild(__$("popupkeyboard"));
+                    }
+
+                } else {
+                    if (Object.keys(options).length > 0) {
+                        addList(__$(id), options, "single", target1, target2, "clearLookup('" + id + "')", (__$("main-content-area").offsetHeight - 50) + "px", __$(id).offsetWidth + "px");
+                    }
+                }
+            }
 			
 		}
 	}
@@ -3580,19 +3588,20 @@ function checkLookup(id){
 			// skip
 			
 		} else {
-		
-			if(__$(id).getAttribute("ajaxURL") != null){
-				
+
+         
+			if(__$(id).getAttribute("ajaxURL") != null ){
+
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxURL"), __$(id).value.trim());
-				
+
 			} else if(__$(id).getAttribute("ajaxUrl") != null){
-				
+
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxUrl"), __$(id).value.trim());
-				
+
 			} else if(__$(id).getAttribute("ajaxurl") != null){
-				
+
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxurl"), __$(id).value.trim());
-				
+
 			}
 			
 		}

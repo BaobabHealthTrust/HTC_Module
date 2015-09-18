@@ -95,7 +95,7 @@ class LocationsController < ApplicationController
 	end
 
    def ta
-      return if params[:search].blank?
+      #return if params[:search].blank?
 			location = TraditionalAuthority.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
       "#{locs.name}"

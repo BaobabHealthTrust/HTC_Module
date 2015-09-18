@@ -62,7 +62,7 @@
                 <form action='/clients/modify_field/<%= params[:id] %>' method='post'>
                   <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 			<input type='hidden' name='name_id' value=<%= @client.id %> />
-            <input type='hidden' name='request_url' value=<%= request.referrer %> />
+            <input type='hidden' name='request_' value=<%= @client.id %> />
 			<fieldset >
 			<legend>Update <%= params[:ref].humanize %></legend>
 			<% if params[:ref] == "surname"  %>
@@ -87,7 +87,7 @@
                                     <label for="date_of_birth"> Date of birth </label>
                                     <input type="text"  onclick="checkDate()" id="date_of_birth"
                                                   max="<%= Date.today %>" name="date_of_birth"
-                                                   fieldtype="age" />
+                                                   fieldtype="age" required = 'true' optional = 'false' />
                                           <br />
                              <% elsif params[:ref] == "residence" %>
                                     <label for="residence">Residence</label>

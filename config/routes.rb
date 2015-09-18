@@ -136,7 +136,11 @@ HTCModule::Application.routes.draw do
 
 	get "clients/first_name/:id" => "clients#first_name"
 
+  get "clients/first_name" => "clients#first_name"
+
 	get "clients/last_name/:id" => "clients#last_name"
+
+  get "clients/last_name" => "clients#last_name"
 	
 	get "total_bookings" => "clients#total_bookings"
 	

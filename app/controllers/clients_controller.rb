@@ -54,7 +54,7 @@ class ClientsController < ApplicationController
   end
 
   def new
-  	
+
 		if ! params[:name_id].blank?
 				@names = PersonName.where("person_id = #{params[:name_id]} AND voided = 0")				
 				@names.each do |name|
@@ -67,7 +67,8 @@ class ClientsController < ApplicationController
 															creator: current_user.id)
 				redirect_to "/clients/#{params[:name_id]}" and return
 
-		elsif ! params[:gender].blank? and ! params[:dob].blank?
+    elsif ! params[:gender].blank? and ! params[:dob].blank?
+
 			current_number = 1
 			current = session[:datetime].to_date rescue Date.today
     
@@ -111,6 +112,42 @@ class ClientsController < ApplicationController
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
+
+      if !params[:firstname].blank? || !params[:surname].blank?
+        @new_name = PersonName.create(preferred: '0', person_id: @person.id,
+            given_name: params[:firstname], family_name: params[:surname],
+            creator: current_user.id) if @person
+      end
+
+      if !params[:address2].blank?
+        @address.address2 = params[:address2]
+      end
+
+      if !params[:ta].blank?
+        @address.county_district = params[:ta]
+      end
+
+      @address.save! if @person
+
+      ["Occupation", "Cell Phone Number", "Office Phone Number", "Home Phone Number", "Landmark Or Plot Number"].each do |name|
+
+        next if params["#{name}"].blank?
+
+        uuid =  ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+        value = params["#{name}"]
+        type = PersonAttributeType.where("name = ?", name).first.id
+
+        next if type.blank?
+
+        attribute = PersonAttribute.create(
+            person_id: @person.id,
+            value: value,
+            creator: current_user.id,
+            person_attribute_type_id: type,
+            uuid: uuid
+        )
+
+      end if @person
 
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
@@ -397,7 +434,7 @@ class ClientsController < ApplicationController
 	end
 
 	def village
-      return if params[:search].blank?
+      #return if params[:search].blank?
 			location = Village.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
       "#{locs.name}"
@@ -406,7 +443,7 @@ class ClientsController < ApplicationController
 	end
 	
 	def first_name
-     return if params[:search].blank?
+     #return if params[:search].blank?
 			person = PersonName.where("given_name LIKE '%#{params[:search]}%'")
 			person = person.map do |locs|
       "#{locs.given_name}"
@@ -415,7 +452,7 @@ class ClientsController < ApplicationController
 	end
 
 	def last_name
-      return if params[:search].blank?
+      #return if params[:search].blank?
 			person = PersonName.where("family_name LIKE '%#{params[:search]}%'")
 			person = person.map do |locs|
       "#{locs.family_name}"
@@ -596,6 +633,11 @@ class ClientsController < ApplicationController
 
 	def search
 			 session[:show_new_client_button] = true
+       @occupation = ["Business", "Craftsman","Domestic worker","Driver","Farmer","Health worker",
+                      "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
+                      "Security guard","Soldier","Student","Teacher","Other","Unknown"]
+       @land_mark = ["School","Police","Church","Mosque","Borehole"]
+       @reception_demographics = Settings.full_demographics_at_reception
 	end
 	
 	def search_results
@@ -734,7 +776,7 @@ class ClientsController < ApplicationController
 					
 					@clients_info << { id: id, accession: accession,
 														 birth: birth, gender: gender, residence: residence}
-					
+
 					@side_panel_date += sp + "#{id} : { id: #{id},
 											accession_number: '#{accession}', status: '#{status}',
 											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
