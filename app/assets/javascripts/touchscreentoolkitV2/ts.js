@@ -1030,7 +1030,7 @@ function addDate(parent, target, date){
           //"value" : (!isNaN(date.getFullYear()) ? date.getFullYear() : (currentdate.length == 3 ? currentdate[2] : "?")),
           "onmousedown" : "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtYearFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
-          "style" : "font-size: 24px; text-align: center; width: 100%;"
+          "style" : "font-size: 24px; margin: auto; text-align: center; width: 82%;"
         },
         {
           "type"  : "input",
@@ -1039,7 +1039,7 @@ function addDate(parent, target, date){
           //"value" : (typeof(months[date.getMonth()]) != "undefined" ? months[date.getMonth()] : (currentdate.length == 3 ? currentdate[1] : "?")),
           "onmousedown" : "showShield(); addList(__$('txtMonthFor' + this.getAttribute('target')),{'Jan':'January','Feb':'February','Mar':'March','Apr':'April','May':'May','Jun':'June','Jul':'July','Aug':'August','Sep':'September','Oct':'October','Nov':'November','Dec':'December','?':'Unknown'},'single',__$('txtMonthFor' + this.getAttribute('target')),__$('txtMonthFor' + this.getAttribute('target')), 'checkDate(\"' + this.getAttribute('target') + '\")'); checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
-          "style" : "font-size: 24px; text-align: center; width: 100%;"
+          "style" : "font-size: 24px; margin: auto; text-align: center; width: 82%;"
         },
         {
           "type"  : "input",
@@ -1048,7 +1048,7 @@ function addDate(parent, target, date){
           //"value" : (!isNaN(date.getDate()) ? date.getDate() : (currentdate.length == 3 ? currentdate[0] : "?")),
           "onmousedown" : "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtDateFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
-          "style" : "font-size: 24px; text-align: center; width: 100%;"
+          "style" : "font-size: 24px; margin: auto; text-align: center; width: 82%;"
         }
       ],
       [
@@ -3589,7 +3589,7 @@ function checkLookup(id){
 			
 		} else {
 
-         
+
 			if(__$(id).getAttribute("ajaxURL") != null ){
 
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxURL"), __$(id).value.trim());
