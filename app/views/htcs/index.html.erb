@@ -66,10 +66,13 @@
                         <%  else %>
                                 <option value= <%= htcs_account_path %> >My Account</option>
                         <% end %>
-			<% if @is_counselor %>
+			<% if @is_counselor%>
 				<option value= <%= reports_index_path %> >Reports</option>
-				<option value= <%= admins_path + '/index/' %> >Administration</option>
 			<% end %>
+
+            <% if is_supervisor%>
+                  <option value= <%= admins_path + '/index/' %> >Administration</option>
+             <% end %>
 			</select>
 			
 		</div>
