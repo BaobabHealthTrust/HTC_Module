@@ -32,13 +32,16 @@ function redirect(location){
     window.location=location;
 }
 
-function subtractMinutes(limit, minutes){
+function subtractMinutes(limit, minutes, redZero){
+        var sign = limit[0].match(/\-/) ? -1 : 1;
+        var limitInt = (parseInt(limit[0]) * 60) + (parseInt(limit[1])* sign);
+        var currentInt = (parseInt(minutes[0]) * 60) + parseInt(minutes[1]);
+        var newtime = 0;
 
-        var olddate = new Date(1982, 1, 1, limit[0], limit[1], 0, 0); 
-        var newdate =  new Date(1982, 1, 1, minutes[0], minutes[1], 0, 0);
-        var subbed = new Date(olddate - newdate);
-
-        var newtime = subbed.getHours() + ':' + subbed.getMinutes();
+        if (limitInt || redZero) {
+            newtime = (currentInt - limitInt);
+            newtime = parseInt(newtime/60) + ":" + (newtime % 60);
+        }
         return newtime;
 }
 

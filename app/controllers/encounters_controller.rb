@@ -9,7 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
-
+#raise params.to_yaml
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])
@@ -73,11 +73,11 @@ class EncountersController < ApplicationController
                     observation["value_datetime"] = nil
 
                  else
-              		observation["value_datetime"] = observation["value_datetime"].to_date.strftime("%Y-%m-%d %H:%M:%S")
+              		observation["value_datetime"] = observation["value_datetime"].to_time.strftime("%Y-%m-%d %H:%M:%S")
                  end
               end
               
-              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
+              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text', 'complex'].map{|value_name|
                 observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
               }.compact
 
@@ -85,7 +85,7 @@ class EncountersController < ApplicationController
 
               observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
               observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
-							
+
 							observation[:obs_datetime] = current.strftime("%Y-%m-%d %H:%M:%S")
 							observation[:creator] = current_user.id
               observation[:encounter_id] = encounter.id

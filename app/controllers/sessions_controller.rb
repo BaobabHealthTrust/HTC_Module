@@ -98,4 +98,8 @@ class SessionsController < ApplicationController
 			location_tag_map.save
 		end
   end
+
+  def server_date
+    render :text => Time.now.to_s(:db)
+  end
 end

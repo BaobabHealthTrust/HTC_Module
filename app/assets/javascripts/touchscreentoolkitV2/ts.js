@@ -701,8 +701,13 @@ function addTimer(parent, limit, label, scale){
   var btn = addButton(cell3, "Start", "green");
 
   btn.style.width = (100 * scale) + "px";
+
   btn.setAttribute("limit", limit);
+
+  btn.setAttribute("targetID", parent.getAttribute("targetID"));
+
   btn.id = "btnTmr" + parent.id;
+
   btn.setAttribute("target", parent.id);
 
   btn.style.fontSize = (28 * scale) + "px";
@@ -714,9 +719,11 @@ function addTimer(parent, limit, label, scale){
   btn.style.width = (100 * scale) + "px";
   
   btn.style.height = (80 * scale) + "px";
-  
+
   btn.onmousedown = function(){
-    
+
+    updateTimerDate(this);
+
     countDown(this.getAttribute('target'), this.getAttribute('limit'))
     
   }
@@ -744,7 +751,9 @@ function countDown(id, limit){
         __$("btnTmr" + id).onmousedown = function(){
         
           if(this.innerHTML.trim().toLowerCase() == "reset"){
-          
+
+            updateTimerDate(this);
+
             this.innerHTML = "Start";
             
             this.className = "button green";
@@ -757,12 +766,16 @@ function countDown(id, limit){
 
             this.onmousedown = function(){
 
+              updateTimerDate(this);
+
               countDown(this.getAttribute('target'), this.getAttribute('limit'));
               
             }
           
           }else {
-          
+
+            updateTimerDate(this);
+
             clearTimeout(timerHandles[this.getAttribute("target")]);
           
             delete timers[this.getAttribute("target")];
@@ -788,7 +801,6 @@ function countDown(id, limit){
   }
 
   var seconds = timers[id] % (60);
-  
   var minutes = (timers[id] - seconds) / (60);
   
   if(__$("time" + id)){
@@ -796,7 +808,8 @@ function countDown(id, limit){
      var sign = (minutes < 0 || seconds < 0) ? '-' : '';
 
     __$("time" + id).innerHTML = sign + padZeros(Math.abs(minutes), 2) + ":" + padZeros(Math.abs(seconds), 2);
-    
+
+
   }
 
   if(timers[id] <= 0){
@@ -835,6 +848,37 @@ function countDown(id, limit){
     timerHandles[id] = setTimeout("countDown('" + id + "', '" + limit + "')", 1000);
   
   }
+
+}
+
+function updateTimerDate(timerObject) {
+
+    var datefile;
+    var text = timerObject.innerHTML;
+
+    if (window.XMLHttpRequest) {
+        datefile = new XMLHttpRequest();
+    }
+
+    datefile.onreadystatechange = function () {
+
+        if (datefile.readyState == 4 && datefile.status == 200) {
+
+            var time = datefile.responseText;
+
+            if (text.toLowerCase().trim() == "start"){
+                __$(timerObject.getAttribute("targetID")).value = time.trim() + "/"
+            }else if (text.toLowerCase().trim() == "stop"){
+                __$(timerObject.getAttribute("targetID")).value = __$(timerObject.getAttribute("targetID")).value + time.trim();
+            }else if (text.toLowerCase().trim() == "reset"){
+                //__$(timerObject.getAttribute("targetID")).value = "";
+            }
+        }
+    }
+    var url = "/sessions/server_date"
+    datefile.open("GET", url, true);
+
+    datefile.send();
 
 }
 

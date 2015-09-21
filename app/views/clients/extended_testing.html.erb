@@ -257,6 +257,12 @@
       <fieldset custom=true fs_onLoad="loadCustom();">
         <legend>HIV Testing (Extended)</legend>
 
+        <input type="hidden" id="give_concent" name="giveconcent" value="" />
+        <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+
         <input type="hidden" name="observations[][value_coded_or_text]" id="rapidtimer" fieldtype="number" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
@@ -266,6 +272,12 @@
         <input type="hidden" name="observations[][value_coded_or_text]" id="goldtimer" fieldtype="number" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+
+        <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" value="" />
 
       </fieldset>

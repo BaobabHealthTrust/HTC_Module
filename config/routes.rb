@@ -178,6 +178,8 @@ HTCModule::Application.routes.draw do
 	
   resources :rooms
 
+  get "sessions/server_date" => "sessions#server_date"
+
 	root 'sessions#attempt_login'
   
   resources :obs

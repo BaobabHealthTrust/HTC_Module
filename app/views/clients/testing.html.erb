@@ -46,26 +46,28 @@
 
       function checkLot() {
 
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                        xmlhttp=new XMLHttpRequest();
-                }else{// code for IE6, IE5
-                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                xmlhttp.onreadystatechange=function() {
-                        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                          var results = xmlhttp.responseText;
-													if (eval(results) == "none"){
-														 __$("valid_rapid").value = "no"
-														}
-													 else {
-														 __$("valid_rapid").value = eval(results)
-														}
-                                                                                                         activateNext()
-                          }
-                        }
+          if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+              xmlhttp = new XMLHttpRequest();
+          } else {// code for IE6, IE5
+              xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          xmlhttp.onreadystatechange = function () {
+              if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                  var results = xmlhttp.responseText;
+                  if (eval(results) == "none") {
+                      __$("valid_rapid").value = "no"
+                  }
+                  else {
+                      __$("valid_rapid").value = eval(results)
+                  }
+                  activateNext()
+              }
+          }
 
-                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
-                xmlhttp.send();
+          if (currentPage == 0) {
+              xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
+              xmlhttp.send();
+          }
 
                  setTimeout("checkLot()", 300);
 }
@@ -90,21 +92,31 @@
                                                                                                          
                           }
                         }
+        if (currentPage == 0) {
+            xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
+            xmlhttp.send();
+        }
 
-                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
-                xmlhttp.send();
-                 setTimeout("checkSecondLots()", 100);
+        setTimeout("checkSecondLots()", 100);
+
 }	
 
       function setValues(){
+
+        var redRapidColor = false;
+        var redGoldColor = false;
         if (__$('timetimer1')){
-          rapidValue = __$('timetimer1').innerHTML.toString()
+          rapidValue = __$('timetimer1').innerHTML.toString();
+          redRapidColor =  (__$('timetimer1').style.color == 'red') ? true : false;
         }
-        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"));
+
+        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"), redRapidColor);
         if(__$('timetimer2')){
-          goldValue = __$('timetimer2').innerHTML.toString()
+          goldValue = __$('timetimer2').innerHTML.toString();
+          redGoldColor =  (__$('timetimer2').style.color == 'red') ? true : false;
         }
-        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"));
+
+        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
         if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus != "YES"){
           __$("allresults").value = "Positive"
@@ -301,8 +313,8 @@
             cell1_1.id = "timer1";
 					
             row1.appendChild(cell1_1);
-					
-            var timer1 = addTimer(cell1_1, 10, kits[0][1] + " Test Timer", 0.55)
+            cell1_1.setAttribute("targetID", 'rapidrange');
+            var timer1 = addTimer(cell1_1, 1, kits[0][1] + " Test Timer", 0.55)
 
             timer1.style.marginLeft = "40px";
 					
@@ -315,7 +327,8 @@
             cell1_2.style.textAlign = "right";
 					
             row1.appendChild(cell1_2);
-					
+
+            cell1_2.setAttribute("targetID", 'goldrange');
             var timer2 = addTimer(cell1_2, 15, kits[1][1] + "  Test Timer", 0.55);
 					
             timer2.style.marginLeft = "40px";
@@ -448,6 +461,7 @@
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" />
+        <input type="hidden" name="observations[][value_complex]" id="rapidrange"/>
 
         <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
@@ -469,6 +483,7 @@
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
+        <input type="hidden" name="observations[][value_complex]" id="goldrange"/>
 
         <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue "" %>" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
