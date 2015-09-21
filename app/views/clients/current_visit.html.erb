@@ -12,6 +12,11 @@
 									
 								}
 
+					function closeLists() {
+						// body...
+						document.getElementById('lists').style.display = "none";
+						document.getElementById('lists').innerHTML ="";
+					}
 
                   function loadTasks(){
 											coordinates = position(__$("tasks"))
@@ -29,6 +34,38 @@
 											var table = document.createElement("div");
 											table.className = "tables";
 										  ele.appendChild(table);
+
+
+											//create a row
+											var cancel_row = document.createElement("div");
+											cancel_row.className = "rows";
+											
+											//create a blank cell to help floating the cancel button to the right
+											var blank_cell = document.createElement("div");
+											blank_cell.className = "cells";
+
+											//create the blank cell data
+											blank = ""
+											blank_cell.innerHTML = blank;
+											cancel_row.appendChild(blank_cell);
+
+											//create the button cell
+											var cancel_cell = document.createElement("div");
+											cancel_cell.className = "cells";
+											
+											//create a cancel button
+											cancel_button = '<a href="#" class="void" onmousedown="closeLists();" style="float: right;">X</a>';
+											
+
+											//append cancel button to cell
+											cancel_cell.innerHTML = cancel_button;
+											
+											//append cell to row
+											cancel_row.appendChild(cancel_cell);
+											
+											//append row to table
+											table.appendChild(cancel_row);
+											
 											
 											var row = document.createElement("div");
                       row.className = "rows";

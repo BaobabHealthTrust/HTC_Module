@@ -58,6 +58,13 @@
 	margin-left:35px;
 }
 
+#mohq {
+  background-image: url(<%= asset_path 'mw.gif' %>);
+  background-size: cover;
+  margin-left:35px;
+}
+
+
 #clnt {
 	background-image: url(<%= asset_path 'clnt.png' %>);
 	background-size: cover;
@@ -80,7 +87,8 @@
 
 <base target="_parent" >
 <%= link_to '<span class="txt"> LH Monthy </span>'.html_safe, monthly_path, :class=>'plain', :id => "csl" %>
-<%= link_to '<span class="txt"> MOH Report</span>'.html_safe, moh_report_path, :class=>'plain', :id => "moh" %>
+<%= link_to '<span class="txt"> MOH District Monthly</span>'.html_safe, moh_report_path, :class=>'plain', :id => "moh" %>
+<%= link_to '<span class="txt"> MOH Combined Quarterly Site</span>'.html_safe, mohquartery_report_path, :class=>'plain', :id => "mohq" %>
 <%= link_to '<span class="txt"> Stock report </span>'.html_safe, 'stock_report', :class=>'plain', :id => "stock" %>
 <%= link_to '<span class="txt"> Temperature changes </span>'.html_safe, 'temp_changes', :class=>'plain', :id => "temperature" %>
 

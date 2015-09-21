@@ -13,6 +13,8 @@ HTCModule::Application.routes.draw do
   get "monthly" => "reports#monthly_report"
   get "moh_report" => "reports#moh_report"
 
+  get "mohquartery_report" => "reports#mohquartery_report"
+
   get "couple/appointment"
   get "reports/index"
   get "reports/stock_report"
