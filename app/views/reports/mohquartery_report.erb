@@ -569,8 +569,9 @@
     }
 
    function getData(){
-      mon = monthNames[__$('month').value]
-      yr = __$('year').value
+      quarter = __$("quarter").value;
+      mon = __$('quarter').value;
+      yr = __$('year').value;
       getMonthlyDetails(mon, yr)
     }
 
@@ -605,7 +606,7 @@
                 td.innerHTML =  "<table class='selects' style='width: 100%;'>" +
                                     "<tr>" +
                                         "<td><label id ='date-label'> Year: </label></td>" +
-                                        "<td><select id ='month'></select></td>" +
+                                        "<td><select id ='quarter'></select></td>" +
                                         "<td><label id ='date-label'> Quarter: </label></td>" +
                                         "<td><select id ='year'> </select></td>  " +
                                         "<td></td>" +
@@ -614,17 +615,52 @@
                 row.appendChild(td);
 
 
-                    var monthSelect = __$("month");
-                    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    var qtSelect = __$("quarter");
+
+                    var months = {
+                        "Q1" : ["Jan", "Feb", "Mar"] ,
+                        "Q2" : ["Apr", "May", "Jun"],
+                        "Q3" : ["Jul", "Aug", "Sep"],
+                        "Q4" : ["Oct", "Nov", "Dec"]
+                    };
+
+                    var curQt = "Q1";
+                    var cur_month = "<%= @cur_month %>".trim();
+
+                    switch (cur_month){
+                        case "Jan":
+                        case "Feb":
+                        case "Mar":
+                            curQt = "Q1";
+                            break;
+                        case "April":
+                        case "May":
+                        case "Jun":
+                            curQt = "Q2";
+                            break;
+                        case "Jul":
+                        case "Aug":
+                        case "Sep":
+                            curQt = "Q3"
+                            break;
+                        case "Oct":
+                        case "Nov":
+                        case "Dec":
+                            curQt = "Q4";
+                            break;
+                        default:
+                            curQt = "Q1";
+                    }
+
                     for(var i in months){
                         var opt = document.createElement("option");
-                        opt.setAttribute("value", months[i]);
-                        opt.innerHTML = months[i];
+                        opt.setAttribute("value", months[i].join(","));
+                        opt.innerHTML = i;
                         opt.setAttribute("onmousedown", "getData()");
-                        if (months[i] == "<%= @cur_month %>"){
+                        if (i == curQt){
                             opt.selected = true;
                         }
-                        monthSelect.appendChild(opt);
+                        qtSelect.appendChild(opt);
                     }
 
                     var yearSelect = __$("year");
