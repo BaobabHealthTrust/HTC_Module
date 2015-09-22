@@ -115,6 +115,45 @@
 
     function buildBody(data){
 
+    //   /* testing code*/
+
+    //   var mainTable = document.createElement("div");
+    //   mainTable.style.display = "table" //table | table-row | table-cell
+    //   mainTable.id = "mainTable";
+
+    //   var parent = document.getElementById("holder");
+    //     var  responseData = document.getElementById("response-data");
+    //     if(responseData){
+    //       parent.removeChild(responseData);
+    //    }
+
+    //   parent.appendChild(mainTable);
+
+    //   var row1 = document.createElement("div");
+    //   row1.style.display = "table-row";
+
+    //   mainTable.appendChild(row1);
+
+    //   var col1 = document.createElement("div");
+    //   col1.style.display = "table-cell";
+    //   col1.innerHTML = "column 1";
+    //   col1.className = "main-table-cell";
+    // row1.appendChild(col1);
+
+    // var col2 = document.createElement("div");
+    //   col2.style.display = "table-cell";
+    //   col2.innerHTML = "column 2";
+    //   col2.className = "main-table-cell"
+    // row1.appendChild(col2);
+
+
+    // var col3 = document.createElement("div");
+    //   col3.style.display = "table-cell";
+    //   col3.className = "main-table-cell"
+    //   col3.innerHTML = "Column 3";
+    // row1.appendChild(col3);
+
+
         btnNext.onmousedown = function (){
           window.location = '<%= htcs_path %>';
         }
@@ -129,10 +168,28 @@
        row.className = "main-row";
        table.appendChild(row);
 
+
       var cell = document.createElement("div");
       cell.className = "caption";
       cell.innerHTML = "Sex / Pregnancy"
       row.appendChild(cell);
+
+
+      var cell = document.createElement("div");
+      cell.className = "caption";
+      cell.innerHTML = "column 2"
+      row.appendChild(cell);
+
+      var cell = document.createElement("div");
+      cell.className = "caption";
+      cell.innerHTML = "column 3"
+      row.appendChild(cell);
+
+      var col1 = document.createElement("div");
+      col1.style.display = "table-cell";
+      col1.innerHTML = "Health Facility";
+      col1.className = "main-table-cell";
+      row1.appendChild(col1);
 
        var row = document.createElement("div");
        row.className = "main-row";
@@ -149,6 +206,11 @@
       for (i = 0; i < gender.length; i++){
         addRow(gender[i], gTable)
       }
+
+      // var total =cocument.createElement("div")
+      // total.className = data-td
+      // total.innerHTML = total (check)
+      // gtable appendChild(td)
 //End of first row
 //Second row
       gender = data["Age groups"]["Values"]
@@ -778,7 +840,7 @@
  .group-row{
       display: table-row;
       border-style: solid;
-      width: 100%;
+      width: 50%;
       text-align: center;
       margin:auto;
 }
@@ -824,11 +886,11 @@ kit-td{
       background-color: lightblue;
       text-decoration: none;}
 
-    .data-table{ display: table;width:99%;margin:auto;padding:5px;padding-top: 0px;border-radius:4px;}
+    .data-table{ display: table;width:50%;margin:0%;padding:10px;padding-top: 0px;border-radius:4px;}
     .table{ display: table;width:99%;margin:auto;padding:5px;padding-top: 0px;border-radius:4px;
            background:lightblue;}
-    .table-inner{ display: table;width:99%;border:0px;vertical-align: top;}
-    .row{display: table-row;width:100%;margin:auto;}
+    .table-inner{ display: table;width:70%;border:0px;vertical-align: top;}
+    .row{display: table-row;width:100%;margin:50%;}
     .topic {display: table-cell;
            vertical-align: middle;
     }
