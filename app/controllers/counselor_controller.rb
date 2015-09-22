@@ -436,6 +436,8 @@ class CounselorController < ApplicationController
                            e.voided = 0 AND DATE(encounter_datetime) >= '#{start}' AND DATE(encounter_datetime) <= '#{end_day}'
                            AND o.voided = 0 AND o.concept_id = #{concept_id} AND o.value_coded = #{value}
                           AND e.encounter_type = #{et}").map{|p| p.person_id }.join(',') rescue ""
+      else
+        
       end
       case number
        
