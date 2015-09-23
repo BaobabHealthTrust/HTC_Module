@@ -853,6 +853,7 @@ function countDown(id, limit){
 
 function updateTimerDate(timerObject) {
 
+    var date1 = new Date();
     var datefile;
     var text = timerObject.innerHTML;
 
@@ -866,6 +867,18 @@ function updateTimerDate(timerObject) {
 
             var time = datefile.responseText;
 
+            //Fix query delays to time
+            var date2 = new Date(Date.parse(time.replace('-','/','g')));
+            var secDiff = Math.abs(Math.round((date1 - date2)/1000));
+            date2.setSeconds(date2.getSeconds() + parseInt(secDiff/2));
+
+            var time = date2.getYear() +
+                "-" + padZeros((date2.getMonth() + 1), 2) +
+                "-" + padZeros(date2.getDate(), 2) +
+                " " + padZeros(date2.getHours(), 2) +
+                ":" + padZeros(date2.getMinutes(), 2) +
+                ":" + padZeros(date2.getSeconds(), 2);
+            
             if (text.toLowerCase().trim() == "start"){
                 __$(timerObject.getAttribute("targetID")).value = time.trim() + "/"
             }else if (text.toLowerCase().trim() == "stop"){

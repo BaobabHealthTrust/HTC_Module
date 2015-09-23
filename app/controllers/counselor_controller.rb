@@ -354,71 +354,91 @@ class CounselorController < ApplicationController
   end
 
   def moh_details
-      start_day, end_day = build_date(params[:month], params[:year])
-      details = {}
-      details["Sex / Pregnancy"] = [["1", "Male",get_value(2, "monthly", start_day, end_day).length],
-                                                    ["2","Female Non-Pregnant",get_value(3, "monthly", start_day, end_day).length],
-                                                    ["3","Female Pregnant",get_value(4, "monthly", start_day, end_day).length]]
-      details["Last HIV Test"] = [["13", "Never Tested",get_value("15", "monthly", start_day, end_day)],
-                                                 ["14","Prev Negative",get_value("16", "monthly", start_day, end_day)],
-                                                 ["15","Prev Positive",get_value("17", "monthly", start_day, end_day)],
-                                                 ["16","Prev Exposed infant",get_value("18", "monthly", start_day, end_day)],
-                                                 ["17","Prev Inconclusive",get_value("19a", "monthly", start_day, end_day)]]
-      details["Outcome Summary (HIV Test)"] = [["22","Single negative",get_value("21", "monthly", start_day, end_day)],
-                                                 ["23","Single Positive",get_value("22", "monthly", start_day, end_day)],
-                                                 ["24","Test 1&2 negative",get_value("23", "monthly", start_day, end_day)],
-                                                 ["25","Test 1&2 positive",get_value("24", "monthly", start_day, end_day)],
-                                                 ["26","Test 1&2 discodant",get_value("25", "monthly", start_day, end_day)]]
-      details["Age groups"] = {}
-      details["Age groups"]["Sections 1"] = ["M","FNP","FP"]
-      details["Age groups"]["Sections 2"] = ["M+","FNP+","FP+"]
-      details["Age groups"]["Values"]= [["4","0-11 months",get_value("5c", "monthly", start_day, end_day)],
-                                                ["5", "1-9 years",get_value("6c", "monthly", start_day, end_day)],
-                                                ["6","10-14 years",get_value("7c", "monthly", start_day, end_day)],
-                                                ["7","15-19 years",get_value("10a", "monthly", start_day, end_day)],
-                                                ["8","20-24 years",get_value("10b", "monthly", start_day, end_day)],
-                                                ["9","25 years above",get_value("8c", "monthly", start_day, end_day)]]
-      details["Partner Present"] = [["18","Partner",get_value("14", "monthly", start_day, end_day)],
-                                                ["19","Partner not",get_value("14a", "monthly", start_day, end_day)],
-                                                ["20","Discordant Couples",get_value("14b", "monthly", start_day, end_day)],
-                                                ["21","Disc +ve(female)", get_value("14c", "monthly", start_day, end_day)]]
-      details["Result Given to Client"] = [["27","New Negative", get_value("27", "monthly", start_day, end_day)],
-                                                ["28","Positive", get_value("28", "monthly", start_day, end_day)],
-                                                ["29","New exposed infant", get_value("29", "monthly", start_day, end_day)],
-                                                ["30","New inconclusive", get_value("30", "monthly", start_day, end_day)],
-                                                ["31","Confirmatory positive", get_value("31", "monthly", start_day, end_day)],
-                                                ["32","Conf. inconclusive", get_value("32", "monthly", start_day, end_day)]
-                                                          ]
-      details["HTC Access Type"] = [["10","PITC", get_value("9", "monthly", start_day, end_day)],
-                                                ["11","FRS", get_value("10", "monthly", start_day, end_day)],
-                                                ["12","Other (VCT, etc)", get_value("11", "monthly", start_day, end_day)]]
-      details["Partner HTC Slips Given"] = [["33","Sum of all slips"]]
 
-      details["Test Kit Use Summary"] = {}
-      
-      tests = FacilityStock.kits_available
+      result = []
 
-      opening =[ FacilityStock.remaining_stock_by_type(tests[0],start_day, 'opening'), FacilityStock.remaining_stock_by_type(tests[1],start_day, 'opening')]
-      closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
-      recepts =[ FacilityStock.receipts(tests[0],start_day, end_day), FacilityStock.receipts(tests[1],start_day, end_day)]
-     client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
-     pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
-     losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
-      closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+      months = params[:month].split(",") rescue []
 
-      details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],
-        ["Total tests in stock at start of 1st day of reporting month","Opening", opening],
-                                                                                  ["Total tests received at this location during this month","Receipts", recepts],
-                                                                                    ["Total tests used for testing clients","Clients", client_tests],
-                                                                                    ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
-                                                                                  ["Total tests expired / disposed, etc","Losses",losses],
-                                                                                  ["Epected remaining Balance","Balance", closing],
-                                                                                  ["Physical tests in stock at end of last day of month","closing", ["",""]],
-                                                                                  ["Excess tests / tests unaccounted for (write + or -)","Difference"
-                                                                                  ]]
-      details["Test Kit Use Summary"]["Test 1"] = {}
-      details["Test Kit Use Summary"]["Test 2"] = {}
-      render text: details.to_json
+      if months.length == 1
+        start_day, end_day = build_date(months[0], params[:year])
+        result = moh_details_per_month(start_day, end_day)
+      else
+
+        months.each do |month|
+          start_day, end_day = build_date(month, params[:year])
+          result << moh_details_per_month(start_day, end_day)
+        end
+      end
+
+      render text: result.to_json
+  end
+
+  def moh_details_per_month(start_day, end_day)
+    details = {}
+    details["Sex / Pregnancy"] = [["1", "Male",get_value(2, "monthly", start_day, end_day).length],
+                                  ["2","Female Non-Pregnant",get_value(3, "monthly", start_day, end_day).length],
+                                  ["3","Female Pregnant",get_value(4, "monthly", start_day, end_day).length]]
+    details["Last HIV Test"] = [["13", "Never Tested",get_value("15", "monthly", start_day, end_day)],
+                                ["14","Prev Negative",get_value("16", "monthly", start_day, end_day)],
+                                ["15","Prev Positive",get_value("17", "monthly", start_day, end_day)],
+                                ["16","Prev Exposed infant",get_value("18", "monthly", start_day, end_day)],
+                                ["17","Prev Inconclusive",get_value("19a", "monthly", start_day, end_day)]]
+    details["Outcome Summary (HIV Test)"] = [["22","Single negative",get_value("21", "monthly", start_day, end_day)],
+                                             ["23","Single Positive",get_value("22", "monthly", start_day, end_day)],
+                                             ["24","Test 1&2 negative",get_value("23", "monthly", start_day, end_day)],
+                                             ["25","Test 1&2 positive",get_value("24", "monthly", start_day, end_day)],
+                                             ["26","Test 1&2 discodant",get_value("25", "monthly", start_day, end_day)]]
+    details["Age groups"] = {}
+    details["Age groups"]["Sections 1"] = ["M","FNP","FP"]
+    details["Age groups"]["Sections 2"] = ["M+","FNP+","FP+"]
+    details["Age groups"]["Values"]= [["4","0-11 months",get_value("5c", "monthly", start_day, end_day)],
+                                      ["5", "1-9 years",get_value("6c", "monthly", start_day, end_day)],
+                                      ["6","10-14 years",get_value("7c", "monthly", start_day, end_day)],
+                                      ["7","15-19 years",get_value("10a", "monthly", start_day, end_day)],
+                                      ["8","20-24 years",get_value("10b", "monthly", start_day, end_day)],
+                                      ["9","25 years above",get_value("8c", "monthly", start_day, end_day)]]
+    details["Partner Present"] = [["18","Partner",get_value("14", "monthly", start_day, end_day)],
+                                  ["19","Partner not",get_value("14a", "monthly", start_day, end_day)],
+                                  ["20","Discordant Couples",get_value("14b", "monthly", start_day, end_day)],
+                                  ["21","Disc +ve(female)", get_value("14c", "monthly", start_day, end_day)]]
+    details["Result Given to Client"] = [["27","New Negative", get_value("27", "monthly", start_day, end_day)],
+                                         ["28","Positive", get_value("28", "monthly", start_day, end_day)],
+                                         ["29","New exposed infant", get_value("29", "monthly", start_day, end_day)],
+                                         ["30","New inconclusive", get_value("30", "monthly", start_day, end_day)],
+                                         ["31","Confirmatory positive", get_value("31", "monthly", start_day, end_day)],
+                                         ["32","Conf. inconclusive", get_value("32", "monthly", start_day, end_day)]
+    ]
+    details["HTC Access Type"] = [["10","PITC", get_value("9", "monthly", start_day, end_day)],
+                                  ["11","FRS", get_value("10", "monthly", start_day, end_day)],
+                                  ["12","Other (VCT, etc)", get_value("11", "monthly", start_day, end_day)]]
+    details["Partner HTC Slips Given"] = [["33","Sum of all slips"]]
+
+    details["Test Kit Use Summary"] = {}
+
+    tests = FacilityStock.kits_available
+
+    opening =[ FacilityStock.remaining_stock_by_type(tests[0],start_day, 'opening'), FacilityStock.remaining_stock_by_type(tests[1],start_day, 'opening')]
+    closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+    recepts =[ FacilityStock.receipts(tests[0],start_day, end_day), FacilityStock.receipts(tests[1],start_day, end_day)]
+    client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
+    pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
+    losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
+    closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+
+    details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],
+                                                   ["Total tests in stock at start of 1st day of reporting month","Opening", opening],
+                                                   ["Total tests received at this location during this month","Receipts", recepts],
+                                                   ["Total tests used for testing clients","Clients", client_tests],
+                                                   ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
+                                                   ["Total tests expired / disposed, etc","Losses",losses],
+                                                   ["Epected remaining Balance","Balance", closing],
+                                                   ["Physical tests in stock at end of last day of month","closing", ["",""]],
+                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"
+                                                   ]]
+    details["Test Kit Use Summary"]["Test 1"] = {}
+    details["Test Kit Use Summary"]["Test 2"] = {}
+
+    return details
   end
 
   def get_value(number, type, start, end_day, sex= "MALE")
@@ -887,7 +907,13 @@ class CounselorController < ApplicationController
   end
 
   def build_date(mon, yr)
-        month = mon.to_i + 1
+        if (mon.length == 3)
+         month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+         month = month.index(mon) + 1;
+        else
+          month = mon.to_i + 1
+        end
+
         start_day = "#{yr}-#{month}-01".to_date
 				return start_day,  start_day.end_of_month
   end

@@ -61,8 +61,10 @@
                           }
                         }
 
-                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
-                xmlhttp.send();
+          if (currentPage == 0) {
+              xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
+              xmlhttp.send();
+          }
 
                  setTimeout("checkLot()", 500);
 }
@@ -84,10 +86,11 @@
                                                                                                          activateNext()
                           }
                         }
-
-                xmlhttp.open("GET","/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
-                xmlhttp.send();
-                 setTimeout("checkSecondLot()", 500);
+        if (currentPage == 0) {
+            xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
+            xmlhttp.send();
+        }
+        setTimeout("checkSecondLot()", 500);
 }
 
       function doLogin(id){
@@ -106,14 +109,18 @@
             }
 
       function setValues(){
+          var redRapidColor = false;
+          var redGoldColor = false;
         if (__$('timetimer1')){
-          rapidValue = __$('timetimer1').innerHTML.toString()
+          rapidValue = __$('timetimer1').innerHTML.toString();
+          redRapidColor =  (__$('timetimer1').style.color == 'red') ? true : false;
         }
-        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"));
+        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"), redRapidColor);
         if(__$('timetimer2')){
-          goldValue = __$('timetimer2').innerHTML.toString()
+          goldValue = __$('timetimer2').innerHTML.toString();
+            redGoldColor =  (__$('timetimer2').style.color == 'red') ? true : false;
         }
-        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"));
+        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
         if(__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive"){
           __$("allresults").value = "Positive"
@@ -185,6 +192,7 @@
           cell1_1.id = "timer1";
           row1.appendChild(cell1_1);
 
+          cell1_1.setAttribute("targetID", 'rapidrange');
           var timer1 = addTimer(cell1_1, 10, kits[0][1] + " Test Timer", 0.55)
           timer1.style.marginLeft = "40px";
           timer1.style.marginRight = "40px";
@@ -195,6 +203,7 @@
           cell1_2.style.textAlign = "right";
           row1.appendChild(cell1_2);
 
+          cell1_2.setAttribute("targetID", 'goldrange');
           var timer2 = addTimer(cell1_2, 15, kits[1][1] + " Test Timer", 0.55);
           timer2.style.marginLeft = "40px";
           timer2.style.marginRight = "40px";
@@ -222,63 +231,65 @@
 
       <input type="hidden" value="" id="valid_rapid" name="test1 done"/>
       <input type="hidden" value="" id="valid_gold" name="test2 done"/>
-      <input type="hidden" name="observations[][value_coded_or_text]" id="allresults" fieldtype="number" />
+      <input type="hidden" name="observations[][value_text]" id="allresults" fieldtype="number" />
       <input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
-       <input type="hidden" name="observations[][value_coded_or_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue ""  %>" />
+      <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue ""  %>" />
       <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
-      <input type="hidden" name="observations[][value_coded_or_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
+      <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
       <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
         <fieldset>
         <legend>HIV Testing (Extended)</legend>
-              <label for="rapid_lot"><%= @kits[0][1] rescue ""  %> Lot Number</label>
-              <input type='text' id="rapid_lot" name="observations[][value_text]"
-              onload="checkLot()" fieldtype="number" />
-              <%= hidden_field_tag("observations[][concept_name]",        "rapit lot number") %>
-              <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
-              <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+            <label for="rapid_lot"><%= @kits[0][1] rescue ""  %> Lot Number</label>
+            <input type='text' id="rapid_lot" name="observations[][value_text]" onload="checkLot()" fieldtype="number" />
+            <input name="observations[][concept_name]" type="hidden" value="rapid lot number" />
+            <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
+            <input name="observations[][obs_datetime]" type="hidden" value="" />
 
-							<label for="gold_lot"><%= @kits[1][1] rescue ""  %> Lot Number</label>
-              <input type='text' id="gold_lot" name="observations[][value_text]"
-              onload="checkSecondLot()" fieldtype="number" />
-              <%= hidden_field_tag("observations[][concept_name]",        "gold lot number") %>
-              <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
-              <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+
+            <label for="gold_lot"><%= @kits[1][1] rescue ""  %> Lot Number</label>
+            <input type='text' id="gold_lot" name="observations[][value_text]" onload="checkSecondLot()" fieldtype="number" />
+            <input name="observations[][concept_name]" type="hidden" value="gold lot number" />
+            <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
+            <input name="observations[][obs_datetime]" type="hidden" value="" />
+
       </fieldset>
 
       <fieldset custom=true fs_onLoad="loadCustom();">
         <legend>HIV Testing (Extended)</legend>
 
-        <input type="hidden" id="give_concent" name="giveconcent" value="" />
-        <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
-        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
-        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-        <input type="hidden" name="observations[][obs_datetime]" value="" />
 
-        <input type="hidden" name="observations[][value_coded_or_text]" id="rapidtimer" fieldtype="number" />
-        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
-        <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
-        <input type="hidden" name="observations[][obs_datetime]" />
+            <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
+            <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
+            <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+            <input type="hidden" name="observations[][obs_datetime]" value="" />
 
-
-        <input type="hidden" name="observations[][value_coded_or_text]" id="goldtimer" fieldtype="number" />
-        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
-        <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
-        <input type="hidden" name="observations[][obs_datetime]" value="" />
+            <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number" />
+            <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
+            <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+            <input type="hidden" name="observations[][obs_datetime]" />
+            <input type="hidden" name="observations[][value_complex]" id="rapidrange"/>
 
 
-        <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
-        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
-        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-        <input type="hidden" name="observations[][obs_datetime]" value="" />
+            <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
+            <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
+            <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+            <input type="hidden" name="observations[][obs_datetime]" value="" />
+            <input type="hidden" name="observations[][value_complex]" id="goldrange"/>
+
+
+            <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
+            <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
+            <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
+            <input type="hidden" name="observations[][obs_datetime]" value="" />
 
       </fieldset>
 
