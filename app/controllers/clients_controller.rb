@@ -341,6 +341,7 @@ class ClientsController < ApplicationController
         end
        redirect_to @task["url"] if ! encounter_done(@client.patient_id, "UPDATE HIV STATUS").blank?
      end
+
   end
 
   def assessment

@@ -63,6 +63,9 @@
                   <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 			<input type='hidden' name='name_id' value=<%= @client.id %> />
             <input type='hidden' name='request_' value=<%= @client.id %> />
+             <% if request.referrer.match("/confirm")%>
+                <input type='hidden' name='request_url' value="<%= request.referrer %>" />
+             <% end %>
 			<fieldset >
 			<legend>Update <%= params[:ref].humanize %></legend>
 			<% if params[:ref] == "surname"  %>

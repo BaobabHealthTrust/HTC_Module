@@ -853,46 +853,28 @@ function countDown(id, limit){
 
 function updateTimerDate(timerObject) {
 
-    var date1 = new Date();
-    var datefile;
+    var date = now;
+
     var text = timerObject.innerHTML;
 
-    if (window.XMLHttpRequest) {
-        datefile = new XMLHttpRequest();
+    if (text.toLowerCase().trim() == "stop"){
+        date.setSeconds(date.getSeconds() - 1) //handle start latency
     }
 
-    datefile.onreadystatechange = function () {
+    var time = date.getFullYear() +
+        "-" + padZeros((date.getMonth() + 1), 2) +
+        "-" + padZeros(date.getDate(), 2) +
+        " " + padZeros(date.getHours(), 2) +
+        ":" + padZeros(date.getMinutes(), 2) +
+        ":" + padZeros(date.getSeconds(), 2);
 
-        if (datefile.readyState == 4 && datefile.status == 200) {
-
-            var time = datefile.responseText;
-
-            //Fix query delays to time
-            var date2 = new Date(Date.parse(time.replace('-','/','g')));
-            var secDiff = Math.abs(Math.round((date1 - date2)/1000));
-            date2.setSeconds(date2.getSeconds() + parseInt(secDiff/2));
-
-            var time = date2.getYear() +
-                "-" + padZeros((date2.getMonth() + 1), 2) +
-                "-" + padZeros(date2.getDate(), 2) +
-                " " + padZeros(date2.getHours(), 2) +
-                ":" + padZeros(date2.getMinutes(), 2) +
-                ":" + padZeros(date2.getSeconds(), 2);
-            
-            if (text.toLowerCase().trim() == "start"){
-                __$(timerObject.getAttribute("targetID")).value = time.trim() + "/"
-            }else if (text.toLowerCase().trim() == "stop"){
-                __$(timerObject.getAttribute("targetID")).value = __$(timerObject.getAttribute("targetID")).value + time.trim();
-            }else if (text.toLowerCase().trim() == "reset"){
-                //__$(timerObject.getAttribute("targetID")).value = "";
-            }
-        }
+    if (text.toLowerCase().trim() == "start"){
+        __$(timerObject.getAttribute("targetID")).value = time.trim() + "/"
+    }else if (text.toLowerCase().trim() == "stop"){
+        __$(timerObject.getAttribute("targetID")).value = __$(timerObject.getAttribute("targetID")).value + time.trim();
+    }else if (text.toLowerCase().trim() == "reset"){
+        //__$(timerObject.getAttribute("targetID")).value = "";
     }
-    var url = "/sessions/server_date"
-    datefile.open("GET", url, true);
-
-    datefile.send();
-
 }
 
 function addAge(parent, target, date, label1, label2){
