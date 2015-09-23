@@ -109,7 +109,7 @@
         }
     }
 
-    function buildBody(data){
+    function buildBody(data, month2, month3){
         btnNext.onmousedown = function (){
             window.location = '<%= htcs_path %>';
         }
@@ -142,7 +142,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable, month2["Sex / Pregnancy"][i], month3["Sex / Pregnancy"][i])
                 }
     //End of first row
 
@@ -183,7 +183,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable, month2["Age groups"]["Values"][i], month3["Age groups"]["Values"][i])
                 }
     //End of second row
 
@@ -212,7 +212,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable, month2["HTC Access Type"][i], month3["HTC Access Type"][i]);
                 }
     //End of third row
 
@@ -241,7 +241,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable,  month2["Last HIV Test"][i], month3["Last HIV Test"][i])
                 }
     //End of Fourth row
 
@@ -270,7 +270,7 @@
         cell.appendChild(gTable)
 
         for (i = 0; i < gender.length; i++){
-            addRow(gender[i], gTable)
+            addRow(gender[i], gTable, month2["Partner Present"][i], month3["Partner Present"][i])
         }
     //End of Fifth row
 
@@ -299,7 +299,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable,  month2["Outcome Summary (HIV Test)"][i], month3["Outcome Summary (HIV Test)"][i])
                 }
     //End of Sixth row
 
@@ -328,7 +328,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable,  month2["Result Given to Client"][i], month3["Result Given to Client"][i])
                 }
     //End of seventh row
 
@@ -357,7 +357,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
+                    addRow(gender[i], gTable,  month2["Partner HTC Slips Given"][i], month3["Partner HTC Slips Given"][i])
                 }
     //End of Eighth row
 
@@ -389,7 +389,7 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addKits(gender[i], gTable)
+                    addKits(gender[i], gTable, month2["Test Kit Use Summary"]["paramers"][i], month3["Test Kit Use Summary"]["paramers"][i])
                 }
     //End of final ("Test Kit Use Summary") row
     }
@@ -412,7 +412,7 @@
     }
     */
 
-    function addKits(d, t){
+    function addKits(d, t, m2, m3){
         var row = document.createElement("div");
         row.className = "data-row";
         t.appendChild(row);
@@ -453,6 +453,26 @@
             td.style.display = "table-cell"
             if (d[2] != undefined){
                 td.innerHTML = d[2][1]
+            }
+            else{
+                td.innerHTML = 0
+            }
+            rw.appendChild(td)
+
+            td = document.createElement("div")
+            td.style.display = "table-cell"
+            if (m3[2] != undefined){
+                td.innerHTML = m2[2][1]
+            }
+            else{
+                td.innerHTML = 0
+            }
+            rw.appendChild(td)
+
+            td = document.createElement("div")
+            td.style.display = "table-cell"
+            if (m3[2] != undefined){
+                td.innerHTML = m3[2][1]
             }
             else{
                 td.innerHTML = 0
@@ -517,7 +537,8 @@
       row.appendChild(cell);
 
     }
-    function addRow(d, t){
+    function addRow(d, t, m2, m3){
+
         var row = document.createElement("div");
         row.className = "data-row";
         t.appendChild(row);
@@ -539,13 +560,22 @@
             */
 
             //Adding Months Data
-            var i="";
-            for (i = 1; i<=3; i++) {
-                var cell = document.createElement("div");
-                cell.className = "month-td";
-                cell.innerHTML = d[2];
-                row.appendChild(cell);
-            }
+
+             var cell = document.createElement("div");
+             cell.className = "month-td";
+             cell.innerHTML = d[2];
+             row.appendChild(cell);
+
+
+            var cell = document.createElement("div");
+            cell.className = "month-td";
+            cell.innerHTML = m2[2];
+            row.appendChild(cell);
+
+            var cell = document.createElement("div");
+            cell.className = "month-td";
+            cell.innerHTML = m3[2];
+            row.appendChild(cell);
 
             /////////////////////////////
     }
@@ -559,8 +589,9 @@
                       xmlhttp.onreadystatechange=function() {
                               if (xmlhttp.readyState==4 && xmlhttp.status==200) {
                                 var results = JSON.parse(xmlhttp.responseText);
-                                  buildBody(results)
-
+                                  if (results.length == 3) {
+                                      buildBody(results[0], results[1], results[2]);
+                                  }
                                 }
                               }
 
