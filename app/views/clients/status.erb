@@ -33,6 +33,7 @@
 
                       function checkPartner(){
                          <% unless params[:config]%>
+                         <% unless params[:config] || @age < 13 %>
                                 partner()
                          <% end %>
                       }

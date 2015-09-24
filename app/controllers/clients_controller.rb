@@ -341,6 +341,7 @@ class ClientsController < ApplicationController
         end
        redirect_to @task["url"] if ! encounter_done(@client.patient_id, "UPDATE HIV STATUS").blank?
      end
+     @age = @client.person.age
   end
 
   def assessment
@@ -366,8 +367,8 @@ class ClientsController < ApplicationController
       @kits, @remaining, @testing = Kit.kits_available(current_user)
   end
   
-	def testing
-    
+  def testing
+  
      @kits, @remaining, @testing = Kit.kits_available(current_user)
      
       current_date = (session[:datetime].to_date rescue Date.today)
