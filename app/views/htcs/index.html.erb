@@ -70,7 +70,7 @@
 				<option value= <%= reports_index_path %> >Reports</option>
 			<% end %>
 
-            <% if is_supervisor%>
+            <% if is_supervisor || User.current.username == 'admin'%>
                   <option value= <%= admins_path + '/index/' %> >Administration</option>
              <% end %>
 			</select>

@@ -21,7 +21,7 @@
       var result1 = "";
       var result2 = "";
 
-      function activateNext(){
+     function activateNext(){
         if (btnNext){
                               if(__$("valid_rapid").value == "no" || __$("valid_gold").value == "no"){
                                          btnNext.onclick = function(){
@@ -314,7 +314,7 @@
 					
             row1.appendChild(cell1_1);
             cell1_1.setAttribute("targetID", 'rapidrange');
-            var timer1 = addTimer(cell1_1, 1, kits[0][1] + " Test Timer", 0.55)
+            var timer1 = addTimer(cell1_1, 10, kits[0][1] + " Test Timer", 0.55)
 
             timer1.style.marginLeft = "40px";
 					
@@ -523,4 +523,12 @@ function checkKits(){
       }
       
   }
+
+function updateServerTime(){
+    now.setSeconds(now.getSeconds() + 1);
+}
+
+now = new Date(Date.parse('<%= Time.now.to_s(:db)%>'.replace('-','/','g')));
+var interval = window.setInterval('updateServerTime()', 1000);
+
 </script>

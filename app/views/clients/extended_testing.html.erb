@@ -220,6 +220,14 @@
       }
   }
 
+
+    function updateServerTime(){
+        now.setSeconds(now.getSeconds() + 1);
+    }
+
+    now = new Date(Date.parse('<%= Time.now.to_s(:db)%>'.replace('-','/','g')));
+    var interval = window.setInterval('updateServerTime()', 1000);
+
     </script>
   </head>
   <body  onLoad="checkKits();setValues();checkLot();checkSecondLot();">
@@ -300,7 +308,7 @@
         tests.each { |test| %>
           <label for="<%= test %>"><%= test %></label>
 
-          <select id="<%= test %>" name="observations[][value_coded_or_text]">
+          <select id="<%= test %>" class = "" name="observations[][value_coded_or_text]">
             <option></option>
             <% results.each {|result| %>
               <option value="<%= result[0] %>"><%= result[1] %></option>
