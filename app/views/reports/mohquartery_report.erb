@@ -109,8 +109,6 @@
         }
     }
 
-    function buildBody(data){
-
     function buildBody(data, month2, month3){
         btnNext.onmousedown = function (){
             window.location = '<%= htcs_path %>';
@@ -142,69 +140,6 @@
                 gTable = document.createElement("div");
                 gTable.className = "table-inner";
                 cell.appendChild(gTable)
-
-                for (i = 0; i < gender.length; i++){
-                addRow(gender[i], gTable)
-                }
-
-      // var total =cocument.createElement("div")
-      // total.className = data-td
-      // total.innerHTML = total (check)
-      // gtable appendChild(td)
-
-//End of first row
-//Second row ("Age Groups")
-      gender = data["Age groups"]["Values"]
-
-    gender = data["Age groups"]["Values"]
-      var cell = document.createElement("div");
-      cell.className = "caption";
-      row.appendChild(cell);
-
-      cTable = document.createElement("div")
-      cTable.className = "table-inner"
-      cell.appendChild(cTable)
-
-       cRow = document.createElement("div")
-       cRow.className = "main-row"
-       cTable.appendChild(cRow)
-
-       cCell = document.createElement("div")
-       cCell.className = "caption"
-       cCell.innerHTML = "Age Groups"
-       cRow.appendChild(cCell)
-
-        for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-        }
-//End of second row
-//Third row ("HTC Access Type")
-          gender = data["HTC Access Type"]
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "caption";
-            cell.innerHTML = "HTC Access Type"
-            row.appendChild(cell);
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "main-td";
-            row.appendChild(cell);
-
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
-
-//End of third row
-    //Fourth row ("Last HIV Test")
-    gender = data["Last HIV Test"]
 
                 for (i = 0; i < gender.length; i++){
                     addRow(gender[i], gTable, month2["Sex / Pregnancy"][i], month3["Sex / Pregnancy"][i])
@@ -254,13 +189,13 @@
 
     //Third row ("HTC Access Type")
     gender = data["HTC Access Type"]
+
         var row = document.createElement("div");
         row.className = "main-row";
         table.appendChild(row);
 
             var cell = document.createElement("div");
             cell.className = "caption";
-            cell.innerHTML = "Last Test"
             cell.innerHTML = "HTC Access Type"
             row.appendChild(cell);
 
@@ -271,77 +206,6 @@
             var cell = document.createElement("div");
             cell.className = "main-td";
             row.appendChild(cell);
-
-          gTable = document.createElement("div");
-          gTable.className = "table-inner";
-          cell.appendChild(gTable)
-
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
-    //End of Fourth row
-
-    //Fifth row ("Partner Present")
-    gender = data["Partner Present"]
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "caption";
-            cell.innerHTML = "Partner Present"
-            row.appendChild(cell);
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-        var cell = document.createElement("div");
-        cell.className = "main-td";
-        row.appendChild(cell);
-
-            gTable = document.createElement("div");
-          gTable.className = "table-inner";
-          cell.appendChild(gTable)
-
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
-
-    //End of Fifth row
-
-    //Sixth row ("Outcome Summary HIV Test")
-    gender = data["Outcome Summary (HIV Test)"]
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "caption";
-            cell.innerHTML = "Outcome Summary (HIV Test)"
-            row.appendChild(cell);
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "main-td";
-            row.appendChild(cell);
-
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
-
-      var cell = document.createElement("div");
-      cell.className = "main-td";
-      row.appendChild(cell);
-
-      gTable = document.createElement("div");
-      gTable.className = "table-inner";
-      cell.appendChild(gTable)
 
                 gTable = document.createElement("div");
                 gTable.className = "table-inner";
@@ -401,22 +265,6 @@
         cell.className = "main-td";
         row.appendChild(cell);
 
-                gTable = document.createElement("div");
-                gTable.className = "table-inner";
-                cell.appendChild(gTable)
-
-                for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
-                }
-    //End of Sixth row
-
-    //Seventh row ("Result Given to Client")
-    gender = data["Result Given to Client"]
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
         gTable = document.createElement("div");
         gTable.className = "table-inner";
         cell.appendChild(gTable)
@@ -428,35 +276,6 @@
 
     //Sixth row ("Outcome Summary HIV Test")
     gender = data["Outcome Summary (HIV Test)"]
-
-            var cell = document.createElement("div");
-            cell.className = "caption";
-            cell.innerHTML = "Result Given to Client"
-            row.appendChild(cell);
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "main-td";
-            row.appendChild(cell);
-
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
-
-       var cell = document.createElement("div");
-      cell.className = "main-td";
-      row.appendChild(cell);
-
-      gTable = document.createElement("div");
-      gTable.className = "table-inner";
-      cell.appendChild(gTable)
-
-       var cell = document.createElement("div");
-      cell.className = "main-td";
-      row.appendChild(cell);
 
         var row = document.createElement("div");
         row.className = "main-row";
@@ -480,18 +299,6 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addRow(gender[i], gTable)
-                }
-    //End of seventh row
-
-    //Eighth row "Partner HTC Slips Given")
-    gender = data["Partner HTC Slips Given"]
-
-                gTable = document.createElement("div");
-                gTable.className = "table-inner";
-                cell.appendChild(gTable)
-
-                for (i = 0; i < gender.length; i++){
                     addRow(gender[i], gTable,  month2["Outcome Summary (HIV Test)"][i], month3["Outcome Summary (HIV Test)"][i])
                 }
     //End of Sixth row
@@ -508,33 +315,6 @@
             cell.innerHTML = "Result Given to Client"
             row.appendChild(cell);
 
-            var cell = document.createElement("div");
-            cell.className = "caption";
-            cell.innerHTML = "Partner HTC Slips Given"
-            row.appendChild(cell);
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
-
-            var cell = document.createElement("div");
-            cell.className = "main-td";
-            row.appendChild(cell);
-
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
-      
-      var cell = document.createElement("div");
-      cell.className = "main-td";
-      row.appendChild(cell);
-
-      gTable = document.createElement("div");
-      gTable.className = "table-inner";
-      cell.appendChild(gTable)
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
         var row = document.createElement("div");
         row.className = "main-row";
         table.appendChild(row);
@@ -572,17 +352,11 @@
             cell.className = "main-td";
             row.appendChild(cell);
 
-      for (i = 0; i < gender.length; i++){
-        addRow(gender[i], gTable)
-      }
                 gTable = document.createElement("div");
                 gTable.className = "table-inner";
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-
-                    addRow(gender[i], gTable)
-
                     addRow(gender[i], gTable,  month2["Partner HTC Slips Given"][i], month3["Partner HTC Slips Given"][i])
                 }
     //End of Eighth row
@@ -590,19 +364,6 @@
     //Final row ("Test Kit Use Summary")
     
     gender = data["Test Kit Use Summary"]["paramers"]
-
-       var row = document.createElement("div");
-       row.className = "main-row";
-       table.appendChild(row);
-
-      var cell = document.createElement("div");
-      cell.className = "kit-td";
-      cell.colSpan = 3
-      row.appendChild(cell);
-
-        var row = document.createElement("div");
-        row.className = "main-row";
-        table.appendChild(row);
 
         var row = document.createElement("div");
         row.className = "main-row";
@@ -613,10 +374,6 @@
             cell.style.width = ""
             cell.innerHTML = "Test Kit Use Summary: <u>Quarterly</u> Totals from HIV Rapid Tests Daily Activity Register"
             row.appendChild(cell);
-
-      for (i = 0; i < gender.length; i++){
-        addKits(gender[i], gTable)
-      }
 
         var row = document.createElement("div");
         row.className = "main-row";
@@ -632,7 +389,6 @@
                 cell.appendChild(gTable)
 
                 for (i = 0; i < gender.length; i++){
-                    addKits(gender[i], gTable)
                     addKits(gender[i], gTable, month2["Test Kit Use Summary"]["paramers"][i], month3["Test Kit Use Summary"]["paramers"][i])
                 }
     //End of final ("Test Kit Use Summary") row
@@ -655,7 +411,7 @@
             }
     }
     */
-    function addKits(d, t){
+
     function addKits(d, t, m2, m3){
         var row = document.createElement("div");
         row.className = "data-row";
@@ -692,10 +448,6 @@
                 td.innerHTML = 0
             }
             rw.appendChild(td)
-            td = document.createElement("div")
-            td.style.display = "table-cell"
-            if (d[2] != undefined){
-                td.innerHTML = d[2][1]
 
             td = document.createElement("div")
             td.style.display = "table-cell"
@@ -785,8 +537,6 @@
       row.appendChild(cell);
 
     }
-   function addRow(d, t){
-
     function addRow(d, t, m2, m3){
 
         var row = document.createElement("div");
@@ -810,13 +560,6 @@
             */
 
             //Adding Months Data
-            var i="";
-            for (i = 1; i<=3; i++) {
-                var cell = document.createElement("div");
-                cell.className = "month-td";
-                cell.innerHTML = d[2];
-                row.appendChild(cell);
-            }
 
              var cell = document.createElement("div");
              cell.className = "month-td";
@@ -991,7 +734,8 @@
 
         //load data in table
         getData();
-}
+
+    }
 
 </script>
 </html>
@@ -1099,7 +843,7 @@
  .group-row{
       display: table-row;
       border-style: solid;
-      width: 50%;
+      width: 100%;
       text-align: center;
       margin:auto;
 }
@@ -1145,11 +889,11 @@ kit-td{
       background-color: lightblue;
       text-decoration: none;}
 
-    .data-table{ display: table;width:70%;margin:0%;padding:10px;padding-top: 0px;border-radius:4px;}
+    .data-table{ display: table;width:99%;margin:auto;padding:5px;padding-top: 0px;border-radius:4px;}
     .table{ display: table;width:99%;margin:auto;padding:5px;padding-top: 0px;border-radius:4px;
            background:lightblue;}
-    .table-inner{ display: table;width:90%;border:0px;vertical-align: top;}
-    .row{display: table-row;width:10%;margin:50%;}
+    .table-inner{ display: table;width:99%;border:0px;vertical-align: top;}
+    .row{display: table-row;width:100%;margin:auto;}
     .topic {display: table-cell;
            vertical-align: middle;
     }
