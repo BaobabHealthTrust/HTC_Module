@@ -386,9 +386,34 @@
                 gTable.className = "table-inner";
                 cell.appendChild(gTable)
 
-                for (i = 0; i < gender.length; i++){
-                    addKits(gender[i], gTable, month2["Test Kit Use Summary"]["paramers"][i], month3["Test Kit Use Summary"]["paramers"][i])
-                }
+                	gCell = document.createElement("div");
+                	gCell.className = "number-td";
+                	gCell.innerHTML = "&nbsp;";
+                	gTable.appendChild(gCell);
+
+                	gCell = document.createElement("div");
+                	gCell.className = "name-td";
+                	gCell.innerHTML = "&nbsp;";
+                	gTable.appendChild(gCell);
+
+                	gCell = document.createElement("div");
+                	gCell.className = "month-td";
+                	gCell.innerHTML = "Month 1";
+                	gTable.appendChild(gCell);
+
+                	gCell = document.createElement("div");
+                	gCell.className = "month-td";
+                	gCell.innerHTML = "Month 2";
+                	gTable.appendChild(gCell);
+
+                	gCell = document.createElement("div");
+                	gCell.className = "month-td";
+                	gCell.innerHTML = "Month 3";
+                	gTable.appendChild(gCell);
+
+	                for (i = 0; i < gender.length; i++){
+	                    addKits(gender[i], gTable, month2["Test Kit Use Summary"]["paramers"][i], month3["Test Kit Use Summary"]["paramers"][i])
+	                }
     //End of final ("Test Kit Use Summary") row
     }
 
