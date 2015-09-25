@@ -58,9 +58,7 @@ class CounselorController < ApplicationController
                        details[test.id]["Sample #{int}"]["resulsts"]["#{n.humanize}"] = value
                   }
                             
-                }
-
-                
+                }        
         }
     elsif ! params[:encounter_id].blank?
 
