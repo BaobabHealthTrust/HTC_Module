@@ -371,7 +371,6 @@
 
             var cell = document.createElement("div");
             cell.className = "caption";
-            cell.style.width = ""
             cell.innerHTML = "Test Kit Use Summary: <u>Quarterly</u> Totals from HIV Rapid Tests Daily Activity Register"
             row.appendChild(cell);
 
@@ -380,8 +379,7 @@
         table.appendChild(row);
 
             var cell = document.createElement("div");
-            cell.className = "kit-td";
-            cell.colSpan = 3
+            cell.className = "main-td";
             row.appendChild(cell);
 
                 gTable = document.createElement("div");
@@ -418,66 +416,99 @@
         t.appendChild(row);
 
             var cell = document.createElement("div");
-            cell.className = "kit-number-td";
-            //cell.innerHTML = d[0];
+            cell.className = "number-td";
+            cell.innerHTML = "&nbsp;";
             row.appendChild(cell);
 
             var cell = document.createElement("div");
-            cell.className = "kit-name-td";
+            cell.className = "name-td";
             cell.innerHTML = d[1];
             row.appendChild(cell);
 
-            var cell = document.createElement("div");
-            cell.className = "kit-result-td";
-            row.appendChild(cell);
+			cl = document.createElement("div");
+			cl.className = "month-td";
+			row.appendChild(cl);
 
-                tb = document.createElement("div")
-                tb.className = "table-inner"
-                cell.appendChild(tb)
+				clD = document.createElement("div");
+				clD.className = "table-inner";
+				cl.appendChild(clD);
 
-        rw = document.createElement("div")
-        rw.style.display = "table-row"
-        tb.appendChild(rw)
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (d[2] != undefined){
+			                clD1.innerHTML = d[2][0]
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
 
-            td = document.createElement("div")
-            td.style.display = "table-cell"
-            if (d[2] != undefined){
-                td.innerHTML = d[2][0]
-            }
-            else{
-                td.innerHTML = 0
-            }
-            rw.appendChild(td)
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (d[2] != undefined){
+			                clD1.innerHTML = d[2][1]
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
 
-            td = document.createElement("div")
-            td.style.display = "table-cell"
-            if (d[2] != undefined){
-                td.innerHTML = d[2][1]
-            }
-            else{
-                td.innerHTML = 0
-            }
-            rw.appendChild(td)
+			cl = document.createElement("div");
+			cl.className = "month-td";
+			row.appendChild(cl);
 
-            td = document.createElement("div")
-            td.style.display = "table-cell"
-            if (m3[2] != undefined){
-                td.innerHTML = m2[2][1]
-            }
-            else{
-                td.innerHTML = 0
-            }
-            rw.appendChild(td)
+				clD = document.createElement("div");
+				clD.className = "table-inner";
+				cl.appendChild(clD);
 
-            td = document.createElement("div")
-            td.style.display = "table-cell"
-            if (m3[2] != undefined){
-                td.innerHTML = m3[2][1]
-            }
-            else{
-                td.innerHTML = 0
-            }
-            rw.appendChild(td)
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (m2[2] != undefined){
+			                clD1.innerHTML = m2[2][0]
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
+
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (m2[2] != undefined){
+			                clD1.innerHTML = m2[2][1]
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
+
+			cl = document.createElement("div");
+			cl.className = "month-td";
+			row.appendChild(cl);
+
+				clD = document.createElement("div");
+				clD.className = "table-inner";
+				cl.appendChild(clD);
+
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (m3[2] != undefined){
+			                clD1.innerHTML = m3[2][0]
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
+
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (m3[2] != undefined){
+			                clD1.innerHTML = m3[2][1]
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
+
     }
 
    function addSplitRow(d, t){
@@ -778,21 +809,21 @@
 
 .kit-number-td{
   display: table-cell;
-  float: left ! important;
-  width: 50%;
-  vertical-align: top;
-
+  float: left;
+  width: 5%;
 }
 
-  .kit-result-td {
-  display: table-cell;
-  float: right;
-  width: 30%;
-}
 .kit-name-td{
   display: table-cell;
   float: left;
 }
+
+.kit-result-td {
+  display: table-cell;
+  float: right;
+  width: 50%;
+ }
+
 .category{
   width:30%;
 }
@@ -804,6 +835,7 @@
 .month-td {
   display: table-cell;
   width: 250px;
+  text-align: center;
 }
 
 .name-td{
@@ -859,10 +891,6 @@
       vertical-align: calc();
 }
 
-kit-td{
-  display: table-cell;
-  width: 100%;
-}
 .group-td{
       display: table-cell;
       border-style: solid;

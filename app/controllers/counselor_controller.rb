@@ -431,10 +431,10 @@ class CounselorController < ApplicationController
                                                    ["Total tests used for testing clients","Clients", client_tests],
                                                    ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
                                                    ["Total tests expired / disposed, etc","Losses",losses],
-                                                   ["Epected remaining Balance","Balance", closing],
-                                                   ["Physical tests in stock at end of last day of month","closing", ["",""]],
-                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"
-                                                   ]]
+                                                   ["Expected remaining Balance","Balance", closing],
+                                                   ["Physical tests in stock at end of last day of month","Closing", ["",""]],
+                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"]
+                                                  ]
     details["Test Kit Use Summary"]["Test 1"] = {}
     details["Test Kit Use Summary"]["Test 2"] = {}
 
