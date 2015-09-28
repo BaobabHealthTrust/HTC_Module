@@ -421,7 +421,7 @@ class CounselorController < ApplicationController
     client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
     pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
     losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
-    closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
+    #closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
 
     details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],
                                                    ["Total tests in stock at start of 1st day of reporting month","Opening", opening],
@@ -429,10 +429,10 @@ class CounselorController < ApplicationController
                                                    ["Total tests used for testing clients","Clients", client_tests],
                                                    ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
                                                    ["Total tests expired / disposed, etc","Losses",losses],
-                                                   ["Epected remaining Balance","Balance", closing],
-                                                   ["Physical tests in stock at end of last day of month","closing", ["",""]],
-                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"
-                                                   ]]
+                                                   ["Expected remaining Balance","Balance", closing],
+                                                   ["Physical tests in stock at end of last day of month","Closing", ["",""]],
+                                                   ["Excess tests / tests unaccounted for (write + or -)","Difference"]
+                                                  ]
     details["Test Kit Use Summary"]["Test 1"] = {}
     details["Test Kit Use Summary"]["Test 2"] = {}
 
