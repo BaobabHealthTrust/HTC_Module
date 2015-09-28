@@ -408,8 +408,14 @@
 		                	if (quarter == "Jan,Feb,Mar") {
 		                		gCell.innerHTML = months.Q1[i];
 		                	}
-		                	else {
-		                		gCell.innerHTML = quarter;
+		                	else if (quarter == "Apr,May,Jun") {
+		                		gCell.innerHTML = months.Q2[i];
+		                	}
+		                	else if (quarter == "Jul,Aug,Sep") {
+		                		gCell.innerHTML = months.Q3[i];
+		                	}
+		                	else if (quarter == "Oct,Nov,Dec") {
+		                		gCell.innerHTML = months.Q4[i];
 		                	}	                	
 		                	gTable.appendChild(gCell);
 	                	}
