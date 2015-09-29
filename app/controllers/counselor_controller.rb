@@ -861,7 +861,7 @@ class CounselorController < ApplicationController
   def spouse_result(start, end_day, r, concept_id)
       e = Observation.find_by_sql("SELECT * FROM obs o
                               WHERE  o.voided = 0 AND DATE(obs_datetime) >= '#{start}' AND DATE(obs_datetime) <= '#{end_day}'
-                              AND o.concept_id = #{concept_id} AND o.person_id = #{r} ORDER BY obs_datetime DESC LIMIT 1").first.answer_string.squish
+                              AND o.concept_id = #{concept_id} AND o.person_id = #{r} ORDER BY obs_datetime DESC LIMIT 1").first.answer_string.squish rescue ""
 
   end
 
@@ -911,7 +911,7 @@ class CounselorController < ApplicationController
         else
           month = mon.to_i + 1
         end
-
+      
         start_day = "#{yr}-#{month}-01".to_date
 				return start_day,  start_day.end_of_month
   end
