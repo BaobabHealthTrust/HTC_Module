@@ -183,7 +183,7 @@
 	                cell.appendChild(gTable)
 
 	                for (i = 0; i < gender.length; i++){
-	                    addRow(gender[i], gTable, month2["Age groups"]["Values"][i], month3["Age groups"]["Values"][i])
+	                    addRow(sumValues(gender[i]), gTable, sumValues(month2["Age groups"]["Values"][i]), sumValues(month3["Age groups"]["Values"][i]))
 	                }
 	    //End of second row
 
@@ -667,6 +667,17 @@
       mon = __$('quarter').value;
       yr = __$('year').value;
       getMonthlyDetails(mon, yr)
+    }
+
+    function sumValues(info){
+        var vals = info[2];
+        var rst = 0;
+        for (var i = 0; i < vals.length; i ++){
+            rst += (parseInt(vals[i]));
+        }
+        info[2] = rst;
+
+        return info;
     }
 
     function buildTable(){
