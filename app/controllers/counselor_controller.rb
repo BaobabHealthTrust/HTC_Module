@@ -58,9 +58,7 @@ class CounselorController < ApplicationController
                        details[test.id]["Sample #{int}"]["resulsts"]["#{n.humanize}"] = value
                   }
                             
-                }
-
-                
+                }        
         }
     elsif ! params[:encounter_id].blank?
 
@@ -456,6 +454,8 @@ class CounselorController < ApplicationController
                            e.voided = 0 AND DATE(encounter_datetime) >= '#{start}' AND DATE(encounter_datetime) <= '#{end_day}'
                            AND o.voided = 0 AND o.concept_id = #{concept_id} AND o.value_coded = #{value}
                           AND e.encounter_type = #{et}").map{|p| p.person_id }.join(',') rescue ""
+      else
+        
       end
       case number
        
@@ -911,7 +911,7 @@ class CounselorController < ApplicationController
         else
           month = mon.to_i + 1
         end
-
+      
         start_day = "#{yr}-#{month}-01".to_date
 				return start_day,  start_day.end_of_month
   end

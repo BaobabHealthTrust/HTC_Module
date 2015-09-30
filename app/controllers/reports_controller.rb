@@ -196,6 +196,6 @@ class ReportsController < ApplicationController
     data.each do |d|
       @result[d.obs_datetime.strftime("%Y-%m-%d-%H-%M-%S")] = d.value_numeric
     end
-    render layout: false
+    render layout: true
   end
 end
