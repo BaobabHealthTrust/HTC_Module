@@ -269,7 +269,7 @@
     function loadDates(select, day, month, year) {
 
         var lastDay = new Date(year, month, 0).getDate();
-
+console.log(lastDay)
         if (select.options > 0) {
             for (i = select.options.length - 1; i >= 0; i--) {
                 select.remove(i);

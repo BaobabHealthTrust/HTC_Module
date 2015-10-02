@@ -96,7 +96,7 @@
         top: "1px",
         left: "5px",
         width: "99%",
-        height: (0.88 * window.innerHeight) + "px"})
+        height: (0.89 * window.innerHeight) + "px"})
 
     __$("__content").style.border = "none";
     btnCancel.parentNode.parentNode.parentNode.style.backgroundColor = "grey";
@@ -216,15 +216,18 @@
        cCell = document.createElement("div")
        cCell.className = "caption"
        cCell.innerHTML = ""
+
        cRow.appendChild(cCell)
 
        cCell = document.createElement("div")
        cCell.className = "caption"
+       cCell.style.textAlign = "center";
        cCell.innerHTML = "Tested"
        cRow.appendChild(cCell)
 
        cCell = document.createElement("div")
        cCell.className = "caption"
+       cCell.style.textAlign = "center";
        cCell.innerHTML = "Positive"
        cRow.appendChild(cCell)
 
@@ -233,25 +236,27 @@
        cTable.appendChild(cRow)
 
        cCell = document.createElement("div")
-       cCell.className = "data-td"
+       cCell.className = "number-td"
        cCell.innerHTML = ""
        cRow.appendChild(cCell)
 
        cCell = document.createElement("div")
        cCell.className = "caption"
        cCell.innerHTML = "Age Groups"
+       cCell.style.width = "27%";
        cRow.appendChild(cCell)
 
        cCell = document.createElement("div")
-       cCell.className = "caption"
+       cCell.className = "parent-caption caption"
        cCell.innerHTML = ""
        cRow.appendChild(cCell)
        addHeaders(cCell, data["Age groups"]["Sections 1"])
 
        cCell = document.createElement("div")
-       cCell.className = "caption"
+       cCell.className = "parent-caption caption"
        cCell.innerHTML = ""
-       cRow.appendChild(cCell)
+       cRow.appendChild(cCell);
+
        addHeaders(cCell, data["Age groups"]["Sections 2"])
 
        var cell = document.createElement("div");
@@ -401,7 +406,7 @@
      gTable.appendChild(row);
      for (i = 0; i < d.length; i++){
         var cell = document.createElement("div");
-        cell.className = "caption";
+        cell.className = "sub-caption caption";
         cell.innerHTML = d[i]
         row.appendChild(cell);
      }
@@ -437,7 +442,7 @@
       td = document.createElement("div")
       td.style.display = "table-cell"
       if (d[2] != undefined){
-        td.innerHTML = d[2][0]
+        td.innerHTML = d[2][0] || "&nbsp;"
       }
       else{
         td.innerHTML = 0
@@ -447,7 +452,7 @@
       td = document.createElement("div")
       td.style.display = "table-cell"
        if (d[2] != undefined){
-        td.innerHTML = d[2][1]
+        td.innerHTML = d[2][1] || "&nbsp;"
       }
       else{
         td.innerHTML = 0
@@ -462,7 +467,7 @@
        t.appendChild(row);
 
       var cell = document.createElement("div");
-      cell.className = "data-td";
+      cell.className = "number-td";
       cell.innerHTML = d[0];
       row.appendChild(cell);
 
@@ -485,7 +490,7 @@
 			addSplitValue(cell, d[2], 3)
    }
 
-		function  addSplitValue(t, value, n){
+ function  addSplitValue(t, value, n){
 
                 
      var table = document.createElement("div");
@@ -512,7 +517,7 @@
       cell.innerHTML = value[n];
       row.appendChild(cell);
 
-		}
+ }
     function addRow(d, t){
        var row = document.createElement("div");
        row.className = "data-row";
@@ -571,7 +576,8 @@
         var td = document.createElement("div");
         td.className = "topic site-label";
         td.style.textAlign = "center";
-        td.innerHTML = "<span class='heading'>Malawi HTC Register</span>";
+        td.innerHTML = "<span class='heading'>Malawi HTC Register</span><br /> " +
+                "<span class='heading'>Facility/Site:</span><span style='font-size:17px;float:right;'><%= @site_name%></span>";
         row.appendChild(td);
 
         var td = document.createElement("div");
@@ -622,22 +628,11 @@
         row2.className = "row top-row";
         topTable.appendChild(row2);
 
-          var td = document.createElement("div");
-        td.className = "topic site-label";
-        td.style.textAlign = "center";
-        td.innerHTML = "<span class='heading'>Facility/Site:</span><span style='font-size:18px;float:right;'><%= @site_name%></span>";
-        row2.appendChild(td);
-
-         var td = document.createElement("div");
-        td.className = "topic site-label";
-        td.style.textAlign = "center";
-        td.innerHTML = "<span class='heading' style='padding-left:25px;'>Location:</span><span style='font-size:18px;float:right;'></span>";
-        row2.appendChild(td);
 
         var dataHolder = document.createElement("div");
         dataHolder.id = "holder";
         dataHolder.className = "table-striped table-condensed table-bordered table-hover"
-        dataHolder.style.height = (0.73 * window.innerHeight) + "px";
+        dataHolder.style.height = (0.755 * window.innerHeight) + "px";
 
         dsp.appendChild(dataHolder);
 
@@ -821,7 +816,11 @@
         border: none !important;
         font-size: 17px;
     }
-
+    .parent-caption{
+        padding: 7px;
+        width: 32% !important;
+        color: red;
+    }
     .main-td{
         border: none !important;
         border-top: 1px dotted lightgray !important;
