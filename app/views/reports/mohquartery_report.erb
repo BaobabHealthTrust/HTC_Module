@@ -10,6 +10,9 @@
   </script>
 
   <%= stylesheet_link_tag 'panel' %>
+  <%= stylesheet_link_tag 'bootstrap.min' %>
+
+
 </head>
 <body>
 
@@ -92,7 +95,7 @@
         top: "1px",
         left: "5px",
         width: "99%",
-        height: (0.88 * window.innerHeight) + "px"})
+        height: (0.89 * window.innerHeight) + "px"})
 
     __$("__content").style.border = "none";
     btnCancel.parentNode.parentNode.parentNode.style.backgroundColor = "grey";
@@ -101,7 +104,7 @@
     }
     buildTable();
 
-    //checkYCollision();
+    checkYCollision();
 
     function checkYCollision(){
         if (collision(jQuery("#holder"), jQuery(btnCancel.parentNode.parentNode.parentNode))){
@@ -116,6 +119,7 @@
 
 	    table = document.getElementById("response-data");
 	    table.innerHTML = "";
+
 
 	    //Adding first row ("Sex / Pregancy")
 	    gender = data["Sex / Pregnancy"]
@@ -133,13 +137,15 @@
 	        row.className = "main-row";
 	        table.appendChild(row);
 	           
-	            var cell = document.createElement("div");
-	            cell.className = "main-td";
-	            row.appendChild(cell);
+            var cell = document.createElement("div");
+            cell.className = "main-td";
+            row.appendChild(cell);
 
-	                gTable = document.createElement("div");
-	                gTable.className = "table-inner";
-	                cell.appendChild(gTable)
+            gTable = document.createElement("div");
+            gTable.className = "table-inner";
+            cell.appendChild(gTable)
+
+                    addHeaderRow(gTable);
 
 	                for (i = 0; i < gender.length; i++){
 	                    addRow(gender[i], gTable, month2["Sex / Pregnancy"][i], month3["Sex / Pregnancy"][i])
@@ -600,10 +606,57 @@
       cell.innerHTML = value[n];
       row.appendChild(cell);
     }
+
+    function addHeaderRow(t, quarter){
+
+        var row = document.createElement("div");
+        row.className = "data-header data-row";
+        t.appendChild(row);
+
+        var cell = document.createElement("div");
+        cell.className = "number-td";
+        cell.innerHTML = "&nbsp;";
+        row.appendChild(cell);
+
+        var cell = document.createElement("div");
+        cell.className = "name-td";
+        cell.innerHTML = "&nbsp;";
+        row.appendChild(cell);
+        /*
+         var cell = document.createElement("div");
+         cell.className = "result-td";
+         cell.innerHTML = d[2];
+         row.appendChild(cell);
+         */
+
+        //Adding Months Data
+
+        var cell = document.createElement("div");
+        cell.className = "month-td";
+        cell.innerHTML = "Month1";
+        cell.style.width = "250px";
+        row.appendChild(cell);
+
+
+        var cell = document.createElement("div");
+        cell.className = "month-td";
+        cell.innerHTML = "Month2";
+        cell.style.width = "250px";
+        row.appendChild(cell);
+
+        var cell = document.createElement("div");
+        cell.className = "month-td";
+        cell.innerHTML = "Month3";
+        cell.style.width = "250px";
+        row.appendChild(cell);
+
+        /////////////////////////////
+    }
+
     function addRow(d, t, m2, m3){
 
         var row = document.createElement("div");
-        row.className = "data-row";
+        row.className = "data-row value-row";
         t.appendChild(row);
 
             var cell = document.createElement("div");
@@ -681,6 +734,7 @@
     }
 
     function buildTable(){
+
         var topTable = document.createElement("div");
         topTable.className = "table top-table";
         dsp.appendChild(topTable);
@@ -693,7 +747,8 @@
                 var td = document.createElement("div");
                 td.className = "topic site-label";
                 td.style.textAlign = "center";
-                td.innerHTML = "<span class='heading'>Malawi HTC Register</span>";
+                td.innerHTML = "<span class='heading'>Malawi HTC Register</span><br /> " +
+                        "<span class='heading'>Facility/Site:</span><span style='font-size:17px;float:right;'><%= @site_name%></span>";
                 row.appendChild(td);
 
                 var td = document.createElement("div");
@@ -779,14 +834,35 @@
                         yearSelect.appendChild(opt);
                     <% end %>
 
-        var row2 = document.createElement("div");
-        row2.className = "row top-row";
-        topTable.appendChild(row2);
+        var tbh = document.createElement("table");
+        tbh.id = "month-header";
+        tbh.className = "data-table table-striped table-condensed table-bordered table-hover"
+        var row = document.createElement("div");
+        row.className = "main-row";
 
-          var td = document.createElement("div");
-        td.className = "topic site-label";
-        td.style.textAlign = "center";
-        td.innerHTML = "<span class='heading'>Facility/Site:</span><span style='font-size:18px;float:right;'><%= @site_name%></span>";
+        tbh.appendChild(row);
+
+        dsp.appendChild(tbh);
+
+        var cell = document.createElement("div");
+        cell.className = "month-header-main-td";
+        row.appendChild(cell);
+
+        var gTable = document.createElement("div");
+        gTable.className = "table-inner";
+        cell.appendChild(gTable);
+
+        addHeaderRow(gTable);
+
+        /*
+                var row2 = document.createElement("div");
+                row2.className = "row top-row";
+                topTable.appendChild(row2);
+
+                var td = document.createElement("div");
+                td.className = "topic site-label";
+                td.style.textAlign = "center";
+                td.innerHTML = "<span class='heading'>Facility/Site:</span><span style='font-size:18px;float:right;'><%= @site_name%></span>";
         row2.appendChild(td);
 
          var td = document.createElement("div");
@@ -794,26 +870,47 @@
         td.style.textAlign = "center";
         td.innerHTML = "<span class='heading' style='padding-left:25px;'>Location:</span><span style='font-size:18px;float:right;'></span>";
         row2.appendChild(td);
-
+*/
         var dataHolder = document.createElement("div");
         dataHolder.id = "holder";
-        dataHolder.style.height = (0.73 * window.innerHeight) + "px";
+        dataHolder.style.height = (0.69* window.innerHeight) + "px";
 
         dsp.appendChild(dataHolder);
 
         var dataTable = document.createElement("div");
-        dataTable.className = "data-table";
+        dataTable.className = "data-table table-striped table-condensed table-bordered table-hover";
         dataTable.id = "response-data"
         dataHolder.appendChild(dataTable);
 
         //load data in table
         getData();
-
     }
 
 </script>
 </html>
 <style>
+    .table-condensed{
+        border-spacing: 0;
+    }
+
+    .name-td, .month-td, .main-row, .caption{
+        border: 1px dotted lightgray !important;
+        padding: 7px !important;
+        margin: 0px !important;
+        vertical-align: middle !important;
+    }
+
+
+    .caption{
+        border: none !important;
+        font-size: 17px;
+    }
+
+    .main-td{
+        border: none !important;
+        border-top: 1px dotted lightgray !important;
+        border-bottom: 1px dotted lightgray !important;
+    }
 
     * {
         -webkit-user-select: none;
@@ -882,8 +979,9 @@
 }
 
 .name-td{
-  display: table-cell;
   float: left;
+  width: 50%;
+
 }
 
 
@@ -902,6 +1000,7 @@
       border-style: solid;
       width: 100%;
       margin:auto;
+
 }
 
   .response-data{
@@ -925,11 +1024,9 @@
 
 .main-td{
       display: table-cell;
-      border-style: solid;
-      background: #7A8B8B;
-      color: white;
-      border-radius: 25px;
-      font-size: 18px ! important;
+      border: 1px solid #d3d3d3;
+      border-radius: 3px;
+      font-size: 17px ! important;
       text-align: left;
       vertical-align: calc();
 }
@@ -948,10 +1045,11 @@
     #dsp {
         margin-top: -1.3%;
         z-index: 80;
+        background: #ffffff;
     }
 
     #buttons{
-        z-index: 900;
+       z-index: 900;
     }
     .sample-table {
       display: table;
@@ -1051,4 +1149,13 @@
          color: black;
      }
 
+    .month-header-main-td, #month-header, #month-header .name-td, #month-header .table-inner, #month-header .main-row{
+        border: none !important;
+        vertical-align: middle !important;
+    }
 </style>
+
+<script>
+        var xls = jQuery(".value-row").width() + "px";
+        jQuery(".data-header")[0].css('width', jQuery(".value-row").width());
+</script>
