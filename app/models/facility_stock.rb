@@ -150,14 +150,14 @@ class FacilityStock < ActiveRecord::Base
     type = InventoryType.where(name: 'Losses').first
 
     result = CouncillorInventory.find_by_sql([
-              "SELECT  SUM(ci.value_numeric) AS sum
+             "SELECT  SUM(ci.value_numeric) AS sum
               FROM councillor_inventory ci
                 WHERE ci.lot_no IN (?)
                   AND ci.inventory_type = ?
                   AND (DATE(ci.encounter_date) BETWEEN ? AND ?)
                   AND ci.location_id IN (?)
-                  AND ci.value_text IN (?)
-             ", lot_numbers, type.id, start_date.to_date, end_date.to_date, locs, loss_categories]
+                  AND (ci.value_text IN (?) OR ci.comments IN (?))
+             ", lot_numbers, type.id, start_date.to_date, end_date.to_date, locs, loss_categories, loss_categories]
     ).collect{|v|  v.sum}
     
   end

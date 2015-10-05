@@ -421,6 +421,17 @@ class CounselorController < ApplicationController
     client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
     pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
     losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
+    lost_unassigned = Inventory.transaction_sums([tests[0]], ["Losses"], start_day, end_day)
+
+    lost_unassigned.each{|la|
+      losses[0] = [losses[0].last.to_i + la.total.to_i]
+    }
+
+    lost_unassigned = Inventory.transaction_sums([tests[1]], ["Losses"], start_day, end_day)
+
+    lost_unassigned.each{|la|
+      losses[1] = [losses[1].last.to_i + la.total.to_i]
+    }
     #closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
 
     details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],
@@ -430,7 +441,7 @@ class CounselorController < ApplicationController
                                                    ["Total tests used for other purposes (QC, PT, Training)","Other",pt_tests],
                                                    ["Total tests expired / disposed, etc","Losses",losses],
                                                    ["Expected remaining Balance","Balance", closing],
-                                                   ["Physical tests in stock at end of last day of month","Closing", ["",""]],
+                                                   ["Physical tests in stock at end of last day of month","Closing"],
                                                    ["Excess tests / tests unaccounted for (write + or -)","Difference"]
                                                   ]
     details["Test Kit Use Summary"]["Test 1"] = {}

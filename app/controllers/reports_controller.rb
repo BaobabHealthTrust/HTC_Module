@@ -126,6 +126,7 @@ class ReportsController < ApplicationController
 		end
 		receipts = Inventory.transaction_sums(kits, ["Delivery", "Serum Delivery"], start_date, end_date)
 		losses = Inventory.transaction_sums(kits, ["Losses"], start_date, end_date)
+
 		distributed = CouncillorInventory.transaction_sums(kits, ["Distribution"], start_date, end_date)
 		receipts.each do |r|
       type = Kit.find(r.type).name rescue r.type
