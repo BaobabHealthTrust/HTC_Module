@@ -32,10 +32,10 @@
                       }
 
                       function checkPartner(){
-                         <% unless params[:config]%>
-                         <% unless params[:config] || @age < 13 %>
-                                partner()
-                         <% end %>
+                          <% unless params[:config] || @age < 13 %>
+                            partner()
+                          <% end %>
+
                       }
                         function verify(id){
                          if (__$(id).value.length > 0){
@@ -210,4 +210,3 @@
   </div>
   <div id="popup" style="display:none">
   </div>
-  <% end %>
