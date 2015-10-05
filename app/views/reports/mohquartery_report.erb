@@ -798,7 +798,7 @@
                         var opt = document.createElement("option");
                         opt.setAttribute("value", months[i].join(","));
                         opt.innerHTML = i;
-                        opt.setAttribute("onmousedown", "getData()");
+                        opt.setAttribute("onclick", "getData()");
                         if (i == curQt){
                             opt.selected = true;
                         }
@@ -809,7 +809,7 @@
                     <% @years.each do |year| %>
                         var opt = document.createElement("option");
                         opt.innerHTML = "<%= year %>";
-                        opt.setAttribute("onmousedown","getData()");
+                        opt.setAttribute("onclick","getData()");
                         <% if year == @cur_year %>
                             opt.selected = true;
                         <% end %>

@@ -12,7 +12,7 @@
 	height:66px; 
 	color:#000; 
 	font:bold 25px/96px arial, sans-serif; 
-  text-decoration:none; 
+    text-decoration:none;
 	position:relative; 
 	white-space:nowrap;
 	-moz-border-radius:20px 20px 0 0;
@@ -27,36 +27,46 @@
 }
 
 .blue {
-    border-radius: 35px;
+    border-radius: 15px;
     display: block;
     float: left;
-    height: 90px;
-    margin-right: 35px;
+    height: 60px;
+    margin-right: 30px;
     vertical-align: baseline;
     width: 90px;
     background-repeat: no-repeat;
-    background-size: 80px 80px;
+    border: 3px outset rgb(73, 93, 135);
+    background-color: rgba(33, 103, 185, 0.75);
+    opacity: 0.9;
+    text-shadow:1px 5px 10px #fff;
+    background-size: 110px 80px;
+}
+
+.blue:hover{
+    border: 4px outset rgb(73, 93, 135);
+    background-color: rgba(33, 103, 185, 0.75);
+}
+
+.blue:active{
+    border: 5px outset rgb(250, 220, 200);
+    background-color: rgba(43, 103, 185, 0.75);
 }
 
 #usrs {
 	background-image: url(<%= asset_path 'users.png' %>);
-	background-size: cover;
 	margin-left:35px;
 }
 
 #locs {
 	background-image: url(<%= asset_path 'locs.png' %>);
-	background-size: cover;
 }
 
 #pro {
 	background-image: url(<%= asset_path 'pro.png' %>);
-	background-size: cover;
 }
 
 #inv {
     background-image: url(<%= asset_path 'inv.png' %>);
-    background-size: cover;
 }
 .txt {
   color: #000000;
@@ -64,7 +74,7 @@
   font-size: 19px;
   position: relative;
   text-align: center;
-  top: 100px;
+  top: 75px;
 }
 
 </style>
@@ -76,7 +86,7 @@
 		<%= link_to '<span class="txt"> Users </span>'.html_safe, users_path, :class=>'blue', :id => "usrs" %>
 		<%= link_to '<span class="txt"> Locations </span>'.html_safe, locations_path, :class=>'blue', :id => "locs" %>
 		<%= link_to '<span class="txt"> Protocols </span>'.html_safe, protocols_path, :class=>'blue', :id => "pro" %>
-                <%= link_to '<span class="txt"> Inventory </span>'.html_safe, inventory_path, :class=>'blue', :id => "inv" %>
+        <%= link_to '<span class="txt"> Inventory </span>'.html_safe, inventory_path, :class=>'blue', :id => "inv" %>
         
 
 

@@ -120,6 +120,8 @@
 
     function loadTableData() {
 
+        checkMonth()
+
         var div = document.createElement("div");
         div.id = "spin";
         document.body.appendChild(div);
@@ -161,7 +163,7 @@
     }
 
     function populateTable(hash) {
-        console.log(hash)
+
         var dates = hash["dates"];
         var table = __$("content-table");
         table.innerHTML = "";
@@ -254,6 +256,13 @@
             }
         }
 
+        var month1 = __$("month1").value;
+        var month2 = __$("month2").value;
+
+        loadDates(__$("day1"), __$("day1").value, __$("month1").value, __$("year1").value);
+
+        loadDates(__$("day2"), __$("day2").value, __$("month2").value, __$("year2").value);
+
         var dateA = new Date(__$("year1").value, __$("month1").value, __$("day1").value);
         var dateB = new Date(__$("year2").value, __$("month2").value, __$("day2").value);
 
@@ -262,22 +271,27 @@
             __$("month1").value = __$("month2").value;
             __$("day1").value = __$("day2").value;
         }
-
-        loadTableData();
     }
 
     function loadDates(select, day, month, year) {
 
-        var lastDay = new Date(year, month, 0).getDate();
-console.log(lastDay)
-        if (select.options > 0) {
-            for (i = select.options.length - 1; i >= 0; i--) {
-                select.remove(i);
-            }
+        var lastDay;
+
+        $(select)
+                .find('option')
+                .remove()
+                .end();
+
+        if ((new Date().getFullYear() == parseInt(year)) && (new Date()).getMonth() == parseInt(month)){
+            lastDay = (new Date()).getDate();
+        }else{
+            lastDay = new Date(year, month, 0).getDate();
         }
+
         var sett = false;
+        var option;
         for (var i = 1; i <= lastDay; i++) {
-            var option = document.createElement("option");
+            option = document.createElement("option");
             option.setAttribute("value", i);
             option.innerHTML = i < 10 ? ("0" + i) : i;
             select.appendChild(option);
@@ -285,6 +299,10 @@ console.log(lastDay)
                 option.selected = true;
                 sett = true;
             }
+        }
+
+        if (sett == false){
+            option.selected = true;
         }
     }
 
@@ -334,7 +352,7 @@ console.log(lastDay)
                 "<td><label id ='date-label'> Start date: </label></td>" +
                 "<td><select id ='day1' onchange='loadTableData()'></select>" +
                 "<td><select id ='month1'  onchange='loadTableData()'></select> " +
-                "</td><td><select id ='year1'  onchange='checkMonth()'> </select></td>  " +
+                "</td><td><select id ='year1'  onchange='loadTableData()'> </select></td>  " +
                 "<td></td></tr></table> </td><td>" +
 
                 "<table class='selects' style='width: 100%;'><tr>" +
@@ -342,7 +360,7 @@ console.log(lastDay)
                 "<td><label id ='date-label'> &nbsp;&nbsp;End date: </label></td>" +
                 "<td><select id ='day2' onchange='loadTableData()'></select>" +
                 "<td><select id ='month2'  onchange='loadTableData()'></select> " +
-                "</td><td><select id ='year2'  onchange='checkMonth()'> </select></td>  " +
+                "</td><td><select id ='year2'  onchange='loadTableData()'> </select></td>  " +
                 "<td></td></tr></table></td></tr></table>"
         row2.appendChild(td);
 

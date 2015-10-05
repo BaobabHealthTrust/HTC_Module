@@ -5,63 +5,51 @@
 	width:250px;
 }
 
-
 .blue {
-    border-radius: 35px;
-    display: block;
-    float: left;
-    height: 90px;
-    margin-right: 35px;
-    vertical-align: baseline;
-    width: 90px;
-    background-repeat: no-repeat;
-    background-size: 80px 80px;
+         border-radius: 15px;
+         display: block;
+         float: left;
+         height: 60px;
+         margin-right: 30px;
+         vertical-align: baseline;
+         width: 90px;
+         background-repeat: no-repeat;
+         border: 3px outset rgb(73, 93, 135);
+         background-color: rgba(33, 103, 185, 0.75);
+         opacity: 0.9;
+         text-shadow:1px 5px 10px #fff;
+         background-size: 110px 80px;
+     }
+
+.blue:hover{
+    border: 4px outset rgb(73, 93, 135);
+    background-color: rgba(33, 103, 185, 0.75);
 }
 
-.plain {
-    border-radius: 35px;
-    border-style: solid;
-    border-color: #ADD8E6;
-    display: block;
-    float: left;
-    height: 90px;
-    font-weight: bold;
-    margin-right: 35px;
-    vertical-align: baseline;
-    width: 90px;
-    background-repeat: no-repeat;
-    background-size: 80px 80px;
-    text-decoration:none;
+.blue:active{
+    border: 5px outset rgb(250, 220, 200);
+    background-color: rgba(43, 103, 185, 0.75);
 }
 
 #csl {
 	background-image: url(<%= asset_path 'csl.png' %>);
-	background-size: cover;
 	margin-left:35px;
 }
 
 #stock {
 	background-image: url(<%= asset_path 'stock_report.png' %>);
-	background-size: cover;
-	margin-left:35px;
 }
 
 #temperature {
 	background-image: url(<%= asset_path 'temperature.png' %>);
-	background-size: cover;
-	margin-left:35px;
 }
 
 #moh {
 	background-image: url(<%= asset_path 'mw.gif' %>);
-	background-size: cover;
-	margin-left:35px;
 }
 
 #mohq {
   background-image: url(<%= asset_path 'mw.gif' %>);
-  background-size: cover;
-  margin-left:35px;
 }
 
 
@@ -73,10 +61,10 @@
 .txt {
   color: #000000;
   display: block;
-  font-size: 19px;
+  font-size: 17px;
   position: relative;
   text-align: center;
-  top: 100px;
+  top: 75px;
 }
 
 </style>
@@ -86,9 +74,9 @@
 <base target="_parent" -->
 
 <base target="_parent" >
-<%= link_to '<span class="txt"> LH Monthy </span>'.html_safe, monthly_path, :class=>'plain', :id => "csl" %>
-<%= link_to '<span class="txt"> MOH District Monthly</span>'.html_safe, moh_report_path, :class=>'plain', :id => "moh" %>
-<%= link_to '<span class="txt"> MOH Combined Quarterly Site</span>'.html_safe, mohquartery_report_path, :class=>'plain', :id => "mohq" %>
-<%= link_to '<span class="txt"> Stock report </span>'.html_safe, 'stock_report', :class=>'plain', :id => "stock" %>
-<%= link_to '<span class="txt"> Temperature changes </span>'.html_safe, 'temp_changes', :class=>'plain', :id => "temperature" %>
+<%= link_to '<span class="txt"> LH Monthy </span>'.html_safe, monthly_path, :class=>'blue', :id => "csl" %>
+<%= link_to '<span class="txt"> MOH District Monthly</span>'.html_safe, moh_report_path, :class=>'blue', :id => "moh" %>
+<%= link_to '<span class="txt"> MOH Combined Quarterly Site</span>'.html_safe, mohquartery_report_path, :class=>'blue', :id => "mohq" %>
+<%= link_to '<span class="txt"> Stock report </span>'.html_safe, 'stock_report', :class=>'blue', :id => "stock" %>
+<%= link_to '<span class="txt"> Temperature changes </span>'.html_safe, 'temp_changes', :class=>'blue', :id => "temperature" %>
 
