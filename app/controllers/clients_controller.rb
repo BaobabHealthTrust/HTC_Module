@@ -105,10 +105,11 @@ class ClientsController < ApplicationController
 			end
 			
 			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
-			
+
 			@person = Person.create(gender: params[:gender], birthdate: birthdate,
 															birthdate_estimated: birthdate_estimated,
 															creator: current_user.id)
+
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
@@ -156,7 +157,7 @@ class ClientsController < ApplicationController
 			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
 		end
-		
+
 		session[:show_new_client_button] = false
 		redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
@@ -718,7 +719,7 @@ class ClientsController < ApplicationController
 				
 		 else
 		 		
-			
+
 			birthdate_estimated = false
 
 			birth_date = params[:date_of_birth].split("/")
@@ -760,6 +761,7 @@ class ClientsController < ApplicationController
 					gender = client.person.gender
 					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 					residence = PersonAddress.find_by_person_id(id).address1
+
 					status = client.current_state(current_date).name rescue ""
 					last_visit = client.encounters.last.encounter_datetime.to_date
 																				.to_formatted_s(:rfc822) rescue nil
@@ -895,7 +897,7 @@ class ClientsController < ApplicationController
 										accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
-										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}',
+										birthDate: '#{i[:birthDate]}', residence: '#{(i[:address] || "").humanize}',
 										days_since_last_visit: '#{i[:days_since_last_visit]}',
 										has_booking: #{i[:has_booking]}, appointment_date: '#{appointment_date}' }"
 				order+=1

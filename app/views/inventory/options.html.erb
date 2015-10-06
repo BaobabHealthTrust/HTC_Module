@@ -100,16 +100,29 @@
         top: 100px;
     }
     .blue {
-        border-radius: 35px;
+        border-radius: 15px;
         display: block;
         float: left;
-        height: 90px;
-        margin-right: 35px;
+        height: 60px;
+        margin-right: 30px;
         vertical-align: baseline;
         width: 90px;
         background-repeat: no-repeat;
-        background-size: 80px 80px;
-        background-size: cover;
+        border: 3px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+        opacity: 0.9;
+        text-shadow:1px 5px 10px #fff;
+        background-size: 110px 80px;
+    }
+
+    .blue:hover{
+        border: 4px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+    }
+
+    .blue:active{
+        border: 5px outset rgb(250, 220, 200);
+        background-color: rgba(43, 103, 185, 0.75);
     }
     #addbatch {
         background-image: url(<%= asset_path 'new.png' %>);

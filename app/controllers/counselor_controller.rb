@@ -372,6 +372,7 @@ class CounselorController < ApplicationController
   end
 
   def moh_details_per_month(start_day, end_day)
+    @session_date = session[:datetime].to_date rescue Date.today
     details = {}
     details["Sex / Pregnancy"] = [["1", "Male",get_value(2, "monthly", start_day, end_day).length],
                                   ["2","Female Non-Pregnant",get_value(3, "monthly", start_day, end_day).length],
@@ -409,18 +410,32 @@ class CounselorController < ApplicationController
     details["HTC Access Type"] = [["10","PITC", get_value("9", "monthly", start_day, end_day)],
                                   ["11","FRS", get_value("10", "monthly", start_day, end_day)],
                                   ["12","Other (VCT, etc)", get_value("11", "monthly", start_day, end_day)]]
-    details["Partner HTC Slips Given"] = [["33","Sum of all slips"]]
+    details["Partner HTC Slips Given"] = [["33","Sum of all slips", FacilityStock.client_usage("",start_day, end_day).last.to_i]]
 
     details["Test Kit Use Summary"] = {}
 
     tests = FacilityStock.kits_available
 
-    opening =[ FacilityStock.remaining_stock_by_type(tests[0],start_day, 'opening'), FacilityStock.remaining_stock_by_type(tests[1],start_day, 'opening')]
-    closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
-    recepts =[ FacilityStock.receipts(tests[0],start_day, end_day), FacilityStock.receipts(tests[1],start_day, end_day)]
-    client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day), FacilityStock.client_usage(tests[1],start_day, end_day)]
-    pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'), FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
-    losses = [ FacilityStock.losses(tests[0],start_day, end_day), FacilityStock.losses(tests[1],start_day, end_day)]
+    opening, closing, recepts = ["", ""], ["", ""], ["", ""]
+
+    opening =[ FacilityStock.remaining_stock_by_type(tests[0],start_day, 'opening'),
+               FacilityStock.remaining_stock_by_type(tests[1],start_day, 'opening')] if start_day.to_date <= @session_date
+
+    closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'),
+               FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]  if end_day.to_date <= @session_date
+
+    recepts =[ FacilityStock.receipts(tests[0],start_day, end_day),
+               FacilityStock.receipts(tests[1],start_day, end_day)]
+
+    client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day),
+                     FacilityStock.client_usage(tests[1],start_day, end_day)]
+
+    pt_tests = [ FacilityStock.proficiency_usage(tests[0],start_day, end_day,'Test 1'),
+                 FacilityStock.proficiency_usage(tests[1],start_day, end_day,'Test 2')]
+
+    losses = [ FacilityStock.losses(tests[0],start_day, end_day),
+               FacilityStock.losses(tests[1],start_day, end_day)]
+
     lost_unassigned = Inventory.transaction_sums([tests[0]], ["Losses"], start_day, end_day)
 
     lost_unassigned.each{|la|
