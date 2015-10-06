@@ -403,8 +403,8 @@ class CounselorController < ApplicationController
     details["Result Given to Client"] = [["27","New Negative", get_value("27", "monthly", start_day, end_day)],
                                          ["28","Positive", get_value("28", "monthly", start_day, end_day)],
                                          ["29","New exposed infant", get_value("29", "monthly", start_day, end_day)],
-                                         ["30","New inconclusive", get_value("30", "monthly", start_day, end_day)],
-                                         ["31","Confirmatory positive", get_value("31", "monthly", start_day, end_day)],
+                                         ["30","New inconclusive", get_value("31", "monthly", start_day, end_day)],
+                                         ["31","Confirmatory positive", get_value("30", "monthly", start_day, end_day)],
                                          ["32","Conf. inconclusive", get_value("32", "monthly", start_day, end_day)]
     ]
     details["HTC Access Type"] = [["10","PITC", get_value("9", "monthly", start_day, end_day)],
