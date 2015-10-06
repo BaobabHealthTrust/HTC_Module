@@ -128,7 +128,7 @@ class ClientsController < ApplicationController
         @address.county_district = params[:ta]
       end
 
-      @address.save! if @person
+      @address.save if @person
 
       ["Occupation", "Cell Phone Number", "Office Phone Number", "Home Phone Number", "Landmark Or Plot Number"].each do |name|
 
@@ -783,7 +783,7 @@ class ClientsController < ApplicationController
 					@side_panel_date += sp + "#{id} : { id: #{id},
 											accession_number: '#{accession}', status: '#{status}',
 											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
-											birthDate: '#{birth}', residence: '#{residence.humanize}',
+											birthDate: '#{birth}', residence: '#{residence}',
 											days_since_last_visit: '#{days_since_last_visit}',
 											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
 					sp = ','
