@@ -239,17 +239,17 @@
 
       <input type="hidden" value="" id="valid_rapid" name="test1 done"/>
       <input type="hidden" value="" id="valid_gold" name="test2 done"/>
-      <input type="hidden" name="observations[][value_text]" id="allresults" fieldtype="number" />
+      <input type="hidden" name="observations[][value_text]" id="allresults" />
       <input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
-      <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue ""  %>" />
+      <input type="hidden" name="observations[][value_text]" id="goldname" value="<%= @kits[1][1] rescue ""  %>" />
       <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
-      <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
+      <input type="hidden" name="observations[][value_text]" id="rapidname" value="<%= @kits[0][1] rescue "" %>" />
       <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
       <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
@@ -257,14 +257,14 @@
         <fieldset>
         <legend>HIV Testing (Extended)</legend>
             <label for="rapid_lot"><%= @kits[0][1] rescue ""  %> Lot Number</label>
-            <input type='text' id="rapid_lot" name="observations[][value_text]" onload="checkLot()" fieldtype="number" />
+            <input type='text' id="rapid_lot" name="observations[][value_text]" onload="checkLot()"/>
             <input name="observations[][concept_name]" type="hidden" value="rapid lot number" />
             <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
             <input name="observations[][obs_datetime]" type="hidden" value="" />
 
 
             <label for="gold_lot"><%= @kits[1][1] rescue ""  %> Lot Number</label>
-            <input type='text' id="gold_lot" name="observations[][value_text]" onload="checkSecondLot()" fieldtype="number" />
+            <input type='text' id="gold_lot" name="observations[][value_text]" onload="checkSecondLot()"/>
             <input name="observations[][concept_name]" type="hidden" value="gold lot number" />
             <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
             <input name="observations[][obs_datetime]" type="hidden" value="" />

@@ -1,5 +1,5 @@
 <!DOCTYPE=html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 	<head>
 		<title>Current Visit</title>
 		<%= javascript_include_tag 'custom' %>
@@ -173,6 +173,21 @@
             ele.style.display = "none";
         }
 
+        function altenate(span_id){
+            var node = __$("span_" + span_id);
+            var img = __$("img_" + span_id);
+            var imgCancel = __$("img_cancel_" + span_id);
+
+            if (node.style.display == "none"){
+                node.style.display = "block";
+                img.src = "/assets/minus.png"
+                imgCancel.style.display = "block";
+            }else{
+                node.style.display = "none";
+                img.src = "/assets/plus.png";
+                imgCancel.style.display = "none";
+            }
+        }
        
 		</script>
 		<style>
@@ -186,7 +201,9 @@
 			.cells{
 			display: table-cell;
 }
-
+.odd {
+    background: rgb(253, 253, 253);
+}
 .txt {
   color: #000000;
   display: block;
@@ -363,9 +380,10 @@
         font-style:normal;
         height:40px;
         line-height:40px;
-        width:86px;
+        width:65px;
         text-decoration:none;
         text-align:center;
+        margin: 5px;
         text-shadow:1px 1px 0px #cc9f52;
     }
 
@@ -497,22 +515,92 @@
 								<label style="color: #5679c1; font-weight: bold; font-size: 16px;"> History</label>
 								
 								<div style="display: table; width: 100%; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
-                                                                      <% @encounters.each{|encounter| %>
-									<div style="display: table-row; width: 100%;">
+                                                                      <% @encounters.each_with_index {|encounter, index| %>
+									<div class="<%= cycle("even", 'odd')%>" style="display: table-row; width: 100%;">
 										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
 											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
+										</div>
+										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 2px;width:70%;">
+											 <div onclick="altenate(<%= index %>)" style="width: 100%;font-size: 18px; padding-top: 10px; padding-left: 35px;" class="encounter-name"><b><%= encounter.name   %></b></div> <br />
+												<span id = "span_<%= index%>" style="display: none; padding-left: 35px;">
+                                                  <% if encounter.observations.length > 0%>
+                                                      <table class="obs-table" style="width: 100%;">
+                                                         <%
+                                                            answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
+                                                            ln = encounter.observations.length
+                                                            ln= answers.length if !answers.blank?
+                                                            encounter.observations.each_with_index do |obs, ix|%>
+                                                            <tr>
+                                                              <td style="color: #1f3b5e; border-top: 1px dotted lightgray;
+                                                                      width: 50%;border-left: 1px dotted lightgray;
+                                                                      padding: 5px; font-size: 18px;
+                                                                      <% if answers.blank? && ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                <b>
+                                                                  <%= obs.concept_names.last.name %>
+                                                                </b>
+                                                              </td>
+                                                              <td style="color: #1f3b5e; font-style: italic; border-top: 1px dotted lightgray;
+                                                                      border-left: 1px dotted lightgray;
+                                                                      border-right: 1px dotted lightgray;
+                                                                      width: 50%; padding: 5px; font-size: 18px;
+                                                                      <% if answers.blank? && ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                  <span>
+                                                                    <%= obs.answer_string%>
+                                                                  </span>
+                                                              </td>
+                                                              </tr>
+                                                            </tr>
+                                                         <% end %>
+
+                                                           <%
+
+                                                              (answers || []).each_with_index{ |answer, ix| %>
+
+                                                            <tr>
+                                                              <td style="color: #1f3b5e; font-style: italic;border-top: 1px dotted lightgray;
+                                                                      width: 50%;border-left: 1px dotted lightgray;
+                                                                      padding: 5px; font-size: 18px;
+                                                                      <% if ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                <b>
+                                                                  <%= answer.name %>
+                                                                </b>
+                                                              </td>
+                                                              <td style="color: #1f3b5e; font-style: italic;border-top: 1px dotted lightgray;
+                                                                      border-left: 1px dotted lightgray;
+                                                                      border-right: 1px dotted lightgray;
+                                                                      width: 50%; padding: 5px; font-size: 18px;
+                                                                      <% if ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                  <span>
+                                                                    <%= answer.answer_string%>
+                                                                  </span>
+                                                              </td>
+                                                            </tr>
+                                                            </tr>
+                                                        <% } %>
+
+                                                      </table>
+                                                   <% end %>
+                                                  <div style="width: 100%;">
+                                                    <img id="img_cancel_<%= index%>" style="float: right; display: none; margin-left: 30px;" width="40" height="40"
+                                                       src="<%= asset_path 'cancel_flat_small_red.png'%>" onmousedown="confirm('<%= encounter.encounter_id %>')" />
+
+                                                  </div>
+                                                       </span>
 										</div> 
-										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:70%;">
-											 <b><%= encounter.name   %>:</b> <br />
-												<%= encounter.to_s.html_safe   %>
-												<% answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
-													 (answers || []).each { |answer| %>
-														<%= answer.to_s.html_safe %>
-												<% } %>
-										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width:15%;">
-										<a href="#" class="void" onmousedown="confirm('<%= encounter.encounter_id %>')">X</a>
-									 </div>
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width:15%;padding-top: 5px;">
+                                          <table>
+                                            <tr>
+                                              <td>
+                                                    <img  id="img_<%= index%>" src="<%= asset_path 'plus.png'%>" height="40" width="40" class="expand"
+                                                       onmousedown="altenate('<%= index%>')" />
+                                              </td>
+                                              <td>
+                                                <img id="img_cancel_<%= index%>" style="display: none; margin-left: 30px;" width="40" height="40"
+                                                     src="<%= asset_path 'cancel_flat_small_red.png'%>" onmousedown="confirm('<%= encounter.encounter_id %>')" />
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </div>
 									</div>
 									<% } %>
 								</div>
