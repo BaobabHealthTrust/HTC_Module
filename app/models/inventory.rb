@@ -69,6 +69,31 @@ class Inventory < ActiveRecord::Base
     kit_sum
   end
 
+  def self.transaction_sums_gross(kit, inv_types, start_date, end_date)
+    inv_type = InventoryType.find_by_sql(["SELECT id FROM inventory_type WHERE name IN (?)",
+                                          inv_types]).map(&:id)
+
+    kit_typesA = []
+    kit_typesB = []
+    if kit.blank?
+      kit_typesA = Kit.all.map(&:id)
+      kit_typesB = ["Negative", "Positive"]
+    else
+      kit.each do |k|
+        kk = Kit.where(name: k).first rescue nil
+        kit_typesA << kk.id if !kk.blank?
+        kit_typesB << k if kk.blank?
+      end
+    end
+
+    kit_sum = Inventory.find_by_sql(["SELECT SUM(value_numeric) AS total FROM inventory
+                          WHERE inventory_type IN (?)
+                          AND (DATE(encounter_date) BETWEEN ? AND ?)
+                          AND voided = 0 AND (kit_type IN (?) OR value_text IN (?))",
+                                     inv_type, start_date.to_date, end_date.to_date, kit_typesA, kit_typesB])[0]['total']
+    kit_sum
+  end
+
   def self.remaining_sum(date, lot_number, type)
     del_type = InventoryType.where(name: "Delivery").first.id
     dist_type = InventoryType.where(name: "Distribution").first.id

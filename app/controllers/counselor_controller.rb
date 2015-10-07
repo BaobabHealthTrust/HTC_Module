@@ -424,8 +424,8 @@ class CounselorController < ApplicationController
     closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'),
                FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]  if end_day.to_date <= @session_date
 
-    recepts =[ FacilityStock.receipts(tests[0],start_day, end_day),
-               FacilityStock.receipts(tests[1],start_day, end_day)]
+    recepts =[ Inventory.transaction_sums_gross(['Determine'], ["Delivery"], start_day, end_day),
+               Inventory.transaction_sums_gross(['UniGold'], ["Delivery"], start_day, end_day)]
 
     client_tests = [ FacilityStock.client_usage(tests[0],start_day, end_day),
                      FacilityStock.client_usage(tests[1],start_day, end_day)]
@@ -447,6 +447,7 @@ class CounselorController < ApplicationController
     lost_unassigned.each{|la|
       losses[1] = [losses[1].last.to_i + la.total.to_i]
     }
+
     #closing =[ FacilityStock.remaining_stock_by_type(tests[0],end_day, 'closing'), FacilityStock.remaining_stock_by_type(tests[1],end_day, 'closing')]
 
     details["Test Kit Use Summary"]["paramers"] = [["Sum Monthly Site Reports, separate for each", "Kit Name", tests],

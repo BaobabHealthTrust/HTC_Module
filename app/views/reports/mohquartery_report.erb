@@ -421,6 +421,18 @@
             }
     }
     */
+
+    function valueCheck(value, def){
+        if (!value)
+            return def;
+
+        if (typeof(value) == "object"){
+            return valueCheck(value[0], def);
+        }
+
+        return value;
+    }
+
     function addKits(d, t, m2, m3){
         var row = document.createElement("div");
         row.className = "data-row";
@@ -445,9 +457,10 @@
 				cl.appendChild(clD);
 
 					clD1 = document.createElement("div");
+                    clD1.style.width = "50%";
 					clD1.className = "data-td";
-			            if (d[2] != undefined){
-			                clD1.innerHTML = d[2][0]
+			            if (d[2] && d[2][0] && d[2] != undefined){
+			                clD1.innerHTML = valueCheck(d[2][0], 0)
 			            }
 			            else{
 			                clD1.innerHTML = 0
@@ -456,36 +469,8 @@
 
 					clD1 = document.createElement("div");
 					clD1.className = "data-td";
-			            if (d[2] != undefined){
-			                clD1.innerHTML = d[2][1]
-			            }
-			            else{
-			                clD1.innerHTML = 0
-			            }
-					clD.appendChild(clD1);
-
-			cl = document.createElement("div");
-			cl.className = "month-td";
-			row.appendChild(cl);
-
-				clD = document.createElement("div");
-				clD.className = "table-inner";
-				cl.appendChild(clD);
-
-					clD1 = document.createElement("div");
-					clD1.className = "data-td";
-			            if (m2[2] != undefined){
-			                clD1.innerHTML = m2[2][0]
-			            }
-			            else{
-			                clD1.innerHTML = 0
-			            }
-					clD.appendChild(clD1);
-
-					clD1 = document.createElement("div");
-					clD1.className = "data-td";
-			            if (m2[2] != undefined){
-			                clD1.innerHTML = m2[2][1]
+			            if (d[2] && d[2][1] && d[2] != undefined){
+			                clD1.innerHTML = valueCheck(d[2][1], 0)
 			            }
 			            else{
 			                clD1.innerHTML = 0
@@ -502,8 +487,9 @@
 
 					clD1 = document.createElement("div");
 					clD1.className = "data-td";
-			            if (m3[2] != undefined){
-			                clD1.innerHTML = m3[2][0]
+                    clD1.style.width = "50%";
+			            if (m2[2] && m2[2][0] && m2[2] != undefined){
+			                clD1.innerHTML = valueCheck(m2[2][0], 0)
 			            }
 			            else{
 			                clD1.innerHTML = 0
@@ -512,8 +498,37 @@
 
 					clD1 = document.createElement("div");
 					clD1.className = "data-td";
-			            if (m3[2] != undefined){
-			                clD1.innerHTML = m3[2][1]
+			            if (m2[2] && m2[2][1] && m2[2] != undefined){
+			                clD1.innerHTML = valueCheck(m2[2][1], 0)
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
+
+			cl = document.createElement("div");
+			cl.className = "month-td";
+			row.appendChild(cl);
+
+				clD = document.createElement("div");
+				clD.className = "table-inner";
+				cl.appendChild(clD);
+
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+                    clD1.style.width = "50%";
+			            if (m3[2] && m3[2][0] && m3[2] != undefined){
+			                clD1.innerHTML = valueCheck(m3[2][0], 0)
+			            }
+			            else{
+			                clD1.innerHTML = 0
+			            }
+					clD.appendChild(clD1);
+
+					clD1 = document.createElement("div");
+					clD1.className = "data-td";
+			            if (m3[2]  && m3[2][1] && m3[2] != undefined){
+			                clD1.innerHTML = valueCheck(m3[2][1], 0)
 			            }
 			            else{
 			                clD1.innerHTML = 0
