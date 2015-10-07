@@ -118,12 +118,22 @@ class FacilityStock < ActiveRecord::Base
 
     lot_numbers = Inventory.find_by_sql(["SELECT lot_no FROM inventory WHERE
                 DATE(encounter_date) <= ? AND voided = 0 AND kit_type IN (?)", end_date, kits]).map(&:lot_no)
+
+    quality = TestObservation.find_by_sql(["
+                        SELECT COUNT(*) as v FROM test_observation
+                        WHERE value_text IN (SELECT distinct(lot_no) 
+                                            FROM inventory WHERE inventory_type = (SELECT id FROM inventory_type WHERE name = 'Delivery')
+                        ) 
+                        AND obs_datetime BETWEEN ? AND ?", start_date, end_date]).first.v rescue 0
+
+=begin
     quality = TestObservation.find_by_sql(["
                         SELECT count(t.value_text) as v FROM test_observation t
                         INNER JOIN inventory i ON i.lot_no = t.value_text
                         WHERE t.voided =0  AND DATE(obs_datetime) >= ?
                         AND DATE(obs_datetime) <= ? AND i.lot_no IN (?)",
-                        start_date, end_date, lot_numbers]).first.v rescue 0
+                        start_date, end_date, lot_numbers]).first.v rescue 0 
+=end
       return (proficiency.to_i + quality.to_i)
   end
 
