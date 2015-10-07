@@ -503,7 +503,7 @@
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:17%;">
 											Current State Start:
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
 											<%= @status.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
 									</div>
@@ -517,7 +517,8 @@
 								<div style="display: table; width: 100%; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
                                                                       <% @encounters.each_with_index {|encounter, index| %>
 									<div class="<%= cycle("even", 'odd')%>" style="display: table-row; width: 100%;">
-										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
+										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1;
+                                                padding: 5px; padding-left: 35px; padding-top: 13px; border-right: 1px solid #5679c1;font-size: 19px;">
 											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
 										</div>
 										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 2px;width:70%;">
