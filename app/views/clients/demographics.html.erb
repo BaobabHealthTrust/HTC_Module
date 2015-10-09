@@ -1,48 +1,391 @@
 <html>
-		<head>
-					<script>
-						var cancelDestination = "clients/<%= params[:client_id] %>";
-                                             function checkDate(){
+    <head>
+	<script>
+                var cancelDestination = "clients/<%= params[:client_id] %>";
+                 monthNumber = {}
+                  list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                  for (i = 1; i <= list.length; i ++){
+                     monthNumber[i] = list[ (i - 1)]
+                  }
+                  month = "?"
+                  month = monthNumber[parseInt("<%= @client.person.birthdate.strftime('%m').to_i %>")]
+                  day = parseInt("<%= @client.person.birthdate.strftime('%d') %>")
+                  year = parseInt("<%= @client.person.birthdate.strftime('%Y') %>")                
+              function __$(id){
+                      return document.getElementById(id);
+              }
+              
+              function addSelected(id1, id2, id3, id4){
+                      __$("textFor" + id1).value = '<%= @client.person.gender %>';
+                      __$(id1).value = '<%= @client.person.gender %>';
 
-                                                          date = document.getElementById("date_of_birth")
-                                                          function noMondays(e){
-                                                              var day = new Date( e.target.value ).getUTCDay();
-                                                              // Days in JS range from 0-6 where 0 is Sunday and 6 is Saturday
-                                                             
-                                                          }
-                                                          date.addEventListener('input',noMondays);
-                                                }
-					</script>
-		</head>
-<body>
+                        __$("textFor" + id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
+                        __$("textFor" + id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
+                        __$("textFor" + id4).value = day + '/' + month + '/' + year ;
+
+                        __$(id4).value = '<%= @client.person.birthdate.strftime('%d/%m/%Y') %>';
+                        __$(id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
+                        __$(id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
+              }
+             function checkDate(){
+
+                          date = document.getElementById("date_of_birth")
+                          function noMondays(e){
+                              var day = new Date( e.target.value ).getUTCDay();
+                              // Days in JS range from 0-6 where 0 is Sunday and 6 is Saturday
+
+                          }
+                          date.addEventListener('input',noMondays);
+                }
+
+			function loadCustom(){
+				if(__$("main-content-area")){
+                                      __$('stage').style.display = "none"
+                                       __$("buttons").style.verticalAlign = "bottom";
+                                        btnNext.id = "newBtn";
+                                        btnNext.style.width = "250px";
+                                        btnCancel.style.width = "250px";
+                                        btnClear.style.display = "none"
+                                        btnBack.style.display = "none"
+
+                                        var display = "inline-table";
+
+                                        btnDivs = __$('buttons').children[0].children;
+
+                                        btnDivs[1].style.display = "none";
+                                        btnDivs[2].style.display = "none";
+
+                                        btnDivs[0].style.display  = "inline-table";
+                                        btnDivs[3].style.display  = "inline-table";
+
+                                        btnDivs[3].style.cssFloat = "right";
+                                        __$('buttons').parentNode.parentNode.parentNode.style.wtidth = '52px'
+                                        __$('buttons').parentNode.parentNode.style.wtidth = '52%'
+                                        var table = document.createElement("div");
+					table.style.display = "table";
+					table.style.margin = "auto";
+                                        table.style.width = "100%";
+					//table.style.border = "1px solid #000";
+
+					__$("main-content-area").appendChild(table);
+
+					var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Firstname"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '<%= @client.person.names.first.given_name.humanize rescue "" %>';
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'firstname' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                        var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Surname"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '<%= @client.person.names.first.family_name.humanize rescue "" %>';
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'surname' + "' class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                        var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Gender"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '<%= @client.person.gender rescue "" %>';
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'gender' + "' class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Date of birth"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = day + '/' + month + '/' + year ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'date_of_birth' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Home District"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'home_district' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Traditional Authority"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'traditional_authority' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Occupation"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'occupation' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Current Residence"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '<%= @residence %>' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'residence' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Land mark"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'land_mark' + "' class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Cell Phone Number"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Office Phone Number"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'office_phone_number' + "'  class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+
+                                         var row1 = document.createElement("div");
+					row1.style.display = "table-row";
+                                        row1.id = "demographics"
+					table.appendChild(row1);
+
+                                        var cell1 = document.createElement("div");
+					cell1.style.display = "table-cell";
+                                        cell1.id = "texts"
+                                        cell1.innerHTML = "Home Phone Number"
+                                        row1.appendChild(cell1)
+
+                                        var cell2 = document.createElement("div");
+					cell2.style.display = "table-cell";
+                                        cell2.id = "values"
+                                        cell2.innerHTML = '' ;
+                                        row1.appendChild(cell2)
+
+                                         var cell3 = document.createElement("div");
+					cell3.style.display = "table-cell";
+                                        cell3.id = "links"
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'home_phone_number' + "' class='navigation'>Edit</a>";
+                                        row1.appendChild(cell3)
+                                }
+                        }
+	</script>
+      <style>
+table{
+  width: 100%;
+}
+#demographics{
+ width: 100%;
+ border: 1px solid #000;
+ background-color: #E0EEEE;
+}
+#texts{
+  width: 40%;
+  font-size: 25px;
+}
+#values{
+  width: 40%;
+  font-size: 25px;
+}
+#links{
+ width: 20%;
+  font-size: 25px;
+}
+.navigation{
+    background-color: grey;
+    border-bottom: 1px outset #eeeeee;
+    border-style: outset;
+    border-top: 1px outset #eeeeee;
+    color: white;
+    display: block;
+    padding: 10px 16px 10px 10px;
+    text-align: center;
+    text-decoration: none;
+}
+      </style>
+     </head>
+<body >
 		<%= form_tag({:action => "new"}, {:method => "get"}) do %>
 			<input type='hidden' name='name_id' value=<%= @client.id %> />
-			<fieldset>
+			<fieldset  custom=true fs_onLoad="loadCustom();">
 			<legend>Update Demographics</legend>
-			<label for="first_name">First name</label>
-			<input type="text" id="first_name" name='first_name' value=""  
-				 ajaxURL="/clients/first_name/<%= params[:client_id] %>"/>
-			<br />
-			<label for="surname"> Surname</label>
-			<input type="text" id="surname" name="surname" value=""  
-					ajaxURL="/clients/last_name/<%= params[:client_id] %>"/>
-			<br />
-			<label for="gender"> Gender </label>
-			<select id="gender" selected="<%= @client.person.gender %>">
-					<option></option>
-					<option value="Female">Female</option>
-					<option value="Male">Male</option>
-				</select>
-		 <br />
-		 <label for="date_of_birth"> Date of birth </label>
-     <input type="text"  onclick="checkDate()"id="date_of_birth" 
-				max="<%= Date.today %>" name="date_of_birth" 
-				value="<%= @client.person.birthdate.strftime('%d/%m/%Y') %>" fieldtype="date" />
-			<br />
-			<label for="residence">Residence</label>
-			<input type="text" id="residence" name="residence" value="<%= @residence %>" 
-				ajaxURL="/locations/village"/>
-			<br />
 			
 			</fieldset>
 			<%= submit_tag "Finish" %>

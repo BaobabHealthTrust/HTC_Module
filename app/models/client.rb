@@ -9,7 +9,25 @@ class Client < ActiveRecord::Base
   def tested(date = Date.today)
      type = EncounterType.where("name = ?", "HIV TESTING").first.id
     encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
-                          type, date).order(encounter_datetime: :desc).first
+                          type, date).order(encounter_datetime: :desc).first rescue []
+  end
+
+ def referred(date = Date.today)
+     type = EncounterType.where("name = ?", "REFERRAL CONSENT CONFIRMATION").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first rescue []
+  end
+
+  def counselled(date = Date.today)
+     type = EncounterType.where("name = ?", "COUNSELING").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first rescue []
+  end
+
+  def appointment(date = Date.today)
+     type = EncounterType.where("name = ?", "APPOINTMENT").first.id
+    encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
+                          type, date).order(encounter_datetime: :desc).first rescue []
   end
 
 	def current_state(date=Date.today)
@@ -77,5 +95,27 @@ class Client < ActiveRecord::Base
 			ClientIdentifier.find(:last, 
 													  :conditions => ["identifier_type = ? AND patient_id = ?", 
 														identifier_type, self.id]).identifier rescue ""
+	end
+	
+	def has_booking
+		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
+		
+		Observation.find_by_sql("
+			SELECT  last_appointment.*, last_encounter.encounter_datetime
+				FROM (
+							SELECT person_id, concept_id, MAX(value_datetime) AS value_datetime
+								FROM obs
+								WHERE person_id = #{self.id} AND concept_id=#{concept_id} AND voided=0
+								GROUP BY person_id
+							) AS last_appointment
+					LEFT JOIN (
+							SELECT patient_id, MAX(encounter_datetime) AS encounter_datetime
+								FROM encounter
+								WHERE voided=0
+								GROUP BY patient_id
+							) AS last_encounter
+					ON last_appointment.person_id=last_encounter.patient_id
+					WHERE last_appointment.value_datetime >= last_encounter.encounter_datetime
+		").first rescue nil
 	end
 end

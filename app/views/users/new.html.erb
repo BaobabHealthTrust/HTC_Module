@@ -2,13 +2,42 @@
 	<head>
 	<script>
 					var cancelDestination = '<%= users_path %>';
+         
+              function confirm(){
+               var ele = document.getElementById('cover')
+                ele.style.display = "inline";
+                document.body.appendChild(ele);
+
+                var ele = document.getElementById('popup')
+                ele.style.display = "inline";
+                html = "<div style='display:table;'><div style='display:table-row'>"
+                html += "<div id='text'>User Already Exists</div></div><div style='display:table-row'>"
+                html += '<div id="confirm"><button class="button blue" style="font-size: 20px; height: 60px;" onmousedown="reset();">OK</button></div>'
+                html += "</div></div>"
+                ele.innerHTML =  html;
+                document.body.appendChild(ele);
+              }
+
+              function reset(){
+                  ele = document.getElementById('cover')
+                  ele.style.display = "none";
+                  ele = document.getElementById('popup')
+                  ele.style.display = "none";
+              }
+          
 	</script>
 	</head>
 
-	<body>
+         <% if ! flash[:alert].blank? %>
+	<body onload="confirm()">
+          <% else %>
+        <body >
+          <% end %>
 	<%= form_for User.new do |f| %>
 		<fieldset>
-		<legend>Add User</legend>
+		<legend>Add User
+               
+                </legend>
 		<%= f.label :username %>
 		<%= f.text_field :username, autocomplete: "off" %>
 
@@ -54,3 +83,52 @@
 	<%end%>
 	</body>
 </html>
+  <div id="cover" align="center">
+  </div>
+  <div id="popup" style="display:none">
+  </div>
+<style>
+  .alert {
+    border-color: #f04124;
+}
+#text, #confirm, #cancel{
+  display: table-cell;
+}
+#text{
+  height: 70px;
+}
+#confirm{
+  vertical-align: middle;
+}
+#cancel{
+  vertical-align: middle;
+}
+
+    #popup{
+      -moz-user-select: none;
+      background-color: #FEEFB3;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: #9F6000;
+      font-size: 28px;
+      height: 159px;
+      left: 38%;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      top: 28%;
+      width: 319px;
+      z-index: 991;
+    }
+    #cover{
+      display:none;
+      position: absolute;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.5;
+    }
+   
+</style>

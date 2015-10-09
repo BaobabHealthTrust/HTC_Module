@@ -9,10 +9,13 @@ HTCModule::Application.routes.draw do
 
 	get "client_demographics" => "clients#demographics"
 	post "client_demographics" => "clients#demographics"
+
+  get "clients/demographics_edit/:id" => "clients#demographics_edit"
   
   get "referral_consent/:id" => "clients#referral_consent"
 
   get "appointment/:id" => "clients#appointment"
+  get "clients/appointment" => "clients#appointment"
 	#get "assign_client_to_unlocated_list" => "clients#assign_to_unlocated_list"
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
   get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
@@ -65,6 +68,8 @@ HTCModule::Application.routes.draw do
 	get "clients/first_name/:id" => "clients#first_name"
 
 	get "clients/last_name/:id" => "clients#last_name"
+	
+	get "total_bookings" => "clients#total_bookings"
 	
 	get "waiting_list" => "clients#waiting_list"
 	#post "unallocated_clients" => "clients#unallocated_clients"

@@ -2,9 +2,39 @@
 	<head>
 	<script>
 					var cancelDestination = "/htcs";
+
+            function __$(id){
+                    return document.getElementById(id);
+            }
+
+            function doLogin(id){
+
+                            if(__$(id) && __$(id).value.trim().match(/\$/)){
+
+                               __$(id).value =  __$(id).value.trim().replace(/\$/, "");
+
+                                    clearTimeout(id)
+                                      document.forms[0].submit();
+
+                                    return;
+                            }
+
+                      setTimeout("doLogin('" + id + "')", 500);
+            }
+
 	</script>
+          <style>
+            <% if @show_counselling_room == true %>
+              #stage, #btn3, #btn2, #btn1{
+                    display: none ! important;
+              }
+              #buttons{
+                width:10% ! important;
+              }
+            <% end %>
+          </style>
 	</head>
-<body>
+<body onload="adjust()">
 
 
 <%= form_tag search_results_path do %>
@@ -19,7 +49,9 @@
 																			<option value="Female">Female</option>
 																			<option value="Male">Male</option>
 																		</select>
-                                  <br />
+                                 
+																 <br />
+																		
                                   <label for="date_of_birth">Date Of Birth</label>
                                   <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false" />
                                   <br />
@@ -28,7 +60,7 @@
                                   <br />
                            <% else %>
                                   <label for="scan_accession_number" >Accession Number </label>
-                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" >
                            				<input id="add_to_session" type="hidden" name="add_to_session" value="true">
                            <% end %>
 							</fieldset>
@@ -36,4 +68,16 @@
            
 <%end%>
 </body>
+<script src="/assets/touchscreentoolkitV2/ts.js?body=1"></script>
+
+<script>
+	btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+   function adjust(){
+     <% if @show_counselling_room == true %>
+          node =  document.getElementById('row2').childNodes[0].childNodes[0]
+           node.style.width = "6%"
+      <% end %>
+  }
+</script>
+
 </html>

@@ -26,6 +26,10 @@ class EncountersController < ApplicationController
 							value_text = value if concept_id.blank?
 					 elsif type.upcase == "DATETIME"
 							value_datetime = value
+              if value.match(/\?/)
+                value_text = value
+                value_datetime = nil
+              end
 					 elsif type.upcase == "NUMBER"
 							value_numeric = value
 					 elsif type.upcase == "TEXT"
@@ -85,6 +89,11 @@ class EncountersController < ApplicationController
               
              
             end
+    
+    if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
+    		redirect_to waiting_list_path and return
+    end
+    
     if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
        redirect_to  "/referral_consent/#{params[:id]}"
     else
@@ -116,11 +125,11 @@ class EncountersController < ApplicationController
     @encounter.destroy
   end
 
-	def write_encounter(encounter_type, person, current = DateTime.now)	
-			current = current.strftime("%Y-%m-%d %H:%M:%S")
+	def write_encounter(encounter_type, person)      
+			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue Time.now.strftime("%Y-%m-%d %H:%M:%S")
 			current_location = @current_location if current_location.nil?	
 			type = EncounterType.find_by_name(encounter_type).id
-			encounter = Encounter.create(encounter_type: type, patient_id: person.id, location_id: current_location.id,
+			encounter = Encounter.create(encounter_type: type, patient_id: person.id,
 									encounter_datetime: current, creator: current_user.id)
 			return encounter	
 	end
@@ -151,9 +160,15 @@ class EncountersController < ApplicationController
 
 	def void
 		@encounter = Encounter.find(params[:id])
-
 		@encounter.void
-  
+    (Observation.where("encounter_id = ?", params[:id]) || []).each { |obs|
+        obs.void
+    }
+    (CounselingAnswer.where("encounter_id = ?", params[:id]) || []).each{|answer|
+       answer.voided = 1
+       answer.voided_by = current_user.id
+       answer.save
+    }
 		render :text => "ok"
 	end
   private

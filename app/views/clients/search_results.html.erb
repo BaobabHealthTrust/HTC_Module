@@ -63,7 +63,10 @@
 	function create_new_patient() {
    window.location = '<%= new_client_path(:dob => params[:date_of_birth], :residence => params[:residence], :gender => params[:gender]) %>'
 	}
-	
+
+   function printAccession(id){
+        window.location = '/clients/print_accession/' + id
+   }
 	function add_to_waiting_list(obj) {
 		window.location = '/clients/' + __$('textForid').value + '/add_to_unallocated';
 	}
@@ -125,8 +128,8 @@
 					btnNext.style.display = "inline-table";
 				<% end %>
 
-						
-				    var button = '<button style="margin: 3px; width: auto; font-size: 24px;"' +
+					
+				    var button = '<button style="margin: 3px; margin-left:10px; width: 250px; font-size: 24px;"' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +
 				    						 ' class="button green" pos="0" section="0">Add to waiting list</button>';
 				   	
@@ -154,19 +157,30 @@
 								 "<span class='d dC'> : </span>" +
 								 "<span class='d dR'>" + obj.last_visit  + "</span>";
 						
+						if (obj.has_booking) {
+							s += "<span class='d dL' style='color:red'> Booking </span>" +
+									 "<span class='d dC'> : </span>" +
+									 "<span class='d dR'>" + obj.appointment_date  + "</span>";
+						}
+						
 						if (parseInt(obj.days_since_last_visit) > 0) {
 							s += "<span class='d dL'> Period Since Last Visit </span>" +
 									 "<span class='d dC'> : </span>" +
 									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
 						}
 
+						var accession_number = "<button onmousedown='printAccession(" + obj.id + ")' style='margin: 3px; margin-left:10px; width: 230px; font-size: 24px;'" +
+		                         ' class="button green" pos="0" section="1">Accesssion</button>';
 						if (obj.status.trim()=="") {
-							s+=button;
+							//s+=button;
+							s +=  button + accession_number;
 						}else {
 							s += "<span class='d dL'> Work-flow Status </span>" +
 									 "<span class='d dC'> : </span>" +
 									 "<span class='d dR'>" + obj.status  + "</span>";
+			        s += accession_number;
 						}
+						
 					}
 					else {
 						btnNext.style.display = "none";
@@ -181,6 +195,10 @@
 		__$("row0").parentNode.appendChild(__$('buttons'));
 		
 		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+		
+		if (__$('ul1')) {
+			__$('ul1').children[0].onmousedown();
+		}
 	</script>
 </html>
 

@@ -1,7 +1,275 @@
 <html>
     <head>        
         <title>Calendar</title>
+        
+				<style>                                                                     
+					.nonclinic {
+						background-color: #C0C0C0 ! important;
+					}
+					.selected {
+						background-color: #99EE99 ! important;
+						color: #000000;
+						font-weight:bold;
+					}
+					.publicholiday {
+						background-color: #CD3333 ! important;
+					}
+					div {
+						-moz-user-select: none;
+					}
+					#cover {
+						position: absolute;
+						background-color: black;
+						width: 100%;
+						height: 102%;
+						left: 0%;
+						top: 0%;
+						z-index: 500;
+						opacity: 0.5;
+						align: center;
+					}
+					#alertPage{
+						position: absolute;
+						left: 575px;
+						width: 350px;
+						height: 150px;
+						top: 185px;
+						padding-bottom: 10px;
+						font-size: 1em;
+						text-align: center;
+						background-color: tomato;
+						padding: 10px;
+						z-index: 999;
+						border: 5px outset tomato;
+						border-radius: 15px;
+						z-index: 900;
+					}
+					.message{
+						font-size:20px;
+						color:white;
+						font-weight:bold;
+					}
+
+				</style>
+				
+				<script>
+					  var globalDate;
+
+						<%
+						clinic_holidays = get_global_property_value('clinic.holidays')
+						@clinic_days = get_global_property_value('clinic.days') rescue []
+						days = []
+						(@clinic_days || []).include?('Sunday')?days.push("Sunday"):days.push("")
+						(@clinic_days || []).include?('Monday')?days.push("Monday"):days.push("")
+						(@clinic_days || []).include?('Tuesday')?days.push("Tuesday"):days.push("")
+						(@clinic_days || []).include?('Wednesday')?days.push("Wednesday"):days.push("")
+						(@clinic_days || []).include?('Thursday')?days.push("Thursday"):days.push("")
+						(@clinic_days || []).include?('Friday')?days.push("Friday"):days.push("")
+						(@clinic_days || []).include?('Saturday')?days.push("Saturday"):days.push("")
+						clinic_holidays = clinic_holidays.split(',').to_json.html_safe
+						 
+						if @clinic_days.blank?
+							 days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+						end
+						%>
+						
+						var clinic_holidays = <%= clinic_holidays.html_safe %>
+						var totalWeekend = new Array;
+						var totalHoliday = new Array;
+
+						var date_set = [];
+
+						for(var c = 0; c < clinic_holidays.length; c++) {
+							date_set.push(clinic_holidays[c]);
+						}
+						
+						function showSelectedDates() {
+							activeCells = document.getElementsByClassName('cellActive');
+							for(var i = 0; i < activeCells.length; i++) {
+								weekDay = activeCells[i].getAttribute('date');
+								param = activeCells[i];
+								nn = new Date(weekDay).getDay();
+								var days = '<%= days.join(',') %>';
+								days = days.split(',');
+			
+								if (days[nn] == ""){
+
+									activeCells[i].setAttribute("ajaxCalendarUrl", "/total_bookings?date=" + weekDay);
+									activeCells[i].className += " nonclinic";
+									activeCells[i].setAttribute('onclick', "showConfirm('Non-clinic day', this);");
+		
+									totalWeekend.push(activeCells[i])
+
+								}
+								else{
+									activeCells[i].setAttribute("ajaxCalendarUrl", "/total_bookings?date=" + weekDay)
+									activeCells[i].setAttribute('onclick', "showConfirm('none', this);");
+				
+									for(var x = 0 ; x < clinic_holidays.length; x++){
+											if (weekDay == clinic_holidays[x]) {
+												activeCells[i].className += " publicholiday";
+												activeCells[i].setAttribute('onclick', "showConfirm('Public Holiday', this);");
+												totalHoliday.push(activeCells[i])
+											}
+									 }
+								}
+							}
+					}
+
+					function setAttributes() {
+						buttons = document.getElementsByClassName('btn');
+						for(var i = 0; i < buttons.length; i++) {
+							new_attr = buttons[i].getAttribute('onclick') + ';showSelectedDates();'
+							buttons[i].setAttribute('onclick',new_attr);
+						}
+					}
+
+					var attt;
+					var result;
+					function showConfirm(attt, field){
+						globalDate = field
+						getTotal();
+						activeCells = document.getElementsByClassName('cellActive');
+						if (attt == "none"){
+
+								for(var i = 0; i < activeCells.length; i++) {
+										activeCells[i].style.backgroundColor = "white"
+										if (totalWeekend.indexOf(activeCells[i]) > -1){
+											activeCells[i].className = activeCells[i].className.replace( /(?:^|\s)selected(?!\S)/g , ' nonclinic' );
+										}
+										else if (totalHoliday.indexOf(activeCells[i]) > -1){
+											activeCells[i].className = activeCells[i].className.replace( /(?:^|\s)selected(?!\S)/g , ' publicholiday' );
+										}
+										else if (field.getAttribute('date') == activeCells[i].getAttribute('date')){
+											field.className = field.className.replace( /(?:^|\s)selected(?!\S)/g , ' ' );
+											field.className +=  ' selected';
+										}
+										else{
+											activeCells[i].className = activeCells[i].className.replace( /(?:^|\s)selected(?!\S)/g , '' );
+										}
+								}
+						}
+
+						else {
+								for(var i = 0; i < activeCells.length; i++) {
+								 activeCells[i].style.backgroundColor = "white"
+									if (totalWeekend.indexOf(activeCells[i]) > -1){
+									if (field.getAttribute('date') == activeCells[i].getAttribute('date')){
+										field.className = field.className.replace( /(?:^|\s)nonclinic(?!\S)/g , ' selected' );
+									}
+									else {
+									activeCells[i].className = activeCells[i].className.replace( /(?:^|\s)selected(?!\S)/g , ' nonclinic' );
+									}
+									}
+									else if (totalHoliday.indexOf(activeCells[i]) > -1){
+									if (field.getAttribute('date') == activeCells[i].getAttribute('date')){
+										field.className = field.className.replace( /(?:^|\s)publicholiday(?!\S)/g , ' selected' );
+									}
+									else {
+									activeCells[i].className = activeCells[i].className.replace( /(?:^|\s)selected(?!\S)/g , ' publicholiday' );
+									}
+									}
+									else{
+									activeCells[i].className = activeCells[i].className.replace( /(?:^|\s)selected(?!\S)/g , '' );
+									}
+								}
+
+							var ele = document.getElementById('cover')
+							ele.style.display = "block";
+							document.body.appendChild(ele);
+
+							var newDiv = document.createElement('div');
+							newDiv.id = "alertPage";
+							newDiv.innerHTML = "<p class='message'>" + attt + "</p>";
+							document.body.appendChild(newDiv);
+
+							var newBtn = document.createElement('button');
+							newBtn.className = "blue";
+							newBtn.innerHTML = "<span>Ok</span>";
+							newDiv.appendChild(newBtn);
+							newBtn.setAttribute('onclick', "document.getElementById('cover').style.display='none'; this.parentNode.style.display='none';");
+						}
+					}
+					
+					function getTotal() {
+						var aUrl = "/total_bookings?date=" + globalDate.getAttribute('date');
+						var httpRequest = new XMLHttpRequest();
+						httpRequest.onreadystatechange = function() {
+							set_total(httpRequest);
+						};
+						try {
+							httpRequest.open('GET', aUrl, true);
+							httpRequest.send(null);
+						} catch(e){
+						}
+					}
+					
+					function set_total(req) {
+						if (req.readyState == 4 && req.status == 200) {
+							total = JSON.parse(req.responseText);
+							
+							if(globalDate.getElementsByTagName("div").length <= 0){
+								var daycount = document.createElement('div');
+								daycount.className = "dayCount";
+								globalDate.appendChild(daycount);
+							}
+
+							globalDate.getElementsByTagName("div")[0].innerHTML = total[globalDate.getAttribute('date')];
+							__$('appoint_date').value = globalDate.getAttribute('date');
+						}
+					}	
+
+					function checkCtrl(obj){
+							var o = obj;
+							var t = o.offsetTop;
+							var l = o.offsetLeft + 1;
+							var w = o.offsetWidth;
+							var h = o.offsetHeight;
+
+							while((o ? (o.offsetParent != document.body) : false)){
+									o = o.offsetParent;
+									t += (o ? o.offsetTop : 0);
+									l += (o ? o.offsetLeft : 0);
+							}
+							return [w, h, t, l];
+					}
+							 
+					function showCategory(category){
+							var pos = checkCtrl(__$("content"));
+			
+							if(__$("category")){
+									document.body.removeChild(__$("category"));
+							}
+			
+							var cat = document.createElement("div");
+							cat.id = "category";
+							cat.style.position = "absolute";
+							cat.style.left = (pos[3] + (pos[0] - 378)) + "px";
+							cat.style.top = (pos[2] + 5) + "px";
+							cat.style.width = "350px";
+							cat.style.minHeight = "45px";
+							cat.style.fontSize = "36px";
+							cat.style.padding = "10px";
+							cat.style.backgroundColor = "#9e9";
+							cat.style.color = "#000";
+							cat.style.opacity = "0.95";
+							cat.style.zIndex = 100;
+							cat.style.textAlign = "center";
+							cat.innerHTML = category;
+			
+							document.body.appendChild(cat);
+					}
+
+				</script>
+				
         <script type="text/javascript">
+						<% if !@waiting_list.blank? %>
+							var cancelDestination = "<%= waiting_list_path %>";
+						<% else %>
+							var cancelDestination = "/clients/<%= params[:id] %>";
+						<% end %>
+						
+        
             var sel = {};
             var today = new Date();
             var y = today.getFullYear();
@@ -47,7 +315,7 @@
             var previousClick = "";
             
             function makeDate(obj) {
-            	var day = obj.innerHTML;
+            	var day = obj.getAttribute("value");
 							var month = __$('month').innerHTML;
             	var year = __$('year').innerHTML;
             	
@@ -67,13 +335,18 @@
             	days = document.getElementsByClassName('cellActive');
             	
             	for(var i=0; i<days.length; i++) {
-            		days[i].setAttribute('onclick',"makeDate(this)");
+            		var e = days[i].getAttribute("onclick");
+            		e = "makeDate(this);" + e;
+            		days[i].setAttribute('onclick',e);
             	}
             }
             
         </script>
     </head>
-    <body><div id='content'>
+    <body>
+					<div id="cover">
+					</div>
+    			<div id='content'>
                 <form  action='/encounters/new/<%= params[:id] %>' method='post' >
 									<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 									<fieldset>
@@ -82,12 +355,17 @@
 																	
 										<%= hidden_field_tag("observations[][concept_name]", "Appointment date") %>
 										<%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
-										
+
+										<% if !@waiting_list.blank? %>
+												<%= hidden_field_tag("waiting_list", true) %>
+										<% end %>
+
 										<legend> Calendar </legend>
 
                     <label for="initial_date"> Calendar </label>
                     <input type='text' field_type='calendar' name='initial_date' id='initial_date' 
-                           helptext='Appointment' value="<%= @initial_date -%>" 
+                           helptext='Appointment' value="<%= @initial_date -%>"
+                           ajaxCalendarUrl="/total_bookings?date="
                            startweekdate="<%=@start_week_date -%>" endweekdate="<%= @end_week_date -%>" />
 									</fieldset>
                 </form>
@@ -189,6 +467,7 @@
     
     //Setup calendar
     
+    	eval("setAttributes();showSelectedDates();showCategory('Next Appointment'); __$('category').style.display = 'none'; __$('cover').style.display = 'none';");
     	setOnclickEvents();
     	updateOnclickForYearChange();
     	updateOnclickForMonthChange();

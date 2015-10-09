@@ -28,6 +28,7 @@ class AdminsController < ApplicationController
 			@protocol.retired = @protocol.retired
 			@protocol.description = params[:description]
 			@protocol.data_type = params[:datatype]
+      @protocol.date_updated = Date.today
 			list = nil
 			child = 0
 			list = params[:listtype] if ! params[:listtype].blank?
@@ -54,8 +55,8 @@ class AdminsController < ApplicationController
   
   def set_date
 			
-			if session[:datetime].to_date != Date.today.to_date
-				session[:datetime] = DateTime.now
+			if !session[:datetime].blank?
+				session[:datetime] = nil
 					if ! params[:client_id].blank?
 							redirect_to "/clients/#{params[:client_id]}" and return
 					else
@@ -81,15 +82,15 @@ class AdminsController < ApplicationController
 				list = nil
 				child = 0
 				list = params[:listtype] if ! params[:listtype].blank?
-				child = 1 if ! params[:parent].blank?
+				child = 1 if ! params[:parent_protocol].blank?
 				@protocol = CounselingQuestion.create(name: params[:name],
 										description: params[:description], data_type: params[:datatype],
 										retired: 0, creator: current_user.id, list_type: list,
-									  child: child)
+									  child: child, date_created: Date.today)
         if child == 1
          # raise params[:parent].to_yaml
 					@children = ChildProtocol.create(protocol_id: @protocol.id,
-            parent_id: params[:parent])
+            parent_id: params[:parent_protocol])
 				end
 				redirect_to protocols_path and return
 			end

@@ -13,6 +13,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20140722145413) do
 =======
 ActiveRecord::Schema.define(version: 20140801091928) do
@@ -20,6 +21,9 @@ ActiveRecord::Schema.define(version: 20140801091928) do
 =======
 ActiveRecord::Schema.define(version: 20140822141340) do
 >>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
+=======
+ActiveRecord::Schema.define(version: 20140825121028) do
+>>>>>>> cc0797c8bf33896dbfeb69636b58bd90a700e9a0
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -498,13 +502,14 @@ ActiveRecord::Schema.define(version: 20140822141340) do
   create_table "counseling_question", primary_key: "question_id", force: true do |t|
     t.text     "name"
     t.text     "description"
-    t.integer  "child",                   default: 0, null: false
+    t.integer  "child",                                            default: 0, null: false
     t.string   "data_type",    limit: 25
     t.text     "list_type"
     t.datetime "date_created"
     t.datetime "date_updated"
-    t.integer  "retired",                 default: 0, null: false
-    t.integer  "creator",                             null: false
+    t.integer  "retired",                                          default: 0, null: false
+    t.integer  "creator",                                                      null: false
+    t.decimal  "position",                precision: 10, scale: 0
   end
 
 >>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa

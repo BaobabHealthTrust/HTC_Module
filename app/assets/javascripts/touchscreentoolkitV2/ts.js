@@ -557,7 +557,7 @@ function showKeyboard(ctrl, disabled, numbers, caps){
                             }
                             
                         }
-                        
+                        overwriteNumber = false;
                         __$('.').setAttribute('class', 'button blue');
                         
                     }
@@ -935,6 +935,8 @@ function addAge(parent, target, date, label1, label2){
     checkDate(this.getAttribute('target'), true);
     
   }
+  
+  checkDate(target.id, true);
 }
 
 function addDate(parent, target, date){
@@ -1007,7 +1009,7 @@ function addDate(parent, target, date){
           "type"  : "input",
           "id"    : "txtYearFor" + target.id,
           "target": target.id,
-          "value" : (!isNaN(date.getFullYear()) ? date.getFullYear() : (currentdate.length == 3 ? currentdate[2] : "?")),
+          //"value" : (!isNaN(date.getFullYear()) ? date.getFullYear() : (currentdate.length == 3 ? currentdate[2] : "?")),
           "onmousedown" : "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtYearFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
           "style" : "font-size: 24px; text-align: center; width: 100%;"
@@ -1016,7 +1018,7 @@ function addDate(parent, target, date){
           "type"  : "input",
           "id"    : "txtMonthFor" + target.id,
           "target": target.id,
-          "value" : (typeof(months[date.getMonth()]) != "undefined" ? months[date.getMonth()] : (currentdate.length == 3 ? currentdate[1] : "?")),
+          //"value" : (typeof(months[date.getMonth()]) != "undefined" ? months[date.getMonth()] : (currentdate.length == 3 ? currentdate[1] : "?")),
           "onmousedown" : "showShield(); addList(__$('txtMonthFor' + this.getAttribute('target')),{'Jan':'January','Feb':'February','Mar':'March','Apr':'April','May':'May','Jun':'June','Jul':'July','Aug':'August','Sep':'September','Oct':'October','Nov':'November','Dec':'December','?':'Unknown'},'single',__$('txtMonthFor' + this.getAttribute('target')),__$('txtMonthFor' + this.getAttribute('target')), 'checkDate(\"' + this.getAttribute('target') + '\")'); checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
           "style" : "font-size: 24px; text-align: center; width: 100%;"
@@ -1025,7 +1027,7 @@ function addDate(parent, target, date){
           "type"  : "input",
           "id"    : "txtDateFor" + target.id,
           "target": target.id,
-          "value" : (!isNaN(date.getDate()) ? date.getDate() : (currentdate.length == 3 ? currentdate[0] : "?")),
+          //"value" : (!isNaN(date.getDate()) ? date.getDate() : (currentdate.length == 3 ? currentdate[0] : "?")),
           "onmousedown" : "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtDateFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
           "style" : "font-size: 24px; text-align: center; width: 100%;"
@@ -1085,7 +1087,7 @@ function addDate(parent, target, date){
       cell.appendChild(input);
     }
   }
-  
+	checkDate(target.id, true);
   return tbl;
 }
 
@@ -1202,13 +1204,53 @@ function decrementDate(id){
 }
 
 function checkDate(id, byAge){
-  
 	if(__$("txtDateFor" + id) && __$("txtYearFor" + id) && __$("txtMonthFor" + id)){
+	  
+	  if(__$("age" + id)) {
+	  		
+			if(__$("txtYearFor" + id).value == "?") {
+				__$("age" + id).disabled = false;
+			}else{
+				__$("age" + id).disabled = true;
+			}
+					
+	  }
+	  
+	  if(!__$("txtYearFor" + id).value.trim().match(/^\d{4}$/)){
+	  		__$("txtMonthFor" + id).disabled = "true";		  	
+		  	__$("btnAddMonthFor" + id).className = "button gray";
+		  	__$("btnSubtractMonthFor" + id).className = "button gray";
+		  	
+		  	__$("txtDateFor" + id).disabled = true;
+		  	__$("btnAddDateFor" + id).className = "button gray";
+		  	__$("btnSubtractDateFor" + id).className = "button gray";	  	
+		  	
+	  } else {
+	  		__$("txtMonthFor" + id).disabled = false;
+		  	__$("btnAddMonthFor" + id).className = "button blue";
+		  	__$("btnSubtractMonthFor" + id).className = "button blue";
+	  		
+	  		
+		  	__$("txtDateFor" + id).disabled = true;
+		  	__$("btnAddDateFor" + id).className = "button gray";
+		  	__$("btnSubtractDateFor" + id).className = "button gray";
+		  	
+				if(!(months.indexOf(__$("txtMonthFor" + id).value.trim()) > -1)){
+						__$("txtDateFor" + id).disabled = true;
+						__$("btnAddDateFor" + id).className = "button gray";
+						__$("btnSubtractDateFor" + id).className = "button gray";
+				} else {
+						__$("txtDateFor" + id).disabled = false;
+						__$("btnAddDateFor" + id).className = "button blue";
+						__$("btnSubtractDateFor" + id).className = "button blue";
+				}
+				
+	  }
 	  
 		if(byAge == undefined || byAge == false){
 		
 			if(!__$("txtYearFor" + id).value.trim().match(/^\d{4}$/)){
-		  
+		  			  
 				__$("txtYearFor" + id).value = "?";
 
 				__$("txtMonthFor" + id).value = "?";
@@ -1223,7 +1265,7 @@ function checkDate(id, byAge){
 
 				if(__$("age" + id)){
 					
-				  __$("age" + id).value = "";
+				 __$("age" + id).value = "";
 
 				}
 				
@@ -2814,7 +2856,6 @@ function navigateTo(pos, section){
       switch(fieldtype.toLowerCase()){
         case "age":
           addAge(__$("stage"), __$("textFor" + fields[pos].id), (!isNaN((new Date(__$("textFor" + fields[pos].id).value.trim())).getDay()) ? __$("textFor" + fields[pos].id).value.trim() : undefined), "Specify Actual Date of Birth", "Age");
-          
           break;
         case "select":
           

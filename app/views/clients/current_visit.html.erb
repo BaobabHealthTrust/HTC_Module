@@ -3,8 +3,32 @@
 	<head>
 		<title>Current Visit</title>
 		<script>
-			  function voiding(node) {             
-                                                                                  
+                  function confirm(node){
+                     var ele = document.getElementById('cover')
+                      ele.style.display = "inline";
+                      document.body.appendChild(ele);
+
+                      var ele = document.getElementById('popup')
+                      ele.style.display = "inline";
+                      html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+                      html += "<div id='text'>Continue Voiding?</div></div><div style='display:table-row;width:100%;'>"
+                      html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
+                      html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="voiding(' + node + ')">Yes</button></div>'
+                      html += "</div></div></div></div></div>"
+                      ele.innerHTML =  html;
+                      document.body.appendChild(ele);
+/*
+                      var newDiv = document.createElement('div');
+                      newDiv.id = "alertPage";
+                      newDiv.className = "alert-box warning"
+                      newDiv.style.left = "39%";
+                      newDiv.style.top = "30%";
+                      newDiv.style.width = "348px";
+                      newDiv.style.height = "200px";
+                      */
+                  
+                  }
+			  function voiding(node) {
 						if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
 								xmlhttp=new XMLHttpRequest();                                             
 							}else{// code for IE6, IE5                                                  
@@ -20,6 +44,12 @@
 							xmlhttp.open("GET","/encounters/void/" + node, true); 
 							xmlhttp.send(); 
 				}
+                        function reset(){
+                            ele = document.getElementById('cover')
+                            ele.style.display = "none";
+                            ele = document.getElementById('popup')
+                            ele.style.display = "none";
+                        }
 		</script>
 		<style>
 			.arrow-right {
@@ -48,6 +78,27 @@
 				border-left: 40px solid #999; 
 			}
 
+* {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
+.red_cancel {
+    background-color: #a90329;
+    background-image: linear-gradient(to bottom, #a90329, #6d0019);
+    border: 1px solid #72021c;
+    border-radius: 3px;
+    color: #ffffff;
+    display: inline-block;
+    font-family: arial,helvetica,sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 10px;
+    text-decoration: none;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
 .blue {
     background-color: #a7cfdf;
     background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
@@ -80,10 +131,67 @@ button {
     min-width: 50px;
     padding: 15px;
 }
+#text, #confirm, #cancel{
+  display: table-cell;
+}
+#confirm{
+  vertical-align: right;
+    width:50%;
+}
+#cancel{
+  vertical-align: left;
+  width:50%;
+}
+#text{
+  height: 70px;
+    width:100%;
+}
+    #popup{
+      -moz-user-select: none;
+      background-color: #FEEFB3;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: #9F6000;
+      font-size: 28px;
+      height: 159px;
+      left: 38%;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      top: 5%;
+      width: 319px;
+      z-index: 991;
+    }
+    #cover{
+      display:none;
+      position: absolute;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.5;
+    }
+    
+.alert-box {
+    color:#555;
+    background-color: #008B8B;
+    border-radius:10px;
+    font-family:Tahoma,Geneva,Arial,sans-serif;font-size:18px;
+    padding:10px 10px 10px 36px;
+    margin:83px;
+}
+.warning {
+    border:1px solid #f2c779;
+}
 
+.alert-box span {
+    font-weight:bold;
+    text-transform:uppercase;
+}
 		</style>
 	</head>
-	<body style="margin: 10px; overflow: auto; font-family: Helvetica;">
+        <body style="margin: 10px; overflow: auto; font-family: Helvetica;">
 		<div style="display: table; width: 100%; border: 1px solid #eee; height: 99%;">
 			<div style="display: table-row;">
 				<div style="display: table-cell; vertical-align: middle; padding-left: 10px; width: 100px;">
@@ -95,7 +203,7 @@ button {
 				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 0px 0px 25px 25px;hieght:200px;overflow: auto;">
 					
 					<div style=" margin: auto; margin-bottom: 40px; width: 100%; vertical-align: middle; ">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;">Today's Visit Details</label>
+						<label style="color: #5679c1; font-weight: normal; font-size: 24px;" class="noselect" >Today's Visit Details</label>
 					</div>
 					
 					<div style="display: table; margin: auto;">
@@ -176,7 +284,7 @@ button {
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
 										<button style="float: right;margin: 3px; font-size: 20px; height: 60px;"
-										class="button blue" onmousedown="voiding('<%= encounter.encounter_id %>')">Void</button>
+										class="button blue" onmousedown="confirm('<%= encounter.encounter_id %>')">Void</button>
 									 </div>
 									</div>
 									<% } %>
@@ -196,4 +304,7 @@ button {
 		</div>
 	</body>
 </html>		
-			}
+  <div id="cover" align="center">
+  </div>
+  <div id="popup" style="display:none">
+  </div>
