@@ -393,7 +393,7 @@ class InventoryController < ApplicationController
     @kits = Kit.where(status: "active")
 
     kmap = {}
-
+    
     if request.post?
       captured_data = params[:data]
       if !captured_data.blank?
