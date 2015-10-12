@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <script>
+      var cancelDestination = "/clients/<%= @client.id %>";
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+    </script>
+  </head>
+  <body>
+    <form action='/hiv_viral_load_menu' method='post'>
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+      <input type='hidden' name='id' value=<%= @client.id %> />
+
+      <fieldset >
+        <legend>HIV Viral Load</legend>
+        <label for="vl_question"> What do you want to do?</label>
+        <select id="vl_question" name="vl_question">
+          <option></option>
+          <option value="request">Request Viral Load</option>
+          <option value="result">Capture Viral Load Result</option>
+        </select>
+
+      </fieldset>
+      <%= submit_tag "Finish" %>
+    </form>
+  </body>
+</html>

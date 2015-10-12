@@ -385,9 +385,18 @@ class ClientsController < ApplicationController
   end
 
   def hiv_viral_load_menu
-
+    @client = Client.find(params[:id])
+    if request.post?
+      vl_question = params[:vl_question].squish.downcase
+      redirect_to ("/hiv_viral_load/#{@client.id}") and return if vl_question == 'request'
+      redirect_to ("/hiv_viral_load_results/#{@client.id}") and return if vl_question == 'result'
+    end
   end
 
+  def hiv_viral_load_results
+    
+  end
+  
   def extended_testing
       @client = Client.find(params[:id])
       @kits, @remaining, @testing = Kit.kits_available(current_user)

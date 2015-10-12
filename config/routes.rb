@@ -77,7 +77,11 @@ HTCModule::Application.routes.draw do
   post "early_infant_diagnosis_menu/" => "clients#early_infant_diagnosis_menu"
   
   get "hiv_viral_load/:id" => "clients#hiv_viral_load"
+  get "hiv_viral_load_menu/:id" => "clients#hiv_viral_load_menu"
+  post "hiv_viral_load_menu/" => "clients#hiv_viral_load_menu"
   post "hiv_viral_load" => "clients#hiv_viral_load"
+  get "hiv_viral_load_results/:id" => "clients#hiv_viral_load_results"
+  post "hiv_viral_load_results/" => "clients#hiv_viral_load_results"
 
 	post "show_client" => "clients#show"
 
