@@ -363,6 +363,31 @@ class ClientsController < ApplicationController
       redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
+  def early_infant_diagnosis
+    @client = Client.find(params[:id])
+  end
+
+  def early_infant_diagnosis_menu
+    @client = Client.find(params[:id])
+    if request.post?
+      eid_test_question = params[:eid_test_question].squish.downcase
+      redirect_to ("/early_infant_diagnosis/#{@client.id}") and return if eid_test_question == 'request'
+      redirect_to ("/early_infant_diagnosis_results/#{@client.id}") and return if eid_test_question == 'result'
+    end
+  end
+
+  def early_infant_diagnosis_results
+
+  end
+  
+  def hiv_viral_load
+    
+  end
+
+  def hiv_viral_load_menu
+
+  end
+
   def extended_testing
       @client = Client.find(params[:id])
       @kits, @remaining, @testing = Kit.kits_available(current_user)

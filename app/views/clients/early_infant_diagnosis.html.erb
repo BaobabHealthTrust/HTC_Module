@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script>
+      var cancelDestination = "/clients/<%= @client.id %>";
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+    </script>
+  </head>
+  <body>
+    <form action='#' method='post'>
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+      <input type='hidden' name='name_id' value=<%= @client.id %> />
+      <input type='hidden' name='request_' value=<%= @client.id %> />
+
+      <fieldset >
+        <legend>Early Infant Diagnosis</legend>
+        <label for="test_reason"> Reason for Test (EID)</label>
+        <select id="test_reason" name="test_reason">
+          <option></option>
+          <option value="HIV Exposed Infant">HIV Exposed Infant</option>
+          <option value="HIV Exposed Infant wit PSHD">HIV Exposed Infant wit PSHD</option>
+          <option value="Unknown exposure with symptoms">Unknown exposure with symptoms</option>
+        </select>
+        <br />
+
+      </fieldset>
+      <%= submit_tag "Finish" %>
+    </form>
+  </body>
+</html>

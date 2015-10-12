@@ -70,6 +70,15 @@ HTCModule::Application.routes.draw do
   get "client_status/:id" => "clients#status"
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
+
+  get "early_infant_diagnosis/:id" => "clients#early_infant_diagnosis"
+  post "early_infant_diagnosis" => "clients#early_infant_diagnosis"
+  get "early_infant_diagnosis_menu/:id" => "clients#early_infant_diagnosis_menu"
+  post "early_infant_diagnosis_menu/" => "clients#early_infant_diagnosis_menu"
+  
+  get "hiv_viral_load/:id" => "clients#hiv_viral_load"
+  post "hiv_viral_load" => "clients#hiv_viral_load"
+
 	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"
