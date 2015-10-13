@@ -365,6 +365,9 @@ class ClientsController < ApplicationController
 
   def early_infant_diagnosis
     @client = Client.find(params[:id])
+    if request.post?
+      redirect_to("/eid_care_giver/#{@client.id}") and return
+    end
   end
 
   def early_infant_diagnosis_menu
@@ -377,7 +380,12 @@ class ClientsController < ApplicationController
   end
 
   def early_infant_diagnosis_results
+    @client = Client.find(params[:id])
+  end
 
+  def eid_care_giver
+    @client = Client.find(params[:id])
+    render layout: false
   end
   
   def hiv_viral_load
@@ -395,6 +403,10 @@ class ClientsController < ApplicationController
 
   def hiv_viral_load_results
     
+  end
+
+  def find_register_caregiver
+
   end
   
   def extended_testing

@@ -75,7 +75,15 @@ HTCModule::Application.routes.draw do
   post "early_infant_diagnosis" => "clients#early_infant_diagnosis"
   get "early_infant_diagnosis_menu/:id" => "clients#early_infant_diagnosis_menu"
   post "early_infant_diagnosis_menu/" => "clients#early_infant_diagnosis_menu"
-  
+  get "early_infant_diagnosis_results/:id" => "clients#early_infant_diagnosis_results"
+  post "early_infant_diagnosis_results/" => "clients#early_infant_diagnosis_results"
+
+  get "eid_care_giver/:id" => "clients#eid_care_giver"
+  post "eid_care_giver/" => "clients#eid_care_giver"
+
+  get "find_register_caregiver/:id" => "clients#find_register_caregiver"
+  post "find_register_caregiver/" => "clients#find_register_caregiver"
+
   get "hiv_viral_load/:id" => "clients#hiv_viral_load"
   get "hiv_viral_load_menu/:id" => "clients#hiv_viral_load_menu"
   post "hiv_viral_load_menu/" => "clients#hiv_viral_load_menu"

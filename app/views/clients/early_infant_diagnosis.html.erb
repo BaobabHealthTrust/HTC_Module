@@ -9,10 +9,9 @@
     </script>
   </head>
   <body>
-    <form action='#' method='post'>
+    <form action='/early_infant_diagnosis' method='post'>
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
-      <input type='hidden' name='name_id' value=<%= @client.id %> />
-      <input type='hidden' name='request_' value=<%= @client.id %> />
+      <input type='hidden' name='id' value=<%= @client.id %> />
 
       <fieldset >
         <legend>Early Infant Diagnosis</legend>
