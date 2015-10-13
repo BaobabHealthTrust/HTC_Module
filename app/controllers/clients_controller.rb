@@ -365,7 +365,30 @@ class ClientsController < ApplicationController
 
   def early_infant_diagnosis
     @client = Client.find(params[:id])
+    current_date = (session[:datetime].to_date rescue Date.today)
+    #raise User.current.inspect
     if request.post?
+      test_reasons = params[:test_reasons].split(";")
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+        encounter = @client.encounters.create({:encounter_type => encounter_type, 
+            :encounter_datetime => current_date}) if encounter.blank?
+
+        test_reasons.each do |test_reason|
+          encounter.observations.create({
+              :person_id => @client.id,
+              :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :value_text => test_reason,
+              :creator => User.current.id
+          })
+        end
+        
+      end
+      
       redirect_to("/eid_care_giver/#{@client.id}") and return
     end
   end
