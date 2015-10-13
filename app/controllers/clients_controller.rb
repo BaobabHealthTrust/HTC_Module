@@ -387,7 +387,11 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
     render layout: false
   end
-  
+
+  def care_giver_search_results
+
+  end
+
   def hiv_viral_load
     
   end

@@ -84,6 +84,8 @@ HTCModule::Application.routes.draw do
   get "find_register_caregiver/:id" => "clients#find_register_caregiver"
   post "find_register_caregiver/" => "clients#find_register_caregiver"
 
+  post "care_giver_search_results/" => "clients#care_giver_search_results"
+
   get "hiv_viral_load/:id" => "clients#hiv_viral_load"
   get "hiv_viral_load_menu/:id" => "clients#hiv_viral_load_menu"
   post "hiv_viral_load_menu/" => "clients#hiv_viral_load_menu"

@@ -1,0 +1,184 @@
+<html>
+  <head>
+    <style>
+      #popup {
+        -moz-user-select: none;
+        background-color: #FEEFB3;
+        border: 4px solid #C6C6C6;
+        border-radius: 15px 15px 15px 15px;
+        color: #9F6000;
+        font-size: 28px;
+        height: 165px;
+        left: 40%;
+        padding: 5px;
+        position: absolute;
+        text-align: center;
+        top: 2%;
+        width: 319px;
+        z-index: 991;
+      }
+    </style>
+    <script>
+      var cancelDestination = "#";
+
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+      function doLogin(id){
+
+        if(__$(id) && __$(id).value.trim().match(/\$/)){
+
+          __$(id).value =  __$(id).value.trim().replace(/\$/, "");
+
+          clearTimeout(id)
+          document.forms[0].submit();
+
+          return;
+        }
+
+        setTimeout("doLogin('" + id + "')", 500);
+      }
+
+    </script>
+    <style>
+      #popupkeyboard{
+        height: 255px ! important;
+      }
+    </style>
+  </head>
+  <body>
+
+
+    <form action="#" method="POST">
+      <fieldset>
+        <legend>Search/Register Care-giver</legend>
+        <br />
+
+        <label for="gender"> Gender </label>
+        <select id="gender" name="gender" optional = 'false'>
+          <option></option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+        </select>
+
+        <br />
+
+        <label for="date_of_birth">Date Of Birth</label>
+        <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false" />
+        <br />
+
+        <label for="residence">Residence</label>
+        <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
+        <br />
+        <input type="hidden" value="<%= params[:id] %>" name="client_id"/>
+      </fieldset>
+
+      <%= submit_tag "Finish" %>
+
+    </form>
+  </body>
+  <script src="/assets/touchscreentoolkitV2/ts.js?body=1"></script>
+
+  <script>
+    btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+
+    function customAlert(msg) {
+      if (__$('popup'))
+        __$('popup').parentNode.removeChild(__$('popup'));
+
+      var ele = document.createElement('div');
+      ele.id = "popup";
+      ele.style.display = "inline";
+      html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+      html += "<div id='text'>" + msg + "</div></div><div style='display:table-row;width:100%;'>"
+      html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 55px;" onmousedown="resetPopup()">Ok</button></div>'
+      html += "</div></div></div></div>";
+      ele.innerHTML = html;
+      document.body.appendChild(ele);
+    }
+
+    function resetPopup() {
+      var ele = document.getElementById('popup');
+      ele.style.display = "none";
+      ele.parentNode.removeChild(ele);
+    }
+
+    function __$(id){
+      return document.getElementById(id);
+    }
+
+    function checkSearchList(){
+
+    }
+
+<% if !flash[:error].blank? %>
+    customAlert("<%= flash[:error]%>");
+<% elsif !flash[:notice].blank?   %>
+    customAlert("<%= flash[:notice]%>");
+<% end %>
+
+  function checkCompulsoryFields(){
+
+    var section = btnNext.getAttribute("section");
+    var pos = btnNext.getAttribute("pos");
+    var node = navigablefieldsets[section][pos];
+
+    if (node){
+
+      var optional = node.getAttribute("optional");
+      var optionals_entered = true;
+      var message = 'cannot be blank!';
+      var missing;
+
+      if (parseInt(pos) == navigablefieldsets[section].length - 1) {
+        for (var i = 0; i < navigablefieldsets[section].length; i++) {
+          var input = navigablefieldsets[section][i];
+          if (input.getAttribute('optional') == 'false' &&
+            (!input.value || input.value == '' || input.value == "?/?/?")) {
+            var missedLabel = __$('textFor' + input.id).parentNode.parentNode.childNodes[0].childNodes[0].innerHTML;
+            optionals_entered = false;
+          }
+
+        }
+      }
+
+      var check = (!node.value || node.value.trim() == "?/?/?" || node.value.trim() == "");
+
+      if((optionals_entered == false || (optional == "false" && (check)))) {
+        var curLabel = __$('textFor' + node.id).parentNode.parentNode.childNodes[0].childNodes[0].innerHTML;
+
+        if (check) {
+          message = curLabel + " " + message;
+        }else{
+          message = missedLabel + " " + message;
+        }
+
+        btnNext.onmousedown = function () {
+          this.setAttribute("disabled", 'true');
+          customAlert(message);
+          this.className = "button gray";
+        }
+      }else{
+        btnNext.onmousedown = null;
+        btnNext.removeAttribute("disabled");
+        btnNext.className = "button green"
+
+        if (btnNext.innerHTML == 'Finish'){
+          btnNext.onmousedown = function(){
+            document.forms[0].submit();
+          }
+        }
+      }
+    }
+  }
+
+  var interval = window.setInterval(function(){
+
+    checkCompulsoryFields();
+
+  }, 100);
+
+  </script>
+
+</html>
