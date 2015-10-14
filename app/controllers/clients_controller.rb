@@ -413,7 +413,72 @@ class ClientsController < ApplicationController
   end
 
   def care_giver_search_results
+    if request.post?
+      birthdate_estimated = false
 
+			birth_date = params[:date_of_birth].split("/")
+			birth_year = birth_date[2]
+			birth_month = birth_date[1]
+			birth_day = birth_date[0]
+
+			birthdate = params[:date_of_birth]
+
+			if birth_month == "?"
+				birthdate_estimated = true
+				birth_month = 7
+			end
+
+			if birth_day == "?"
+				birthdate_estimated = true
+				birth_day = 1
+			end
+
+      birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+      @birthdate = birthdate
+      @residence = params[:residence]
+      @gender = params[:gender]
+      @client_id = params[:client_id]
+      @guardians = Client.find_by_sql("SELECT * FROM person p INNER JOIN person_address pa
+            ON p.person_id = pa.person_id INNER JOIN relationship r ON p.person_id = r.person_a
+            WHERE pa.address1 = '#{params[:residence]}' AND p.gender = '#{params[:gender]}' AND
+            DATE(p.birthdate) = '#{birthdate.to_date}' AND p.voided = 0 LIMIT 20"
+      )
+
+    end
+  end
+
+  def create_care_giver
+    gender = params[:gender]
+    birthdate = params[:birthdate]
+    residence = params[:residence]
+    estimated = false
+    estimated = true if (params[:birthdate_estimated] == true)
+
+    relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
+    
+    ActiveRecord::Base.transaction do
+      person = Person.new
+      person.gender = gender
+      person.birthdate = birthdate
+      person.birthdate_estimated = true if estimated
+      person.creator = User.current_user.id
+      person.save
+
+      person_address = PersonAddress.new
+      person_address.person_id = person.id
+      person_address.creator = User.current_user.id
+      person_address.address1 = residence
+      person_address.save
+
+      relationship = Relationship.new
+      relationship.person_a = person.id
+      relationship.person_b = params[:client_id]
+      relationship.relationship = relationship_type
+      relationship.creator = User.current_user.id
+      relationship.save
+    end
+
+    redirect_to("/clients/#{params[:client_id]}") and return
   end
 
   def hiv_viral_load
@@ -434,39 +499,6 @@ class ClientsController < ApplicationController
   end
 
   def find_register_caregiver
-
-    if request.post?
-      raise params.inspect
-      birthdate_estimated = false
-
-			birth_date = params[:date_of_birth].split("/")
-			birth_year = birth_date[2]
-			birth_month = birth_date[1]
-			birth_day = birth_date[0]
-
-			birthdate = params[:date_of_birth]
-
-			if birth_month == "?"
-				birthdate_estimated = true
-				birth_month = 7
-			end
-
-			if birth_day == "?"
-				birthdate_estimated = true
-				birth_day = 1
-			end
-      
-      birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
-      
-      @guardians = Client.find_by_sql("SELECT * FROM person p INNER JOIN person_address pa
-            ON p.person_id = pa.person_id INNER JOIN relationship r ON p.person_id = r.person_a
-            WHERE pa.address1 = '#{params[:residence]}' AND p.gender = '#{params[:gender]}' AND
-            DATE(p.birthdate) = '#{birthdate.to_date}' AND p.voided = 0 LIMIT 20"
-      )
-
-      #@relation = Relationship.create(person_a: params[:client], person_b: @scanned.patient_id,
-                                  #relationship: relationship_type, creator: current_user.id)
-    end
 
   end
   

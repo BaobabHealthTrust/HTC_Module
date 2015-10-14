@@ -208,18 +208,24 @@
               <td colspan="6">
                 <div class="scrollit">
                   <table id="child" cellspacing='0' style="width:100%; left: 0%;">
-                    <% 30.times do %>
-                      <tr style="line-height: 3em;">
-                        <td style="border-bottom: 1px solid black; text-align: center;">20-2015</td>
-                        <td style="border-bottom: 1px solid black; text-align: center;">Test</td>
-                        <td style="border-bottom: 1px solid black; text-align: center;">Guardian</td>
-                        <td style="border-bottom: 1px solid black; text-align: center;">Mangochi</td>
-                        <td style="border-bottom: 1px solid black; text-align: center;">01-Jan-2015</td>
-                        <td class="btn-primary"><span>Select</span></td>
-                      </tr>
-                      <tr>
-                        <td colspan="6"></td>
-                      </tr>
+                    <% unless @guardians.blank? %>
+                      <% 30.times do %>
+                        <tr style="line-height: 3em;">
+                          <td style="border-bottom: 1px solid black; text-align: center;">20-2015</td>
+                          <td style="border-bottom: 1px solid black; text-align: center;">Test</td>
+                          <td style="border-bottom: 1px solid black; text-align: center;">Guardian</td>
+                          <td style="border-bottom: 1px solid black; text-align: center;">Mangochi</td>
+                          <td style="border-bottom: 1px solid black; text-align: center;">01-Jan-2015</td>
+                          <td class="btn-primary"><span>Select</span></td>
+                        </tr>
+                        <tr>
+                          <td colspan="6"></td>
+                        </tr>
+                      <% end %>
+                    <% else %>
+                        <tr style="line-height: 4em;">
+                          <td colspan="6" style="text-align: center;"><b>No results found</b></td>
+                        </tr>
                     <% end %>
                   </table>
                 </div>
