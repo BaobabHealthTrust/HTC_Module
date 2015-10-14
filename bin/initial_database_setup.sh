@@ -17,10 +17,14 @@ if [ -z "$ENV" ] ; then
 fi
 
 set -x # turns on stacktrace mode which gives useful debug information
+ 
+set -e # exit shell script if any one command fails
 
 # if [ ! -x config/database.yml ] ; then
 #   cp config/database.yml.example config/database.yml
 # fi
+
+bundle install --local
 
 USERNAME=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['username']"`
 PASSWORD=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['password']"`
@@ -38,5 +42,12 @@ mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/malawi_r
 #mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/locations.sql
 mysql --host=$HOST --user=$USERNAME --password=$PASSWORD $DATABASE < db/protocols.sql
 
-echo "After completing database setup"
+echo "Running rake migrations"
+
+bundle exec rake db:migrate
+
+echo "Seeding default values using rake"
+
+bundle exec rake db:seed
+
 
