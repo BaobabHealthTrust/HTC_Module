@@ -1,4 +1,5 @@
 class ClientsController < ApplicationController
+
   before_action :set_client, only: [:show, :edit, :update, :destroy,
                                     :add_to_unallocated, :remove_from_waiting_list,
                                     :assign_to_counseling_room, :village, :confirm]
@@ -433,6 +434,39 @@ class ClientsController < ApplicationController
   end
 
   def find_register_caregiver
+
+    if request.post?
+      raise params.inspect
+      birthdate_estimated = false
+
+			birth_date = params[:date_of_birth].split("/")
+			birth_year = birth_date[2]
+			birth_month = birth_date[1]
+			birth_day = birth_date[0]
+
+			birthdate = params[:date_of_birth]
+
+			if birth_month == "?"
+				birthdate_estimated = true
+				birth_month = 7
+			end
+
+			if birth_day == "?"
+				birthdate_estimated = true
+				birth_day = 1
+			end
+      
+      birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+      
+      @guardians = Client.find_by_sql("SELECT * FROM person p INNER JOIN person_address pa
+            ON p.person_id = pa.person_id INNER JOIN relationship r ON p.person_id = r.person_a
+            WHERE pa.address1 = '#{params[:residence]}' AND p.gender = '#{params[:gender]}' AND
+            DATE(p.birthdate) = '#{birthdate.to_date}' AND p.voided = 0 LIMIT 20"
+      )
+
+      #@relation = Relationship.create(person_a: params[:client], person_b: @scanned.patient_id,
+                                  #relationship: relationship_type, creator: current_user.id)
+    end
 
   end
   
