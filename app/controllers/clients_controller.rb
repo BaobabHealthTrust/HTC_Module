@@ -456,7 +456,8 @@ class ClientsController < ApplicationController
   end
 
   def create_care_giver
-
+    current_date = (session[:datetime].to_date rescue Date.today)
+    
     if request.post?
       birthdate_estimated = false
 
@@ -485,8 +486,11 @@ class ClientsController < ApplicationController
       residence = params[:residence]
 
       relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
-      guardian_concept = Concept.find_by_name("Who is present as guardian?").id
-      
+      client = Client.find(params[:client_id])
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+      encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
       ActiveRecord::Base.transaction do
         person = Person.new
         person.gender = gender
@@ -515,7 +519,22 @@ class ClientsController < ApplicationController
         relationship.creator = User.current.id
         relationship.save
       end
-      
+
+      relationship = Relationship.find(:last, :conditions => ["person_b =? AND relationship =?", params[:client_id], relationship_type])
+      person_name = PersonName.find(:last, :conditions => ["person_id =?", relationship.person_a])
+      guardian_names = (person_name.given_name.to_s rescue 'Unknown') + ' ' + (person_name.family_name.to_s rescue 'Unknown')
+
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+      encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+      encounter.observations.create({
+              :person_id => client.id,
+              :concept_id => Concept.find_by_name("Who is present as guardian?").id,
+              :value_text => guardian_names,
+              :creator => User.current.id
+      })
+    
       redirect_to("/clients/#{params[:client_id]}") and return
     end
 
