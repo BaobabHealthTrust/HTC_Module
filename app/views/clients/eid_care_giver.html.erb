@@ -67,16 +67,19 @@
   </head>
 
   <body onload="adjust()">
-    <form action="#" method="POST">
+    <form action="/scan_caregiver" method="POST">
       <fieldset>
         <legend>Search Care-giver</legend>
         <br />
         <label for="scan_accession_number" >Accession Number </label>
         <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />
+        <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+        <input type="hidden" value="<%= params[:id] %>" name="client_id"/>
       </fieldset>
       <%= submit_tag "Finish" %>
     </form>
   </body>
+  
   <script src="/assets/touchscreentoolkitV2/ts.js?body=1"></script>
   <script type="text/javascript">
     function findRegisterCareGiver(){

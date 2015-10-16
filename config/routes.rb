@@ -97,6 +97,8 @@ HTCModule::Application.routes.draw do
   get "create_care_giver/" => "clients#create_care_giver"
   post "create_care_giver/" => "clients#create_care_giver"
 
+  post "scan_caregiver/" => "clients#scan_caregiver"
+
 	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"

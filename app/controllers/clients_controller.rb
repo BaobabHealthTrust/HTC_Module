@@ -521,6 +521,54 @@ class ClientsController < ApplicationController
 
   end
 
+  def scan_caregiver
+    identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+
+    accession = params[:accession_number]
+    relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
+		client_identifier = ClientIdentifier.where("identifier = '#{accession}' AND
+        identifier_type = #{identifier_type} AND voided = 0"
+    ).last rescue []
+
+    client = Client.find(params[:client_id])
+    guardian_names = ""
+    
+    current_date = (session[:datetime].to_date rescue Date.today)
+    
+    if client_identifier.blank?
+      flash[:error] = "Person not found."
+      redirect_to ("/eid_care_giver/#{params[:client_id]}") and return
+    else
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+      encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+      relationship = Relationship.find(:last, :conditions => ["person_a =? AND person_b =? AND
+       relationship =?", client_identifier.patient_id, params[:client_id], relationship_type])
+      
+      person_name = PersonName.find(:last, :conditions => ["person_id =?", client_identifier.patient_id])
+      guardian_names = person_name.given_name.to_s + ' ' + person_name.family_name.to_s
+      
+      if relationship.blank?
+        relationship = Relationship.new
+        relationship.person_a = client_identifier.patient_id
+        relationship.person_b = params[:client_id]
+        relationship.relationship = relationship_type
+        relationship.creator = User.current.id
+        relationship.save
+      end
+
+      encounter.observations.create({
+              :person_id => client.id,
+              :concept_id => Concept.find_by_name("Who is present as guardian?").id,
+              :value_text => guardian_names,
+              :creator => User.current.id
+      })
+
+      redirect_to ("/eid_care_giver/#{params[:client_id]}") and return
+    end
+    
+  end
+  
   def hiv_viral_load
     
   end
