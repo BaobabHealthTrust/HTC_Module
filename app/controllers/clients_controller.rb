@@ -438,6 +438,7 @@ class ClientsController < ApplicationController
       @residence = params[:residence]
       @gender = params[:gender]
       @client_id = params[:client_id]
+      @birthdate_estimated = birthdate_estimated.to_s
       @guardians = Client.find_by_sql("SELECT * FROM person p INNER JOIN person_address pa
             ON p.person_id = pa.person_id INNER JOIN relationship r ON p.person_id = r.person_a
             WHERE pa.address1 = '#{params[:residence]}' AND p.gender = '#{params[:gender]}' AND
@@ -448,25 +449,26 @@ class ClientsController < ApplicationController
   end
 
   def create_care_giver
+
     gender = params[:gender]
     birthdate = params[:birthdate]
     residence = params[:residence]
     estimated = false
-    estimated = true if (params[:birthdate_estimated] == true)
+    estimated = true if (params[:birthdate_estimated] == "true")
 
     relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
-    
+
     ActiveRecord::Base.transaction do
       person = Person.new
       person.gender = gender
       person.birthdate = birthdate
       person.birthdate_estimated = true if estimated
-      person.creator = User.current_user.id
+      person.creator = User.current.id
       person.save
 
       person_address = PersonAddress.new
       person_address.person_id = person.id
-      person_address.creator = User.current_user.id
+      person_address.creator = User.current.id
       person_address.address1 = residence
       person_address.save
 
@@ -474,7 +476,7 @@ class ClientsController < ApplicationController
       relationship.person_a = person.id
       relationship.person_b = params[:client_id]
       relationship.relationship = relationship_type
-      relationship.creator = User.current_user.id
+      relationship.creator = User.current.id
       relationship.save
     end
 

@@ -40,7 +40,18 @@
 
         setTimeout("doLogin('" + id + "')", 500);
       }
-      
+
+      function createNewCaregiver(){
+        clientId = '<%= @client_id %>';
+        residence = '<%= @residence %>';
+        gender = '<%= @gender %>';
+        birthdate = '<%= @birthdate %>';
+        birthdateEstimated = '<%= @birthdate_estimated %>'
+        data = "client_id=" + clientId + '&residence=' + residence + '&gender=' + gender + '&birthdate=' + birthdate + '&birthdate_estimated=' + birthdateEstimated;
+        url = '/create_care_giver?' + data;
+        window.location = url;
+      }
+
     </script>
     <style>
       #stage, #btn3, #btn2, #btn1{
@@ -209,7 +220,7 @@
                 <div class="scrollit">
                   <table id="child" cellspacing='0' style="width:100%; left: 0%;">
                     <% unless @guardians.blank? %>
-                      <% 30.times do %>
+                      <% @guardians.each do |guardian| %>
                         <tr style="line-height: 3em;">
                           <td style="border-bottom: 1px solid black; text-align: center;">20-2015</td>
                           <td style="border-bottom: 1px solid black; text-align: center;">Test</td>
@@ -285,7 +296,7 @@
       }
 
       document.getElementById("findRegisterButton").onclick = function(){
-        //window.location = careGiveDestination;
+        createNewCaregiver();
       }
     }
 
