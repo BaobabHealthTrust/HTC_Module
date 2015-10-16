@@ -546,7 +546,7 @@ class ClientsController < ApplicationController
        relationship =?", client_identifier.patient_id, params[:client_id], relationship_type])
       
       person_name = PersonName.find(:last, :conditions => ["person_id =?", client_identifier.patient_id])
-      guardian_names = person_name.given_name.to_s + ' ' + person_name.family_name.to_s
+      guardian_names = (person_name.given_name.to_s rescue 'Unknown') + ' ' + (person_name.family_name.to_s rescue 'Unknown')
       
       if relationship.blank?
         relationship = Relationship.new
@@ -564,7 +564,7 @@ class ClientsController < ApplicationController
               :creator => User.current.id
       })
 
-      redirect_to ("/eid_care_giver/#{params[:client_id]}") and return
+      redirect_to ("/clients/#{params[:client_id]}") and return
     end
     
   end
