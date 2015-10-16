@@ -43,11 +43,11 @@
 
       function createNewCaregiver(){
         clientId = '<%= @client_id %>';
-        residence = '<%= @residence %>';
+        first_name = '<%= @first_name %>';
         gender = '<%= @gender %>';
-        birthdate = '<%= @birthdate %>';
-        birthdateEstimated = '<%= @birthdate_estimated %>'
-        data = "client_id=" + clientId + '&residence=' + residence + '&gender=' + gender + '&birthdate=' + birthdate + '&birthdate_estimated=' + birthdateEstimated;
+        last_name = '<%= @last_name %>';
+
+        data = "client_id=" + clientId + '&first_name=' + first_name + '&gender=' + gender + '&last_name=' + last_name;
         url = '/create_care_giver?' + data;
         window.location = url;
       }
@@ -222,11 +222,11 @@
                     <% unless @guardians.blank? %>
                       <% @guardians.each do |guardian| %>
                         <tr style="line-height: 3em;">
-                          <td style="border-bottom: 1px solid black; text-align: center;">20-2015</td>
-                          <td style="border-bottom: 1px solid black; text-align: center;">Test</td>
-                          <td style="border-bottom: 1px solid black; text-align: center;">Guardian</td>
-                          <td style="border-bottom: 1px solid black; text-align: center;">Mangochi</td>
-                          <td style="border-bottom: 1px solid black; text-align: center;">01-Jan-2015</td>
+                          <td style="border-bottom: 1px solid black; text-align: center;">000000</td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.given_name %></td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.family_name %></td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.addresses.last.address1 %></td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.date_created.strftime("%d-%b-%Y") %></td>
                           <td class="btn-primary"><span>Select</span></td>
                         </tr>
                         <tr>

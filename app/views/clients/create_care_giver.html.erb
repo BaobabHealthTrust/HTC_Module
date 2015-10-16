@@ -50,29 +50,24 @@
   <body>
 
 
-    <form action="/care_giver_search_results" method="POST">
+    <form action="/create_care_giver" method="POST">
       <fieldset>
-        <legend>Search/Register Care-giver</legend>
+        <legend>Create Care-giver</legend>
         <br />
 
-        <label for="gender"> Gender </label>
-        <select id="gender" name="gender" optional = 'false'>
-          <option></option>
-          <option value="Female">Female</option>
-          <option value="Male">Male</option>
-        </select>
 
+        <label for="date_of_birth">Date Of Birth</label>
+        <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false" />
+        <br />
+        
+        <label for="residence">Residence</label>
+        <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
         <br />
 
-        <label for="first_name">First Name</label>
-        <input type="text" id="first_name" name="first_name" optional="false" />
-        <br />
-
-        <label for="last_name">Last Name</label>
-        <input type="text" id="last_name" name="last_name" optional="false" />
-        <br />
-
-        <input type="hidden" value="<%= params[:id] %>" name="client_id"/>
+        <input type="hidden" value="<%= params[:client_id] %>" name="client_id"/>
+        <input type="hidden" value="<%= params[:first_name] %>" name="first_name"/>
+        <input type="hidden" value="<%= params[:last_name] %>" name="last_name"/>
+        <input type="hidden" value="<%= params[:gender] %>" name="gender"/>
       </fieldset>
 
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
@@ -184,3 +179,4 @@
   </script>
 
 </html>
+

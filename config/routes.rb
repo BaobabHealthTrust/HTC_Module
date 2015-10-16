@@ -95,6 +95,7 @@ HTCModule::Application.routes.draw do
   post "hiv_viral_load_results/" => "clients#hiv_viral_load_results"
 
   get "create_care_giver/" => "clients#create_care_giver"
+  post "create_care_giver/" => "clients#create_care_giver"
 
 	post "show_client" => "clients#show"
 
