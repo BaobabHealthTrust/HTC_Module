@@ -540,6 +540,40 @@ class ClientsController < ApplicationController
 
   end
 
+  def select_caregiver
+    current_date = (session[:datetime].to_date rescue Date.today)
+    client = Client.find(params[:client_id])
+    relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
+    encounter_type = EncounterType.find_by_name("EID VISIT").id
+    
+    relationship = Relationship.find(:last, :conditions => ["person_a =? AND person_b =? AND relationship =?",
+            params[:guardian_id], params[:client_id], relationship_type]
+    )
+
+    person_name = PersonName.find(:last, :conditions => ["person_id =?", params[:guardian_id]])
+    guardian_names = (person_name.given_name.to_s rescue 'Unknown') + ' ' + (person_name.family_name.to_s rescue 'Unknown')
+    encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+    
+    if relationship.blank?
+        relationship = Relationship.new
+        relationship.person_a = params[:guardian_id]
+        relationship.person_b = params[:client_id]
+        relationship.relationship = relationship_type
+        relationship.creator = User.current.id
+        relationship.save
+    end
+
+    encounter.observations.create({
+              :person_id => client.id,
+              :concept_id => Concept.find_by_name("Who is present as guardian?").id,
+              :value_text => guardian_names,
+              :creator => User.current.id
+   })
+
+   redirect_to("/clients/#{params[:client_id]}") and return
+  end
+  
   def scan_caregiver
     identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 
@@ -589,7 +623,38 @@ class ClientsController < ApplicationController
   end
   
   def hiv_viral_load
-    
+    current_date = (session[:datetime].to_date rescue Date.today)
+    @client = Client.find(params[:id])
+    if request.post?
+      test_reasons = params[:test_reasons].split(";")
+      encounter_type = EncounterType.find_by_name("REQUEST").id
+
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+        encounter = @client.encounters.create({:encounter_type => encounter_type,
+            :encounter_datetime => current_date}) if encounter.blank?
+
+        test_reasons.each do |test_reason|
+          encounter.observations.create({
+              :person_id => @client.id,
+              :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :value_text => test_reason,
+              :creator => User.current.id
+          })
+        end
+
+        encounter.observations.create({
+              :person_id => @client.id,
+              :concept_id => Concept.find_by_name("SAMPLE").id,
+              :value_text => params[:type_of_sample],
+              :creator => User.current.id
+          })
+      end
+
+      redirect_to("/clients/#{@client.id}") and return
+    end
   end
 
   def hiv_viral_load_menu

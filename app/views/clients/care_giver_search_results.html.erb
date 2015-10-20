@@ -52,6 +52,11 @@
         window.location = url;
       }
 
+      function selectGuardian(guardianId){
+        clientId = '<%= params[:client_id] %>';
+        window.location = '/select_caregiver?client_id=' + clientId + '&guardian_id=' + guardianId;
+      }
+      
     </script>
     <style>
       #stage, #btn3, #btn2, #btn1{
@@ -227,7 +232,7 @@
                           <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.family_name %></td>
                           <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.addresses.last.address1 %></td>
                           <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.date_created.strftime("%d-%b-%Y") %></td>
-                          <td class="btn-primary"><span>Select</span></td>
+                          <td class="btn-primary" onclick="selectGuardian(<%= guardian.person_id %>)"><span>Select</span></td>
                         </tr>
                         <tr>
                           <td colspan="6"></td>
