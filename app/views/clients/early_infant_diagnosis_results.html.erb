@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <script>
+      var cancelDestination = "/clients/<%= @client.id %>";
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+      function customKeyboardButtons(){
+        colonButton = document.getElementById(":");
+        if (colonButton){
+          colonButton.className = "button blue";
+          colonButton.innerHTML = "<";
+          colonButton.onmousedown = function(){
+
+            if (target.value == "") target.value += '<';
+
+          }
+        }
+        
+        backSlashButton = document.getElementById("/");
+        if (colonButton){
+          backSlashButton.className = "button blue";
+          backSlashButton.innerHTML = ">";
+          backSlashButton.onmousedown = function(){
+            if (target.value == "") target.value += ">";
+          }
+        }
+        
+        abcButton = document.getElementById("abc");
+        if (abcButton){
+          abcButton.className = "button blue";
+          abcButton.innerHTML = "=";
+          abcButton.onmousedown = function(){
+            if (target.value == "") target.value += "=";
+          }
+        }
+
+        decimalButton = document.getElementById(".");
+
+        if (decimalButton){
+          decimalButton.onmousedown = function(){
+            if (target.value != ""){
+              decimalCount = (target.value.match(/\./g) || []).length;
+              if ((decimalCount == 0)) target.value += ".";
+            }
+          }
+        }
+      }
+
+     
+      window.setInterval("customKeyboardButtons();", 50);
+    </script>
+  </head>
+  <body>
+    <form action='/early_infant_diagnosis_menu' method='post'>
+      <fieldset>
+        <legend>EID Results</legend>
+        <br />
+        <label for="results" >Results </label>
+        <input type="text" id="results" name="results" optional="false" fieldtype="decimal" />
+        <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+        <input type='hidden' name='id' value=<%= @client.id %> />
+      </fieldset>
+      <%= submit_tag "Finish" %>
+    </form>
+  </body>
+</html>
