@@ -667,7 +667,7 @@ class ClientsController < ApplicationController
   end
 
   def hiv_viral_load_results
-    
+    @client = Client.find(params[:id])
   end
 
   def find_register_caregiver
