@@ -405,6 +405,39 @@ class ClientsController < ApplicationController
 
   def early_infant_diagnosis_results
     @client = Client.find(params[:id])
+    current_date = (session[:datetime].to_date rescue Date.today)
+    
+    if request.post?
+      test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
+      test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+
+      eid_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
+            EncounterType.find_by_name("EID VISIT").id]
+         ).encounter_id
+         
+      encounter_type = EncounterType.find_by_name("EID_FOLLOWUP").id
+      
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.create({
+          :encounter_type => encounter_type,
+          :encounter_datetime => current_date,
+          :creator => User.current.id
+        })
+      
+        encounter.observations.create({
+            :concept_id => Concept.find_by_name("RESULT AVAILABLE").concept_id,
+            :person_id => params[:id],
+            :accession_number => "",
+            :value_modifier => test_modifier,
+            :value_text => test_value,
+            :value_complex => "encounter_id:#{eid_request_enc_id}"
+        })
+      
+      end
+      
+      redirect_to("/eid_care_giver/#{@client.id}") and return
+    end
+    
   end
 
   def eid_care_giver
