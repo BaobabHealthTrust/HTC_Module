@@ -705,6 +705,42 @@ class ClientsController < ApplicationController
 
   def hiv_viral_load_results
     @client = Client.find(params[:id])
+    current_date = (session[:datetime].to_date rescue Time.now)
+    
+    if request.post?
+      test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
+      test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+
+      vl_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
+            EncounterType.find_by_name("REQUEST").id]
+         ).encounter_id
+         
+      encounter_type = EncounterType.find_by_name("LAB RESULTS").id
+      
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date.to_date, encounter_type])
+        
+        encounter = @client.encounters.create({
+          :encounter_type => encounter_type,
+          :encounter_datetime => current_date,
+          :creator => User.current.id
+        }) if encounter.blank?
+      
+        encounter.observations.create({
+            :concept_id => Concept.find_by_name("HIV VIRAL LOAD").concept_id,
+            :person_id => params[:id],
+            :obs_datetime => current_date,
+            :value_modifier => test_modifier,
+            :value_text => test_value,
+            :value_complex => "encounter_id:#{vl_request_enc_id}",
+            :creator => User.current.id
+        })
+      
+      end
+      
+      redirect_to("/clients/#{@client.id}") and return
+    end
   end
 
   def find_register_caregiver
