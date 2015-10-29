@@ -211,23 +211,21 @@
         <table id="parent" cellspacing='0' style="top: 10%; position:absolute; width:100%; left: 0%;">
 
           <tr class="table_header" style="background-color: #f0c992; line-height: 2em; font-size: 18px;">
-            <td><span style="position: inherit; margin-left: 20%;">Accession #</span></td>
-            <td><span style="position: inherit; margin-left: -12%;">First Name</span></td>
-            <td><span style="position: inherit; margin-left: -47%;">Last Name</span></td>
-            <td><span style="position: inherit; margin-left: -34%;">Residence</span></td>
-            <td><span style="position: inherit; margin-left: -10%;">Date Registered</span></td>
+            <td><span style="position: inherit;  margin-left: 10%;">First Name</span></td>
+            <td><span style="position: inherit; margin-left: -20%;">Last Name</span></td>
+            <td><span style="position: inherit; margin-left: -12%;">Residence</span></td>
+            <td><span style="position: inherit; ">Date Registered</span></td>
             <td><span style="">&nbsp;</span></td>
           </tr>
 
           <tbody>
             <tr>
-              <td colspan="6">
+              <td colspan="5">
                 <div class="scrollit">
                   <table id="child" cellspacing='0' style="width:100%; left: 0%;">
                     <% unless @guardians.blank? %>
                       <% @guardians.each do |guardian| %>
                         <tr style="line-height: 3em;">
-                          <td style="border-bottom: 1px solid black; text-align: center;">000000</td>
                           <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.given_name %></td>
                           <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.family_name %></td>
                           <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.addresses.last.address1 %></td>
