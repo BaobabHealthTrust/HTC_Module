@@ -9,8 +9,10 @@ class EncountersController < ApplicationController
   end
 
   def new
+#raise params.to_yaml
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
+    patient = Client.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
 
 		if params["ENCOUNTER"].upcase == "COUNSELING"
@@ -46,19 +48,36 @@ class EncountersController < ApplicationController
 										value_datetime: value_datetime)
 				end
 		end 
-		
+
+    test_kit = {}
     (params[:observations] || []).each do |observation|
 
               next if observation[:concept_name].blank?
 
+              if params["ENCOUNTER"].upcase == "HIV TESTING"
+                  (1..2).each{|i|
+                     if observation[:concept_name] ==  "HTC Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
+                        used = CouncillorInventory.create_used_testkit(observation[:value_text], params["test#{i} done"], current, current_user)
+                     end
+                  }
+              end
               # Check to see if any values are part of this observation
               # This keeps us from saving empty observations
-              
+              if params["ENCOUNTER"].upcase == "UPDATE HIV STATUS"  and observation[:concept_name].upcase == "PATIENT PREGNANT"
+                    observation[:value_coded_or_text] = params[:patient]
+              end
+
               if !observation["value_datetime"].blank?
-              		observation["value_datetime"] = observation["value_datetime"].to_date.strftime("%Y-%m-%d %H:%M:%S")
+                 if observation["value_datetime"].match(/\?/)
+                    observation["value_text"] = observation["value_datetime"]
+                    observation["value_datetime"] = nil
+
+                 else
+              		observation["value_datetime"] = observation["value_datetime"].to_time.strftime("%Y-%m-%d %H:%M:%S")
+                 end
               end
               
-              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text'].map{|value_name|
+              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text', 'complex'].map{|value_name|
                 observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
               }.compact
 
@@ -66,7 +85,7 @@ class EncountersController < ApplicationController
 
               observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
               observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
-							
+
 							observation[:obs_datetime] = current.strftime("%Y-%m-%d %H:%M:%S")
 							observation[:creator] = current_user.id
               observation[:encounter_id] = encounter.id
@@ -87,21 +106,26 @@ class EncountersController < ApplicationController
                 Observation.create(observation) rescue []
               end
               
-             
             end
-    
     if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
     		redirect_to waiting_list_path and return
     end
-    
-    if ! params[:giveconcent].blank? and params[:giveconcent].upcase == "YES"
-       redirect_to  "/referral_consent/#{params[:id]}"
-    else
-      	redirect_to "/clients/#{params[:id]}" and return
-    end 
+
+    unless params["all timers request"].blank?
+        if params["all timers request"].upcase == "YES"
+            redirect_to  "/extended_testing/#{person.person_id}" and return
+        end
+    end
+
+    redirect_to next_task(patient)["url"] and return
+
   end
 
   def edit
+  end
+
+  def create_inventory(name, lot_number)
+     
   end
 
   def create

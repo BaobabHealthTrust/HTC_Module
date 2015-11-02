@@ -1,8 +1,125 @@
 <!DOCTYPE=html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 	<head>
 		<title>Current Visit</title>
+		<%= javascript_include_tag 'custom' %>
 		<script>
+								  function __$(id){
+										return document.getElementById(id)
+									}
+									
+								 function logout(){
+									
+								}
+
+					function closeLists() {
+						// body...
+						document.getElementById('lists').style.display = "none";
+						document.getElementById('lists').innerHTML ="";
+					}
+
+                  function loadTasks(){
+											coordinates = position(__$("tasks"))
+                      var htcTasks = [["Assessment", "/client_assessment/<%= @client.id %>", "assessment"],[ "Counseling", "/client_counseling?client_id=<%= @client.id %>", "counseling"],
+                          ["HIV Testing", "/client_testing?client_id=<%= @client.id -%>","testing"],["Extended Testing", "/extended_testing/<%= @client.id -%>","extend"],["Schedule", "/appointment/<%= @client.id %>","appointment"],["Referral","/referral_consent/<%= @client.id %>","confirmation"]]
+                     var ele = document.getElementById('cover');
+                      ele.style.display = "inline";
+                      document.body.appendChild(ele);
+
+                      var ele = document.getElementById('lists')
+											ele.style.top = coordinates[0]
+											ele.style.left = coordinates[1] - 230
+                      ele.style.display = "inline";
+											
+											var table = document.createElement("div");
+											table.className = "tables";
+										  ele.appendChild(table);
+
+
+											//create a row
+											var cancel_row = document.createElement("div");
+											cancel_row.className = "rows";
+											
+											//create a blank cell to help floating the cancel button to the right
+											var blank_cell = document.createElement("div");
+											blank_cell.className = "cells";
+
+											//create the blank cell data
+											blank = ""
+											blank_cell.innerHTML = blank;
+											cancel_row.appendChild(blank_cell);
+
+											//create the button cell
+											var cancel_cell = document.createElement("div");
+											cancel_cell.className = "cells";
+											
+											//create a cancel button
+											cancel_button = '<a href="#" class="void" onmousedown="closeLists();" style="float: right;">X</a>';
+											
+
+											//append cancel button to cell
+											cancel_cell.innerHTML = cancel_button;
+											
+											//append cell to row
+											cancel_row.appendChild(cancel_cell);
+											
+											//append row to table
+											table.appendChild(cancel_row);
+											
+											
+											var row = document.createElement("div");
+                      row.className = "rows";
+                      table.appendChild(row);
+											
+
+                      for (var i = 0; i < htcTasks.length; i++){
+										  if (i % 2 != 1){
+												var row = document.createElement("div");
+                        row.className = "rows";
+                        table.appendChild(row);
+											}
+                     
+                      var cell = document.createElement("div");
+                      cell.className = "cells";
+                      html = '<a class="tskblue" id="' + htcTasks[i][2] + '" style="width:120px;" href="' + htcTasks[i][1] + '"><span class="txt">' + htcTasks[i][0] + '</span></a>';
+                      cell.innerHTML = html
+                      row.appendChild(cell)
+                      }
+                      
+											var row = document.createElement("div");
+                      row.className = "rows";
+                      table.appendChild(row); 
+											
+										  var cell = document.createElement("div");
+                      cell.className = "cells";
+                      html = '<a class="tskblue" id="logout" style="width:120px;" href="" onclick="logout();"><span class="txt">Logout</span></a>';
+                      cell.innerHTML = html
+                      row.appendChild(cell)
+                  }
+
+								 function checkFrame(){
+									 if (window!=window.top) {     
+													 if (window.top.location.href.match(/couple/g)){
+															createButtons()
+													 }
+												
+										} else{
+												createButtons()
+										}
+								}
+
+										function createButtons(){
+													  
+														var covers =  document.getElementById("frame_data");
+														html = '<button class="blue" style="width:120px;" onmousedown="window.location = ' + "'/client_demographics?client_id=<%= @client.id -%>'" + '">';
+														html +=  'Demo..</button>';
+														html += '<button class="blue" style="width:120px;" onmousedown="window.location = ' + "'<%= @task["url"] rescue "" -%>'" + '">';
+														html += 'Next</button>';
+														html += '<button class="blue"  id="tasks" style="width:120px;"onmousedown="loadTasks()">';
+														html += ' Tasks</button>';
+													 covers.innerHTML = html;
+										}
+
                   function confirm(node){
                      var ele = document.getElementById('cover')
                       ele.style.display = "inline";
@@ -37,115 +154,273 @@
 							xmlhttp.onreadystatechange=function() {                                     
 								if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
 								  var results = xmlhttp.responseText;
-								  location.reload();                              
+                  <% if @client.partner_present == true %>
+                      window.location.href = "/client_current_visit?client_id=<%= @client.id %>"
+                  <% else %>
+                      window.top.location.href = "/clients/<%= @client.id %>"
+                  <% end %>
 								  }                                                                     
 								}                                                                         
 							                                                                         
 							xmlhttp.open("GET","/encounters/void/" + node, true); 
-							xmlhttp.send(); 
+							xmlhttp.send();
 				}
-                        function reset(){
-                            ele = document.getElementById('cover')
-                            ele.style.display = "none";
-                            ele = document.getElementById('popup')
-                            ele.style.display = "none";
-                        }
+
+        function reset(){
+            ele = document.getElementById('cover')
+            ele.style.display = "none";
+            ele = document.getElementById('popup')
+            ele.style.display = "none";
+        }
+
+        function altenate(span_id){
+            var node = __$("span_" + span_id);
+            var img = __$("img_" + span_id);
+            var imgCancel = __$("img_cancel_" + span_id);
+
+            if (node.style.display == "none"){
+                node.style.display = "block";
+                img.src = "/assets/minus.png"
+                imgCancel.style.display = "block";
+            }else{
+                node.style.display = "none";
+                img.src = "/assets/plus.png";
+                imgCancel.style.display = "none";
+            }
+        }
+       
 		</script>
 		<style>
-			.arrow-right {
-				width: 0; 
-				height: 0; 
-				border-top: 180px solid transparent; 
-				border-left: 40px solid #ccc; 
-				border-bottom: 180px solid transparent;
-				cursor: pointer;
-			}
-			
-			.arrow-left {
-				width: 0; 
-				height: 0; 
-				border-top: 180px solid transparent; 
-				border-right: 40px solid #ccc; 
-				border-bottom: 180px solid transparent;
-				cursor: pointer;
-			}
-			
-			.arrow-left:hover{
-				border-right: 40px solid #999; 
-			}
-			
-			.arrow-right:hover{
-				border-left: 40px solid #999; 
-			}
+			.tables{
+			display: table;
+}
+			.rows{
+			display: table-row;
 
-* {
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: -moz-none;
-    -o-user-select: none;
-    user-select: none;
 }
-.red_cancel {
-    background-color: #a90329;
-    background-image: linear-gradient(to bottom, #a90329, #6d0019);
-    border: 1px solid #72021c;
-    border-radius: 3px;
-    color: #ffffff;
-    display: inline-block;
-    font-family: arial,helvetica,sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    padding: 10px;
-    text-decoration: none;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+			.cells{
+			display: table-cell;
 }
-.blue {
-    background-color: #a7cfdf;
+.odd {
+    background: rgb(253, 253, 253);
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 19px;
+  position: relative;
+  text-align: center;
+  top: 100px;
+}
+
+    .tskblue {
+        border-radius: 15px;
+        display: block;
+        float: left;
+        height: 70px;
+        margin-right: 30px;
+        vertical-align: baseline;
+        width: 90px;
+        background-repeat: no-repeat;
+        border: 3px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+        opacity: 0.9;
+        text-shadow:1px 5px 10px #fff;
+        background-size: 120px 70px;
+    }
+
+
+.tskblue {
+    background-repeat: no-repeat;
+    background-color: rgba(33, 103, 185, 0.75);
     background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
-    border: 1px solid #7eb9d0;
-    border-radius: 3px;
     color: #ffffff;
-    display: inline-block;
     font-family: arial,helvetica,sans-serif;
     font-size: 28px;
-    font-weight: bold;
-    padding: 10px;
-    text-decoration: none;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    float: left;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    vertical-align: baseline;
 }
-.button {
-    border-radius: 10px !important;
-    cursor: pointer;
-    font-size: 0.5em;
-    margin: 3px;
-    min-height: 60px;
-    min-width: 70px;
-    padding: 15px;
+
+.tskblue span{
+    margin-top: -25px;
 }
-button {
-    border-radius: 10px !important;
-    cursor: pointer;
-    font-size: 0.5em;
-    margin: 3px;
-    min-height: 50px;
-    min-width: 50px;
-    padding: 15px;
+
+    .tskblue:active, .tskblue:hover{
+        border: 3px outset rgb(250, 220, 200);
+        background-color: rgba(43, 103, 185, 0.75);
+    }
+#testing {
+	background-image: url(<%= asset_path 'testing.png' %>);
+	background-size: cover;
 }
-#text, #confirm, #cancel{
-  display: table-cell;
+
+#assessment{
+ 	background-image: url(<%= asset_path 'risk_assessment.png' %>);
 }
-#confirm{
-  vertical-align: right;
-    width:50%;
+
+#counseling{
+	background-image: url(<%= asset_path 'users.png' %>);
 }
-#cancel{
-  vertical-align: left;
-  width:50%;
+
+#appointment{
+ 	background-image: url(<%= asset_path 'schedule.png' %>);
 }
-#text{
-  height: 70px;
-    width:100%;
+
+#confirmation {
+	background-image: url(<%= asset_path 'hospital.png' %>);
 }
+
+#extend{
+ 	background-image: url(<%= asset_path 'extended.jpg' %>);
+}
+
+#logout {
+	background-image: url(<%= asset_path 'deactive.jpeg' %>);
+}    #lists{
+      -moz-user-select: none;
+      background-color: #D3D3D3;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: #9F6000;
+      font-size: 28px;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      z-index: 991;
+    }
+    .arrow-right {
+        width: 0;
+        height: 0;
+        border-top: 180px solid transparent;
+        border-left: 40px solid #ccc;
+        border-bottom: 180px solid transparent;
+        cursor: pointer;
+    }
+
+    .arrow-left {
+        width: 0;
+        height: 0;
+        border-top: 180px solid transparent;
+        border-right: 40px solid #ccc;
+        border-bottom: 180px solid transparent;
+        cursor: pointer;
+    }
+
+    .arrow-left:hover{
+        border-right: 40px solid #999;
+    }
+
+    .arrow-right:hover{
+        border-left: 40px solid #999;
+    }
+
+    * {
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: -moz-none;
+        -o-user-select: none;
+        user-select: none;
+    }
+
+
+  .red_cancel {
+        background-color: #a90329;
+        background-image: linear-gradient(to bottom, #a90329, #6d0019);
+        border: 1px solid #72021c;
+        border-radius: 3px;
+        color: #ffffff;
+        display: inline-block;
+        font-family: arial,helvetica,sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 10px;
+        text-decoration: none;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    }
+    .blue {
+        background-color: #a7cfdf;
+        background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+        border: 1px solid #7eb9d0;
+        border-radius: 3px;
+        color: #ffffff;
+        display: inline-block;
+        font-family: arial,helvetica,sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 10px;
+        text-decoration: none;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    }
+    .void {
+        -moz-box-shadow:inset 0px 1px 0px 0px #fce2c1;
+        -webkit-box-shadow:inset 0px 1px 0px 0px #fce2c1;
+        box-shadow:inset 0px 1px 0px 0px #fce2c1;
+        background-color:#f7f4f4;
+        -webkit-border-top-left-radius:20px;
+        -moz-border-radius-topleft:20px;
+        border-top-left-radius:20px;
+        -webkit-border-top-right-radius:20px;
+        -moz-border-radius-topright:20px;
+        border-top-right-radius:20px;
+        -webkit-border-bottom-right-radius:20px;
+        -moz-border-radius-bottomright:20px;
+        border-bottom-right-radius:20px;
+        -webkit-border-bottom-left-radius:20px;
+        -moz-border-radius-bottomleft:20px;
+        border-bottom-left-radius:20px;
+        text-indent:0;
+        border:1px solid #eeb44f;
+        display:inline-block;
+        color:#ed1a48;
+        font-family:Arial;
+        font-size:35px;
+        font-weight:bold;
+        font-style:normal;
+        height:40px;
+        line-height:40px;
+        width:65px;
+        text-decoration:none;
+        text-align:center;
+        margin: 5px;
+        text-shadow:1px 1px 0px #cc9f52;
+    }
+
+    .button {
+        border-radius: 10px !important;
+        cursor: pointer;
+        font-size: 0.5em;
+        margin: 3px;
+        min-height: 40px;
+        min-width: 45px;
+        padding: 15px;
+    }
+    button {
+        border-radius: 10px !important;
+        cursor: pointer;
+        font-size: 0.5em;
+        margin: 3px;
+        min-height: 50px;
+        min-width: 50px;
+        padding: 15px;
+    }
+    #text, #confirm, #cancel{
+      display: table-cell;
+    }
+    #confirm{
+      vertical-align: right;
+        width:50%;
+    }
+    #cancel{
+      vertical-align: left;
+      width:50%;
+    }
+    #text{
+      height: 70px;
+        width:100%;
+    }
+
     #popup{
       -moz-user-select: none;
       background-color: #FEEFB3;
@@ -164,7 +439,7 @@ button {
     }
     #cover{
       display:none;
-      position: absolute;
+      position: relative;
       width: 100%;
       height: 102%;
       left: 0%;
@@ -172,120 +447,161 @@ button {
       z-index: 990;
       opacity: 0.5;
     }
-    
-.alert-box {
-    color:#555;
-    background-color: #008B8B;
-    border-radius:10px;
-    font-family:Tahoma,Geneva,Arial,sans-serif;font-size:18px;
-    padding:10px 10px 10px 36px;
-    margin:83px;
-}
-.warning {
-    border:1px solid #f2c779;
-}
 
-.alert-box span {
-    font-weight:bold;
-    text-transform:uppercase;
-}
+    .alert-box {
+        color:#555;
+        background-color: #008B8B;
+        border-radius:10px;
+        font-family:Tahoma,Geneva,Arial,sans-serif;font-size:18px;
+        padding:10px 10px 10px 36px;
+        margin:83px;
+    }
+    .warning {
+        border:1px solid #f2c779;
+    }
+
+    .alert-box span {
+        font-weight:bold;
+        text-transform:uppercase;
+    }
 		</style>
 	</head>
-        <body style="margin: 10px; overflow: auto; font-family: Helvetica;">
-		<div style="display: table; width: 100%; border: 1px solid #eee; height: 99%;">
-			<div style="display: table-row;">
-				<div style="display: table-cell; vertical-align: middle; padding-left: 10px; width: 100px;">
-
-					<div class="arrow-left" onmousedown="window.parent.clickPrevious()">
-					</div>
-
-				</div>
-				<div style="display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 0px 0px 25px 25px;hieght:200px;overflow: auto;">
+        <body style="margin: 10px; overflow: auto; font-family: Helvetica;" onLoad="checkFrame();">
+		<div style="display: table; width: 100%;height: 99%;">
+			<div style="display: table-row; width: 100%;">
+				
+				<div style=" width: 100%;display: table-cell; vertical-align: top;border: 3px black solid;border-radius: 15px 15px 15px 15px;hieght:200px;overflow: auto;">
 					
-					<div style=" margin: auto; margin-bottom: 40px; width: 100%; vertical-align: middle; ">
-						<label style="color: #5679c1; font-weight: normal; font-size: 24px;" class="noselect" >Today's Visit Details</label>
-					</div>
-					
-					<div style="display: table; margin: auto;">
-						<div style="display: table-row;">
-							<div style="display: table-cell; padding:15px;width:40%;">
-								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Summary</label>
+					<div style=" width: 100%;display: table; margin: auto;">
+						<div style="display: table-row; width: 100%;">
+							<div style="display: table-cell;width:100%;padding-bottom: 15px;padding-left: 15px;padding-right: 15px;">
+                                                          <div style="padding-bottom: 15px;">
+								<label style="color: #5679c1; font-weight: bold; font-size: 16px;float:left;">Summary  <%= @show_name %></label>
 								
-								<div style="display: table; border: 1px solid #5679c1; font-size: 18px;">
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											First State Time
+                                                                <label  style="color: #5679c1; font-weight: bold; font-size: 16px; float: right;">
+                                                                  <div id="frame_data">
+                                                                  </div>
+                                                                </label>
+                                                                
+                                                          </div>
+								<div style="display: table; border: 1px solid #5679c1; font-size: 18px; width: 100%;">
+									<div style="display: table-row; width: 100%;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:16%;">
+											First State Time:
 										</div>
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 50%;">
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%; border-right: 1px solid #5679c1;">
 												<%= @firststatus.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
-									</div>
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											Current State
+									
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:16%;">
+											Current State:
 										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
-											<%= @status.name rescue "NaN"%>
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;width:16%; border-right: 1px solid #5679c1;">
+											<%= @status.name.humanize rescue "NaN"%>
 										</div> 
-									</div>
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											Current State Start
+									
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; font-weight: bold; padding: 5px;width:17%;">
+											Current State Start:
 										</div> 
 										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
 											<%= @status.encounter_datetime.strftime("%I :%M") rescue "NaN" %>
 										</div> 
 									</div>
-									
-									<!-- div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											Final State Time
-										</div>
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
-											<%= @finalstatus.encounter_datetime.strftime("%I : %M") rescue "NaN" %>
-										</div> 
-									</div -->
-									
-									<div style="display: table-row;">
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											&nbsp;
-										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;  padding: 5px;">
-											&nbsp;
-										</div> 
-									</div>
-									<div style="display: table-row;">
-										<div style="display: table-cell; font-weight: bold; padding: 5px; border-right: 1px solid #5679c1;">
-											&nbsp;
-										</div> 
-										<div style="display: table-cell; padding: 5px;">
-											&nbsp;
-										</div> 
-									</div>
 								</div>
 							</div>
-							
-							<div style="display: table-cell;width:60%;">
-								<label style="color: #5679c1; font-weight: bold; font-size: 16px;">Current Client's States Log</label>
+                                                </div>
+                                                <div style="display: table-row;width:100%;">
+							<div style="display: table-cell;width:100%;padding-left: 15px;padding-right: 15px;">
+								<label style="color: #5679c1; font-weight: bold; font-size: 16px;"> History</label>
 								
-								<div style="display: table; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
-                                                                      <% @encounters.each{|encounter| %>
-									<div style="display: table-row;">
-										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; border-right: 1px solid #5679c1;">
+								<div style="display: table; width: 100%; border: 1px solid #5679c1; font-size: 15px;vertical-align: top;">
+                                                                      <% @encounters.each_with_index {|encounter, index| %>
+									<div class="<%= cycle("even", 'odd')%>" style="display: table-row; width: 100%;">
+										<div style="width: 15%;vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1;
+                                                padding: 5px; padding-left: 35px; padding-top: 13px; border-right: 1px solid #5679c1;font-size: 19px;">
 											<%= encounter.encounter_datetime.strftime("%I : %M")  %>
+										</div>
+										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 2px;width:70%;">
+											 <div onclick="altenate(<%= index %>)" style="width: 100%;font-size: 18px; padding-top: 10px; padding-left: 35px;" class="encounter-name"><b><%= encounter.name   %></b></div> <br />
+												<span id = "span_<%= index%>" style="display: none; padding-left: 35px;">
+                                                  <% if encounter.observations.length > 0%>
+                                                      <table class="obs-table" style="width: 100%;">
+                                                         <%
+                                                            answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
+                                                            ln = encounter.observations.length
+                                                            ln= answers.length if !answers.blank?
+                                                            encounter.observations.each_with_index do |obs, ix|%>
+                                                            <tr>
+                                                              <td style="color: #1f3b5e; border-top: 1px dotted lightgray;
+                                                                      width: 50%;border-left: 1px dotted lightgray;
+                                                                      padding: 5px; font-size: 18px;
+                                                                      <% if answers.blank? && ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                <b>
+                                                                  <%= obs.concept_names.last.name %>
+                                                                </b>
+                                                              </td>
+                                                              <td style="color: #1f3b5e; font-style: italic; border-top: 1px dotted lightgray;
+                                                                      border-left: 1px dotted lightgray;
+                                                                      border-right: 1px dotted lightgray;
+                                                                      width: 50%; padding: 5px; font-size: 18px;
+                                                                      <% if answers.blank? && ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                  <span>
+                                                                    <%= obs.answer_string%>
+                                                                  </span>
+                                                              </td>
+                                                              </tr>
+                                                            </tr>
+                                                         <% end %>
+
+                                                           <%
+
+                                                              (answers || []).each_with_index{ |answer, ix| %>
+
+                                                            <tr>
+                                                              <td style="color: #1f3b5e; font-style: italic;border-top: 1px dotted lightgray;
+                                                                      width: 50%;border-left: 1px dotted lightgray;
+                                                                      padding: 5px; font-size: 18px;
+                                                                      <% if ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                <b>
+                                                                  <%= answer.name %>
+                                                                </b>
+                                                              </td>
+                                                              <td style="color: #1f3b5e; font-style: italic;border-top: 1px dotted lightgray;
+                                                                      border-left: 1px dotted lightgray;
+                                                                      border-right: 1px dotted lightgray;
+                                                                      width: 50%; padding: 5px; font-size: 18px;
+                                                                      <% if ix == ln -1 %>border-bottom: 1px dotted lightgray; <% end %>">
+                                                                  <span>
+                                                                    <%= answer.answer_string%>
+                                                                  </span>
+                                                              </td>
+                                                            </tr>
+                                                            </tr>
+                                                        <% } %>
+
+                                                      </table>
+                                                   <% end %>
+                                                  <div style="width: 100%;">
+                                                    <img id="img_cancel_<%= index%>" style="float: right; display: none; margin-left: 30px;" width="40" height="40"
+                                                       src="<%= asset_path 'cancel_flat_small_red.png'%>" onmousedown="confirm('<%= encounter.encounter_id %>')" />
+
+                                                  </div>
+                                                       </span>
 										</div> 
-										<div style="vertical-align: top;display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px;">
-											 <b><%= encounter.name   %>:</b> <br />
-												<%= encounter.to_s.html_safe   %>
-												<% answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
-													 (answers || []).each { |answer| %>
-														<%= answer.to_s.html_safe %>
-												<% } %>
-										</div> 
-										<div style="display: table-cell; border-bottom: 1px dotted #5679c1; padding: 5px; width: 250px;">
-										<button style="float: right;margin: 3px; font-size: 20px; height: 60px;"
-										class="button blue" onmousedown="confirm('<%= encounter.encounter_id %>')">Void</button>
-									 </div>
+										<div style="display: table-cell; border-bottom: 1px dotted #5679c1;width:15%;padding-top: 5px;">
+                                          <table>
+                                            <tr>
+                                              <td>
+                                                    <img  id="img_<%= index%>" src="<%= asset_path 'plus.png'%>" height="40" width="40" class="expand"
+                                                       onmousedown="altenate('<%= index%>')" />
+                                              </td>
+                                              <td>
+                                                <img id="img_cancel_<%= index%>" style="display: none; margin-left: 30px;" width="40" height="40"
+                                                     src="<%= asset_path 'cancel_flat_small_red.png'%>" onmousedown="confirm('<%= encounter.encounter_id %>')" />
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </div>
 									</div>
 									<% } %>
 								</div>
@@ -294,12 +610,7 @@ button {
 					</div>
 					
 				</div>
-				<div style="display: table-cell; vertical-align: middle; padding-right: 10px; width: 100px; text-align: right;">
-					
-					<div class="arrow-right" style="float: right;" onmousedown="window.parent.clickNext()">					
-					</div>
-					
-				</div>
+				
 			</div>
 		</div>
 	</body>
@@ -308,3 +619,8 @@ button {
   </div>
   <div id="popup" style="display:none">
   </div>
+	  <div id="lists" style="display:none">
+  </div>
+<script>
+
+</script>

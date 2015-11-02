@@ -1,7 +1,8 @@
 <html>
     <head>
+		<%= javascript_include_tag 'custom' %>
 	<script>
-                var cancelDestination = "clients/<%= params[:client_id] %>";
+								 var cancelDestination = addLink(window, <%=params[:client_id] %>)
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   for (i = 1; i <= list.length; i ++){
@@ -15,18 +16,6 @@
                       return document.getElementById(id);
               }
               
-              function addSelected(id1, id2, id3, id4){
-                      __$("textFor" + id1).value = '<%= @client.person.gender %>';
-                      __$(id1).value = '<%= @client.person.gender %>';
-
-                        __$("textFor" + id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
-                        __$("textFor" + id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
-                        __$("textFor" + id4).value = day + '/' + month + '/' + year ;
-
-                        __$(id4).value = '<%= @client.person.birthdate.strftime('%d/%m/%Y') %>';
-                        __$(id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
-                        __$(id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
-              }
              function checkDate(){
 
                           date = document.getElementById("date_of_birth")
@@ -41,6 +30,10 @@
 			function loadCustom(){
 				if(__$("main-content-area")){
                                       __$('stage').style.display = "none"
+                                      <% if @client.partner_present == true %>
+                                            __$("main-content-area").style.height = (screen.height - 250) + "px";
+                                            __$('row1').parentNode.style.height = (screen.height - 70) + "px";
+                                      <%  end %>
                                        __$("buttons").style.verticalAlign = "bottom";
                                         btnNext.id = "newBtn";
                                         btnNext.style.width = "250px";
@@ -89,7 +82,7 @@
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'firstname' + "'  class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'firstname' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                         var row1 = document.createElement("div");
@@ -112,7 +105,7 @@
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'surname' + "' class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'surname' + "' class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                         var row1 = document.createElement("div");
@@ -135,7 +128,7 @@
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'gender' + "' class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'gender' + "' class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                          var row1 = document.createElement("div");
@@ -158,7 +151,7 @@
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'date_of_birth' + "'  class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'date_of_birth' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                          var row1 = document.createElement("div");
@@ -175,13 +168,13 @@
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
                                         cell2.id = "values"
-                                        cell2.innerHTML = '' ;
+                                        cell2.innerHTML = '<%= @home_district rescue "" %>' ;
                                         row1.appendChild(cell2)
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'home_district' + "'  class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'home_district' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                          var row1 = document.createElement("div");
@@ -198,13 +191,13 @@
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
                                         cell2.id = "values"
-                                        cell2.innerHTML = '' ;
+                                        cell2.innerHTML = '<%= @ta rescue "" %>' ;
                                         row1.appendChild(cell2)
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'traditional_authority' + "'  class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'traditional_authority' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                          var row1 = document.createElement("div");
@@ -221,13 +214,13 @@
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
                                         cell2.id = "values"
-                                        cell2.innerHTML = '' ;
+                                        cell2.innerHTML = '<%= @occupation rescue "" %>' ;
                                         row1.appendChild(cell2)
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'occupation' + "'  class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'occupation' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                          var row1 = document.createElement("div");
@@ -250,30 +243,7 @@
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'residence' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
-
-                                         var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-                                        row1.id = "demographics"
-					table.appendChild(row1);
-
-                                        var cell1 = document.createElement("div");
-					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Land mark"
-                                        row1.appendChild(cell1)
-
-                                        var cell2 = document.createElement("div");
-					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
-                                        cell2.innerHTML = '' ;
-                                        row1.appendChild(cell2)
-
-                                         var cell3 = document.createElement("div");
-					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'land_mark' + "' class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'residence' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
 
                                          var row1 = document.createElement("div");
@@ -290,66 +260,28 @@
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
                                         cell2.id = "values"
-                                        cell2.innerHTML = '' ;
+                                        cell2.innerHTML = '<%= @cell_phone_number rescue "" %>' ;
                                         row1.appendChild(cell2)
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
-
-                                         var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-                                        row1.id = "demographics"
-					table.appendChild(row1);
-
-                                        var cell1 = document.createElement("div");
-					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Office Phone Number"
-                                        row1.appendChild(cell1)
-
-                                        var cell2 = document.createElement("div");
-					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
-                                        cell2.innerHTML = '' ;
-                                        row1.appendChild(cell2)
-
-                                         var cell3 = document.createElement("div");
-					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'office_phone_number' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
-
-                                         var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-                                        row1.id = "demographics"
-					table.appendChild(row1);
-
-                                        var cell1 = document.createElement("div");
-					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Home Phone Number"
-                                        row1.appendChild(cell1)
-
-                                        var cell2 = document.createElement("div");
-					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
-                                        cell2.innerHTML = '' ;
-                                        row1.appendChild(cell2)
-
-                                         var cell3 = document.createElement("div");
-					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
-                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= params[:client_id] %>+ "?ref=" + 'home_phone_number' + "' class='navigation'>Edit</a>";
+                                        cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
                                 }
                         }
 	</script>
       <style>
+ .disabled {
+   pointer-events: none;
+   cursor: default;
+}
+
 table{
   width: 100%;
+}
+#text, #values, #links{
+  border-radius: 25px;
 }
 #demographics{
  width: 100%;
@@ -379,16 +311,52 @@ table{
     text-align: center;
     text-decoration: none;
 }
+#buttons{
+  height: 20px ! important;
+}
+<% if @client.partner_present != true %>
+#main-content-area{
+   height: 576px ! important; 
+}
+<% end %>
       </style>
      </head>
-<body >
-		<%= form_tag({:action => "new"}, {:method => "get"}) do %>
-			<input type='hidden' name='name_id' value=<%= @client.id %> />
+<body onload="adjust()" >
+                 <% if @client.partner_present != true %>
+
+                  <%= form_tag show_client_path(:id => @client.id) do %>
+                    <input type='hidden' name='name_id' value=<%= @client.id %> />
+                    <fieldset custom=true fs_onLoad="loadCustom();">
+                    <legend>Update Demographics</legend>
+                    </fieldset>
+                    <%= submit_tag "Finish" %>
+                    <%end%>
+
+                  <% else %>
+                        <form action="/client_current_visit?client_id=<%=  params[:client_id] %>" method="get">
+                          <input type='hidden' name='client_id' value=<%= params[:client_id] %> />
+               
+			<input type='hidden' name='name_id' value=<%= params[:client_id] %> />
 			<fieldset  custom=true fs_onLoad="loadCustom();">
 			<legend>Update Demographics</legend>
 			
 			</fieldset>
-			<%= submit_tag "Finish" %>
-		<%end%>
+			<input type="submit" value="Finish">
+		</form>
+                  <% end %>
+
 </body>
 </html>
+<script>
+    function adjust(){
+           node =  document.getElementById('row2').childNodes[0].childNodes[0]
+           node.style.height = "92px"
+           document.getElementById('row2').childNodes[0].style.height = "92px"
+           document.getElementById('row2').style.height = "92px"
+
+           <% if @client.partner_present == true %>
+                  __$("main-content-area").style.height = (screen.height - 250) + "px";
+                  __$('row1').parentNode.style.height = (screen.height - 70) + "px";
+          <%  end %>
+  }
+</script>

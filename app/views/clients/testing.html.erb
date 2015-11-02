@@ -1,172 +1,534 @@
 <html>
-<head>
-  <style>
-    #cover {
-      display: none;
+  <head>
+    <style>
+      #cover {
+        display: none;
+      }
+    </style>
+    <%= javascript_include_tag 'jquery-1.3.2.min' %>
+		<%= javascript_include_tag 'custom' %>
+    <script>
+
+      var cancelDestination = addLink(window, <%=params[:client_id] %>)
+
+      var age = '<%= @client.person.age rescue 0 %>'
+      var motherStatus = '<%=  @mother_status.upcase %>'
+      var rapidValue = "";
+      var goldValue = "";
+      var kits = JSON.parse('<%= @kits.to_json.html_safe %>');
+      var testing = parseInt('<%= @testing %>')
+      var motherStatus = "";
+      var result1 = "";
+      var result2 = "";
+
+     function activateNext(){
+        if (btnNext){
+                              if(__$("valid_rapid").value == "no" || __$("valid_gold").value == "no"){
+                                         btnNext.onclick = function(){
+                                         confirm("Enter correct lot numbers");
+                                      };
+                              }
+                              else {
+                                         btnNext.onclick = function(){
+
+                                        var pos = parseInt(this.getAttribute("pos")) + 1;
+
+                                        var section = parseInt(this.getAttribute("section"));
+
+                                        clearTimeout()
+
+                                        navigateTo(pos, section);
+
+                                      };
+                              }
+                         }
+      }
+
+      function checkLot() {
+
+          if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+              xmlhttp = new XMLHttpRequest();
+          } else {// code for IE6, IE5
+              xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          xmlhttp.onreadystatechange = function () {
+              if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                  var results = xmlhttp.responseText;
+                  if (eval(results) == "none") {
+                      __$("valid_rapid").value = "no"
+                  }
+                  else {
+                      __$("valid_rapid").value = eval(results)
+                  }
+                  activateNext()
+              }
+          }
+
+          if (currentPage == 0) {
+              xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
+              xmlhttp.send();
+          }
+
+                 setTimeout("checkLot()", 300);
 }
-  </style>
-                <%= javascript_include_tag 'jquery-1.3.2.min' %>
-		<script>
-			var cancelDestination = "clients/<%= params[:client_id] %>";
-			function loadCustom(){
-			
-				if(__$("main-content-area")){
-					
-					__$("main-content-area").innerHTML = "";
-					
-					var table = document.createElement("div");					
-					table.style.display = "table";
-					table.style.margin = "auto";
-					// table.style.border = "1px solid #000";
-					
-					__$("main-content-area").appendChild(table);
-					
-					var row1 = document.createElement("div");
-					row1.style.display = "table-row";
-					
-					table.appendChild(row1);
-					
-					var cell1_1 = document.createElement("div");
-					cell1_1.style.display = "table-cell";
-					cell1_1.id = "timer1";
-					
-					row1.appendChild(cell1_1);
-					
-					var timer1 = addTimer(cell1_1, 10, "Rapid Test Timer", 0.55)
 
-					timer1.style.marginLeft = "40px";
-					
-					timer1.style.marginRight = "40px";
-					
-					var cell1_2 = document.createElement("div");
-					cell1_2.style.display = "table-cell";
-					cell1_2.id = "timer2";
-					cell1_2.style.textAlign = "right";
-					
-					row1.appendChild(cell1_2);
-					
-					var timer2 = addTimer(cell1_2, 15, "Gold Test Timer", 0.55);
-					
-					timer2.style.marginLeft = "40px";
-					
-					timer2.style.marginRight = "40px";
-					
-					var row2 = document.createElement("div");
-					row2.style.display = "table-row";
-					
-					table.appendChild(row2);
-					
-					var cell2_1 = document.createElement("div");
-					cell2_1.style.display = "table-cell";
-					cell2_1.id = "label1";
-					cell2_1.style.textAlign = "right";
-					cell2_1.style.padding = "10px";
-					
-					row2.appendChild(cell2_1);
-					
-					addLabel(cell2_1, "Result", "32px", "black");
-					
-					var cell2_2 = document.createElement("div");
-					cell2_2.style.display = "table-cell";
-					cell2_2.id = "text1";
-					cell2_2.style.padding = "10px";
-					
-					row2.appendChild(cell2_2);
-					
-					var text = addTextbox(cell2_2, "text", document.getElementById("customresult"));
-					text.id = "resultdisplay";
-					
-					text.style.fontSize = "28px";
-					
-					var div = document.createElement("div");
-					div.style.width = "100%";
-					div.style.height = "100%";
-					div.style.overflow = "auto";
-					
-					var combo = addCombo(__$("stage"), {"Unknown":"Uknown","Positive":"Reactive","Negative":"Non-Reactive"}, "single", document.getElementById("resultdisplay"), document.getElementById("customresult"));
-					
-					combo.style.fontSize = "28px";
+	function checkSecondLots() {
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                        xmlhttp=new XMLHttpRequest();
+                }else{// code for IE6, IE5
+                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange=function() {
+                        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                          var results = xmlhttp.responseText;
+													  if (eval(results.toUpperCase()) == 'NONE'){																
+															__$("valid_gold").value = "no"	
+														}else {
+															__$("valid_gold").value = eval(results)
+														}
+                                                                                      
+                                                                                           activateNext();
+                                                                                        
+                                                                                                         
+                          }
+                        }
+        if (currentPage == 0) {
+            xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
+            xmlhttp.send();
+        }
 
-					combo.style.textAlign = "left";
+        setTimeout("checkSecondLots()", 100);
 
-					if(btnClear){
-						
-						btnClear.onclick = function(){
-							
-							document.getElementById("resultdisplay").value = "";
-							
-							document.getElementById("customresult").value = "";
-							
-							clearUl("ul2");
-							
-						}
-						
-					}
+}	
+
+      function setValues(){
+
+        var redRapidColor = false;
+        var redGoldColor = false;
+        if (__$('timetimer1')){
+          rapidValue = __$('timetimer1').innerHTML.toString();
+          redRapidColor =  (__$('timetimer1').style.color == 'red') ? true : false;
+        }
+
+        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"), redRapidColor);
+        if(__$('timetimer2')){
+          goldValue = __$('timetimer2').innerHTML.toString();
+          redGoldColor =  (__$('timetimer2').style.color == 'red') ? true : false;
+        }
+
+        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
+        __$("allresults").value  = "";
+        if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus != "YES"){
+          __$("allresults").value = "Positive"
+          clearTimeout("setValues()")
+          confirm("Positive <br> Results")
+        }
+        else if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus == "YES"){
+          __$("allresults").value = "Exposed Infant"
+          clearTimeout("setValues()")
+          confirm("Exposed Infant")
+        }
+
+        else if((__$("customresult1").value == "Positive" && __$("customresult2").value == "Negative") || (__$("customresult1").value == "Negative" && __$("customresult2").value == "Positive")){
+          __$("alltimers").value = "YES"
+          __$("allresults").value = "Inconclusive"
+          clearTimeout("setValues()")
+          confirm("Inconclusive <br> Results")
+        }
+        else{
+          __$("allresults").value = "Negative"
+        }
+
+        setTimeout("setValues()", 500);
+      }
+
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+
+      function confirm(message){
+        var ele = document.getElementById('cover')
+        ele.style.display = "inline";
+        document.body.appendChild(ele);
+
+        var ele = document.getElementById('popup')
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
+        if (message == "Enter correct lot numbers"){
+          html += '<div id="confirm"><button class="button red" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">Ok</button></div>';
+        }else{
+          html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>';
+        }
+        html += "</div></div></div></div></div>"
+        ele.innerHTML =  html;
+        document.body.appendChild(ele);
+      }
+
+      function allow(){
+        document.forms[0].submit();
+      }
+
+      function deny(){
+        document.forms[0].submit();
+      }
+                
+      function addData(parent){
+        var tbl = document.createElement("div");
+        tbl.style.display = "table";
+        tbl.style.width = "100%";
+
+        tbl.style.border = "1px solid #3465a4";
+        tbl.style.borderRadius = "5px";
+
+        parent.appendChild(tbl);
+
+        attributes = [["Test 1", __$("customresult1").value], ["Test 2","Not Done"],["Risk Assessment", '<%= @message %>']]
+        for (i = 0; i < attributes.length; i ++) {
+          row = document.createElement("div");
+          row.style.display = "table-row";
+          if (i % 2 == 0){
+            row.style.backgroundColor = '#C1CDCD'
+          }
+          else{
+            row.style.backgroundColor = '#FFF8DC'
+          }
           
-				}                                    
-                              
-			}
-                     
-		</script>
-</head>
-<body >
-	
-		<%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
-		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
-		<input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
-                <fieldset>
-				<legend>HIV Testing</legend>
-                        <label for="test_type">Test Type</label>
-			<select id="test_type" name="observations[][value_text]" >
-					<option></option>
-					<option value="Initial HIV Test">Initial</option>
-					<option value="Confirmatory HIV Test">Verification</option>
-				</select>
 
-				<input type="hidden" name="observations[][concept_name]" value="HIV test type" />
-				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-				<input type="hidden" name="observations[][obs_datetime]" value="" />
-		 <br />
-                </fieldset>
-		<fieldset custom=true fs_onLoad="loadCustom();">
-				<legend>HIV Testing</legend>
-			
-        <input type="hidden" id="give_concent" name="giveconcent" value="" />
-				<input id="customresult" name="observations[][value_text]" type="hidden" value="" />
-				<input type="hidden" name="observations[][concept_name]" value="Result of HIV test" />
-				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-				<input type="hidden" name="observations[][obs_datetime]" value="" />
+          tbl.appendChild(row);
+
+          var cell1 = document.createElement("div");
+          cell1.style.display = "table-cell";
+          cell1.style.textAlign = "left";
+          cell1.style.verticalAlign = "left";
+          cell1.style.fontSize = "25px";
+          cell1.innerHTML = attributes[i][0]
+          row.appendChild(cell1);
+
+          var cell2 = document.createElement("div");
+          cell2.style.display = "table-cell";
+          cell2.style.textAlign = "middle";
+          cell1.style.fontSize = "25px";
+          cell2.style.verticalAlign = "right";
+          cell2.innerHTML = attributes[i][1]
+
+          row.appendChild(cell2);
+        }
+      }
+
+      function adjust(){
+        node =  document.getElementById('row2').childNodes[0].childNodes[0];
+        node.style.width = "6%";
+        node.style.height = "92px";
+        document.getElementById('row2').childNodes[0].style.height = "92px";
+        document.getElementById('row2').style.height = "92px";
+        document.getElementById('row2').childNodes[0].style.backgroundColor = "grey";
+        document.getElementById('row2').childNodes[0].style.MozBorderRadius = '1em';
+        document.getElementById('row2').childNodes[0].style.borderRadius = '1em';
+        button =  document.getElementById('buttons');
+        button.style.removeProperty('border')
+        button.style.backgroundColor = "grey";
+      }
+      
+      function createSummary(){
+        __$("main-content-area").innerHTML = "";
+        adjust()
+        var node =  document.getElementById('row2').childNodes[0].childNodes[0];
+        node.style.width = "100%";
+        node.style.height = "92px";
+        // var node =  document.getElementById('row2').childNodes[0].childNodes[0]
+        //node.style.width = "100% ! important";
+        //__$("row0").style.display = "none";
+        __$("stage").style.display = "none";
+        __$("buttons").style.width = "100%";
+        __$("buttons").style.height = "100%";
+
+        btnDivs = __$('buttons').children[0].children;
+
+        btnDivs[0].style.display = "none";
+        btnDivs[1].style.display = "none";
+
+        btnDivs[2].style.display  = "inline-table";
+        btnDivs[3].style.display  = "inline-table";
+
+        btnDivs[3].style.cssFloat = "right";
+
+                  
+        var table = document.createElement("div");
+        table.style.display = "table";
+        table.style.margin = "auto";
+        table.style.width = "100%";
+        //table.style.backgroundColor = "lightblue"
+        __$("main-content-area").appendChild(table);
+
+        var row1 = document.createElement("div");
+        row1.style.display = "table-row";
+        row1.style.width = "100%"
+        table.appendChild(row1);
 
 
-				<input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number" />
-				<input type="hidden" name="observations[][concept_name]" value="Rapid Antibody Testing Time frame" id="hidden"/>
-				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-				<input type="hidden" name="observations[][obs_datetime]" />
-		
+        var cell1_1 = document.createElement("div");
+        cell1_1.style.display = "table-cell";
+        cell1_1.style.width = "90%"
+        cell1_1.id = "testsummary";
+                  
 
-				<input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
-				<input type="hidden" name="observations[][concept_name]" value="Gold Antibody Testing Time frame" />
-				<input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
-				<input type="hidden" name="observations[][obs_datetime]"  value="" />
+        row1.appendChild(cell1_1);
+        addData(cell1_1)
+        btnDivs[3].innerHTML = "Finish"
+        btnDivs[3].setAttribute("class", "button blue")
+        btnDivs[3].onclick = function(){
+          document.forms[0].submit();
+        }
+      }
+
+      function loadCustom(message){
+        if(__$("main-content-area")){
+          if (message == "timer2"){
+            if (__$("customresult1").value != "Positive"){
+              createSummary()
+              return
+            }
+          }
+          __$("main-content-area").innerHTML = "";
+					
+          var table = document.createElement("div");
+          table.style.display = "table";
+          table.style.margin = "auto";
+          // table.style.border = "1px solid #000";
+					
+          __$("main-content-area").appendChild(table);
+				
+          var row1 = document.createElement("div");
+          row1.style.display = "table-row";
+					
+          table.appendChild(row1);
+
+          if (message == "timer1"){
+
+            var cell1_1 = document.createElement("div");
+            cell1_1.style.display = "table-cell";
+            cell1_1.id = "timer1";
+					
+            row1.appendChild(cell1_1);
+            cell1_1.setAttribute("targetID", 'rapidrange');
+            var timer1 = addTimer(cell1_1, 10, kits[0][1] + " Test Timer", 0.55)
+
+            timer1.style.marginLeft = "40px";
+					
+            timer1.style.marginRight = "40px";
+
+          }else{
+            var cell1_2 = document.createElement("div");
+            cell1_2.style.display = "table-cell";
+            cell1_2.id = "timer2";
+            cell1_2.style.textAlign = "right";
+					
+            row1.appendChild(cell1_2);
+
+            cell1_2.setAttribute("targetID", 'goldrange');
+            var timer2 = addTimer(cell1_2, 15, kits[1][1] + "  Test Timer", 0.55);
+					
+            timer2.style.marginLeft = "40px";
+					
+            timer2.style.marginRight = "40px";
+
+          }
+          var row2 = document.createElement("div");
+          row2.style.display = "table-row";
+					
+          table.appendChild(row2);
+					
+          var cell2_1 = document.createElement("div");
+          cell2_1.style.display = "table-cell";
+          cell2_1.id = "label1";
+          cell2_1.style.textAlign = "right";
+          cell2_1.style.padding = "10px";
+					
+          row2.appendChild(cell2_1);
+					
+          addLabel(cell2_1, "Result", "32px", "black");
+					
+          var cell2_2 = document.createElement("div");
+          cell2_2.style.display = "table-cell";
+          cell2_2.id = "text1";
+          cell2_2.style.padding = "10px";
+					
+          row2.appendChild(cell2_2);
+
+          if (message == "timer1"){
+            resultname = "resultdisplay1"
+            comboname = "customresult1"
+            var text = addTextbox(cell2_2, "text", document.getElementById("customresult1"));
+            text.id = "resultdisplay1"
+          }else{
+            resultname = "resultdisplay2"
+            comboname = "customresult2"
+            var text = addTextbox(cell2_2, "text", document.getElementById("customresult2"));
+            text.id = "resultdisplay2";
+          }
+
+					
+          text.style.fontSize = "28px";
+					
+          var div = document.createElement("div");
+          div.style.width = "100%";
+          div.style.height = "100%";
+          div.style.overflow = "auto";
+					
+          var combo = addCombo(__$("stage"), {"Unknown":"Uknown","Positive":"Reactive","Negative":"Non-Reactive"}, "single", document.getElementById(resultname), document.getElementById(comboname));
+					
+          combo.style.fontSize = "28px";
+
+          combo.style.textAlign = "left";
+
+          if(btnClear){
+						
+            btnClear.onclick = function(){
 							
-			</fieldset>
+              document.getElementById(resultname).value = "";
+							
+              document.getElementById(comboname).value = "";
 
-			<input type="submit" value="Submit" />
+							
+              clearUl("ul2");
+							
+            }
+						
+          }
+          
+        }
+                              
+      }
+                        
+                     
+    </script>
+		<style>
+			#error{
+				color: #DC143C;
+				float: right;			
+			}	
+		</style>
+  </head>
+  <body onLoad="checkKits();setValues();checkLot();checkSecondLots();">
 
-	<%end%>
-</body>
+    <%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+			<input type="hidden" value="" id="valid_rapid" name="test1 done"/>
+			<input type="hidden" value="" id="valid_gold" name="test2 done"/>
+      <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
+      <input type="hidden" value="" name="all timers request" id="alltimers"/>
+
+      <input type="hidden" id="test_type" name="observations[][value_text]" value="" />
+      <input type="hidden" name="observations[][concept_name]" value="HIV test type" />
+      <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+      <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+      <input type="hidden" name="observations[][value_text]" id="allresults" fieldtype="number" />
+      <input type="hidden" name="observations[][concept_name]" value="Result of hiv test" />
+      <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+      <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
+      <fieldset>
+        <legend>HIV Testing</legend>
+              <label for="rapid_lot"><%= @kits[0][1] rescue "" %> Lot Number</label>
+              <input type='text' id="rapid_lot" name="observations[][value_text]"
+               />
+              <%= hidden_field_tag("observations[][concept_name]",        "test 1 lot number") %>
+              <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+              <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+
+	      <label for="gold_lot"><%= @kits[1][1] rescue "" %> Lot Number</label>
+              <input type='text' id="gold_lot" name="observations[][value_text]"
+              />
+              <%= hidden_field_tag("observations[][concept_name]",        "test 2 lot number") %>
+              <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+              <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+      </fieldset>
+      <fieldset custom=true fs_onLoad="loadCustom('timer1');">
+        <legend>HIV Testing</legend>
+
+        <input type="hidden" id="give_concent" name="giveconcent" value="" />
+        <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+
+        <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number"  value="" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" />
+        <input type="hidden" name="observations[][value_complex]" id="rapidrange"/>
+
+        <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
+
+      </fieldset>
+
+      <fieldset custom=true hidden="true" fs_onLoad="loadCustom('timer2');">
+        <legend>HIV Testing</legend>
+
+        <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]" value="" />
+
+        <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" value="" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]"  value="" />
+        <input type="hidden" name="observations[][value_complex]" id="goldrange"/>
+
+        <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue "" %>" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
+        <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
+        <input type="hidden" name="observations[][obs_datetime]"  value="" />
+
+      </fieldset>
+
+      <input type="submit" value="Submit" />
+
+    <%end%>
+  </body>
 </html>
-<div id="cover">
-
+<div id="cover" align="center">
+</div>
+<div id="popup" style="display:none">
 </div>
 <script>
-$(window).unload(function(){
-     __$('rapidtimer').value = __$('timetimer1').innerHTML.toString()
-      __$('goldtimer').value = __$('timetimer2').innerHTML.toString()
-        if(__$("customresult").value == "Positive"){
-             __$("give_concent").value = "YES"
-        }
-});
 
-             
+<% if @last_date == 0 %>
+    __$("test_type").value = "Initial HIV test"
+<% elsif @last_date == 1 %>
+    __$("test_type").value = "Return after four weeks"
+<% else %>
+    __$("test_type").value = "Return before four weeks"
+<% end %>
+
+
+function checkKits(){
+     __$("gold_lot").value = "";
+     __$("rapid_lot").value = "";
+     __$("customresult1").value = "";
+     __$("customresult2").value = "";
+     reset();
+      if (testing == 0){
+                loadMessage('You do not have one of the test kits ', addLink(window, <%=params[:client_id] %>), 1500);
+      }
+      
+  }
+
+function updateServerTime(){
+    now.setSeconds(now.getSeconds() + 1);
+}
+
+now = new Date(Date.parse('<%= Time.now.to_s(:db)%>'.replace('-','/','g')));
+var interval = window.setInterval('updateServerTime()', 1000);
+
 </script>

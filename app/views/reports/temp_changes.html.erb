@@ -1,0 +1,68 @@
+<html>
+<head>
+  <script>
+      var cancelDestination = "/htcs?tab=report";
+      var data = {};
+      var selects = {};
+      var spinner;
+      var session_date = new Date();
+      session_date.setYear("<%= @session_date.year%>");
+      session_date.setMonth("<%= @session_date.month - 1%>");
+      session_date.setDate("<%= @session_date.day%>");
+
+  </script>
+
+  <%= stylesheet_link_tag 'panel' %>
+  <%=javascript_include_tag "Charts/Highcharts/jquery.min"%>
+</head>
+<body>
+<iframe id="chart" scrolling="no" src="/reports/ajax_temp_changes?chart_mode=true"></iframe>
+<div id ="buttonsDiv"><button class="buttons" onclick="window.location = cancelDestination">Finish</button></div>
+</body>
+
+</html>
+<style>
+
+    #chart{
+        position: absolute;
+        top: 9%;
+        width: 85%;
+        height:73%;
+        left: 8%;
+        margin: auto;
+        background: #CCC;
+        border: 1px dotted gray;
+        border-radius: 10px;
+    }
+
+    #buttonsDiv{
+        position: absolute;
+        bottom: 0.3%;
+        width: 99%;
+        background: grey;
+        height: 75px;
+        border-radius: 15px;
+    }
+
+    .buttons {
+        float: right;
+        min-width: 150px;
+        text-align: center;
+        height: 60px;
+        margin-top: 9px;
+        margin-right: 18px;
+        border-radius: 10px;
+        background-color: #4ba614;
+        background-image: linear-gradient(to bottom, #4ba614, #008c00);
+        border: 1px solid #34740e;
+        color: #ffffff;
+        display: inline-block;
+        font-family: arial,helvetica,sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 10px;
+        text-decoration: none;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+</style>

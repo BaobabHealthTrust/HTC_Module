@@ -14,6 +14,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20140722145413) do
 =======
 ActiveRecord::Schema.define(version: 20140801091928) do
@@ -24,6 +25,9 @@ ActiveRecord::Schema.define(version: 20140822141340) do
 =======
 ActiveRecord::Schema.define(version: 20140825121028) do
 >>>>>>> cc0797c8bf33896dbfeb69636b58bd90a700e9a0
+=======
+ActiveRecord::Schema.define(version: 20141204093047) do
+>>>>>>> d5085065ca64e9359af3214550b969893d23410b
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -483,7 +487,27 @@ ActiveRecord::Schema.define(version: 20140825121028) do
   add_index "concept_word", ["word"], name: "word_in_concept_name", using: :btree
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+  create_table "councillor_inventory", force: true do |t|
+    t.string   "lot_no"
+    t.integer  "councillor_id"
+    t.string   "value_text"
+    t.integer  "value_numeric"
+    t.datetime "value_date"
+    t.datetime "encounter_date"
+    t.integer  "inventory_type"
+    t.text     "comments"
+    t.integer  "location_id"
+    t.integer  "creator"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+>>>>>>> d5085065ca64e9359af3214550b969893d23410b
   create_table "counseling_answer", primary_key: "answer_id", force: true do |t|
     t.integer  "question_id"
     t.integer  "patient_id"
@@ -700,6 +724,11 @@ ActiveRecord::Schema.define(version: 20140825121028) do
 
   add_index "external_source", ["creator"], name: "map_ext_creator", using: :btree
   add_index "external_source", ["source"], name: "map_ext_source", using: :btree
+
+  create_table "facility_stocks", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "field", primary_key: "field_id", force: true do |t|
     t.string   "name",                       default: "",                    null: false
@@ -934,6 +963,45 @@ ActiveRecord::Schema.define(version: 20140825121028) do
   add_index "htmlformentry_html_form", ["changed_by"], name: "User who changed htmlformentry_htmlform", using: :btree
   add_index "htmlformentry_html_form", ["creator"], name: "User who created htmlformentry_htmlform", using: :btree
   add_index "htmlformentry_html_form", ["form_id"], name: "Form with which this htmlform is related", using: :btree
+
+  create_table "inventory", force: true do |t|
+    t.string   "lot_no"
+    t.integer  "kit_type"
+    t.integer  "inventory_type"
+    t.string   "value_text"
+    t.integer  "value_numeric"
+    t.datetime "value_date"
+    t.datetime "date_of_expiry"
+    t.datetime "encounter_date"
+    t.text     "comments"
+    t.integer  "location_id"
+    t.integer  "creator"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "inventory_type", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "creator"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "kits", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "creator"
+    t.string   "status"
+    t.integer  "duration"
+    t.integer  "min_temp"
+    t.integer  "max_temp"
+    t.integer  "flow_order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "liquibasechangelog", id: false, force: true do |t|
     t.string   "ID",            limit: 63,  null: false
@@ -1679,7 +1747,7 @@ ActiveRecord::Schema.define(version: 20140825121028) do
 >>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "privilege", primary_key: "privilege", force: true do |t|
     t.string "description", limit: 250, default: "", null: false
-    t.string "uuid",        limit: 38
+    t.string "uuid",        limit: 38,               null: false
   end
 
   add_index "privilege", ["uuid"], name: "privilege_uuid_index", unique: true, using: :btree
@@ -1914,7 +1982,7 @@ ActiveRecord::Schema.define(version: 20140825121028) do
 
   create_table "role", primary_key: "role", force: true do |t|
     t.string "description",            default: "", null: false
-    t.string "uuid",        limit: 38
+    t.string "uuid",        limit: 38,              null: false
   end
 
   add_index "role", ["uuid"], name: "role_uuid_index", unique: true, using: :btree
@@ -1986,7 +2054,47 @@ ActiveRecord::Schema.define(version: 20140825121028) do
   add_index "serialized_object", ["uuid"], name: "serialized_object_uuid_index", unique: true, using: :btree
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+  create_table "test_encounter", force: true do |t|
+    t.string   "test_encounter_type"
+    t.integer  "creator"
+    t.datetime "encounter_datetime"
+    t.integer  "location_id"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "test_encounter_type", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.integer  "creator"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "test_observation", force: true do |t|
+    t.string   "encounter_id"
+    t.integer  "concept_id"
+    t.float    "value_numeric"
+    t.string   "value_text"
+    t.datetime "value_date"
+    t.datetime "obs_datetime"
+    t.integer  "location_id"
+    t.boolean  "voided"
+    t.string   "void_reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "value_group_id"
+    t.float    "obs_group_id"
+    t.float    "value_coded"
+  end
+
+>>>>>>> d5085065ca64e9359af3214550b969893d23410b
   create_table "traditional_authorities", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"

@@ -1,0 +1,88 @@
+<style>
+    .pd {
+        margin-right:20px;
+        width: 250px;
+        text-align:center;
+    }
+
+
+    .blue {
+        border-radius: 15px;
+        display: block;
+        float: left;
+        height: 60px;
+        margin-right: 30px;
+        vertical-align: baseline;
+        width: 90px;
+        background-repeat: no-repeat;
+        border: 3px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+        opacity: 0.9;
+        text-shadow:1px 5px 10px #fff;
+        background-size: 110px 80px;
+    }
+
+    .blue:hover{
+        border: 4px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+    }
+
+    .blue:active{
+        border: 5px outset rgb(250, 220, 200);
+        background-color: rgba(43, 103, 185, 0.75);
+    }
+
+    #ops {
+        background-image: url(<%= asset_path 'users.png' %>);
+
+    }
+
+    #levels {
+        background-image: url(<%= asset_path 'stock_report.png' %>);
+        margin-left:35px;
+    }
+
+    #exam {
+        background-image: url(<%= asset_path 'exam_mark.png' %>);
+        margin-left:35px;
+    }
+
+    #new {
+        background-image: url(<%= asset_path 'new_test.png' %>);
+        margin-left:35px;
+    }
+
+    #kls {
+        background-image: url(<%= asset_path 'pro.png' %>);
+    }
+
+    #qct {
+        background-image: url(<%= asset_path 'pro.png' %>);
+    }
+
+    .txt {
+        color: #000000;
+        display: block;
+        font-size: 19px;
+        position: relative;
+        text-align: center;
+        top: 75px;
+    }
+
+</style>
+<br />
+<br />
+
+<base target="_parent">
+
+<%= link_to '<span class="txt"> Stock levels </span>'.html_safe, stock_levels_path, :class=>'blue', :id => "levels" %>
+<% if ! is_supervisor %>
+<%= link_to '<span class="txt"> Record kit loss </span>'.html_safe, kit_loss_path, :class=>'blue', :id => "kls" %>
+<%= link_to '<span class="txt"> QC tests </span>'.html_safe, quality_control_tests_path, :class=>'blue', :id => "qct" %>
+<%= link_to '<span class="txt"> Test </span>'.html_safe, tests_path, :class=>'blue', :id => "exam" %>
+<% else %>
+<%= link_to '<span class="txt"> Check Tests </span>'.html_safe, list_tests_path, :class=>'blue', :id => "exam" %>
+<%= link_to '<span class="txt"> New Test </span>'.html_safe, add_test_path, :class=>'blue', :id => "new" %>
+<% end %>
+
+

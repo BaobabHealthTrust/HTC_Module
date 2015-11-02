@@ -1,10 +1,15 @@
 source 'https://rubygems.org'
 
+
+#arcadia manual install
+#gem 'arcadia', '~> 1.1.0'
+gem 'coderay', '~> 1.0'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.0'
 
 # Use mysql as the database for Active Record
-gem 'mysql2'
+gem 'mysql'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -50,7 +55,7 @@ gem 'composite_primary_keys'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'passenger'
+gem 'passenger', '5.0.6'
 
 gem 'zebra_printer'
 

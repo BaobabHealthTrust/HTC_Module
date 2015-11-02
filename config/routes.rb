@@ -1,5 +1,26 @@
 HTCModule::Application.routes.draw do
+  get "counselor/test_details"
+  get "list_tests" => "counselor#list_tests"
+  get  "counselor/monthly_details"
+  get  "counselor/moh_details"
+  get "add_test" => "counselor#new_test"
+  get "sample" => "counselor#sample"
+  get "counselor/final_result"
+  get "couple/status"
+  get "couple/testing"
+  get "couple/counseling"
+  get "couple/assessment"
+  get "monthly" => "reports#monthly_report"
+  get "moh_report" => "reports#moh_report"
+
+  get "mohquartery_report" => "reports#mohquartery_report"
+
+  get "couple/appointment"
   get "reports/index"
+  get "reports/stock_report"
+  get "reports/temp_changes"
+  get "reports/ajax_temp_changes"
+  get "reports/ajax_stock_levels_report"
 	get "/login" => "sessions#attempt_login"
 	post "/login" => "sessions#login", as: :log_in
 	get "/logout" => "sessions#logout", as: :log_out
@@ -11,8 +32,14 @@ HTCModule::Application.routes.draw do
 	post "client_demographics" => "clients#demographics"
 
   get "clients/demographics_edit/:id" => "clients#demographics_edit"
+
+  post "clients/modify_field/:id" => "clients#modify_field"
   
   get "referral_consent/:id" => "clients#referral_consent"
+
+  get "inventory/batch_available" => "inventory#batch_available"
+
+  get "extended_testing/:id" => "clients#extended_testing"
 
   get "appointment/:id" => "clients#appointment"
   get "clients/appointment" => "clients#appointment"
@@ -20,6 +47,9 @@ HTCModule::Application.routes.draw do
   get "clients/:id/add_to_unallocated" => "clients#add_to_unallocated", as: :add_to_unallocated
   get "htcs/swap_desk" => "htcs#swap_desk", as: :swap_desk
   post "htcs/swap" => "htcs#swap", as: :swap
+
+  get "htcs/record_temp" => "inventory#record_temp", as: :record_temp
+  post "htcs/record_temp" => "inventory#record_temp"
   
   #get "clients/remove_from_waiting_list" => "clients#remove_from_waiting_list", as: :remove_from_waiting_list
   post "clients/remove_from_waiting_list" => "clients#remove_from_waiting_list", as: :remove_from_waiting_list
@@ -31,12 +61,20 @@ HTCModule::Application.routes.draw do
   #post "assign_to_unlocated" => "clients#assign_to_unlocated"
 
   #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
+  get "client_assessment/:id" => "clients#assessment"
+  
+  get "search_couple/:id" => "clients#search_couple"
 
+  post "search_couple/:id" => "clients#search_couple"
+
+  get "client_status/:id" => "clients#status"
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
 	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"
+  get "tests" => "admins#tests"
+  get "new_test" => "admins#new_test"
 	get "edit_protocols" => "admins#edit_protocols"
 	post "edit_protocols" => "admins#edit_protocols"
 	
@@ -44,6 +82,33 @@ HTCModule::Application.routes.draw do
 	
 	get "new_protocol" => "admins#new_protocol"
 	post "new_protocol" => "admins#new_protocol"
+
+  get "stock_levels" => "inventory#stock_levels"
+  get "kit_loss" => "inventory#kit_loss"
+  post "kit_loss" => "inventory#kit_loss"
+
+  get "inventory" => "inventory#options"
+  get "new_batch" => "inventory#new_batch"
+
+  get "ajax_stock_levels" => "inventory#ajax_stock_levels"
+
+  get "physical_count" => "inventory#physical_count"
+  post "physical_count" => "inventory#physical_count"
+
+  post "create_batch" => "inventory#create"
+  get "edit_batch" => "inventory#edit"
+
+  get "distribute_batch" => "inventory#distribute"
+  post "distribute_batch" => "inventory#distribute"
+
+  get "quality_control_tests" => "inventory#quality_control_tests"
+  post "quality_control_tests" => "inventory#quality_control_tests"
+
+  post "losses" => "inventory#losses"
+
+  get "inventory/validate_dist" => "inventory#validate_dist"
+  get "inventory/get_exp_date" => "inventory#get_exp_date"
+  get "inventory/check_presence" => "inventory#check_presence"
 
 	get "client_testing" => "clients#testing"
 	post "client_testing" => "clients#testing"
@@ -59,15 +124,25 @@ HTCModule::Application.routes.draw do
 
 	get "clients/locations/:id" => "clients#locations"
 
+  get "clients/confirm/:id" => "clients#confirm"
+
+  post "clients/confirm/:id" => "clients#confirm"
+
 	get "clients/village/:id" => "clients#village"
 
 	get "clients/print_accession/:id" => "clients#print_accession"
 
   get "clients/print_summary/:id" => "clients#print_summary"
 
+  get "clients/print_confirmation/:id" => "clients#print_confirmation"
+
 	get "clients/first_name/:id" => "clients#first_name"
 
+  get "clients/first_name" => "clients#first_name"
+
 	get "clients/last_name/:id" => "clients#last_name"
+
+  get "clients/last_name" => "clients#last_name"
 	
 	get "total_bookings" => "clients#total_bookings"
 	
@@ -82,6 +157,7 @@ HTCModule::Application.routes.draw do
 	post "admins/set_date" => "admins#set_date"
 	
 	get "htcs/dashboard" => "htcs#dashboard"
+  get "htcs/account" => "users#my_account"
 
 	get "locations/destroy/:id" => "locations#destroy"
 
@@ -89,6 +165,8 @@ HTCModule::Application.routes.draw do
 	post "/locations/new" => "locations#new"
 
 	get "/locations/village" => "locations#village"
+
+  get "/locations/ta" => "locations#ta"
 
   get "client_printouts" => "clients#printouts"
 
@@ -101,6 +179,8 @@ HTCModule::Application.routes.draw do
 	resources :location_tags
 	
   resources :rooms
+
+  get "sessions/server_date" => "sessions#server_date"
 
 	root 'sessions#attempt_login'
   

@@ -116,7 +116,7 @@ function createMonth(date, selected, initialdate, startweekdate, endweekdate){
     if(typeof(endweekdate) != "undefined"){                    
         end_week_date = endweekdate;
     }
-                
+   
     if(typeof(date) != "undefined" && date != null){
         var test_date = Date.parse(date);
 
@@ -127,13 +127,17 @@ function createMonth(date, selected, initialdate, startweekdate, endweekdate){
         }
         
         selected_date = new Date(date);
+        
+        if (String(selected_date.getFullYear()) == "NaN"){
+            selected_date = new Date()
+        }
         current_year = selected_date.getFullYear();
         current_month = monthNames[selected_date.getMonth()];        
     } else {
         current_year = (new Date()).getFullYear();
         current_month = monthNames[(new Date()).getMonth()];
     }            
-      
+    // console.log(current_month)
     if(typeof(selected) == "undefined"){
         selected = {};
     } else {
@@ -141,6 +145,7 @@ function createMonth(date, selected, initialdate, startweekdate, endweekdate){
     }
       
     __$("year").innerHTML = current_year;
+
     __$("month").innerHTML = current_month;
                 
     var first_day = new Date(current_year, months[current_month][0], 1);

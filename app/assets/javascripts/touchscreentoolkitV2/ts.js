@@ -163,7 +163,7 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
     
     if(typeof(numbers) == 'undefined') numbers = false;
     
-    if(typeof(caps) == 'undefined') caps = false;
+    if(typeof(caps) == 'undefined') caps = true;
     
     currentCaseUpper = caps;
     
@@ -185,20 +185,20 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
       
     } else {
      
-      if(currentKeysQWERTY){
-        
-        keys = [["Q","W","E","R","T","Y","U","I","O","P"],["A","S","D","F","G","H","J","K","L"],['',"Z","X","C","V","B","N","M",'',"CAP"],['','|_|','&larr;',":",".","/","num","abc","?"]];
-        
+         if(currentKeysQWERTY){
+
+        keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','Space','&larr;',":",".","/","?","num","abc"]];
+
       } else {
-      
-        keys = [["A","B","C","D","E","F","G","H","I"],["J","K","L","M","N","O","P","Q","R"],["S","T","U","V","W","X","Y","Z","CAP"],['','|_|','&larr;',":",".","/","num","qwe","?"]];
-        
+
+        keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','Space','&larr;',":",".","/","?","num","qwe"]];
+
       }
-      
+
     }
-    
-    var letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
-                        
+
+    var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+                     
     var table = document.createElement('div');
     table.style.display = 'table';
     table.style.margin = 'auto';
@@ -227,7 +227,11 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
             button.setAttribute('class', (disabled[keys[i][j]] ? 'button gray' : 'button blue'));
             button.style.width = '65px';
             button.style.height = '60px';
-            button.style.minWidth = '40px';
+            if (String(keys[i][j]).trim() == "Space"){
+                 button.style.minWidth = '80px';
+            } else {
+                button.style.minWidth = '40px';
+            }           
             button.style.minHeight = '40px';
             button.style.margin = '2px';
             button.style.fontSize = "24px";
@@ -308,7 +312,7 @@ function showFixedKeyboard(ctrl, container, disabled, numbers, caps){
                           
                         }
                        
-                    } else if(this.innerHTML.trim() == '|_|'){ 
+                    } else if(this.innerHTML.trim() == 'Space'){
                        
                        target.value += " ";
                        
@@ -403,20 +407,20 @@ function showKeyboard(ctrl, disabled, numbers, caps){
           
         } else {
          
-          if(currentKeysQWERTY){
-            
-            keys = [["Q","W","E","R","T","Y","U","I","O","P"],["A","S","D","F","G","H","J","K","L"],['',"Z","X","C","V","B","N","M",'',"CAP"],['','|_|','&larr;',":",".","/","num","abc"]];
-            
-          } else {
-          
-            keys = [["A","B","C","D","E","F","G","H","I"],["J","K","L","M","N","O","P","Q","R"],["S","T","U","V","W","X","Y","Z","CAP"],['','|_|','&larr;',":",".","/","num","qwe"]];
-            
-          }
-          
-        }
-        
-        var letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
-                            
+             if(currentKeysQWERTY){
+
+             keys = [["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],['',"z","x","c","v","b","n","m",'',"cap"],['','Space','&larr;',":",".","/","num","abc","?"]];
+
+              } else {
+
+                keys = [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z","cap"],['','Space','&larr;',":",".","/","num","qwe","?"]];
+
+              }
+
+            }
+
+        var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+
         var table = document.createElement('div');
         table.style.display = 'table';
         table.style.margin = 'auto';
@@ -530,7 +534,7 @@ function showKeyboard(ctrl, disabled, numbers, caps){
                               
                             }
                            
-                        } else if(this.innerHTML.trim() == '|_|'){ 
+                        } else if(this.innerHTML.trim() == 'Space'){
                            
                            target.value += " ";
                            
@@ -617,7 +621,7 @@ function addTimer(parent, limit, label, scale){
   if(parent == undefined || limit == undefined || label == undefined){
     return;
   }
-  
+
   var tbl = document.createElement("div");
   tbl.style.display = "table";
   tbl.style.borderSpacing = (5 * scale) + "px";
@@ -675,7 +679,7 @@ function addTimer(parent, limit, label, scale){
   disc.style.verticalAlign = "middle";
   disc.style.textAlign = "center";
   disc.style.marginBottom = (-40 * scale) + "px";
-  
+
   cell2.appendChild(disc);
   
   var time = document.createElement("div");
@@ -695,12 +699,17 @@ function addTimer(parent, limit, label, scale){
   row3.appendChild(cell3);
   
   var btn = addButton(cell3, "Start", "green");
-  
+
   btn.style.width = (100 * scale) + "px";
+
   btn.setAttribute("limit", limit);
+
+  btn.setAttribute("targetID", parent.getAttribute("targetID"));
+
   btn.id = "btnTmr" + parent.id;
+
   btn.setAttribute("target", parent.id);
-  
+
   btn.style.fontSize = (28 * scale) + "px";
   
   btn.style.minWidth = (100 * scale) + "px";
@@ -710,13 +719,15 @@ function addTimer(parent, limit, label, scale){
   btn.style.width = (100 * scale) + "px";
   
   btn.style.height = (80 * scale) + "px";
-  
+
   btn.onmousedown = function(){
-    
+
+    updateTimerDate(this);
+
     countDown(this.getAttribute('target'), this.getAttribute('limit'))
     
   }
-  
+
   return tbl;
   
 }
@@ -740,7 +751,9 @@ function countDown(id, limit){
         __$("btnTmr" + id).onmousedown = function(){
         
           if(this.innerHTML.trim().toLowerCase() == "reset"){
-          
+
+            updateTimerDate(this);
+
             this.innerHTML = "Start";
             
             this.className = "button green";
@@ -752,19 +765,27 @@ function countDown(id, limit){
             }
 
             this.onmousedown = function(){
-              
+
+              updateTimerDate(this);
+
               countDown(this.getAttribute('target'), this.getAttribute('limit'));
               
             }
           
-          } else {
-          
+          }else {
+
+            updateTimerDate(this);
+
             clearTimeout(timerHandles[this.getAttribute("target")]);
           
             delete timers[this.getAttribute("target")];
   
             this.innerHTML = "Reset";
-            
+
+             __$("time" + this.getAttribute("target")).style.color = 'black';
+
+             __$("time" + this.getAttribute("target")).parentNode.style.border = "2px solid  #3465a4";
+
           }
           
         }
@@ -780,17 +801,26 @@ function countDown(id, limit){
   }
 
   var seconds = timers[id] % (60);
-  
   var minutes = (timers[id] - seconds) / (60);
   
   if(__$("time" + id)){
-   
-    __$("time" + id).innerHTML = padZeros(minutes, 2) + ":" + padZeros(seconds, 2); 
-    
+
+     var sign = (minutes < 0 || seconds < 0) ? '-' : '';
+
+    __$("time" + id).innerHTML = sign + padZeros(Math.abs(minutes), 2) + ":" + padZeros(Math.abs(seconds), 2);
+
+
   }
 
   if(timers[id] <= 0){
-  
+
+      __$("time" + id).style.color = 'red';
+
+      __$("time" + id).parentNode.style.border = "2px solid darkred";
+
+      timerHandles[id] = setTimeout("countDown('" + id + "', '" + limit + "')", 1000);
+
+   /*
     delete timers[id];
     
     if(__$("btnTmr" + id)){
@@ -811,6 +841,7 @@ function countDown(id, limit){
           
         }
     }
+    */
             
   } else {
   
@@ -818,6 +849,32 @@ function countDown(id, limit){
   
   }
 
+}
+
+function updateTimerDate(timerObject) {
+
+    var date = now;
+
+    var text = timerObject.innerHTML;
+
+    if (text.toLowerCase().trim() == "stop"){
+        date.setSeconds(date.getSeconds() - 1) //handle start latency
+    }
+
+    var time = date.getFullYear() +
+        "-" + padZeros((date.getMonth() + 1), 2) +
+        "-" + padZeros(date.getDate(), 2) +
+        " " + padZeros(date.getHours(), 2) +
+        ":" + padZeros(date.getMinutes(), 2) +
+        ":" + padZeros(date.getSeconds(), 2);
+
+    if (text.toLowerCase().trim() == "start"){
+        __$(timerObject.getAttribute("targetID")).value = time.trim() + "/"
+    }else if (text.toLowerCase().trim() == "stop"){
+        __$(timerObject.getAttribute("targetID")).value = __$(timerObject.getAttribute("targetID")).value + time.trim();
+    }else if (text.toLowerCase().trim() == "reset"){
+        //__$(timerObject.getAttribute("targetID")).value = "";
+    }
 }
 
 function addAge(parent, target, date, label1, label2){
@@ -1012,7 +1069,7 @@ function addDate(parent, target, date){
           //"value" : (!isNaN(date.getFullYear()) ? date.getFullYear() : (currentdate.length == 3 ? currentdate[2] : "?")),
           "onmousedown" : "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtYearFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
-          "style" : "font-size: 24px; text-align: center; width: 100%;"
+          "style" : "font-size: 24px; margin: auto; text-align: center; width: 82%;"
         },
         {
           "type"  : "input",
@@ -1021,7 +1078,7 @@ function addDate(parent, target, date){
           //"value" : (typeof(months[date.getMonth()]) != "undefined" ? months[date.getMonth()] : (currentdate.length == 3 ? currentdate[1] : "?")),
           "onmousedown" : "showShield(); addList(__$('txtMonthFor' + this.getAttribute('target')),{'Jan':'January','Feb':'February','Mar':'March','Apr':'April','May':'May','Jun':'June','Jul':'July','Aug':'August','Sep':'September','Oct':'October','Nov':'November','Dec':'December','?':'Unknown'},'single',__$('txtMonthFor' + this.getAttribute('target')),__$('txtMonthFor' + this.getAttribute('target')), 'checkDate(\"' + this.getAttribute('target') + '\")'); checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
-          "style" : "font-size: 24px; text-align: center; width: 100%;"
+          "style" : "font-size: 24px; margin: auto; text-align: center; width: 82%;"
         },
         {
           "type"  : "input",
@@ -1030,7 +1087,7 @@ function addDate(parent, target, date){
           //"value" : (!isNaN(date.getDate()) ? date.getDate() : (currentdate.length == 3 ? currentdate[0] : "?")),
           "onmousedown" : "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtDateFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
           "class" : "input_cell",
-          "style" : "font-size: 24px; text-align: center; width: 100%;"
+          "style" : "font-size: 24px; margin: auto; text-align: center; width: 82%;"
         }
       ],
       [
@@ -2633,7 +2690,7 @@ function navigateTo(pos, section){
 	timerHandles = {};
 
   if(__$("popupkeyboard")){
-    
+
 	  document.body.removeChild(__$("popupkeyboard"));
 
 	}
@@ -3395,7 +3452,7 @@ function checkValidity(){
         }
         
       } else {
-        
+
         if(fields[i].getAttribute("disabled") == null && __$("textFor" + fields[i].id)){
           if(fields[i].getAttribute("regex") != null){
             
@@ -3491,7 +3548,7 @@ function showShield(action){
 }
 
 function loadAjax(id, target1, target2, url, search){   
-			
+
 	var textfile;
 	if (window.XMLHttpRequest)
 	{ 
@@ -3519,18 +3576,26 @@ function loadAjax(id, target1, target2, url, search){
 				}
 				
 			}
-			
-			if(__$("popupkeyboard")){
-				
-				__$("popupkeyboard").innerHTML = "";
-				
-				addCombo(__$("popupkeyboard"), options, "single", target1, target2, true, id, "clearLookup('" + id + "')");
-				
-			} else {
-				
-				addList(__$(id), options, "single", target1, target2, "clearLookup('" + id + "')", (__$("main-content-area").offsetHeight - 50) + "px", __$(id).offsetWidth + "px");
-				
-			}
+
+			var targetPos = target1.getAttribute("pos");
+            var curPos = btnNext.getAttribute("pos");
+
+            if (targetPos == curPos) {
+                if (__$("popupkeyboard")) {
+
+                    __$("popupkeyboard").innerHTML = "";
+                    if (Object.keys(options).length > 0) {
+                        addCombo(__$("popupkeyboard"), options, "single", target1, target2, true, id, "clearLookup('" + id + "')");
+                    } else {
+                        __$("popupkeyboard").parentNode.removeChild(__$("popupkeyboard"));
+                    }
+
+                } else {
+                    if (Object.keys(options).length > 0) {
+                        addList(__$(id), options, "single", target1, target2, "clearLookup('" + id + "')", (__$("main-content-area").offsetHeight - 50) + "px", __$(id).offsetWidth + "px");
+                    }
+                }
+            }
 			
 		}
 	}
@@ -3562,19 +3627,20 @@ function checkLookup(id){
 			// skip
 			
 		} else {
-		
-			if(__$(id).getAttribute("ajaxURL") != null){
-				
+
+
+			if(__$(id).getAttribute("ajaxURL") != null ){
+
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxURL"), __$(id).value.trim());
-				
+
 			} else if(__$(id).getAttribute("ajaxUrl") != null){
-				
+
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxUrl"), __$(id).value.trim());
-				
+
 			} else if(__$(id).getAttribute("ajaxurl") != null){
-				
+
 				loadAjax("textFor" + id, __$("textFor" + id), __$(id), __$(id).getAttribute("ajaxurl"), __$(id).value.trim());
-				
+
 			}
 			
 		}

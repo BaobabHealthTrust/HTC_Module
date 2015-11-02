@@ -4,6 +4,7 @@ class SessionsController < ApplicationController
   end
 
   def login
+  	flash[:alert] = nil
   	load_location_from_setting if session[:user_id].blank?
     location = params[:location].gsub("$", '').squish rescue nil
     
@@ -15,15 +16,18 @@ class SessionsController < ApplicationController
 		
 		if @location
 			is_counselor = @user.user_roles.map(&:role).include?('Counselor') rescue false
+      is_supervisor = @user.user_roles.map(&:role).include?('Supervisor') rescue false
 			
 			htc_room_tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 			location_tags = LocationTagMap.where("location_tag_id=#{htc_room_tag_id}")
 																		.map(&:location_id) rescue []
 		
-			if location_tags.include?(@location.id) && !is_counselor
+			if location_tags.include?(@location.id) && !is_counselor && !is_supervisor
 				@location = nil
-				flash[:alert] = "You are not allow to visit this location"
+				flash[:alert] = "You are not allowed to visit this location"
 			end
+		else
+			flash[:alert] = "Location: #{location} does not exist!"
 		end
 		
 		if @location
@@ -38,7 +42,6 @@ class SessionsController < ApplicationController
 				redirect_to log_in_path
 			end
 		else
-				flash[:alert] = "Location: #{location} does not exist!"
 				redirect_to log_in_path
 		end
   end
@@ -94,5 +97,9 @@ class SessionsController < ApplicationController
 			location_tag_map = LocationTagMap.create(location_tag_map_params)
 			location_tag_map.save
 		end
+  end
+
+  def server_date
+    render :text => Time.now.to_s(:db)
   end
 end

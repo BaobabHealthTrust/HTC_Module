@@ -1,0 +1,74 @@
+<html>
+	<head>
+	<script>
+	    var cancelDestination = "/client_status/<%= params[:id] %>";
+
+            function __$(id){
+                    return document.getElementById(id);
+            }
+
+            function doSubmit(id){
+
+                            if(__$(id) && __$(id).value.trim().match(/\$/)){
+
+                               __$(id).value =  __$(id).value.trim().replace(/\$/, "");
+
+                                    clearTimeout(id)
+                                      document.forms[0].submit();
+
+                                    return;
+                            }
+
+                      setTimeout("doSubmit('" + id + "')", 500);
+            }
+
+	</script>
+          <style>
+              #stage, #btn3, #btn2, #btn1{
+                    display: none ! important;
+              }
+              #buttons{
+                width:10% ! important;
+              }
+
+             #popupkeyboard{
+                height: 255px ! important;
+            }
+          </style>
+	</head>
+<body onload="adjust()">
+
+
+<%= form_tag search_results_path do %>
+  <input type="hidden" value="<%= params[:id] %>" name="client"/>
+            <fieldset>
+			<legend>Search Client</legend>
+                                  <label for="scan_accession_number" >Accession Number </label>
+                                  <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doSubmit('scan_accession_number')" >
+                           				<input id="add_to_session" type="hidden" name="add_to_session" value="true">
+                         
+							</fieldset>
+	<%= submit_tag "Finish" %>
+
+<%end%>
+</body>
+<script src="/assets/touchscreentoolkitV2/ts.js?body=1"></script>
+
+<script>
+	btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+   function adjust(){
+            node =  document.getElementById('row2').childNodes[0].childNodes[0];
+            node.style.width = "6%";
+            node.style.height = "92px";
+            document.getElementById('row2').childNodes[0].style.height = "92px";
+            document.getElementById('row2').style.height = "92px";
+            document.getElementById('row2').childNodes[0].style.backgroundColor = "grey";
+            document.getElementById('row2').childNodes[0].style.MozBorderRadius = '1em';
+            document.getElementById('row2').childNodes[0].style.borderRadius = '1em';
+            button =  document.getElementById('buttons');
+            button.style.removeProperty('border')
+            button.style.backgroundColor = "grey";
+  }
+</script>
+
+</html>

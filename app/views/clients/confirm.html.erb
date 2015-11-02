@@ -1,0 +1,224 @@
+<html>
+    <head>
+		<%= javascript_include_tag 'custom' %>
+	<script>
+								 var cancelDestination = "/htcs"
+                 monthNumber = {}
+                  list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                  for (i = 1; i <= list.length; i ++){
+                     monthNumber[i] = list[ (i - 1)]
+                  }
+                  month = "?"
+                  month = monthNumber[parseInt("<%= @client.person.birthdate.strftime('%m').to_i %>")]
+                  day = parseInt("<%= @client.person.birthdate.strftime('%d') %>")
+                  year = parseInt("<%= @client.person.birthdate.strftime('%Y') %>")                
+              function __$(id){
+                      return document.getElementById(id);
+              }
+              
+             function checkDate(){
+
+                          date = document.getElementById("date_of_birth")
+                          function noMondays(e){
+                              var day = new Date( e.target.value ).getUTCDay();
+                              // Days in JS range from 0-6 where 0 is Sunday and 6 is Saturday
+
+                          }
+                          date.addEventListener('input',noMondays);
+                }
+
+			function loadCustom(){
+				if(__$("main-content-area")){
+                                      __$('stage').style.display = "none"
+                                      <% if @client.partner_present == true %>
+                                            __$("main-content-area").style.height = (screen.height - 250) + "px";
+                                            __$('row1').parentNode.style.height = (screen.height - 70) + "px";
+                                      <%  end %>
+                                       __$("buttons").style.verticalAlign = "bottom";
+                                        btnNext.id = "newBtn";
+                                        btnNext.style.width = "250px";
+                                        btnCancel.style.width = "250px";
+                                        btnClear.style.display = "none"
+                                        btnBack.style.display = "none"
+
+                                        var display = "inline-table";
+
+                                        btnDivs = __$('buttons').children[0].children;
+
+                                        btnDivs[1].style.display = "none";
+                                        btnDivs[2].style.display = "none";
+
+                                        btnDivs[0].style.display  = "inline-table";
+                                        btnDivs[3].style.display  = "inline-table";
+
+                                        btnDivs[3].style.cssFloat = "right";
+                                        __$('buttons').parentNode.parentNode.parentNode.style.wtidth = '52px'
+                                        __$('buttons').parentNode.parentNode.style.wtidth = '52%'
+                                        var table = document.createElement("div");
+					table.style.display = "table";
+					table.style.margin = "auto";
+                                        table.style.width = "100%";
+					//table.style.border = "1px solid #000";
+
+					__$("main-content-area").appendChild(table);
+                    //Label, Value, Link
+
+                    <% if @reception_demographics.to_s.strip == 'true'%>
+                        var fieldRows = [
+                            ["Firstname", '<%= @client.person.names.first.given_name.humanize rescue "" %>',
+                                    "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'firstname' + "'  class='navigation'>Edit</a>"],
+                            ["Surname", '<%= @client.person.names.first.family_name.humanize rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'surname' + "' class='navigation'>Edit</a>"],
+                            ["Gender", '<%= @client.person.gender rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'gender' + "' class='navigation'>Edit</a>"],
+                            ["Date of birth", (day + '/' + month + '/' + year),
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'date_of_birth' + "'  class='navigation'>Edit</a>"],
+                            ["Home District", '<%= @home_district rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'home_district' + "'  class='navigation'>Edit</a>"],
+                            ["Traditional Authority", '<%= @ta rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'traditional_authority' + "'  class='navigation'>Edit</a>"],
+                            ["Occupation", '<%= @occupation rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'occupation' + "'  class='navigation'>Edit</a>"],
+                            ["Current residence", '<%= @residence rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'residence' + "'  class='navigation'>Edit</a>"],
+                            ["Cell Phone Number", '<%= @cell_phone_number rescue "" %>',
+                                        "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>"]
+                        ]
+                     <% else %>
+
+                    var fieldRows = [
+
+                        ["Gender", '<%= @client.person.gender rescue "" %>',
+                                    "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'gender' + "' class='navigation'>Edit</a>"],
+                        ["Date of birth", (day + '/' + month + '/' + year),
+                                    "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'date_of_birth' + "'  class='navigation'>Edit</a>"],
+                        ["Current residence", '<%= @residence rescue "" %>',
+                                    "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'residence' + "'  class='navigation'>Edit</a>"]
+                    ]
+                     <% end %>
+
+                    for (var i = 0; i < fieldRows.length; i++){
+
+
+                        var row1 = document.createElement("div");
+                        row1.style.display = "table-row";
+                        row1.id = "demographics"
+                        table.appendChild(row1);
+
+                        var cell1 = document.createElement("div");
+                        cell1.style.display = "table-cell";
+                        cell1.id = "texts"
+                        cell1.innerHTML = fieldRows[i][0];
+                        row1.appendChild(cell1)
+
+                        var cell2 = document.createElement("div");
+                        cell2.style.display = "table-cell";
+                        cell2.id = "values"
+                        cell2.innerHTML = fieldRows[i][1];
+                        row1.appendChild(cell2)
+
+                        var cell3 = document.createElement("div");
+                        cell3.style.display = "table-cell";
+                        cell3.id = "links"
+                        cell3.innerHTML = fieldRows[i][2];
+                        row1.appendChild(cell3);
+
+                    }
+
+                }
+        }
+	</script>
+      <style>
+ .disabled {
+   pointer-events: none;
+   cursor: default;
+}
+
+table{
+  width: 100%;
+}
+#text, #values, #links{
+  border-radius: 25px;
+}
+#demographics{
+ width: 100%;
+ border: 1px solid #000;
+ background-color: #E0EEEE;
+}
+#texts{
+  width: 40%;
+  font-size: 25px;
+}
+#values{
+  width: 40%;
+  font-size: 25px;
+}
+#links{
+ width: 20%;
+  font-size: 25px;
+}
+.navigation{
+    background-color: grey;
+    border-bottom: 1px outset #eeeeee;
+    border-style: outset;
+    border-top: 1px outset #eeeeee;
+    color: white;
+    display: block;
+    padding: 10px 16px 10px 10px;
+    text-align: center;
+    text-decoration: none;
+}
+#buttons{
+  height: 20px ! important;
+}
+<% if @client.partner_present != true %>
+#main-content-area{
+   height: 576px ! important; 
+}
+<% end %>
+
+               .state{
+                   color: red;
+                   margin-left: 10%;
+               }
+      </style>
+     </head>
+<body onload="adjust()" >
+
+        <%= form_tag "/clients/confirm/#{@id}" do %>
+        <input type='hidden' name='name_id' value=<%= @client.id %> />
+        <fieldset custom=true fs_onLoad="loadCustom();">
+        <legend>Confirm Client <%= ((@current_state == 'IN WAITING') ? "<span class='state'>  client is on waiting list<sup>*</sup></span>" : "").html_safe%></legend>
+        </fieldset>
+        <%= submit_tag "Finish" %>
+
+<%end%>
+
+</body>
+</html>
+<script>
+
+    var current_state = "<%= @current_state %>";
+
+    function adjust(){
+           node =  document.getElementById('row2').childNodes[0].childNodes[0]
+           node.style.height = "92px"
+           document.getElementById('row2').childNodes[0].style.height = "92px"
+           document.getElementById('row2').style.height = "92px"
+
+           <% if @client.partner_present == true %>
+                  __$("main-content-area").style.height = (screen.height - 250) + "px";
+                  __$('row1').parentNode.style.height = (screen.height - 70) + "px";
+          <%  end %>
+  }
+
+ setTimeout(function() {
+     if (current_state != 'IN WAITING') {
+         btnNext.innerHTML = "<span>Add to Waiting List</span>"
+     }else{
+         btnNext.style.display = 'none';
+     }
+
+  }, 40);
+
+</script>

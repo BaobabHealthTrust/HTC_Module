@@ -1,28 +1,41 @@
 <html>
 	<head>
 <style>
-.blue {
-    border-radius: 35px;
-    display: block;
-    float: left;
-    height: 90px;
-    margin-right: 35px;
-    vertical-align: baseline;
-    width: 90px;
-    background-repeat: no-repeat;
-    background-size: 80px 80px;
-}
+
+    .blue {
+        border-radius: 15px;
+        display: block;
+        float: left;
+        height: 60px;
+        margin-right: 30px;
+        vertical-align: baseline;
+        width: 90px;
+        background-repeat: no-repeat;
+        border: 3px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+        opacity: 0.9;
+        text-shadow:1px 5px 10px #fff;
+        background-size: 110px 80px;
+    }
+
+    .blue:hover{
+        border: 4px outset rgb(73, 93, 135);
+        background-color: rgba(33, 103, 185, 0.75);
+    }
+
+    .blue:active{
+        border: 5px outset rgb(250, 220, 200);
+        background-color: rgba(43, 103, 185, 0.75);
+    }
+
 #accession{
  	background-image: url(<%= asset_path 'accession.png' %>);
-	background-size: cover;
 }
 #summary{
  	background-image: url(<%= asset_path 'summary.png' %>);
-	background-size: cover;
 }
 #confirm{
  	background-image: url(<%= asset_path 'confirmation.png' %>);
-	background-size: cover;
 }
 .txt {
   color: #000000;
@@ -30,7 +43,7 @@
   font-size: 19px;
   position: relative;
   text-align: center;
-  top: 100px;
+  top: 75px;
 }
 </style>
 <script>
@@ -42,8 +55,8 @@
         window.location = '/clients/print_summary/' + <%= params[:client_id] %>;
    }
 
-  function printConfimation(){
-        window.location = '/clients/print_confimation/' + <%= params[:client_id] %>;
+  function printConfirmation(){
+        window.location = '/clients/print_confirmation/' + <%= params[:client_id] %>;
    }
 </script>
 </head>
@@ -52,16 +65,15 @@
 <br />
 
 <base target="_parent">
-		<button
-		onmousedown="printAccession()"
-		class="blue" pos="0" section="0" id="accession"><span class="txt">Accession Number</span></button>
+		<a onmousedown="printAccession()"
+		class="blue" pos="0" section="0" id="accession">
+          <span class="txt">Accession Number</span></a>
 
-		<button 
+		<a
 		onmousedown="printSummary()"
-		class="blue" pos="0" section="0" id="summary"><span class="txt">Visit Summary</span></button>
+		class="blue" pos="0" section="0" id="summary"><span class="txt">Visit Summary</span></a>
 
-		<button id="confirm"
-		onmousedown="printConfirmation()"
-		class="blue" pos="0" section="0"><span class="txt">Confirmation</span></button>
+		<a id="confirm" onmousedown="printConfirmation()" class="blue" pos="0" section="0">
+                  <span class="txt">Confirmation</span></a>
 </body>
-
+</html>

@@ -1,0 +1,31 @@
+<<<<<<< HEAD
+#Name of the HTC facility
+<<<<<<< HEAD
+facility_name: Lighthouse HTC
+=======
+=======
+#	Dashboard counseling room refresh 60000 = 1 Minute
+refresh_dashboard: 60000
+
+#	Name of the HTC facility
+>>>>>>> cc0797c8bf33896dbfeb69636b58bd90a700e9a0
+facility_name: kamuzu Central Hospital
+>>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
+
+<<<<<<< HEAD
+#60000 = 1 Minute
+refresh_dashboard: 30000
+=======
+# HTC Rooms
+other_htc_rooms: [Reception]
+counseling_rooms: [Room 1, Room 2, Room 3, Room 4]
+
+# Calendar settings
+clinic.holidays: '1900-12-25,1900-03-03,2014-09-03'
+clinic.days: ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", ""]
+<<<<<<< HEAD:config/settings.yml
+>>>>>>> cc0797c8bf33896dbfeb69636b58bd90a700e9a0
+=======
+
+full_demographics_at_reception: false
+>>>>>>> d5085065ca64e9359af3214550b969893d23410b:config/settings.yml.example

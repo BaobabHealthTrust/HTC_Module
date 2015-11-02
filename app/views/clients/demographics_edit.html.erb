@@ -1,7 +1,17 @@
 <html>
     <head>
 	<script>
-                var cancelDestination = "clients/<%= params[:client_id] %>";
+
+              <% if session[:partner] %>
+                    var cancelDestination = "/client_demographics?client_id=<%=  session[:client_id] %>&partner_id=<%= session[:partner] %>";
+                <% else %>
+                    var cancelDestination = "/client_demographics?client_id=<%=  params[:id] %>";
+                  <% end %>
+
+              <% if request.referrer.match('/confirm')%>
+                    var cancelDestination = "/clients/confirm/<%= params[:id] || session[:client_id] %>";
+              <% end %>
+              
                  monthNumber = {}
                   list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   for (i = 1; i <= list.length; i ++){
@@ -11,22 +21,31 @@
                   month = monthNumber[parseInt("<%= @client.person.birthdate.strftime('%m').to_i %>")]
                   day = parseInt("<%= @client.person.birthdate.strftime('%d') %>")
                   year = parseInt("<%= @client.person.birthdate.strftime('%Y') %>")
+                  
               function __$(id){
                       return document.getElementById(id);
               }
 
-              function addSelected(id1, id2, id3, id4){
-                      __$("textFor" + id1).value = '<%= @client.person.gender %>';
-                      __$(id1).value = '<%= @client.person.gender %>';
+              function addSelected(id){
+                    if (id == 'gender'){
+                       value = '<%= @client.person.gender %>';
+                    }
+                    else if (id == 'surname'){
+                       value = '<%= @client.person.names.first.family_name rescue "" %>';
+                    }
+                    else if (id == 'firstname'){
+                       value = '<%= @client.person.names.first.given_name rescue "" %>'
+                    }
+                    else if (id == 'date_of_birth'){
+                       value = day + '/' + month + '/' + year ;
+                    }
+                      __$("textFor" + id).value = value;
+                      __$(id).value = value;
 
-                        __$("textFor" + id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
-                        __$("textFor" + id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
-                        __$("textFor" + id4).value = day + '/' + month + '/' + year ;
-
-                        __$(id4).value = '<%= @client.person.birthdate.strftime('%d/%m/%Y') %>';
-                        __$(id2).value = '<%= @client.person.names.first.given_name rescue "" %>';
-                        __$(id3).value = '<%= @client.person.names.first.family_name rescue "" %>';
+                      if (id == 'date_of_birth')
+                       __$(id).value =  '<%= @client.person.birthdate.strftime('%d/%m/%Y') %>';
               }
+              
              function checkDate(){
 
                           date = document.getElementById("date_of_birth")
@@ -39,19 +58,29 @@
                 }
 	</script>
      </head>
-<body >
-		<%= form_tag({:action => "new"}, {:method => "get"}) do %>
+<body  onLoad="addSelected('<%= params[:ref] %>')">
+                <form action='/clients/modify_field/<%= params[:id] %>' method='post'>
+                  <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 			<input type='hidden' name='name_id' value=<%= @client.id %> />
+            <input type='hidden' name='request_' value=<%= @client.id %> />
+             <% if request.referrer.match("/confirm")%>
+                <input type='hidden' name='request_url' value="<%= request.referrer %>" />
+             <% end %>
 			<fieldset >
 			<legend>Update <%= params[:ref].humanize %></legend>
 			<% if params[:ref] == "surname"  %>
                               <label for="surname"> Surname</label>
                               <input type="text" id="surname" name="surname" value=""
-                                              ajaxURL="/clients/last_name/<%= params[:client_id] %>"/>
+                                              ajaxURL="/clients/last_name/<%= params[:id] %>"/>
+                              <br />
+                         <% elsif params[:ref] == "firstname"  %>
+                              <label for="firstname"> First name</label>
+                              <input type="text" id="firstname" name="firstname" value=""
+                                              ajaxURL="/clients/first_name/<%= params[:id] %>"/>
                               <br />
                          <% elsif params[:ref] == "gender" %>
                                 <label for="gender"> Gender </label>
-                                <select id="gender">
+                                <select id="gender" name="gender">
                                                 <option></option>
                                                 <option value="Female">Female</option>
                                                 <option value="Male">Male</option>
@@ -61,25 +90,48 @@
                                     <label for="date_of_birth"> Date of birth </label>
                                     <input type="text"  onclick="checkDate()" id="date_of_birth"
                                                   max="<%= Date.today %>" name="date_of_birth"
-                                                   fieldtype="age" />
+                                                   fieldtype="age" required = 'true' optional = 'false' />
                                           <br />
                              <% elsif params[:ref] == "residence" %>
                                     <label for="residence">Residence</label>
-                                    <input type="text" id="residence" name="residence" value="<%= @residence %>"
+                                    <input type="text" id="residence" name="address1" value="<%= @residence %>"
                                             ajaxURL="/locations/village"/>
                                     <br />
                               <% elsif params[:ref] == "home_district" %>
                                     <label for="<%= params[:ref] %>">Home District</label>
-                                    <input type="text" id="<%= params[:ref] %>" name="<%= params[:ref] %>" value=""
+                                    <input type="text" id="<%= params[:ref] %>" name="address2" value=""
                                         ajaxURL="/locations/village"/>
                                 <br />
-                               <% elsif params[:ref] == "home_phone_number" %>
+                                <% elsif params[:ref] == "traditional_authority" %>
+                                    <label for="<%= params[:ref] %>">Traditional Authority</label>
+                                    <input type="text" id="<%= params[:ref] %>" name="ta" value=""
+                                        ajaxURL="/locations/ta"/>
+                                <br />
+                             <% elsif params[:ref] == "occupation" %>
+                                    <label for="<%= params[:ref] %>">Occupation</label>
+                                       <select id="<%= params[:ref] %>" name="<%= params[:ref] %>">
+                                                <option></option>
+                                                <% @occupation.each{|occupation| %>
+                                                <option value="<%= occupation %>"><%= occupation %></option>
+                                                <% } %>
+                                        </select>
+                                  <br />
+                               <% elsif params[:ref] == "land_mark" %>
+                                    <label for="<%= params[:ref] %>">Land Mark</label>
+                                       <select id="<%= params[:ref] %>" name="<%= params[:ref] %>">
+                                                <option></option>
+                                                <% @land_mark.each{|land_mark| %>
+                                                <option value="<%= land_mark %>"><%= land_mark %></option>
+                                                <% } %>
+                                        </select>
+                                  <br />
+                               <% elsif (params[:ref] == "home_phone_number" || params[:ref] == "cell_phone_number" || params[:ref] == "office_phone_number" ) %>
                                     <label for="<%= params[:ref] %>"><%= params[:ref].humanize %></label>
                                               <input type="text" id="<%= params[:ref] %>" name='<%= params[:ref] %>' value="" fieldtype="number"/>
                                     <br />
                                 <% end %>
 			</fieldset>
 			<%= submit_tag "Finish" %>
-		<%end%>
+                </form>
 </body>
 </html>

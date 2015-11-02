@@ -16,4 +16,17 @@ class CounselingAnswer < ActiveRecord::Base
 		formatted_answer ||= self.value_text if ! self.value_text.blank?
     "<b>#{formatted_name}:</b>  #{formatted_answer}"
   end
+
+  def name(tags=[])
+    formatted_name = self.counseling_question.name rescue nil
+    formatted_name
+  end
+
+  def answer_string(tags=[])
+    formatted_answer ||= ConceptName.find_by_concept_id(self.value_coded).name if ! self.value_coded.blank?
+    formatted_answer ||= self.value_datetime.strftime("%d/%m/%Y") if ! self.value_datetime.blank?
+    formatted_answer ||= self.value_numeric if ! self.value_numeric.blank?
+    formatted_answer ||= self.value_text if ! self.value_text.blank?
+    formatted_answer
+  end
 end

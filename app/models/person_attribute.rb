@@ -5,4 +5,12 @@ class PersonAttribute < ActiveRecord::Base
 
   belongs_to :type, -> {where retired: 0}, class_name: "PersonAttributeType", foreign_key: :person_attribute_type_id 
   belongs_to :person, -> {where voided: 0}, foreign_key: :person_id
+
+  def before_create
+    self.date_created = Time.now if self.date_created.blank?
+  end
+
+  def before_save
+    self.date_changed = Time.now if self.date_changed.blank?
+  end
 end

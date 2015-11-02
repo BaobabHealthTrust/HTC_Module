@@ -1,7 +1,7 @@
 <html>
     <head>        
         <title>Calendar</title>
-        
+        <%= javascript_include_tag 'custom' %>
 				<style>                                                                     
 					.nonclinic {
 						background-color: #C0C0C0 ! important;
@@ -266,8 +266,8 @@
 						<% if !@waiting_list.blank? %>
 							var cancelDestination = "<%= waiting_list_path %>";
 						<% else %>
-							var cancelDestination = "/clients/<%= params[:id] %>";
-						<% end %>
+							var cancelDestination = addLink(window, <%=params[:id] %>)
+            <% end %>
 						
         
             var sel = {};

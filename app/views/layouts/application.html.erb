@@ -11,9 +11,16 @@
 <%= yield %>
 
 <%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+  <%= stylesheet_link_tag 'custom' %>
+  <%= javascript_include_tag 'custom' %>
 
 <script>
-	btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+    if (typeof btnCancel != 'undefined'){
+      btnCancel.parentNode.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+        try {
+            __$('Space').style.width = "80px";
+        }catch(e){}
+    }
 </script>
 
 </body>

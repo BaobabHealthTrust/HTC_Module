@@ -1,11 +1,19 @@
 class HtcsController < ApplicationController
   before_action :set_htc, only: [:show, :edit, :update, :destroy]
 
-  def index
+  def index		
   	tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id) rescue []
 		@date = (session[:datetime].to_date rescue Date.today.to_date)
 
+    @temp = TestObservation.find_by_sql(["SELECT o.obs_datetime, o.value_numeric FROM test_encounter e
+          INNER JOIN test_observation o ON o.encounter_id = e.id AND e.test_encounter_type = ?
+          WHERE o.concept_id = ? AND DATE(e.encounter_datetime) = ?
+            AND o.location_id = ? ORDER BY o.obs_datetime DESC LIMIT 1",
+                                         encounter_type = TestEncounterType.where(name: 'Temperature Quality Control').first,
+    ConceptName.where(name: 'Temperature').first.concept_id, @date, @current_location.id]).last
+
+    
 		if session[:location_id].nil?
 			session[:user_id] = nil
 			redirect_to "/login" and return
@@ -30,7 +38,7 @@ class HtcsController < ApplicationController
   def swap
 		name = params[:location]
 
-  	htc_tags = ["HTC Counseling Room","Other HTC Room"] 
+  	htc_tags = ["HTC Counseling Room","Other HTC Room","Counselor Supervision Room"]
   	htc_tags = htc_tags.map{|l| LocationTag.find_by_name(l).location_tag_id}
   	
   	location = Location.joins(:location_tag_maps).where(:location_tag_map => {:location_tag_id => htc_tags},
@@ -53,7 +61,8 @@ class HtcsController < ApplicationController
   end
   
   def dashboard
-  
+    session[:partner] = nil
+    session[:client_id] = nil
   	tag_id = LocationTag.find_by_name('HTC Counseling Room').id rescue []
 		@rooms = Location.joins(:location_tag_maps).where("location_tag_id=?",tag_id)
 										 .map{ |r|r.name.humanize } rescue []
@@ -196,7 +205,7 @@ class HtcsController < ApplicationController
 				                    .order('encounter_datetime DESC')
 				                    
 		@clients = @clients.reject{|c| c.current_state(date).name != "IN WAITING"} rescue []
-		@clients.count
+		@clients.uniq.count
 	end
 
   def past_waiting_list_total
@@ -234,6 +243,6 @@ class HtcsController < ApplicationController
 			WHERE todays_bookings.value_datetime > lastest_encounter_date.encounter_datetime
 		")
 		booking_list.count
-	end
+  end
 
 end

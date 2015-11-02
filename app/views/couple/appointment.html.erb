@@ -1,0 +1,312 @@
+<html>
+	<head>
+	<script>
+					var cancelDestination = "/htcs?tab=admin";
+	</script>
+		<%= stylesheet_link_tag 'panel' %>
+	</head>
+<body>
+
+<%= form_tag new_protocol_path do %>
+            <fieldset>
+						<legend>Counseling Protocols</legend>
+
+						<input type='hidden' name='new_protocol' value='true' />
+						<br />
+                <label for="id">  </label>
+								<select id="id" name="id">
+										<option></option>
+										<%= @client.each do |p|%>
+											<option value="<%= p.patient_id %>">Name : <%= p.person.names.first.given_name rescue "" %>; <%= p.person.names.first.family_name %> </option>
+										<% end %>
+									</select>
+                <br />
+							</fieldset>
+	<%= submit_tag "Finish" %>
+
+<%end%>
+</body>
+
+	<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+	<script>
+	var sidePanelData = {<%= @side_panel_data.html_safe %>};
+	var selectProtocolId;
+	var currentPosition;
+
+	function setIdsForChildren(parent_id) {
+		children = __$(parent_id).children;
+		var l = children.length;
+		var pos;
+
+		for(var i=0; i<l; i++) {
+			children[i].id = children[i].value;
+			pos = sidePanelData[children[i].value].position;
+			children[i].setAttribute("position", pos);
+		}
+	}
+
+	function sortChildren(parent_id) {
+		parent = __$(parent_id);
+		children = parent.children;
+
+		var sortable = [];
+		var pos;
+		var l = children.length;
+		for (var i=0;  i<l; i++) {
+			pos = children[i].getAttribute("position");
+			sortable.push([children[i], pos]);
+		}
+
+		sortable.sort(function(a, b) {return a[1] - b[1]})
+		parent.innerHTML = "";
+
+		for(var i in sortable) {
+			parent.appendChild(sortable[i][0]);
+		}
+	}
+
+	function updateList(parent_id, data) {
+		var child = __$(parent_id).children;
+		var l = child.length;
+
+		for(var i=0; i<l; i++) {
+			child[i].innerHTML = "Pos: " + data[child[i].id].position + "; " + data[child[i].id].name;
+			child[i].setAttribute("position",data[child[i].id].position);
+		}
+	}
+
+	function highlightList(obj) {
+    if(obj.getAttribute("target") != null){
+      if(__$(obj.getAttribute("target"))){
+        var opts = __$(obj.getAttribute("target")).children;
+
+        for(var i = 0; i < opts.length; i++){
+          if(opts[i].getAttribute("selecttag") != null){
+            opts[i].removeAttribute("selecttag");
+            opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+          }
+        }
+      }
+
+      obj.setAttribute("selecttag", true);
+      obj.style.backgroundColor = "lightblue";
+      obj.style.color = "black";
+    }
+	}
+
+	function deactivate() {
+		window.location = '/edit_protocols?protocol_id=' + __$('textForid').value + '&retire=1';
+	}
+
+	function activate() {
+		window.location = '/edit_protocols?protocol_id=' + __$('textForid').value + '&retire=0';
+	}
+
+	function edit_protocol() {
+		window.location = 'edit_protocols?protocol_id=' + __$('textForid').value;
+	}
+
+	function UpdateProtocolPosition(method,url,id) {
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+			xmlhttp=new XMLHttpRequest();
+		}
+
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var rsp = xmlhttp.responseText.split(";");
+				var result = [rsp[0]];
+				sidePanelData = eval('(' + rsp[1] + ')');
+				sidePanelData = eval('(' + sidePanelData + ')');
+				__$(id).innerHTML=result;
+
+				if (__$(id).innerHTML == "true") {
+					__$(id).setAttribute("class", "button orange");
+					updateList('ul1', sidePanelData);
+					sortChildren('ul1');
+				} else {
+					__$(id).setAttribute("class", "button red");
+				}
+
+				setTimeout('__$("'+ id + '").setAttribute("class", "button green");'+
+									 '__$("'+ id + '").innerHTML="Save";' +
+									 'shieldOperator(__$("'+ id + '"));',500);
+			}
+		}
+		xmlhttp.open(method,url,true);
+		xmlhttp.send();
+	}
+
+	function shieldOperator(obj){
+		__$('txtYearFortextFordates').value = sidePanelData[selectProtocolId].position;
+		if(obj.getAttribute("action") != null){
+			showShield(obj.getAttribute("action"));
+		} else {
+			showShield();
+		}
+	}
+
+
+	function updatePosition() {
+		__$('?').innerHTML= "Save";
+		__$('?').setAttribute("class","button green");
+
+		__$('abc').innerHTML= "C";
+		__$('abc').setAttribute("class","button red");
+
+
+		__$('?').onmousedown = function() {
+			var url = "update_protocol_position/";
+					url += selectProtocolId + "/" + __$('txtYearFortextFordates').value;
+			UpdateProtocolPosition('GET', url,this.id);
+		};
+
+		__$('abc').onmousedown = function() {
+			shieldOperator(this);
+		};
+
+		__$('shield').setAttribute("onclick", "shieldOperator(this);");
+	}
+
+		__$("row1").style.display="none";
+		__$("buttons").style.verticalAlign = "bottom";
+		__$("buttons").style.width = "100%";
+		__$("buttons").style.height = "100%";
+
+		btnNext.innerHTML = "New Question";
+		btnNext.id = "newBtn";
+		btnNext.style.width = "250px";
+		btnCancel.style.width = "250px";
+
+		var display = "inline-table";
+
+		btnDivs = __$('buttons').children[0].children;
+
+		btnDivs[1].style.display = "none";
+		btnDivs[2].style.display = "none";
+
+		btnDivs[0].style.display  = "inline-table";
+		btnDivs[3].style.display  = "inline-table";
+
+		btnDivs[3].style.cssFloat = "right";
+
+		var dsp = document.createElement("div");
+		dsp.id = "dsp";
+		dsp.style.display = "table-cell";
+		dsp.style.border = "1px solid #3465a4";
+		dsp.style.overflow = "hidden";
+		dsp.style.borderRadius = "10px";
+		dsp.style.width = "50%";
+		dsp.style.height = "100%";
+		dsp.style.verticalAlign = "top";
+		dsp.innerTHML = "none";
+
+		__$('textForid').style.height = "100%";
+		__$('textForid').style.width = "100%";
+
+		var lst = __$('ul1').children;
+		for (var i=0; i < lst.length ; i++) {
+				lst[i].onmousedown = function() {
+				highlightList(this);
+
+				__$('textForid').value = this.value;
+
+				var obj = sidePanelData[this.value];
+				selectProtocolId = this.value;
+				var s = "";
+
+				var button;
+				var editBtn  = '<a href="#" id="edit"' +
+												'onmousedown="edit_protocol()"' +
+												' class="blue" pos="0" section="0"><span class="txt">Edit</span></a>';
+
+
+				btnNext.style.display = "inline-table";
+
+
+				if(obj.status.trim() == "Active") {
+						button = '<a href="#" id="deactivate"' +
+												 'onmousedown="deactivate()"' +
+												 ' class="blue" pos="0" section="0"><span class="txt">Deactivate</span></a>'
+				}else {
+						button = '<a href="#" id="activate"' +
+												 'onmousedown="activate()"' +
+												 ' class="blue" pos="0" section="0"><span class="txt">Activate</span></a>'
+				}
+
+				s += "<span class='d dL'> Question </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.name  + "</span>";
+
+				s += "<span class='d dL'> Status </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + obj.status  + "</span>";
+
+				var textFordates = document.createElement("input");
+				var inPos = "<input type='input' id='txtYearFortextFordates' " +
+								"target='textFordates' value='" + obj.position + "' " +
+								" onmousedown='overwriteNumber = true;" +
+								" if(__$(\"keyboard\")){document.body.removeChild(__$(\"keyboard\"));} " +
+								"else {showShield(\"checkDate(\" + this.getAttribute(\"textFordates\") + \", false)\"); " +
+								" showKeyboard(__$(\"txtYearFor\" + this.getAttribute(\"target\"))," +
+								"{\":\":\":\",\"/\":\"/\",\".\":\".\",\"abc\":\"abc\"},true);updatePosition();} "+
+								"checkDate(this.getAttribute(\"target\"));' class='input_cell'" +
+								" style='position:relative; top:-10px; font-size: 24px; text-align: center; width: 50%;'>";
+
+				s += "<span class='d dL'> Position </span>" +
+						 "<span class='d dC'> : </span>" +
+						 "<span class='d dR'>" + inPos  + "</span>";
+
+				s+="<br />";
+				s+= "<span class='dL' style='padding:10px;'>" + editBtn + "</span>";
+				s+= "<span class='dR' style='padding:10px;'>" + button + "</span>";
+				__$('dsp').innerHTML = s;
+			};
+		}
+		__$('textForid').value = -1;
+		row.insertBefore(dsp, row.firstChild);
+		__$("row0").parentNode.appendChild(__$('buttons'));
+
+		btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+
+		setIdsForChildren('ul1');
+		sortChildren('ul1');
+
+		if (__$('ul1')) {
+			__$('ul1').children[0].onmousedown();
+		}
+	</script>
+</html>
+<style>
+   .blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 75px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 75px;
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+}
+#edit {
+	background-image: url(<%= asset_path 'edit_protocol.png' %>);
+	background-size: cover;
+}
+#activate {
+	background-image: url(<%= asset_path 'deactive.jpeg' %>);
+	background-size: cover;
+}
+#deactivate {
+	background-image: url(<%= asset_path 'activate.jpeg' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 15px;
+  position: relative;
+  text-align: center;
+  top: 85px;
+}
+</style>

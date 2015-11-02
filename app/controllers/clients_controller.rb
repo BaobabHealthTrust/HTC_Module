@@ -1,7 +1,7 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy,
                                     :add_to_unallocated, :remove_from_waiting_list,
-                                    :assign_to_counseling_room, :village]
+                                    :assign_to_counseling_room, :village, :confirm]
 
 	#skip_before_action :village
 
@@ -10,6 +10,8 @@ class ClientsController < ApplicationController
   end
 
   def show
+    
+      @task = next_task(@client)
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
 			@residence = PersonAddress.find_by_person_id(@client.id).address1
@@ -18,11 +20,41 @@ class ClientsController < ApplicationController
 			@status  = @client.current_state(current_date) 
 			@firststatus  = @client.first_state rescue "NaN"
 			@age = person.age(current_date)
-			
+      spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+      @relation = Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          @client.id, @client.id, spouse).first rescue []
+       @string = ""
+       if ! @relation.blank?
+           @relation = Client.find(@relation.person_a) if @relation.person_a != @client.id
+           @relation = Client.find(@relation.person_b) if @relation.person_b != @client.id rescue @relation
+           @string = "Partner: #{@relation.person.names.first.given_name rescue ''} #{@relation.person.names.first.family_name rescue ''}"
+       end
+         
+      @all_encounters = {}
+      state_encounters = ['IN WAITING', 'IN SESSION','Counseling',
+												'HIV Testing', 'Referral Consent Confirmation','ASSESSMENT',"UPDATE HIV STATUS",
+												'Appointment']
+      state_encounters.each{|encounter|
+        @all_encounters[encounter.upcase] = ""
+      }
+      ids = []
+		EncounterType.where("name IN (?)",state_encounters)
+								 .each do |e|
+										ids << e.id
+                    @all_encounters[e.name.upcase] = '#FF4040'
+									end
+
+	 Encounter.joins(:type).where("encounter_type IN (?) AND DATE(encounter_datetime)= ? 
+                          AND encounter.voided = 0 AND encounter.patient_id = ?", ids, current_date, person.person_id)
+                .each{|state|
+                  @all_encounters[state.name.upcase] = "#E0EEEE"
+                }
+      
 			render layout: false
   end
 
   def new
+
 		if ! params[:name_id].blank?
 				@names = PersonName.where("person_id = #{params[:name_id]} AND voided = 0")				
 				@names.each do |name|
@@ -35,13 +67,21 @@ class ClientsController < ApplicationController
 															creator: current_user.id)
 				redirect_to "/clients/#{params[:name_id]}" and return
 
-		elsif ! params[:gender].blank? and ! params[:dob].blank?
+    elsif ! params[:gender].blank? and ! params[:dob].blank?
+
 			current_number = 1
 			current = session[:datetime].to_date rescue Date.today
+    
+      if current.month >= 7
+         string = "#{current.year.to_s}"
+      else
+        string = "#{(current.year - 1).to_s}"
+      end
+
 			identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 			type = ClientIdentifier.find(:last, 
 																	 :conditions => ["identifier_type = ? AND identifier LIKE ?",
-																	  identifier_type, "%#{current.year.to_s}"])
+																	  identifier_type, "%#{string}"])
 			type = type.identifier.split("-")[0].to_i rescue 0
 			identifier = current_number + type
 			
@@ -65,24 +105,66 @@ class ClientsController < ApplicationController
 			end
 			
 			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
-			
+
 			@person = Person.create(gender: params[:gender], birthdate: birthdate,
 															birthdate_estimated: birthdate_estimated,
 															creator: current_user.id)
+
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
+
+      if !params[:firstname].blank? || !params[:surname].blank?
+        @new_name = PersonName.create(preferred: '0', person_id: @person.id,
+            given_name: params[:firstname], family_name: params[:surname],
+            creator: current_user.id) if @person
+      end
+
+      if !params[:address2].blank?
+        @address.address2 = params[:address2]
+      end
+
+      if !params[:ta].blank?
+        @address.county_district = params[:ta]
+      end
+
+      @address.save if @person
+
+      ["Occupation", "Cell Phone Number", "Office Phone Number", "Home Phone Number", "Landmark Or Plot Number"].each do |name|
+
+        next if params["#{name}"].blank?
+
+        uuid =  ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+        value = params["#{name}"]
+        type = PersonAttributeType.where("name = ?", name).first.id
+
+        next if type.blank?
+
+        attribute = PersonAttribute.create(
+            person_id: @person.id,
+            value: value,
+            creator: current_user.id,
+            person_attribute_type_id: type,
+            uuid: uuid
+        )
+
+      end if @person
+
 			@identifier = ClientIdentifier.create(identifier_type: identifier_type, 
 															patient_id: @client.id, 
-															identifier: "#{identifier}-#{current.year}", creator: current_user.id)
+															identifier: "#{identifier}-#{string}", creator: current_user.id)
 			
 			current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 			write_encounter("IN WAITING", @person, current)
-      #print_new_accession(@client.patient_id)
 		end
-		
+
+		session[:show_new_client_button] = false
 		redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
+  end
+
+  def search_couple
+
   end
 
   def edit
@@ -93,14 +175,180 @@ class ClientsController < ApplicationController
   end
   
 	def demographics
-		 		@client = Client.find(params[:client_id])
-		 		@residence = PersonAddress.find_by_person_id(@client.id).address1
+        @id = params[:client_id]
+        if params[:partner_id]
+          @id = params[:partner_id]
+        end
+		 		@client = Client.find(@id)
+        address = PersonAddress.find_by_person_id(@client.id)
+		 		@residence = address.address1
+        @ta = address.county_district
+        @home_district = address.address2
+         type = PersonAttributeType.where("name = 'occupation'").first.id rescue ""
+         @occupation = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+         type = PersonAttributeType.where("name = 'Home Phone Number'").first.id rescue ""
+         @home_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+          type = PersonAttributeType.where("name = 'Office Phone Number'").first.id rescue ""
+         @office_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+          type = PersonAttributeType.where("name = 'Cell Phone Number'").first.id rescue ""
+         @cell_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+         type = PersonAttributeType.where("name = 'Landmark Or Plot Number'").first.id rescue ""
+         @land_mark = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
 	end
 
   def demographics_edit
       	@client = Client.find(params[:id])
+        @occupation = ["Business", "Craftsman","Domestic worker","Driver","Farmer","Health worker",
+          "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
+          "Security guard","Soldier","Student","Teacher","Other","Unknown"]
+        @land_mark = ["School","Police","Church","Mosque","Borehole"]
+  end
+
+  def modify_field
+
+    client = Client.find(params[:id])
+    if  params[:home_phone_number] || params[:cell_phone_number] || params[:office_phone_number] || params[:occupation] || params[:land_mark]
+     uuid =  ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+        if params[:occupation]
+          value = params[:occupation]
+          name = "Occupation"
+        elsif params[:home_phone_number]
+          value = params[:home_phone_number]
+          name = "Home Phone Number"
+        elsif params[:office_phone_number]
+          value = params[:office_phone_number]
+          name = "Office Phone Number"
+        elsif params[:cell_phone_number]
+          value = params[:cell_phone_number]
+          name = "Cell Phone Number"
+       elsif params[:land_mark]
+          value = params[:land_mark]
+          name = "Landmark Or Plot Number"
+        end
+        
+         type = PersonAttributeType.where("name = ?", name).first.id
+         available = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", params[:id], type)
+         (available || []).each{|attribute|
+           attribute.voided = 1
+           attribute.save
+         }
+      attribute = PersonAttribute.create(person_id: params[:id],
+        value: value, creator: current_user.id,
+        person_attribute_type_id: type, uuid: uuid)
+
+    elsif params[:firstname] || params[:surname]
+      given_name = nil
+      family_name = nil
+      names = PersonName.where("person_id = #{params[:id]} AND voided = 0 ")
+
+      unless names.blank?
+        given_name = names.first.given_name
+        family_name = names.first.family_name
+      end
+
+			names.each do |name|
+					 name.voided = 1
+					 name.save!
+				end
+
+        given_name = params[:firstname] if params[:firstname]
+        family_name = params[:surname] if params[:surname]
+				new_name = PersonName.create(preferred: '0', person_id: params[:id],
+															given_name: given_name, family_name: family_name,
+															creator: current_user.id)
+        # raise new_name.to_yaml
+    elsif params[:gender] || params[:date_of_birth]
+        person = Person.find(params[:id])
+        gender = person.gender
+        birthdate = person.birthdate
+        gender = params[:gender] if params[:gender]
+        if params[:date_of_birth]
+            birthdate_estimated = false
+
+            birth_date = params[:date_of_birth].split("/")
+            birth_year = birth_date[2]
+            birth_month = birth_date[1]
+            birth_day = birth_date[0]
+
+            birthdate = params[:date_of_birth]
+
+            if birth_month == "?"
+                birthdate_estimated = true
+                birth_month = 7
+            end
+
+            if birth_day == "?"
+                birthdate_estimated = true
+                birth_day = 1
+            end
+
+            if birthdate_estimated == true
+              birthdate = "#{birth_day}/#{birth_month}/#{birth_year}"
+              person.birthdate_estimated = 1
+            end
+
+        end
+        person.gender = gender
+        person.birthdate = birthdate
+        person.save
+    elsif params[:ta] || params[:address1] || params[:address2]
+
+        addresses = PersonAddress.where("person_id = ?", params[:id])
+        address1 = nil
+        address2 = nil
+        county_district = nil
+
+        if ! addresses.blank?
+           if addresses.first.address2.blank? and addresses.first.county_district.blank?
+              addresses.first.address1 = params[:address1] if params[:address1]
+              addresses.first.address2 = params[:address2] if params[:address2]
+              addresses.first.county_district = params[:ta] if params[:ta]
+              addresses.first.save
+              redirect_to "/client_demographics?client_id=#{params[:id]}" and return
+           elsif
+             address1 = addresses.first.address1
+             address2 = addresses.first.address2
+           county_district = addresses.first.county_district
+
+             (addresses || []).each{|address|
+               address.voided = 1
+               address.save
+             }
+           end
+        end
+
+       address1 = params[:address1] if params[:address1]
+       address2 = params[:address2] if params[:address2]
+       county_district = params[:ta] if params[:ta]
+
+       new_address = PersonAddress.create(person_id: params[:id],
+                        address1: address1, address2: address2, county_district: county_district, creator: current_user.id)
+    end
+
+    if params[:request_url].blank?
+      redirect_to "/client_demographics?client_id=#{params[:id]}"
+    else
+      redirect_to params[:request_url]
+    end
   end
   
+  def status
+     @client = Client.find(params[:id])
+     if @client.partner_present == true #and ! session[:partner].blank?
+       #raise @task.to_yaml
+       @task = next_task(@client)
+        if @task["name"]== "Update Status"
+            @task["url"] = "/client_status/#{@client.patient_id}?config=couple"
+        end
+       redirect_to @task["url"] if ! encounter_done(@client.patient_id, "UPDATE HIV STATUS").blank?
+     end
+     @age = @client.person.age
+  end
+
+  def assessment
+    @client = Client.find(params[:id])
+  end
+
 	def counseling
 			@client = Client.find(params[:client_id])
       @protocol = []
@@ -115,15 +363,59 @@ class ClientsController < ApplicationController
       redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
-	def testing
+  def extended_testing
+      @client = Client.find(params[:id])
+      @kits, @remaining, @testing = Kit.kits_available(current_user)
+  end
+  
+  def testing
+  
+     @kits, @remaining, @testing = Kit.kits_available(current_user)
+     
+      current_date = (session[:datetime].to_date rescue Date.today)
   		@client = Client.find(params[:client_id])
+      type = EncounterType.find_by_name("HIV testing").encounter_type_id
+      result = ConceptName.where("name = 'Result of hiv test'").first.concept_id
+      obs =   Observation.where("concept_id = ? AND person_id = ? AND DATE(obs_datetime) <", result, params[:client_id], current_date).order(obs_datetime: :desc).first rescue []
+      last = obs.to_s.split(':')[1].squish rescue []
+      @last_date = 0
+      unless last.blank?
+         if (current_date.to_date.mjd - obs.obs_datetime.to_date.mjd) > 28 || last.to_s.match(/Inconclusive/i) || last.to_s.match(/Positive/i) || last.to_s.match(/Exposed Infant/i)
+             redirect_to  "/extended_testing/#{@client.id}" and return
+         end
+      end
+      concept = ConceptName.where("name = 'last HIV test'").first.concept_id
+      last_test = Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue []
+      unless last_test.blank?
+         if last_test.match(/Last Positive/i) || last_test.match(/Last Exposed Infant/i) || last_test.match(/Last Inconclusive/i)
+              redirect_to  "/extended_testing/#{@client.id}" and return
+         end
+      end
+    concept = ConceptName.where("name = 'Mother HIV status'").first.concept_id
+    @mother_status =  Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
+    concept = ConceptName.where("name = 'Client Risk Category'").first.concept_id
+    @risk = Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
+
+    unless @risk.blank?
+        if @risk.upcase =="AVD+ OR HIGH RISK"
+            @message = "#{@risk}<br>Advise re-test every 12 months".to_s.html_safe
+        elsif @risk.upcase == "HIGH RISK EVENT IN LAST 3 MONTHS"
+            @message = "#{@risk}<br>Check event in last 72 hours".to_s.html_safe
+        elsif @risk.upcase == "LOW RISK"
+            @message = "#{@risk}<br>Patient Negative".to_s.html_safe
+        else
+            @message = "#{@risk}<br>Re-test in 4 weeks to rule out New infection".to_s.html_safe
+        end
+    end
+       
   end
 	
 	def referral_consent
-			
+					@client = Client.find(params[:id])
 	end
 
   def appointment
+			@client = Client.find(params[:id])
   		today = (session[:datetime].to_date rescue Date.today)
   		@start_week_date = today - 1.week
   		@initial_date =  today + 1.day
@@ -144,7 +436,7 @@ class ClientsController < ApplicationController
 	end
 
 	def village
-      return if params[:search].blank?
+      #return if params[:search].blank?
 			location = Village.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
       "#{locs.name}"
@@ -153,7 +445,7 @@ class ClientsController < ApplicationController
 	end
 	
 	def first_name
-     return if params[:search].blank?
+     #return if params[:search].blank?
 			person = PersonName.where("given_name LIKE '%#{params[:search]}%'")
 			person = person.map do |locs|
       "#{locs.given_name}"
@@ -162,7 +454,7 @@ class ClientsController < ApplicationController
 	end
 
 	def last_name
-      return if params[:search].blank?
+      #return if params[:search].blank?
 			person = PersonName.where("family_name LIKE '%#{params[:search]}%'")
 			person = person.map do |locs|
       "#{locs.family_name}"
@@ -178,23 +470,53 @@ class ClientsController < ApplicationController
     client = Client.find(params[:id])
 		print_string = get_accession_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
-		#redirect_to '/locations'
   end
 
   def print_new_accession(client_id)
     client = Client.find(client_id)
 		print_string = get_accession_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{client_id}#{rand(10000)}.lbl", :disposition => "inline")
-		#redirect_to '/locations'
   end
 
   def print_summary
     client = Client.find(params[:id])
 		print_string = get_summary_label(client)
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
-		#redirect_to '/locations'
   end
 
+  def print_confirmation
+    client = Client.find(params[:id])
+		print_string = get_confirmation_label(client)
+    send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
+  end
+
+    def get_confirmation_label(client)
+    test_type = ConceptName.find_by_name("HIV TEST TYPE").concept_id
+    confirmed = Observation.where("concept_id = ? AND person_id = ?", test_type, client.patient_id).order("encounter_id DESC").first rescue []
+
+     label = ZebraPrinter::StandardLabel.new
+     label.draw_barcode(300,30,0,1,4,8,50,false,"#{client.accession_number}")
+     label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
+     label.draw_line(25,120,800,5)
+    if ! confirmed.blank?
+          test_result = ConceptName.find_by_name("RESULT OF HIV TEST").concept_id
+          result = Observation.where("encounter_id = ? AND concept_id = ?", confirmed.encounter_id, test_result).first.to_s.split(':')[1].squish
+          result = "Test Result : #{result}"
+          test_location = "Facility name: #{Settings.facility_name}"
+          date = "Date: #{Date.today.strftime('%d-%m-%Y')}"
+          issued_date = "Issued On: #{(session[:datetime].to_date  rescue Date.today).strftime('%d-%m-%Y')}"
+          test_date = "Visit Date: #{confirmed.obs_datetime.strftime('%d/%m/%Y') rescue ''}"
+          user = "Confirmed by #{User.find(confirmed.creator).username}"
+  
+          label.draw_text(test_location,75, 130, 0, 3, 1, 1, false)        
+          label.draw_text(result,75, 160, 0, 3, 1, 1, false)
+          label.draw_text(user,75, 190, 0, 3, 1, 1, false)
+          label.draw_text(test_date,75, 220, 0, 3, 1, 1, false)
+    else
+       label.draw_text("Never Tested",75, 130, 0, 3, 1, 1, false)
+    end
+      label.print(1)
+    end
     def get_summary_label(client)
     current = session[:datetime].to_date rescue Date.today
     return unless client.patient_id
@@ -243,6 +565,11 @@ class ClientsController < ApplicationController
 	def current_visit
 		current_date = session[:datetime].to_date rescue Date.today
 		@client = Client.find(params[:client_id])
+    @show_name = " For #{@client.name.humanize}" if @client.partner_present == true
+    @task = next_task(@client)
+    if @task["name"]== "Update Status"
+       @task["url"] = "/client_status/#{@client.patient_id}?config=couple"
+    end
 		@status  = @client.current_state(current_date) rescue "NaN"
 		@firststatus  = @client.first_state rescue []
 		@finalstatus = @client.final_state
@@ -281,6 +608,7 @@ class ClientsController < ApplicationController
 	
   def previous_visit
     @previous_visits  = get_previous_encounters(params[:client_id])
+    render layout: false
   end
 
   def create
@@ -306,10 +634,17 @@ class ClientsController < ApplicationController
   end
 
 	def search
-			 
+			 session[:show_new_client_button] = true
+       @occupation = ["Business", "Craftsman","Domestic worker","Driver","Farmer","Health worker",
+                      "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
+                      "Security guard","Soldier","Student","Teacher","Other","Unknown"]
+       @land_mark = ["School","Police","Church","Mosque","Borehole"]
+       @reception_demographics = Settings.full_demographics_at_reception
 	end
 	
 	def search_results
+
+		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 
@@ -322,26 +657,69 @@ class ClientsController < ApplicationController
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
 
 				if @accession.blank?
-					flash[:notice] = "Invalid accession number...."
-					redirect_to "/search" and return
+					flash[:notice] = "Invalid accession number..."
+					redirect_to "/htcs" and return
 				end
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
-				
+
 				if params[:add_to_session] =="true" || !params[:barcode].blank?
-					if !@scanned.current_state(current_date).blank?
+
+					if !@scanned.current_state(current_date).blank? && !@current_location.name.match(/reception/i)
 						if @scanned.current_state(current_date).name == "IN WAITING"
 						 assign_to_counseling_room(@scanned)
 						end
-					else
+          else
+            redirect_to "/clients/confirm/#{@accession.patient_id}" and return if @current_location.name.match(/reception/i)
+
+            flash[:notice] = "Client not on waiting list"
 						redirect_to "/search" and return
 					end
 				end
+
+
+
+				if params[:client]
+           session[:partner] = @scanned.patient_id
+           
+           session[:client_id] = params[:client]
+           relationship_type = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+           @relation = Relationship.where("(person_a = ? AND person_b = ?)
+                                                                  OR (person_a = ? AND person_b = ?)",
+                                                                  params[:client], @scanned.patient_id, @scanned.patient_id, 
+                                                                  params[:client]).order(relationship_id: :desc).first
+            if @relation.blank?
+               @relation = Relationship.create(person_a: params[:client], person_b: @scanned.patient_id,
+                                  relationship: relationship_type, creator: current_user.id)
+            end
+            concept_id = ConceptName.find_by_name("partner or spouse").concept_id
+            answer =  ConceptName.find_by_name("yes").concept_id
+            p_session = encounter_done(@scanned.patient_id, 'IN SESSION')
+            if ! p_session.blank?
+                encounter = p_session.first
+            else
+                encounter = write_encounter("IN SESSION", @scanned)
+            end
+            c_session = encounter_done(Client.find(params[:client]), 'IN SESSION').first rescue []
+            if c_session.blank?
+               c_session = write_encounter("IN SESSION", Client.find(params[:client]))
+            end
+            
+            obs = Observation.create(person_id: encounter.patient_id, concept_id: concept_id,encounter_id: encounter.encounter_id,
+                      obs_datetime: encounter.encounter_datetime,
+                      creator: current_user.id, value_coded: answer)
+             obs = Observation.create(person_id: c_session.patient_id, concept_id: concept_id,encounter_id: c_session.encounter_id,
+                      obs_datetime: c_session.encounter_datetime,
+                      creator: current_user.id, value_coded: answer)
+            
+           redirect_to "/couple/status?client_id=#{params[:client]}" and return
+        else
+           redirect_to "/client_demographics?client_id=#{@scanned.patient_id}" and return
+        end
 				
-				redirect_to "/clients/#{@scanned.patient_id}" and return
 		 else
 		 		
-			
+
 			birthdate_estimated = false
 
 			birth_date = params[:date_of_birth].split("/")
@@ -370,7 +748,7 @@ class ClientsController < ApplicationController
 											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
 											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
 											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
-				
+
 				sp = ""
 				@side_panel_date = ""
 				@client_list = ""
@@ -383,6 +761,7 @@ class ClientsController < ApplicationController
 					gender = client.person.gender
 					birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
 					residence = PersonAddress.find_by_person_id(id).address1
+
 					status = client.current_state(current_date).name rescue ""
 					last_visit = client.encounters.last.encounter_datetime.to_date
 																				.to_formatted_s(:rfc822) rescue nil
@@ -400,11 +779,11 @@ class ClientsController < ApplicationController
 					
 					@clients_info << { id: id, accession: accession,
 														 birth: birth, gender: gender, residence: residence}
-					
+
 					@side_panel_date += sp + "#{id} : { id: #{id},
 											accession_number: '#{accession}', status: '#{status}',
 											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
-											birthDate: '#{birth}', residence: '#{residence.humanize}',
+											birthDate: '#{birth}', residence: '#{residence}',
 											days_since_last_visit: '#{days_since_last_visit}',
 											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
 					sp = ','
@@ -413,7 +792,36 @@ class ClientsController < ApplicationController
      end
      render layout: false
 	end
-	
+
+
+  def confirm
+
+    if request.post?
+      #Add the confirmed client to waiting list
+      add_to_unallocated
+    end
+
+    current_date = session[:datetime].to_date rescue Date.today.to_date
+    @reception_demographics = Settings.full_demographics_at_reception
+    @current_state = @client.current_state(current_date).name rescue nil
+
+    @id = @client.id
+    address = PersonAddress.find_by_person_id(@client.id)
+    @residence = address.address1
+    @ta = address.county_district
+    @home_district = address.address2
+    type = PersonAttributeType.where("name = 'occupation'").first.id rescue ""
+    @occupation = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Home Phone Number'").first.id rescue ""
+    @home_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Office Phone Number'").first.id rescue ""
+    @office_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Cell Phone Number'").first.id rescue ""
+    @cell_phone_number = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+    type = PersonAttributeType.where("name = 'Landmark Or Plot Number'").first.id rescue ""
+    @land_mark = PersonAttribute.where("person_id = ? AND person_attribute_type_id =?", @id, type).first.value rescue ""
+  end
+
 	def waiting_list
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
      encounter_type_id = EncounterType.find_by_name('IN WAITING').id
@@ -441,12 +849,20 @@ class ClientsController < ApplicationController
 		 has_booking = false
 		 appointment_date = c.has_booking.value_datetime rescue nil
 
+		 if appointment_date.blank?
+			appointment_date = c.latest_booking.value_datetime rescue nil
+		end
+		
 		 if !appointment_date.blank?
 		 	has_booking = true
-		 	appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+		 end
+
+		 if appointment_date.blank?
+			appointment_date = c.latedst_booking.value_datetime rescue nil
+			has_booking = true if !appointment_date.blank?
 		 end
 			
-     	@waiting << { id: c.id, accession_number: c.accession_number,
+     @waiting << { id: c.id, accession_number: c.accession_number,
      							  age: c.person.age, gender: c.person.gender,
      							  datetime: datetime, date: date, time: time,
      							  birthDate: birth, address: residence,
@@ -455,25 +871,36 @@ class ClientsController < ApplicationController
      							 }
      end
      
-     @waiting = @waiting.sort{|a, b| a[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime <=> b[:datetime].strftime("%Y-%m-%d %H:%M:%S").to_datetime}
+     #raise @waiting.to_json 
+     @waiting = @waiting.sort!{ |b,a| (a[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) <=> (b[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) } rescue []
      
      sp = ""
      @w = ""
      @side_panel_date = ""
      
-			@waiting.each do |i|
+     order = 0
+     
+		 @waiting.each do |i|
+				appointment_date = i[:appointment_date]
+				if !appointment_date.blank?
+					appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+				end
+				
 				@w += sp + "{ id: #{i[:id]}, accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', 
-										time: '#{i[:time]}', birthDate: '#{i[:birthDate]}' }"
+										time: '#{i[:time]}', birthDate: '#{i[:birthDate]}',
+										has_booking: #{i[:has_booking]}, appointment_date: '#{appointment_date}'}"
 				
-				@side_panel_date += sp + "#{i[:id]} : { id: #{i[:id]},
+
+				@side_panel_date += sp + "#{i[:id]} : {order: #{order}, id: #{i[:id]},
 										accession_number: '#{i[:accession_number]}',
 										age: #{i[:age]}, gender: '#{i[:gender]}',
 										datetime: '#{i[:datetime].to_s}', date: '#{i[:date]}', time: '#{i[:time]}',
-										birthDate: '#{i[:birthDate]}', residence: '#{i[:address].humanize}',
+										birthDate: '#{i[:birthDate]}', residence: '#{(i[:address] || "").humanize}',
 										days_since_last_visit: '#{i[:days_since_last_visit]}',
-										has_booking: #{i[:has_booking]}, appointment_date: '#{i[:appointment_date]}' }"
+										has_booking: #{i[:has_booking]}, appointment_date: '#{appointment_date}' }"
+				order+=1
 				sp = ','
 			end
 

@@ -1,0 +1,151 @@
+<html>
+	<head>
+		<script>
+			var cancelDestination = "clients/<%= params[:client_id] %>?tab=task";
+                        function __$(id){
+                            return document.getElementById(id);
+                      }
+
+                        function verify(){
+                         if (btnNext){
+                              if(btnNext.innerHTML.toLowerCase() == "finish"){
+                                         btnNext.onclick = function(){
+                                                  confirm()
+                                                  clearTimeout()
+                                      };
+                              }
+                              else {
+                                         btnNext.onclick = function(){
+
+                                        var pos = parseInt(this.getAttribute("pos")) + 1;
+
+                                        var section = parseInt(this.getAttribute("section"));
+
+                                        navigateTo(pos, section);
+
+                                      };
+                              }
+                         }
+                            setTimeout("verify()", 50);
+                        }
+
+               function confirm(){
+                     var ele = document.getElementById('cover')
+                      ele.style.display = "inline";
+                      document.body.appendChild(ele);
+
+                      var ele = document.getElementById('popup')
+                      ele.style.display = "inline";
+                      html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+                      html += "<div id='text'>Continue With Testing?</div></div><div style='display:table-row;width:100%;'>"
+                      html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="deny()">No</button></div>'
+                      html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Yes</button></div>'
+                      html += "</div></div></div></div></div>"
+                      ele.innerHTML =  html;
+                      document.body.appendChild(ele);
+                  }
+
+              function allow(){
+                __$("continue_testing").value = "Yes"
+                document.forms[0].submit();
+              }
+
+              function deny(){
+                 __$("continue_testing").value = "No"
+                   document.forms[0].submit();
+              }
+
+              function reset(){
+                            ele = document.getElementById('cover')
+                            ele.style.display = "none";
+                            ele = document.getElementById('popup')
+                            ele.style.display = "none";
+                        }
+
+		</script>
+            <style>
+
+  </style>
+	</head>
+<body  onload="verify()">
+	<form action='/encounters/new/<%= params[:client_id] %>' method='post'>
+	<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+	<input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
+        <input type="hidden" value="" id="continue_testing" name="observations[][value_coded_or_text]"/>
+        <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
+        <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+
+		<% x = 0
+		y = 1
+		set = 0
+		(@protocol || []).each do |protocol|
+			if x == 0
+			set = 0 %>
+<fieldset>
+<legend>Counseling Protocols Page <%= y %></legend>
+<% end %>
+	<% if protocol.data_type.upcase == "BOOLEAN" %>
+	   <label for="obs[<%= protocol.id %>]"> <%= protocol.name %> </label>
+	   <label for="<%= protocol.id %>.1">Yes</label>
+	   <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.1" value="YES">
+	   <label for="<%= protocol.id %>.2">No</label>
+	   <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.2" value="NO">
+	   <label for="<%= protocol.id %>.3">Unknown</label>
+	   <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.3" value="Unknown">
+	   <br />
+  <% elsif protocol.data_type.upcase == "NUMBER" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="number" />
+  <% elsif protocol.data_type.upcase == "DATETIME" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="date" />
+	<% elsif protocol.data_type.upcase == "TIME" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" fieldtype="number" />
+	<% elsif protocol.data_type.upcase == "TEXT" %>
+	   <label for="<%= protocol.id %>"> <%= protocol.name %></label>
+	   <input name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" type="text" value="" />
+  <% elsif protocol.data_type.upcase == "LIST" %>
+       <% if protocol.list_type.upcase == "RESIDENCE" %>
+				<br />
+				<label for="<%= protocol.id %>"><%= protocol.name %></label>
+			  <input type="text" id="<%= protocol.id %>" name="obs[<%= protocol.id %>]"
+					ajaxURL="/locations/village"/>
+
+       <% elsif protocol.list_type.upcase == "GENDER"   %>
+					<br />
+					<label for="<%= protocol.id %>"> <%= protocol.name %> </label>
+					<select name="obs[<%= protocol.id %>]" id="<%= protocol.id %>" >
+						<option></option>
+						<option value="Female">Female</option>
+						<option value="Male">Male</option>
+					</select>
+        <% elsif protocol.list_type.upcase == "HEALTH FACILITIES"  %>
+				<br />
+				<label for="<%= protocol.id %>"><%= protocol.name %></label>
+			  <input type="text" id="<%= protocol.id %>" name="obs[<%= protocol.id %>]"
+							ajaxURL="/clients/locations/<%= params[:client_id] %>"/>
+        <% end %>
+	<% end %>
+<% if x == 2
+x = 0
+set = 1
+y = y + 1
+%>
+</fieldset>
+<% else
+x = x + 1
+end %>
+<% end %>
+	</fieldset>
+	<button type='submit'>Finish</button>
+
+	</form>
+</body>
+</html>
+  <div id="cover" align="center">
+  </div>
+  <div id="popup" style="display:none">
+  </div>

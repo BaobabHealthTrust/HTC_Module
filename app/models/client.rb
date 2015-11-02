@@ -36,7 +36,7 @@ class Client < ActiveRecord::Base
 		
 		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','ASSESSMENT',"UPDATE HIV STATUS", "APPOINTMENT"]
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
 										ids << e.id
@@ -53,7 +53,7 @@ class Client < ActiveRecord::Base
 
 		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','ASSESSMENT',"UPDATE HIV STATUS", "APPOINTMENT"]
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
 										ids << e.id
@@ -70,7 +70,7 @@ class Client < ActiveRecord::Base
 
 		state_encounters = ['IN WAITING', 'IN SESSION',
 												'HIV Testing', 'Referral Consent Confirmation',
-												'Counseling']
+												'Counseling','ASSESSMENT',"UPDATE HIV STATUS", "APPOINTMENT"]
 		EncounterType.where("name IN (?)",state_encounters)
 								 .each do |e|
 										ids << e.id
@@ -118,4 +118,45 @@ class Client < ActiveRecord::Base
 					WHERE last_appointment.value_datetime >= last_encounter.encounter_datetime
 		").first rescue nil
 	end
+	
+	def latest_booking
+		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
+		Observation.find_by_sql("
+			SELECT person_id, concept_id, MAX(value_datetime) AS value_datetime
+				FROM obs
+				WHERE person_id = #{self.id} AND concept_id=#{concept_id} AND voided=0
+				GROUP BY person_id
+		").first rescue nil
+	end
+
+  def get_recent_partner
+       spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+       Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          self.id, self.id, spouse).order(relationship_id: :desc).first
+  end
+
+  def get_all_partners
+       spouse = RelationshipType.where("a_is_to_b = 'spouse/partner'").first.relationship_type_id
+       client = []
+        Relationship.where("person_a = ? OR person_b = ? AND relationship = ?",
+                          self.id, self.id, spouse).each {|p|
+                          client << Client.find(p.person_a) if p.person_a != self.id
+                          client << Client.find(p.person_b) if p.person_b != self.id }
+      return client
+  end
+
+  def partner_present
+    partner = ActionView::Base.full_sanitizer.sanitize(encounter_done(self.id, "IN SESSION").first.to_s.upcase) rescue ""
+    present = false
+    if partner.match(/PARTNER OR SPOUSE/i)
+       present = true
+     end
+     return present
+  end
+
+    def encounter_done(patient_id, encounter)
+      current_date = session[:datetime].to_date rescue Date.today
+      type = EncounterType.where("name = ?", encounter).first.encounter_type_id
+      return Encounter.where("patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?", patient_id, type, current_date  ).order("encounter_datetime desc")
+  end
 end

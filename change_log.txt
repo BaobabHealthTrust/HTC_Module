@@ -1,0 +1,19 @@
+1. Entering of testkits upon delivery
+2. Entering of serum upon delivery
+3. Distributing testkits to councillors
+4. Recording damaged testkits (those not yet given to councillor).
+5. Recording damaged testkits by councillor
+6. Performing testkit Quality control tests
+7. Recording temperature (Button on user dashboard)
+8. Checking stock levels by user
+10. Added counsellor proficiency tests
+11. Added supervior test creation
+12. Added cousellor test results mapping
+13. Activated testing apon availability of test kits
+14. Added extended testing feature
+15. Added couples testing
+16. added HTC workflow for automated next task
+17. separated dashcoards for couples and single client
+18. Added the inventory stock report
+19. Removed Changes_log.txt and added change_log.txt
+20. Implemented temperature changes chart => reports => temperature changes

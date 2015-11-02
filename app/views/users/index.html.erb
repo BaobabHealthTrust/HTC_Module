@@ -1,7 +1,7 @@
 <html>
 	<head>
 	<script>
-		var cancelDestination = "/htcs";
+		var cancelDestination = "/htcs?tab=admin";
 	</script>
 		<%= stylesheet_link_tag 'panel' %>
 	</head>
@@ -121,29 +121,31 @@
 								
 				btnNext.style.display = "inline-table";
 				
-				var edit_btn  = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+				var edit_btn  = '<a href="#" id="edit"' +
 												'onmousedown="edit_user()"' +
-												' class="button blue" pos="0" section="0">Edit</button>';
+												' class="blue" pos="0" section="0"><span class="txt">Edit</span></a>';
 										 
-				var del = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
-						 'onmousedown="del()"' +
-						 ' class="button red" pos="0" section="0">Delete</button>';
+				var del =  '<a href="#" id="delete"' +
+												'onmousedown="del()"' +
+												' class="blue" pos="0" section="0"><span class="txt">Delete</span></a>';
 				
 				if (obj.retired == false) {
 					vdtxt = "Deactivate";
-					btnClass = "red";
+					btnClass = "blue";
+					btnId = "deactivate";
 					stts = 1;
 				} else {
 					vdtxt = "Activate";
-					btnClass = "green";
+					btnClass = "blue";
+					btnId = "activate";
 					stts = 0
 				}
 				
-				vdBtn = '<button style="margin: 3px; width: 250px; font-size: 24px;"' +
+				vdBtn = '<a href="#" id="' + btnId + '"' +
 								 'onmousedown="vd('+ stts +')"' +
-								 ' class="button ' + btnClass + '" pos="0" section="0">' +
+								 ' class="' + btnClass + '" pos="0" section="0"><span class="txt">' +
 								 		vdtxt +
-								 '</button>';
+								 '</span></a>';
 
 				if (<%= session[:user_id] %> == this.value) {
 					del = "";
@@ -194,4 +196,41 @@
 		}
 	</script>
 </html>
+<style>
+   .blue {
+    border-radius: 35px;
+    display: block;
+    float: left;
+    height: 70px;
+    margin-right: 35px;
+    vertical-align: baseline;
+    width: 70px;
+    background-repeat: no-repeat;
+    background-size: 60px 60px;
+}
+#edit {
+	background-image: url(<%= asset_path 'edit_protocol.png' %>);
+	background-size: cover;
+}
+#delete {
+	background-image: url(<%= asset_path 'delete_user.jpeg' %>);
+	background-size: cover;
+}
 
+#activate {
+	background-image: url(<%= asset_path 'deactive.jpeg' %>);
+	background-size: cover;
+}
+#deactivate {
+	background-image: url(<%= asset_path 'activate.jpeg' %>);
+	background-size: cover;
+}
+.txt {
+  color: #000000;
+  display: block;
+  font-size: 13px;
+  position: relative;
+  text-align: center;
+  top: 80px;
+}
+</style>

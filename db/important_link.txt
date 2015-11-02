@@ -6,10 +6,12 @@ virtualBox				http://www.n00bsonubuntu.net/content/install-virtualbox-ubuntu-14-
 rails 3.2.17			http://guides.rubyonrails.org/v3.2.17/active_record_querying.html
 icons							http://findicons.com/search/clinic
 icons							http://findicons.com/search/location/4
+ 
+
+----Creating 1.9 metadata
+mysqldump -u root -p openmrs  > db/openmrs_metadata_1_9.sql --tables concept concept_answer concept_class concept_complex concept_datatype concept_description concept_map_type concept_name concept_name_tag concept_name_tag_map concept_numeric concept_proposal concept_proposal_tag_map concept_reference_map concept_reference_source concept_reference_term concept_reference_term_map concept_set concept_set_derived concept_state_conversion concept_stop_word concept_synonym concept_word drug location location_tag location_tag_map order_type patient_identifier_type person_attribute_type privilege program program_workflow program_workflow_state provider_attribute_type relationship_type role visit_attribute_type visit_type encounter_type encounter_role encounter_provider
 
 
-mysqldump -u root -p openmrs concept concept_answer concept_class concept_complex concept_datatype concept_description concept_description concept_name concept_name_tag concept_name_tag_map concept_numeric concept_proposal concept_proposal_tag_map concept_reference_map concept_reference_term concept_reference_term_map concept_set concept_set_derived concept_state_conversion concept_stop_word concept_synonym concept_word > concept.sql 
 
 
-mysqldump -u root -p openmrs  > db/1_9.sql --tables concept concept_answer concept_class concept_complex concept_datatype concept_description concept_map_type concept_name concept_name_tag concept_name_tag_map concept_numeric concept_proposal concept_proposal_tag_map concept_reference_map concept_reference_source concept_reference_term concept_reference_term_map concept_set concept_set_derived concept_state_conversion concept_stop_word concept_synonym concept_word drug location order_type patient_identifier_type person_attribute_type privilege program program_workflow program_workflow_state provider_attribute_type relationship_type role visit_attribute_type visit_type
 
