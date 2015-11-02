@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <script>
+      var cancelDestination = "/clients/<%= @client.id %>";
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+      function processMultipleElements(){
+        testReasons = document.getElementById('textFortest_reason').value;
+        form = document.createElement('form');
+        document.getElementsByTagName('body')[0].appendChild(form);
+        form.action ='/hiv_viral_load';
+        form.method='POST'
+        createInput(form, 'hidden', 'test_reasons', testReasons)
+        createInput(form, 'hidden', 'authenticity_token', '<%= form_authenticity_token() %>')
+        createInput(form, 'hidden', 'id', '<%= params[:id] %>');
+
+
+        type_of_sample = document.getElementById('textFortype_of_sample').value;
+        createInput(form, 'hidden', 'type_of_sample', type_of_sample);
+        form.submit();
+      }
+
+      function createInput(form, type, name, value){
+        input = document.createElement('input');
+        input.type = type
+        input.value = value
+        input.name = name
+        form.appendChild(input)
+      }
+
+    </script>
+  </head>
+  <body>
+    <form action='/hiv_viral_load' method='post' id="mybody">
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+      <input type='hidden' name='id' value=<%= @client.id %> />
+
+      <input type='hidden' id="test_reasons" name='test_reasons' />
+
+      <fieldset >
+        <legend>HIV Viral Load</legend>
+        <label for="test_reason"> Reason for Test (Viral Load)</label>
+        <select   id="test_reason" name="test_reason[]" multiple="true">
+          <option></option>
+          <option value="Routine">Routine</option>
+          <option value="Targeted">Targeted</option>
+          <option value="Confirmatory">Confirmatory (2nd VL test)</option>
+        </select>
+        <br />
+        <label for="type_of_sample"> Type of Sample</label>
+        <select   id="type_of_sample" name="type_of_sample">
+          <option></option>
+          <option value="DBS (Using capillary tube)">DBS (Using capillary tube)</option>
+          <option value="DBS (free drop to filter paper)">DBS (free drop to filter paper)</option>
+          <option value="Plasma">Plasma</option>
+        </select>
+      </fieldset>
+      <%= submit_tag "Finish" %>
+    </form>
+  </body>
+  <script>
+    function setAttributes(){
+      if(!incomplete){
+        btnNext.onclick = function(){
+
+        }
+
+        btnNext.onmousedown = function(){
+          processMultipleElements();
+        }
+      }
+    }
+    window.setInterval("setAttributes();", 350);
+  </script>
+</html>

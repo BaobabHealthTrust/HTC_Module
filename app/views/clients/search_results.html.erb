@@ -139,55 +139,33 @@
 				    var button = '<a href="#" id="add" ' +
 				    						 'onmousedown="add_to_waiting_list(this)"' +
 				    						 ' class="blue" pos="0" section="0"><span class="txt">Add to waiting list</span></a>';
-                        s += "<div class = 'list-table'>"
-						s += "<div class = 'row'><span class='d dL'> Accession Number</span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.accession_number  + "</span></div>";
 
-								 
-						s += "<div class = 'row'><span class='d dL'> Gender </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.gender  + "</span></div>";
+                        s += "<table class = 'list-table'>"
+                        s += addString("Accession Number", obj.accession_number );
+                        s += addString("Gender", obj.gender );
+                        s += addString("Age", obj.age );
+                        s += addString("Date of Birth", obj.birthDate );
+                        s += addString("Residence", obj.residence );
+                        s += addString("Last Visit", obj.last_visit );
 
-						s += "<div class = 'row'><span class='d dL'> Date of Birth </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.birthDate  + "</span></div>";
-								 
-						s += "<div class = 'row'><span class='d dL'> Age </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.age  + "</span></div>";
 
-						s += "<div class = 'row'><span class='d dL'> Residence </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.residence  + "</span></div>";
-								 
-						s += "<div class = 'row'><span class='d dL'> Last Visit </span>" +
-								 "<span class='d dC'> : </span>" +
-								 "<span class='d dR'>" + obj.last_visit  + "</span></div>";
-						
 						if (obj.has_booking) {
-							s += "<div class = 'row'><span class='d dL' style='color:red'> Booking </span>" +
-									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + obj.appointment_date  + "</span></div>";
+                            s += addString("Booking", obj.appointment_date, (obj.days_since_last_visit  + " day(s)") );
 						}
 						
 						if (parseInt(obj.days_since_last_visit) > 0) {
-							s += "<div class = 'row'><span class='d dL'> Period Since Last Visit </span>" +
-									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span></div>";
+                            s += addString("Period Since Last Visit", obj.last_visit );
 						}
 
 						var accession_number =  '<a href="#" id="print" ' +
 				    						 'onmousedown="printAccession(' + obj.id + ')"' +
 				    						 ' class="blue" pos="0" section="0"><span class="txt">Accession</span></a>';
 						if (obj.status.trim()=="") {
-							s+= "</div>";
+							s+= "</table>";
 							s +=  button + accession_number;
 						}else {
-							s += "<div class = 'row'><span class='d dL'> Work-flow Status </span>" +
-									 "<span class='d dC'> : </span>" +
-									 "<span class='d dR'>" + humanize(obj.status.toLowerCase())  + "</span></div>";
-                            s += "</div>";
+                            s += addString("Work-flow Status", (humanize(obj.status.toLowerCase())) );
+                            s += "</table>";
 			        s += accession_number;
 						}
 						
@@ -209,7 +187,18 @@
 		if (__$('ul1')) {
 			__$('ul1').children[0].onmousedown();
 		}
-                
+
+    function addString(label, value){
+        if (!value)
+            value = "&nbsp";
+
+        return ("<tr>" +
+                    "<td style='border: 1px dotted lightgray; color: rgb(50, 50, 50); width: 40%; font-size: 1.2em; font-weight: bold;padding: 10px;'> " + label + "</td>" +
+                    "<td style='border: 1px dotted lightgray;width: 40%; font-size: 1.3em; padding: 10px;font-style: italic;'>" + value + "</td>" +
+               "</tr>");
+
+    }
+
     function humanize(string){
      return string.replace(/_/g, ' ')
             .replace(/(\w+)/g, function(match) {
@@ -257,16 +246,8 @@
   top: 85px;
 }
 
-.row {
-    display: table-row;
+.list-table{
+   width: 100%;
 }
-
- .d{
-     display: table-cell;
- }
-  .list-table{
-      display: table;
-      width: 50%;
-  }
 
 </style>

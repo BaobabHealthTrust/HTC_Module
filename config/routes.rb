@@ -70,6 +70,37 @@ HTCModule::Application.routes.draw do
   get "client_status/:id" => "clients#status"
 	get "client_counseling" => "clients#counseling"
 	post "client_counseling" => "clients#counseling"
+
+  get "early_infant_diagnosis/:id" => "clients#early_infant_diagnosis"
+  post "early_infant_diagnosis" => "clients#early_infant_diagnosis"
+  get "early_infant_diagnosis_menu/:id" => "clients#early_infant_diagnosis_menu"
+  post "early_infant_diagnosis_menu/" => "clients#early_infant_diagnosis_menu"
+  get "early_infant_diagnosis_results/:id" => "clients#early_infant_diagnosis_results"
+  post "early_infant_diagnosis_results/" => "clients#early_infant_diagnosis_results"
+
+  get "eid_care_giver/:id" => "clients#eid_care_giver"
+  post "eid_care_giver/" => "clients#eid_care_giver"
+
+  get "find_register_caregiver/:id" => "clients#find_register_caregiver"
+  post "find_register_caregiver/" => "clients#find_register_caregiver"
+
+  get "care_giver_search_results/" => "clients#care_giver_search_results"
+  post "care_giver_search_results/" => "clients#care_giver_search_results"
+
+  get "hiv_viral_load/:id" => "clients#hiv_viral_load"
+  get "hiv_viral_load_menu/:id" => "clients#hiv_viral_load_menu"
+  post "hiv_viral_load_menu/" => "clients#hiv_viral_load_menu"
+  post "hiv_viral_load" => "clients#hiv_viral_load"
+  get "hiv_viral_load_results/:id" => "clients#hiv_viral_load_results"
+  post "hiv_viral_load_results/" => "clients#hiv_viral_load_results"
+
+  get "create_care_giver/" => "clients#create_care_giver"
+  post "create_care_giver/" => "clients#create_care_giver"
+
+  post "scan_caregiver/" => "clients#scan_caregiver"
+
+  get "select_caregiver/" => "clients#select_caregiver"
+
 	post "show_client" => "clients#show"
 
 	get "protocols" => "admins#protocols"

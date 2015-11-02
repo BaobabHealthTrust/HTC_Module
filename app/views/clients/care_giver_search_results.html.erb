@@ -1,0 +1,341 @@
+<html>
+  <head>
+    <style>
+      #popup {
+        -moz-user-select: none;
+        background-color: #FEEFB3;
+        border: 4px solid #C6C6C6;
+        border-radius: 15px 15px 15px 15px;
+        color: #9F6000;
+        font-size: 28px;
+        height: 165px;
+        left: 40%;
+        padding: 5px;
+        position: absolute;
+        text-align: center;
+        top: 2%;
+        width: 319px;
+        z-index: 991;
+      }
+    </style>
+    <script>
+      var cancelDestination = "#";
+      var careGiveDestination = "#";
+
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+      function doLogin(id){
+
+        if(__$(id) && __$(id).value.trim().match(/\$/)){
+
+          __$(id).value =  __$(id).value.trim().replace(/\$/, "");
+
+          clearTimeout(id)
+          document.forms[0].submit();
+
+          return;
+        }
+
+        setTimeout("doLogin('" + id + "')", 500);
+      }
+
+      function createNewCaregiver(){
+        clientId = '<%= @client_id %>';
+        first_name = '<%= @first_name %>';
+        gender = '<%= @gender %>';
+        last_name = '<%= @last_name %>';
+
+        data = "client_id=" + clientId + '&first_name=' + first_name + '&gender=' + gender + '&last_name=' + last_name;
+        url = '/create_care_giver?' + data;
+        window.location = url;
+      }
+
+      function selectGuardian(guardianId){
+        clientId = '<%= params[:client_id] %>';
+        window.location = '/select_caregiver?client_id=' + clientId + '&guardian_id=' + guardianId;
+      }
+      
+    </script>
+    <style>
+      #stage, #btn3, #btn2, #btn1{
+        display: none ! important;
+      }
+      #buttons{
+        width:10% ! important;
+      }
+      #popupkeyboard{
+        height: 255px ! important;
+      }
+
+      #findButton{
+        width: 100%;
+        margin-right: -100% !important;
+
+      }
+      #findButton button{
+        left: 40%;
+
+      }
+
+      .btn-primary {
+        background-color: #006dcc;
+        background-image: linear-gradient(to bottom, #08c, #04c);
+        background-repeat: repeat-x;
+        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+        color: #fff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        text-align: center;
+        border-style: solid;
+        border-width: 1px;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+        line-height: 35px;
+      }
+
+
+
+      #stock{
+        position: absolute;
+        width: 95%;
+        height: 70%;
+        top: 10%;
+        z-index: 991;
+        left: 1.5%;
+        border: 1px solid black;
+      }
+
+      .table_header{
+        border-radius: 15px 15px 0px 0px;
+        background-color: white;
+        font-size: 18px;
+        font-family: "Rockwell Extra Bold", "Rockwell Bold", monospace;
+        font-weight: bold;
+      }
+
+      .scrollit{
+        overflow:auto;
+        height:444px;
+      }
+
+      .current_stock{
+        position: relative;
+        float: right;
+        padding: 0px 13% 0px 0px;
+      }
+
+      .stock_header_right{
+        position: relative;
+        float: left;
+        padding: 0px 0px 0px 0px;
+        font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+        font-weight: bold;
+      }
+
+      .drug_name{
+        margin-left: 2%;
+      }
+
+      .stock_header_left{
+        position: relative;
+        margin-left: 4%;
+        font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+        font-weight: bold;
+      }
+
+      .consumption_rate{
+        position: relative;
+        float: right;
+        margin-left: 20%;
+        /*margin-left: 4%;*/
+      }
+
+      .consumption_rate_header{
+        position: relative;
+        float: left;
+        margin-left: 53%;
+        font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+        font-weight: bold;
+      }
+
+      .estimated_stock_out_date_header{
+        position: relative;
+        float: right;
+        padding: 0px 10% 0px 0px;
+        font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+        font-weight: bold;
+      }
+
+      .estimated_stock_out_date{
+        position: relative;
+        float: left;
+        margin-left: 30%;
+      }
+
+      .pack_size_header{
+        position: relative;
+        float: right;
+        padding: 0px 0px 0px 0px;
+        font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+        font-weight: bold;
+      }
+
+      .pack_size{
+        position: relative;
+        float: right;
+        margin-right: 24%;
+      }
+
+      table th, table td
+      {
+
+      }
+    </style>
+  </head>
+
+  <body onload="adjust()">
+    <form action="#" method="POST">
+      <fieldset>
+        <legend>Search Results</legend>
+        <br />
+      </fieldset>
+      <%= submit_tag "Finish" %>
+    </form>
+
+    <div id="stock">
+      <div style="position: absolute; width:100%;">
+        <table id="parent" cellspacing='0' style="top: 10%; position:absolute; width:100%; left: 0%;">
+
+          <tr class="table_header" style="background-color: #f0c992; line-height: 2em; font-size: 18px;">
+            <td><span style="position: inherit;  margin-left: 10%;">First Name</span></td>
+            <td><span style="position: inherit; margin-left: -20%;">Last Name</span></td>
+            <td><span style="position: inherit; margin-left: -12%;">Residence</span></td>
+            <td><span style="position: inherit; ">Date Registered</span></td>
+            <td><span style="">&nbsp;</span></td>
+          </tr>
+
+          <tbody>
+            <tr>
+              <td colspan="5">
+                <div class="scrollit">
+                  <table id="child" cellspacing='0' style="width:100%; left: 0%;">
+                    <% unless @guardians.blank? %>
+                      <% @guardians.each do |guardian| %>
+                        <tr style="line-height: 3em;">
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.given_name %></td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.names.last.family_name %></td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.addresses.last.address1 %></td>
+                          <td style="border-bottom: 1px solid black; text-align: center;"><%= guardian.date_created.strftime("%d-%b-%Y") %></td>
+                          <td class="btn-primary" onclick="selectGuardian(<%= guardian.person_id %>)"><span>Select</span></td>
+                        </tr>
+                        <tr>
+                          <td colspan="6"></td>
+                        </tr>
+                      <% end %>
+                    <% else %>
+                        <tr style="line-height: 4em;">
+                          <td colspan="6" style="text-align: center;"><b>No results found</b></td>
+                        </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+  <!--<script src="/assets/touchscreentoolkitV2/ts.js?body=1"></script>-->
+  <script type="text/javascript">
+
+    function adjust(){
+      node =  document.getElementById('row2').childNodes[0].childNodes[0];
+      node.style.width = "6%";
+      node.style.height = "92px";
+      document.getElementById('row2').childNodes[0].style.height = "92px";
+      document.getElementById('row2').style.height = "92px";
+      document.getElementById('row2').childNodes[0].style.backgroundColor = "grey";
+      document.getElementById('row2').childNodes[0].style.MozBorderRadius = '1em';
+      document.getElementById('row2').childNodes[0].style.borderRadius = '1em';
+      button =  document.getElementById('buttons');
+      button.style.removeProperty('border')
+      button.style.backgroundColor = "grey";
+      findButton = '<div id="findButton" style="display: table-cell; width: 100%; vertical-align: bottom;"><button id="findRegisterButton" style="margin: 3px; width: 314px !Important; font-size: 24px; float: right;" class="button green">New Caregiver</button></div>';
+      cancelB = document.getElementById('btn0');
+      cancelB.parentNode.innerHTML += findButton;
+      //button.innerHTML += findButton;
+      btnNext.parentNode.parentNode.parentNode.parentNode.style.width = '100%';
+      document.getElementById('row').parentNode.style.width = '100%';
+    }
+
+    function setAttributes(){
+      document.getElementById('btn0').onclick = function(){
+        //window.location = cancelDestination;
+      }
+
+      document.getElementById("findRegisterButton").onclick = function(){
+        createNewCaregiver();
+      }
+    }
+
+    window.setTimeout("setAttributes();", 350);
+
+    function customAlert(msg) {
+      if (__$('popup'))
+        __$('popup').parentNode.removeChild(__$('popup'));
+
+      var ele = document.createElement('div');
+      ele.id = "popup";
+      ele.style.display = "inline";
+      html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+      html += "<div id='text'>" + msg + "</div></div><div style='display:table-row;width:100%;'>"
+      html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 55px;" onmousedown="resetPopup()">Ok</button></div>'
+      html += "</div></div></div></div>";
+      ele.innerHTML = html;
+      document.body.appendChild(ele);
+    }
+
+    function resetPopup() {
+      var ele = document.getElementById('popup');
+      ele.style.display = "none";
+      ele.parentNode.removeChild(ele);
+    }
+
+    function __$(id){
+      return document.getElementById(id);
+    }
+
+<% if !flash[:error].blank? %>
+    customAlert("<%= flash[:error]%>");
+<% elsif !flash[:notice].blank?   %>
+    customAlert("<%= flash[:notice]%>");
+<% end %>
+
+  </script>
+
+</html>

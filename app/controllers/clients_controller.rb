@@ -1,4 +1,5 @@
 class ClientsController < ApplicationController
+
   before_action :set_client, only: [:show, :edit, :update, :destroy,
                                     :add_to_unallocated, :remove_from_waiting_list,
                                     :assign_to_counseling_room, :village, :confirm]
@@ -363,6 +364,389 @@ class ClientsController < ApplicationController
       redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
+  def early_infant_diagnosis
+    @client = Client.find(params[:id])
+    current_date = (session[:datetime].to_date rescue Date.today)
+    #raise User.current.inspect
+    if request.post?
+      test_reasons = params[:test_reasons].split(";")
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+        encounter = @client.encounters.create({:encounter_type => encounter_type, 
+            :encounter_datetime => current_date}) if encounter.blank?
+
+        test_reasons.each do |test_reason|
+          encounter.observations.create({
+              :person_id => @client.id,
+              :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :value_text => test_reason,
+              :creator => User.current.id
+          })
+        end
+        
+      end
+      
+      redirect_to("/eid_care_giver/#{@client.id}") and return
+    end
+  end
+
+  def early_infant_diagnosis_menu
+    @client = Client.find(params[:id])
+    if request.post?
+      eid_test_question = params[:eid_test_question].squish.downcase
+      redirect_to ("/early_infant_diagnosis/#{@client.id}") and return if eid_test_question == 'request'
+      redirect_to ("/early_infant_diagnosis_results/#{@client.id}") and return if eid_test_question == 'result'
+    end
+  end
+
+  def early_infant_diagnosis_results
+    @client = Client.find(params[:id])
+    current_date = (session[:datetime].to_date rescue Time.now)
+    
+    if request.post?
+      test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
+      test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+
+      eid_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
+            EncounterType.find_by_name("EID VISIT").id]
+         ).encounter_id
+         
+      encounter_type = EncounterType.find_by_name("LAB RESULTS").id
+      
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date.to_date, encounter_type])
+        
+        encounter = @client.encounters.create({
+          :encounter_type => encounter_type,
+          :encounter_datetime => current_date,
+          :creator => User.current.id
+        }) if encounter.blank?
+      
+        encounter.observations.create({
+            :concept_id => Concept.find_by_name("EARLY INFANT DIAGNOSIS").concept_id,
+            :person_id => params[:id],
+            :obs_datetime => current_date,
+            :value_modifier => test_modifier,
+            :value_text => test_value,
+            :value_complex => "encounter_id:#{eid_request_enc_id}",
+            :creator => User.current.id
+        })
+      
+      end
+      
+      redirect_to("/clients/#{@client.id}") and return
+    end
+    
+  end
+
+  def eid_care_giver
+    @client = Client.find(params[:id])
+    render layout: false
+  end
+
+  def care_giver_search_results
+    if request.post?
+=begin
+      birthdate_estimated = false
+
+			birth_date = params[:date_of_birth].split("/")
+			birth_year = birth_date[2]
+			birth_month = birth_date[1]
+			birth_day = birth_date[0]
+
+			birthdate = params[:date_of_birth]
+
+			if birth_month == "?"
+				birthdate_estimated = true
+				birth_month = 7
+			end
+
+			if birth_day == "?"
+				birthdate_estimated = true
+				birth_day = 1
+			end
+
+      
+      @birthdate = birthdate
+      @residence = params[:residence]
+      @gender = params[:gender]
+      @client_id = params[:client_id]
+      @birthdate_estimated = birthdate_estimated.to_s
+=end
+      @first_name = params[:first_name]
+      @last_name = params[:last_name]
+      @gender = params[:gender]
+      @client_id = params[:client_id]
+      
+      @guardians = Person.find_by_sql("SELECT * FROM person p INNER JOIN person_name pn
+            ON p.person_id = pn.person_id INNER JOIN relationship r ON p.person_id = r.person_a
+            WHERE pn.given_name = '#{params[:first_name]}' AND pn.family_name = '#{params[:last_name]}' AND p.gender = '#{params[:gender]}'
+            AND p.voided = 0 LIMIT 20"
+      )
+
+    end
+  end
+
+  def create_care_giver
+    current_date = (session[:datetime].to_date rescue Date.today)
+    
+    if request.post?
+      birthdate_estimated = false
+
+			birth_date = params[:date_of_birth].split("/")
+			birth_year = birth_date[2]
+			birth_month = birth_date[1]
+			birth_day = birth_date[0]
+
+			birthdate = params[:date_of_birth]
+
+			if birth_month == "?"
+				birthdate_estimated = true
+				birth_month = 7
+			end
+
+			if birth_day == "?"
+				birthdate_estimated = true
+				birth_day = 1
+			end
+
+      birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+     
+      gender = params[:gender]
+      first_name = params[:first_name]
+      last_name = params[:last_name]
+      residence = params[:residence]
+
+      relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
+      client = Client.find(params[:client_id])
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+      encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+      ActiveRecord::Base.transaction do
+        person = Person.new
+        person.gender = gender
+        person.birthdate = birthdate
+        person.birthdate_estimated = true if birthdate_estimated
+        person.creator = User.current.id
+        person.save
+
+        person_name = PersonName.new
+        person_name.person_id = person.id
+        person_name.given_name = first_name
+        person_name.family_name = last_name
+        person_name.creator = User.current.id
+        person_name.save
+        
+        person_address = PersonAddress.new
+        person_address.person_id = person.id
+        person_address.creator = User.current.id
+        person_address.address1 = residence
+        person_address.save
+
+        relationship = Relationship.new
+        relationship.person_a = person.id
+        relationship.person_b = params[:client_id]
+        relationship.relationship = relationship_type
+        relationship.creator = User.current.id
+        relationship.save
+      end
+
+      relationship = Relationship.find(:last, :conditions => ["person_b =? AND relationship =?", params[:client_id], relationship_type])
+      person_name = PersonName.find(:last, :conditions => ["person_id =?", relationship.person_a])
+      guardian_names = (person_name.given_name.to_s rescue 'Unknown') + ' ' + (person_name.family_name.to_s rescue 'Unknown')
+
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+      encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+      encounter.observations.create({
+              :person_id => client.id,
+              :concept_id => Concept.find_by_name("Who is present as guardian?").id,
+              :value_text => guardian_names,
+              :creator => User.current.id
+      })
+    
+      redirect_to("/clients/#{params[:client_id]}") and return
+    end
+
+  end
+
+  def select_caregiver
+    current_date = (session[:datetime].to_date rescue Date.today)
+    client = Client.find(params[:client_id])
+    relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
+    encounter_type = EncounterType.find_by_name("EID VISIT").id
+    
+    relationship = Relationship.find(:last, :conditions => ["person_a =? AND person_b =? AND relationship =?",
+            params[:guardian_id], params[:client_id], relationship_type]
+    )
+
+    person_name = PersonName.find(:last, :conditions => ["person_id =?", params[:guardian_id]])
+    guardian_names = (person_name.given_name.to_s rescue 'Unknown') + ' ' + (person_name.family_name.to_s rescue 'Unknown')
+    encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+    
+    if relationship.blank?
+        relationship = Relationship.new
+        relationship.person_a = params[:guardian_id]
+        relationship.person_b = params[:client_id]
+        relationship.relationship = relationship_type
+        relationship.creator = User.current.id
+        relationship.save
+    end
+
+    encounter.observations.create({
+              :person_id => client.id,
+              :concept_id => Concept.find_by_name("Who is present as guardian?").id,
+              :value_text => guardian_names,
+              :creator => User.current.id
+   })
+
+   redirect_to("/clients/#{params[:client_id]}") and return
+  end
+  
+  def scan_caregiver
+    identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+
+    accession = params[:accession_number]
+    relationship_type = RelationshipType.find_by_b_is_to_a("Guardian").id
+		client_identifier = ClientIdentifier.where("identifier = '#{accession}' AND
+        identifier_type = #{identifier_type} AND voided = 0"
+    ).last rescue []
+
+    client = Client.find(params[:client_id])
+    guardian_names = ""
+    
+    current_date = (session[:datetime].to_date rescue Date.today)
+    
+    if client_identifier.blank?
+      flash[:error] = "Person not found."
+      redirect_to ("/eid_care_giver/#{params[:client_id]}") and return
+    else
+      encounter_type = EncounterType.find_by_name("EID VISIT").id
+      encounter = client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+      relationship = Relationship.find(:last, :conditions => ["person_a =? AND person_b =? AND
+       relationship =?", client_identifier.patient_id, params[:client_id], relationship_type])
+      
+      person_name = PersonName.find(:last, :conditions => ["person_id =?", client_identifier.patient_id])
+      guardian_names = (person_name.given_name.to_s rescue 'Unknown') + ' ' + (person_name.family_name.to_s rescue 'Unknown')
+      
+      if relationship.blank?
+        relationship = Relationship.new
+        relationship.person_a = client_identifier.patient_id
+        relationship.person_b = params[:client_id]
+        relationship.relationship = relationship_type
+        relationship.creator = User.current.id
+        relationship.save
+      end
+
+      encounter.observations.create({
+              :person_id => client.id,
+              :concept_id => Concept.find_by_name("Who is present as guardian?").id,
+              :value_text => guardian_names,
+              :creator => User.current.id
+      })
+
+      redirect_to ("/clients/#{params[:client_id]}") and return
+    end
+    
+  end
+  
+  def hiv_viral_load
+    current_date = (session[:datetime].to_date rescue Date.today)
+    @client = Client.find(params[:id])
+    if request.post?
+      test_reasons = params[:test_reasons].split(";")
+      encounter_type = EncounterType.find_by_name("REQUEST").id
+
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date, encounter_type])
+
+        encounter = @client.encounters.create({:encounter_type => encounter_type,
+            :encounter_datetime => current_date}) if encounter.blank?
+
+        test_reasons.each do |test_reason|
+          encounter.observations.create({
+              :person_id => @client.id,
+              :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :value_text => test_reason,
+              :creator => User.current.id
+          })
+        end
+
+        encounter.observations.create({
+              :person_id => @client.id,
+              :concept_id => Concept.find_by_name("SAMPLE").id,
+              :value_text => params[:type_of_sample],
+              :creator => User.current.id
+          })
+      end
+
+      redirect_to("/clients/#{@client.id}") and return
+    end
+  end
+
+  def hiv_viral_load_menu
+    @client = Client.find(params[:id])
+    if request.post?
+      vl_question = params[:vl_question].squish.downcase
+      redirect_to ("/hiv_viral_load/#{@client.id}") and return if vl_question == 'request'
+      redirect_to ("/hiv_viral_load_results/#{@client.id}") and return if vl_question == 'result'
+    end
+  end
+
+  def hiv_viral_load_results
+    @client = Client.find(params[:id])
+    current_date = (session[:datetime].to_date rescue Time.now)
+    
+    if request.post?
+      test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
+      test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+
+      vl_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
+            EncounterType.find_by_name("REQUEST").id]
+         ).encounter_id
+         
+      encounter_type = EncounterType.find_by_name("LAB RESULTS").id
+      
+      ActiveRecord::Base.transaction do
+        encounter = @client.encounters.find(:last, :conditions => ["DATE(encounter_datetime) =? AND
+              encounter_type =?", current_date.to_date, encounter_type])
+        
+        encounter = @client.encounters.create({
+          :encounter_type => encounter_type,
+          :encounter_datetime => current_date,
+          :creator => User.current.id
+        }) if encounter.blank?
+      
+        encounter.observations.create({
+            :concept_id => Concept.find_by_name("HIV VIRAL LOAD").concept_id,
+            :person_id => params[:id],
+            :obs_datetime => current_date,
+            :value_modifier => test_modifier,
+            :value_text => test_value,
+            :value_complex => "encounter_id:#{vl_request_enc_id}",
+            :creator => User.current.id
+        })
+      
+      end
+      
+      redirect_to("/clients/#{@client.id}") and return
+    end
+  end
+
+  def find_register_caregiver
+
+  end
+  
   def extended_testing
       @client = Client.find(params[:id])
       @kits, @remaining, @testing = Kit.kits_available(current_user)

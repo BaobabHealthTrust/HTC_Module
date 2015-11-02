@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <script>
+      var cancelDestination = "/clients/<%= @client.id %>";
+      function __$(id){
+        return document.getElementById(id);
+      }
+
+    </script>
+  </head>
+  <body>
+    <form action='/early_infant_diagnosis_menu' method='post'>
+      <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+      <input type='hidden' name='id' value=<%= @client.id %> />
+
+      <fieldset >
+        <legend>Early Infant Diagnosis</legend>
+        <label for="test_question"> What do you want to do?</label>
+        <select id="test_question" name="eid_test_question">
+          <option></option>
+          <option value="request">Request EID Test</option>
+          <option value="result">Capture EID Result</option>
+        </select>
+
+      </fieldset>
+      <%= submit_tag "Finish" %>
+    </form>
+  </body>
+</html>

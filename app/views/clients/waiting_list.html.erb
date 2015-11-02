@@ -127,46 +127,23 @@
 					 				 ' class="blue" pos="0" section="0"><span class="txt">Remove from waiting list</span></a>';
 
 			var obj = sidePanelData[this.value];
-			s += "<span class='d dL'> Accession Number</span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.accession_number  + "</span>";
-					 
-			s += "<span class='d dL'> Gender </span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.gender  + "</span>";
-
-			s += "<span class='d dL'> Date of Birth </span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.birthDate  + "</span>";
-					 
-			s += "<span class='d dL'> Age </span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.age  + "</span>";
-		
-			s += "<span class='d dL'> Residence </span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.residence  + "</span>";
-					 
-			s += "<span class='d dL'> Date of Visit </span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.date  + "</span>";		
-
-			s += "<span class='d dL'> Time of Visit </span>" +
-					 "<span class='d dC'> : </span>" +
-					 "<span class='d dR'>" + obj.time  + "</span>";
-					 
+                s += "<table class = 'list-table'>"
+                s += addString("Accession Number", obj.accession_number );
+                s += addString("Gender", obj.gender );
+                s += addString("Age", obj.age );
+                s += addString("Date of Birth", obj.birthDate );
+                s += addString("Residence", obj.residence );
+                s += addString("Last Visit", obj.last_visit );
 						
 			if (obj.has_booking) {
-				s += "<span class='d dL' style='color:red;'> Booking On</span>" +
-						 "<span class='d dC'> : </span>" +
-						 "<span class='d dR'>" + obj.appointment_date  + "</span>";
+                s += addString("Booking", obj.appointment_date, (obj.days_since_last_visit  + " day(s)") );
 			}
 					 
 			if (parseInt(obj.days_since_last_visit) > 0) {
-				s += "<span class='d dL'> Period Since Last Visit </span>" +
-						 "<span class='d dC'> : </span>" +
-						 "<span class='d dR'>" + obj.days_since_last_visit  + " day(s) </span>";	
+                s += addString("Period Since Last Visit", obj.last_visit );
 			}
+
+            s+= "</table>";
 
 			__$('dsp').innerHTML = s + "<br /> <br />" +button;  
 		};
@@ -194,7 +171,19 @@
 		if (__$('ul1')) {
 			__$('ul1').children[0].onmousedown();
 		}
-	</script>
+
+    function addString(label, value){
+        if (!value)
+            value = "&nbsp";
+
+        return ("<tr>" +
+                "<td style='border: 1px dotted lightgray; color: rgb(50, 50, 50); width: 40%; font-size: 1.2em; font-weight: bold;padding: 10px;'> " + label + "</td>" +
+                "<td style='border: 1px dotted lightgray;width: 40%; font-size: 1.3em; padding: 10px;font-style: italic;'>" + value + "</td>" +
+                "</tr>");
+
+    }
+
+</script>
 </html>
 <style>
    .blue {
@@ -231,5 +220,8 @@
   position: relative;
   text-align: center;
   top: 85px;
+}
+.list-table{
+   width: 100%;
 }
 </style>
