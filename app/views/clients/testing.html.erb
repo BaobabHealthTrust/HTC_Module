@@ -23,7 +23,9 @@
 
      function activateNext(){
         if (btnNext){
-                              if(__$("valid_rapid").value == "no" || __$("valid_gold").value == "no"){
+                              var pos = parseInt(btnNext.getAttribute("pos"));
+                              console.log(pos);
+                              if((pos == 1) && (__$("valid_rapid").value == "no" || __$("valid_gold").value == "no")){
                                          btnNext.onclick = function(){
                                          confirm("Enter correct lot numbers");
                                       };
@@ -31,7 +33,7 @@
                               else {
                                          btnNext.onclick = function(){
 
-                                        var pos = parseInt(this.getAttribute("pos")) + 1;
+                                        var pos = parseInt(this.getAttribute("pos"))+1;
 
                                         var section = parseInt(this.getAttribute("section"));
 

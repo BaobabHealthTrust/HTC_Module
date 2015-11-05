@@ -816,7 +816,7 @@
                         var opt = document.createElement("option");
                         opt.setAttribute("value", months[i].join(","));
                         opt.innerHTML = i;
-                        opt.setAttribute("onclick", "getData()");
+                        opt.setAttribute("onmousedown", "getData()");
                         if (i == curQt){
                             opt.selected = true;
                         }
@@ -1153,6 +1153,12 @@
     .month-header-main-td, #month-header, #month-header .name-td, #month-header .table-inner, #month-header .main-row{
         border: none !important;
         vertical-align: middle !important;
+    }
+
+    .data-header .month-td{
+        font-weight: bold;
+        background-color: lightgray;
+        border-color: white !important;
     }
 </style>
 
