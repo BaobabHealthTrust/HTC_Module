@@ -76,6 +76,10 @@
 	 document.getElementById("waiting_list").submit();
 	}
 
+	function printAccession(id){
+        window.location = '/clients/print_accession/' + id
+   }
+
 	__$("row1").style.display="none";
 	__$("buttons").style.verticalAlign = "bottom";
 	__$("buttons").style.width = "100%";
@@ -143,9 +147,13 @@
                 s += addString("Period Since Last Visit", obj.last_visit );
 			}
 
+		var btnPrnt = '<a href="#" id="print"' +
+		    						 'onmousedown="printAccession(' + obj.id + ')"' +
+		    						 ' class="blue" pos="0" section="0"><span class="txt">Accession</span></a>';
+
             s+= "</table>";
 
-			__$('dsp').innerHTML = s + "<br /> <br />" +button;  
+			__$('dsp').innerHTML = s + "<br /> <br />" +button+" "+btnPrnt;  
 		};
 	}
 	__$('textForid').value = -1;
