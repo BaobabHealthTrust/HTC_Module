@@ -664,6 +664,7 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
     if request.post?
       test_reasons = params[:test_reasons].split(";")
+      accession_number = params[:accession_number]
       encounter_type = EncounterType.find_by_name("REQUEST").id
 
       ActiveRecord::Base.transaction do
@@ -686,6 +687,7 @@ class ClientsController < ApplicationController
               :person_id => @client.id,
               :concept_id => Concept.find_by_name("SAMPLE").id,
               :value_text => params[:type_of_sample],
+              :accession_number => accession_number,
               :creator => User.current.id
           })
       end
@@ -710,7 +712,8 @@ class ClientsController < ApplicationController
     if request.post?
       test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
       test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
-
+      accession_number = params[:accession_number]
+      
       vl_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
             EncounterType.find_by_name("REQUEST").id]
          ).encounter_id
@@ -733,6 +736,7 @@ class ClientsController < ApplicationController
             :obs_datetime => current_date,
             :value_modifier => test_modifier,
             :value_text => test_value,
+            :accession_number => accession_number,
             :value_complex => "encounter_id:#{vl_request_enc_id}",
             :creator => User.current.id
         })

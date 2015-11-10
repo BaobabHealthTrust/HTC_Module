@@ -50,19 +50,92 @@
 
 
       window.setInterval("customKeyboardButtons();", 50);
+
+
+      function customAlert() {
+        if (__$('popup'))
+          __$('popup').parentNode.removeChild(__$('popup'));
+        __$('shield').style.display = '';
+        
+        msg = 'Accession # Available?'
+        var ele = document.createElement('div')
+        ele.id = "popup";
+        ele.style.display = "inline";
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
+        html += "<div id='text'>" + msg + "</div></div><div style='display:table-row;width:100%;'>"
+        html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 55px;" onmousedown="removePopup()">Yes</button>'
+        html += '<button onmousedown="accessionNumberNotavailable();" class="button blue" style="margin: 3px; font-size: 20px; height: 55px;">No</button></div>'
+        html += "</div></div></div></div>";
+        ele.innerHTML = html;
+        document.body.appendChild(ele);
+      }
+
+      function removePopup() {
+        ele = document.getElementById('popup');
+        ele.style.display = "none";
+        ele.parentNode.removeChild(ele);
+        __$('shield').style.display = 'none';
+      }
+
+      function accessionNumberNotavailable(){
+        __$('textForaccession_number').value = 'N/A';
+        removePopup();
+      }
+
+      function setOnFocusAttribute(){
+        if (__$('textForaccession_number')){
+          //__$('textForaccession_number').setAttribute("onclick", customAlert());
+        }
+        if (__$('textForresults')){
+          __$('textForresults').setAttribute("onclick", customAlert());
+        }
+      }
+      
     </script>
+    <style>
+      #shield{
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 990;
+        opacity: 0.5;
+      }
+
+      #popup{
+        z-index: 1000;
+      }
+    </style>
   </head>
   <body>
     <form action='/hiv_viral_load_results' method='post'>
       <fieldset>
         <legend>Viral Load Results</legend>
         <br />
+        <!-------                         -->
+
+        <label for="question1">Accession # Available?</label>
+        <label for="choice1.0">Yes</label>
+        <input type="radio" name="question1" id="choice1.0" value="yes"/>
+        <label for="choice1.1">No</label>
+        <input type="radio" name="question1" id="choice1.1" value="no"/>
+
+
+
+        <label for="accession_number"> Accession Number</label>
+        <input type="text" id="accession_number" name="accession_number" condition="__$('choice1.0').checked" />
+        <!---                     -->
         <label for="results" >Results </label>
-        <input type="text" id="results" name="results" optional="false" fieldtype="decimal" />
+        <input type="text" id="results" name="results"  fieldtype="decimal"/>
         <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
         <input type='hidden' name='id' value=<%= @client.id %> />
       </fieldset>
       <%= submit_tag "Finish" %>
     </form>
+    <div id="shield" style="display: none;">
+
+    </div>
   </body>
 </html>
