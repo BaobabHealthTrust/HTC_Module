@@ -1,0 +1,130 @@
+<html>
+<head>
+    <%= javascript_include_tag 'custom' %>
+    <script>
+      
+      //var cancelDestination = addLink(window, <%=params[:id] %>)
+
+    function onClickStatus(btnID) {
+        // body...
+        alert(btnID);
+    }
+
+    function manipulateContent(){
+        if (document.getElementById("work")){
+            divs = document.getElementById("work").children;
+            groupDivs = arrayGroup(divs, 3);
+            table = "<table>";
+            for(var i=0; i<=groupDivs.length - 1; i++){
+                table += "<tr>";
+                for(var j=0; j<=groupDivs[i].length - 1; j++){
+                    childNodes = groupDivs[i][j].childNodes;
+                    label = childNodes[0].innerHTML;
+                    button = childNodes[2].innerHTML;
+                    table += "<td>" + label + " </td>";
+                    table += "<td>" + button + " </td>";
+                }
+                table += "</tr>";
+            }
+            table += "</table>";
+            document.getElementById("work").innerHTML = table;
+            document.getElementById("stage").style.display = "none";
+            document.getElementById("buttons").style.display = "table";
+            document.getElementById("buttons").style.height = "auto";
+            document.getElementById("buttons").style.width = "100%";
+            document.getElementById("main-content-area").style.height = "100%";
+            document.getElementById("row2").style.height = "10%";
+            for (var i = 0; i <=3; i++) {
+                document.getElementById("btn"+i).parentNode.style.display = "table-cell";
+                document.getElementById("btn"+i).style.width = "20%";
+            }
+        }
+    }
+    
+    window.setTimeout("manipulateContent()", 100);
+
+        function arrayGroup(arr, maxPerGroup) {
+            var result = [];
+            var tempArr = [];
+            for (var i = 1; i <= arr.length; i++) {
+                tempArr.push(arr[i-1]);
+                if (i%maxPerGroup === 0) {
+                    result.push(tempArr);
+                    tempArr = [];
+                }
+            }
+
+            if(tempArr.length > 0 && tempArr.length < maxPerGroup) {
+                result.push(tempArr);
+            }
+
+            return result;
+        }               
+     </script>
+  <style>
+#text, #confirm, #cancel{
+  display: table-cell;
+}
+#text{
+  height: 70px;
+}
+#confirm{
+  vertical-align: middle;
+}
+#cancel{
+  vertical-align: middle;
+}
+
+    #popup{
+      -moz-user-select: none;
+      background-color: #FEEFB3;
+      border: 4px solid #C6C6C6;
+      border-radius: 15px 15px 15px 15px;
+      color: #9F6000;
+      font-size: 28px;
+      height: 159px;
+      left: 38%;
+      padding: 5px;
+      position: absolute;
+      text-align: center;
+      top: 28%;
+      width: 319px;
+      z-index: 991;
+    }
+    #cover{
+      display:none;
+      position: absolute;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.5;
+    }
+    #popupkeyboard{
+                height: 255px ! important;
+            }
+  </style>
+</head>
+<body >
+    <%= form_tag(controller: "encounters", action: "new", method: "post") do %>
+        <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+        <input type="hidden" value="ASSESSMENT" name="ENCOUNTER"/>
+        <form action='/encounters/new/<%= params[:client_id] %>' method='post'>
+        <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+        <input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
+    <fieldset>
+        <legend>Behaviour Risk</legend>
+        <% (@protocol || []).each do |protocol| %>
+            <label for="obs[<%= protocol.id %>]"> <%= protocol.name %> </label>
+            <label for="<%= protocol.id %>.1">Yes</label>    
+            <input type="radio" name="obs[<%= protocol.id %>]" id="<%= protocol.id %>.1" value="YES">
+            <br />
+            <%# break if (x == 5)%>
+        <% end %>
+    </fieldset>
+        <%= link_to "Cancel" , "/clients/#{params[:id]}" %>
+        <%= submit_tag "Finish" %>
+    <%end%>
+</body>
+</html>
