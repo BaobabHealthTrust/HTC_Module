@@ -17,7 +17,7 @@ class EncountersController < ApplicationController
 
     #raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
-			  (params[:observation] || []).each do |key, value|
+			  (params[:obs] || []).each do |key, value|
 					 type = CounselingQuestion.find(key).data_type rescue []
 					 next if type.blank?
 					 concept_id = nil
@@ -118,8 +118,27 @@ class EncountersController < ApplicationController
         end
     end
 
+    # call risk_type
+    #risk_type = risk_assessment_type(patient, current)
+    #raise risk_type
     redirect_to next_task(patient)["url"] and return
 
+  end
+
+  def risk_assessment_type(patient_id, risk_date)
+    # load risk_types from settings
+    low_risk = Settings[:low_risk]
+    on_going_risk = Settings[:on_going_risk]
+    high_risk = Settings[:high_risk]
+
+    all_risks = low_risk+on_going_risk+high_risk
+    risk_type = "Unknown"
+    query = "SELECT ca.patient_id, ca.encounter_id FROM counseling_answer as ca "
+
+    # loop
+
+    #raise high_risk[1].to_yaml 
+    return risk_type
   end
 
   def edit
