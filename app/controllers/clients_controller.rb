@@ -32,8 +32,8 @@ class ClientsController < ApplicationController
        end
          
       @all_encounters = {}
-      state_encounters = ['IN WAITING', 'IN SESSION','Counseling',
-												'HIV Testing', 'Referral Consent Confirmation','ASSESSMENT',"UPDATE HIV STATUS",
+      state_encounters = ['IN WAITING','IN SESSION','Counseling','ASSESSMENT',
+												'HIV Testing', 'Referral Consent Confirmation','UPDATE HIV STATUS',
 												'Appointment']
       state_encounters.each{|encounter|
         @all_encounters[encounter.upcase] = ""
@@ -1231,10 +1231,10 @@ class ClientsController < ApplicationController
 			days_since_last_visit = (date_today - last_visit.to_date).to_i
 			
 		 has_booking = false
-		 appointment_date = c.has_booking.value_datetime rescue nil
+		 appointment_date = c.has_booking.value_datetime.to_s rescue nil
 
 		 if appointment_date.blank?
-			appointment_date = c.latest_booking.value_datetime rescue nil
+			appointment_date = c.latest_booking.value_datetime#.to_s.to_date rescue nil
 		end
 		
 		 if !appointment_date.blank?
@@ -1242,7 +1242,7 @@ class ClientsController < ApplicationController
 		 end
 
 		 if appointment_date.blank?
-			appointment_date = c.latedst_booking.value_datetime rescue nil
+			appointment_date = c.latedst_booking.value_datetime.to_s rescue nil
 			has_booking = true if !appointment_date.blank?
 		 end
 			
@@ -1255,7 +1255,7 @@ class ClientsController < ApplicationController
      							 }
      end
      
-     #raise @waiting.to_json 
+     raise @waiting.to_json 
      @waiting = @waiting.sort!{ |b,a| (a[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) <=> (b[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) } rescue []
      
      sp = ""

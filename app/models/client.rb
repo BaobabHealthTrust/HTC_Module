@@ -121,12 +121,15 @@ class Client < ActiveRecord::Base
 	
 	def latest_booking
 		concept_id = ConceptName.find_by_name("APPOINTMENT DATE").id
-		Observation.find_by_sql("
+		x = Observation.find_by_sql("
 			SELECT person_id, concept_id, MAX(value_datetime) AS value_datetime
 				FROM obs
 				WHERE person_id = #{self.id} AND concept_id=#{concept_id} AND voided=0
 				GROUP BY person_id
 		").first rescue nil
+		unless x.blank?
+			raise x.value_datetime.inspect
+	end
 	end
 
   def get_recent_partner
