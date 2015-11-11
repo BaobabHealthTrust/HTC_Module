@@ -151,7 +151,19 @@
           <% if encounter.match(/confirmation/i) %>
               cell1.innerHTML = 'Confirm'
           <% else %>
-            cell1.innerHTML = '<%= encounter.squish.humanize %>'
+            cell1.innerHTML = '<%=
+              if (encounter.squish.humanize =~ /hiv(.*)/)
+                sentence = encounter.squish.humanize
+                sentence["hiv"] = "HIV"
+                sentence
+              elsif(encounter.squish.humanize =~ /Hiv(.*)/)
+                sentence = encounter.squish.humanize
+                sentence["Hiv"] = "HIV"
+                sentence            
+              else
+                encounter.squish.humanize
+              end 
+            %>'
           <% end %>
         row1.appendChild(cell1)
         <% } %>

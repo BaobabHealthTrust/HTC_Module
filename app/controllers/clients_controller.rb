@@ -350,18 +350,32 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
   end
 
+  def risk_assessment #risk_assessment_block_for_protocols
+        @client = Client.find(params[:client_id])
+        @protocol = []
+            CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
+            @protocol << protocol
+            ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
+                CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each{|x|
+                    @protocol << x
+                }
+            }
+        }
+        redirect_to client_path(@client.id) if @protocol.blank?
+  end
+
 	def counseling
-			@client = Client.find(params[:client_id])
-      @protocol = []
-			CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
-          @protocol << protocol
-          ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
-             CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each{|x|
-               @protocol << x
-             }
-          }
-      }
-      redirect_to client_path(@client.id) if @protocol.blank?
+		@client = Client.find(params[:client_id])
+        @protocol = []
+		CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
+            @protocol << protocol
+            ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
+                CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each {|x|
+                    @protocol << x
+                }
+            }
+        }
+        redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
   def early_infant_diagnosis
