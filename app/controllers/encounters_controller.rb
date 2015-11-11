@@ -9,14 +9,15 @@ class EncountersController < ApplicationController
   end
 
   def new
-#raise params.to_yaml
+# raise params.to_yaml
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
 
+    #raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
-			  params[:obs].each do |key, value|
+			  (params[:observation] || []).each do |key, value|
 					 type = CounselingQuestion.find(key).data_type rescue []
 					 next if type.blank?
 					 concept_id = nil

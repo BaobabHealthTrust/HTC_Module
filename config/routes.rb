@@ -62,6 +62,8 @@ HTCModule::Application.routes.draw do
 
   #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
   get "client_assessment/:id" => "clients#assessment"
+
+  get "client_risk_assessment" => "clients#risk_assessment"
   
   get "search_couple/:id" => "clients#search_couple"
 
