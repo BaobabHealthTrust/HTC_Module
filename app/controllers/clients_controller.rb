@@ -367,7 +367,6 @@ class ClientsController < ApplicationController
   def early_infant_diagnosis
     @client = Client.find(params[:id])
     current_date = (session[:datetime].to_date rescue Date.today)
-    #raise User.current.inspect
     if request.post?
       test_reasons = params[:test_reasons].split(";")
       encounter_type = EncounterType.find_by_name("EID VISIT").id
@@ -379,10 +378,12 @@ class ClientsController < ApplicationController
         encounter = @client.encounters.create({:encounter_type => encounter_type, 
             :encounter_datetime => current_date}) if encounter.blank?
 
+        accession_number = params[:accession_number]
         test_reasons.each do |test_reason|
           encounter.observations.create({
               :person_id => @client.id,
               :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :accession_number => accession_number,
               :value_text => test_reason,
               :creator => User.current.id
           })

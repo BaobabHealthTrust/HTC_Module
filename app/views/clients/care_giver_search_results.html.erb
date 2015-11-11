@@ -19,7 +19,7 @@
       }
     </style>
     <script>
-      var cancelDestination = "#";
+      var cancelDestination = "/clients/<%= params[:client_id] %>";
       var careGiveDestination = "#";
 
       function __$(id){
@@ -295,7 +295,7 @@
 
     function setAttributes(){
       document.getElementById('btn0').onclick = function(){
-        //window.location = cancelDestination;
+        window.location = cancelDestination;
       }
 
       document.getElementById("findRegisterButton").onclick = function(){
