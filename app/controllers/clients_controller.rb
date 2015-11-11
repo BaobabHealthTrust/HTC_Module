@@ -425,6 +425,7 @@ class ClientsController < ApplicationController
     if request.post?
       test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
       test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+      accession_number = params[:accession_number]
 
       eid_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
             EncounterType.find_by_name("EID VISIT").id]
@@ -448,6 +449,7 @@ class ClientsController < ApplicationController
             :obs_datetime => current_date,
             :value_modifier => test_modifier,
             :value_text => test_value,
+            :accession_number => accession_number,
             :value_complex => "encounter_id:#{eid_request_enc_id}",
             :creator => User.current.id
         })

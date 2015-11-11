@@ -57,8 +57,21 @@
       <fieldset>
         <legend>EID Results</legend>
         <br />
+        <!-------                         -->
+
+        <label for="question1">Accession # Available?</label>
+        <label for="choice1.0">Yes</label>
+        <input type="radio" name="question1" id="choice1.0" value="yes"/>
+        <label for="choice1.1">No</label>
+        <input type="radio" name="question1" id="choice1.1" value="no"/>
+
+
+
+        <label for="accession_number"> Accession Number</label>
+        <input type="text" id="accession_number" name="accession_number" condition="__$('choice1.0').checked" />
+        <!---                     -->
         <label for="results" >Results </label>
-        <input type="text" id="results" name="results" optional="false" fieldtype="decimal" />
+        <input type="text" id="results" name="results" fieldtype="decimal" />
         <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
         <input type='hidden' name='id' value=<%= @client.id %> />
       </fieldset>
