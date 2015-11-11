@@ -32,8 +32,8 @@ class ClientsController < ApplicationController
        end
          
       @all_encounters = {}
-      state_encounters = ['IN WAITING', 'IN SESSION','Counseling',
-												'HIV Testing', 'Referral Consent Confirmation','ASSESSMENT',"UPDATE HIV STATUS",
+      state_encounters = ['IN WAITING','IN SESSION','Counseling','ASSESSMENT',
+												'HIV Testing', 'Referral Consent Confirmation','UPDATE HIV STATUS',
 												'Appointment']
       state_encounters.each{|encounter|
         @all_encounters[encounter.upcase] = ""
@@ -381,7 +381,6 @@ class ClientsController < ApplicationController
   def early_infant_diagnosis
     @client = Client.find(params[:id])
     current_date = (session[:datetime].to_date rescue Date.today)
-    #raise User.current.inspect
     if request.post?
       test_reasons = params[:test_reasons].split(";")
       encounter_type = EncounterType.find_by_name("EID VISIT").id
@@ -393,10 +392,12 @@ class ClientsController < ApplicationController
         encounter = @client.encounters.create({:encounter_type => encounter_type, 
             :encounter_datetime => current_date}) if encounter.blank?
 
+        accession_number = params[:accession_number]
         test_reasons.each do |test_reason|
           encounter.observations.create({
               :person_id => @client.id,
               :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :accession_number => accession_number,
               :value_text => test_reason,
               :creator => User.current.id
           })
@@ -424,6 +425,7 @@ class ClientsController < ApplicationController
     if request.post?
       test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
       test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+      accession_number = params[:accession_number]
 
       eid_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
             EncounterType.find_by_name("EID VISIT").id]
@@ -447,6 +449,7 @@ class ClientsController < ApplicationController
             :obs_datetime => current_date,
             :value_modifier => test_modifier,
             :value_text => test_value,
+            :accession_number => accession_number,
             :value_complex => "encounter_id:#{eid_request_enc_id}",
             :creator => User.current.id
         })
@@ -678,6 +681,7 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
     if request.post?
       test_reasons = params[:test_reasons].split(";")
+      accession_number = params[:accession_number]
       encounter_type = EncounterType.find_by_name("REQUEST").id
 
       ActiveRecord::Base.transaction do
@@ -700,6 +704,7 @@ class ClientsController < ApplicationController
               :person_id => @client.id,
               :concept_id => Concept.find_by_name("SAMPLE").id,
               :value_text => params[:type_of_sample],
+              :accession_number => accession_number,
               :creator => User.current.id
           })
       end
@@ -724,7 +729,8 @@ class ClientsController < ApplicationController
     if request.post?
       test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
       test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
-
+      accession_number = params[:accession_number]
+      
       vl_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
             EncounterType.find_by_name("REQUEST").id]
          ).encounter_id
@@ -747,6 +753,7 @@ class ClientsController < ApplicationController
             :obs_datetime => current_date,
             :value_modifier => test_modifier,
             :value_text => test_value,
+            :accession_number => accession_number,
             :value_complex => "encounter_id:#{vl_request_enc_id}",
             :creator => User.current.id
         })
@@ -1245,10 +1252,10 @@ class ClientsController < ApplicationController
 			days_since_last_visit = (date_today - last_visit.to_date).to_i
 			
 		 has_booking = false
-		 appointment_date = c.has_booking.value_datetime rescue nil
+		 appointment_date = c.has_booking.value_datetime.to_s rescue nil
 
 		 if appointment_date.blank?
-			appointment_date = c.latest_booking.value_datetime rescue nil
+			appointment_date = c.latest_booking.value_datetime#.to_s.to_date rescue nil
 		end
 		
 		 if !appointment_date.blank?
@@ -1256,7 +1263,7 @@ class ClientsController < ApplicationController
 		 end
 
 		 if appointment_date.blank?
-			appointment_date = c.latedst_booking.value_datetime rescue nil
+			appointment_date = c.latedst_booking.value_datetime.to_s rescue nil
 			has_booking = true if !appointment_date.blank?
 		 end
 			
@@ -1269,7 +1276,7 @@ class ClientsController < ApplicationController
      							 }
      end
      
-     #raise @waiting.to_json 
+     raise @waiting.to_json 
      @waiting = @waiting.sort!{ |b,a| (a[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) <=> (b[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) } rescue []
      
      sp = ""

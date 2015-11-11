@@ -81,7 +81,26 @@ x = x + 1
 end %>
 <% end %>
 	</fieldset>
-        <fieldset>
+<!-- 
+  <fieldset>
+        <legend>Risk Assessment</legend>
+                               <label for="type">Client Risk Category</label>
+
+                                <select id="type" name="observations[][value_coded_or_text]">
+          <option></option>
+          <option value="Low Risk">Low Risk</option>
+          <option value="AVD+ or High Risk">On-going Risk</option>
+                                       <option value="High risk event in last 3 months">High risk event in last 3 months</option>
+                                       <option value="Risk assessment not done">Risk assessment not done</option>
+
+        </select>
+                            <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
+                            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                            <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+</fieldset> -->
+
+<!--         <fieldset>
           <legend>Counseling Protocols Page <%= y %></legend>
 					<label for="continue_testing">Continue Testing? </label>
 					<select name="observations[][value_coded_or_text]" id="continue_testing" >
@@ -93,7 +112,7 @@ end %>
 				<%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
 				<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
-        </fieldset>
+        </fieldset> -->
 
 	<button type='submit'>Finish</button>
 			

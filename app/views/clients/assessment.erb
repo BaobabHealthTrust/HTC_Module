@@ -72,6 +72,19 @@
                             <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
                             <%= hidden_field_tag("observations[][value_datetime]",       "") %>
 </fieldset>
+        <fieldset>
+          <legend>Counseling Protocols Page </legend>
+          <label for="continue_testing">Continue Testing? </label>
+          <select name="observations[][value_coded_or_text]" id="continue_testing" >
+            <option></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
+        <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        </fieldset>
 <%= link_to "Cancel" , "/clients/#{params[:id]}" %>
 <%= submit_tag "Finish" %>
 	<%end%>
