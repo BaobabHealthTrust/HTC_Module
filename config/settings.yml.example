@@ -18,4 +18,4 @@ on_going_risk: ["Stable partner who is taking ART", "Stable partner with unknown
 high_risk: ["Occupational Exposure ", "STI", "Rape", "Unprotected sex", "Shared needles with known HIV infected person"]
 
 
-full_demographics_at_reception: false
+full_demographics_at_reception: true
