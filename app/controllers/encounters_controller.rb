@@ -119,7 +119,7 @@ class EncountersController < ApplicationController
     end
 
     # call risk_type
-    #risk_type = risk_assessment_type(patient, current)
+    risk_type = risk_assessment_type(patient, current)
     #raise risk_type
     redirect_to next_task(patient)["url"] and return
 
@@ -133,7 +133,33 @@ class EncountersController < ApplicationController
 
     all_risks = low_risk+on_going_risk+high_risk
     risk_type = "Unknown"
-    query = "SELECT ca.patient_id, ca.encounter_id FROM counseling_answer as ca "
+  
+=begin    
+    encounter_list = "SELECT e.encounter_id, e.encounter_type, e.encounter_datetime
+                      FROM encounter as e
+                      WHERE patient_id = 48 and Date(encounter_datetime) = ? and encounter_type = 149;",current
+=end
+    yesAnswers = ["Stable, known HIV-negative partner who does not engage in risky behaviour","No Sex/Abstenance","MSM","STI"]
+
+    yesAnswers.each do |yes|
+      if high_risk.include? yes
+        risk_type = "high"
+        break
+      elsif on_going_risk.include? yes
+        risk_type = "ongoing"
+      elsif low_risk.include? yes
+        if risk_type != "ongoing"
+          risk_type = "low"
+        end       
+      end
+    end
+
+    #raise risk_type.to_yaml
+    
+
+
+
+    # query = "SELECT ca.patient_id, ca.encounter_id FROM counseling_answer as ca "
 
     # loop
 
