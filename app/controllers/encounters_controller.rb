@@ -119,7 +119,7 @@ class EncountersController < ApplicationController
     end
 
     # call risk_type
-    risk_type = risk_assessment_type(patient, current)
+    #risk_type = risk_assessment_type(patient, current)
     #raise risk_type
     redirect_to next_task(patient)["url"] and return
 
