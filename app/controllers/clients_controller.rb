@@ -1255,7 +1255,7 @@ class ClientsController < ApplicationController
 		 appointment_date = c.has_booking.value_datetime.to_s rescue nil
 
 		 if appointment_date.blank?
-			appointment_date = c.latest_booking.value_datetime#.to_s.to_date rescue nil
+			appointment_date = c.latest_booking.value_datetime.to_s.to_date rescue nil
 		end
 		
 		 if !appointment_date.blank?
@@ -1276,7 +1276,7 @@ class ClientsController < ApplicationController
      							 }
      end
      
-     raise @waiting.to_json 
+     # raise @waiting.to_json 
      @waiting = @waiting.sort!{ |b,a| (a[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) <=> (b[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) } rescue []
      
      sp = ""
