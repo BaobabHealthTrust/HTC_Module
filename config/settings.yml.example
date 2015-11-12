@@ -12,4 +12,10 @@ counseling_rooms: [Room 1, Room 2, Room 3, Room 4]
 clinic.holidays: '1900-12-25,1900-03-03,2014-09-03'
 clinic.days: ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", ""]
 
+# Behaviour Risk Assessment for clients
+low_risk: ["No Sex/Abstenance","Consistent and correct Condom useConsistent and correct Condom use", "Stable, known HIV-negative partner who does not engage in risky behaviour"]
+on_going_risk: ["Stable partner who is taking ART", "Stable partner with unknown HIV status", "MSM", "Sex Worker", "Injecting drug user", "Born/Breastfeeding from HIV-Infected mother"]
+high_risk: ["Occupational Exposure ", "STI", "Rape", "Unprotected sex", "Shared needles with known HIV infected person"]
+
+
 full_demographics_at_reception: false
