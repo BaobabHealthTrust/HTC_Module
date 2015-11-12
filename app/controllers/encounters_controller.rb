@@ -119,13 +119,20 @@ class EncountersController < ApplicationController
     end
 
     # call risk_type
-    #risk_type = risk_assessment_type(patient, current)
+    risk_type = risk_assessment_type(patient, current)
     #raise risk_type
-    redirect_to next_task(patient)["url"] and return
+    url = next_task(patient)["url"]
+    if risk_type.present? && url.match(/\?/)
+      url = url + "&risk_type=" + risk_type
+    elsif risk_type.present? && !url.match(/\?/)
+      url = url + "?risk_type=" + risk_type
+    end
+
+    redirect_to url and return
 
   end
 
-  def risk_assessment_type(patient_id, risk_date)
+  def risk_assessment_type(patient, risk_date)
     # load risk_types from settings
     low_risk = Settings[:low_risk]
     on_going_risk = Settings[:on_going_risk]
@@ -139,8 +146,20 @@ class EncountersController < ApplicationController
                       FROM encounter as e
                       WHERE patient_id = 48 and Date(encounter_datetime) = ? and encounter_type = 149;",current
 =end
-    yesAnswers = ["Stable, known HIV-negative partner who does not engage in risky behaviour","No Sex/Abstenance","MSM","STI"]
+    yes_concept = Concept.find_by_name("YES").id
+    @yes_query = CounselingQuestion.find_by_sql("SELECT cq.question_id, cq.name, ca.patient_id, ca.value_coded
+                 FROM counseling_question as cq 
+                 INNER JOIN counseling_answer as ca
+                 ON cq.question_id = ca.question_id
+                 WHERE value_coded = #{yes_concept} AND ca.patient_id = #{patient.id}")
+    #raise @yes_query.inspect
 
+    yesAnswers = []
+    @yes_query.each do |record|
+      yesAnswers << record.name
+    end
+
+    #raise yesAnswers.uniq.inspect
     yesAnswers.each do |yes|
       if high_risk.include? yes
         risk_type = "high"

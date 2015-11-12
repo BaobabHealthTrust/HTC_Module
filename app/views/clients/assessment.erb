@@ -61,10 +61,26 @@
 
                                 <select id="type" name="observations[][value_coded_or_text]">
 					<option></option>
-					<option value="Low Risk">Low Risk</option>
-					<option value="AVD+ or High Risk">On-going Risk</option>
-                                       <option value="High risk event in last 3 months">High risk event in last 3 months</option>
-                                       <option value="Risk assessment not done">Risk assessment not done</option>
+					<option 
+            <% if params["risk_type"]=="low" %>
+                selected
+            <% end %> 
+          value="Low Risk">Low Risk</option>
+					<option 
+            <% if params["risk_type"]=="ongoing" %>
+                selected
+            <% end %> 
+          value="AVD+ or High Risk">On-going Risk</option>
+          <option 
+            <% if params["risk_type"]=="high" %>
+                selected
+            <% end %> 
+          value="High risk event in last 3 months">High risk event in last 3 months</option>
+          <option 
+            <% if params["risk_type"]=="unknown" %>
+                selected
+            <% end %> 
+          value="Risk assessment not done">Risk assessment not done</option>
 
 				</select>
                             <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
