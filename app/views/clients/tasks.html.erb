@@ -71,21 +71,21 @@
 <br />
 
 <base target="_parent">
+
+  <a href= '/client_status/<%= @client.id -%>' id="history" class=" blue">
+  <span class="txt">Status History</span></a>
+
 <a href="/client_counseling?client_id=<%= @client.id -%>"  id="counseling" class='blue' >
    <span class="txt"> Counseling</span></a>
+
+   <a href= '/client_assessment/<%= @client.id -%>' id="risk" class=" blue">
+  <span class="txt">Assessment</span></a>
 
 <a href= '/client_testing?client_id=<%= @client.id -%>' id="test" class=" blue">
   <span class="txt">Testing</span></a>
   
   <a href= '/extended_testing/<%= @client.id -%>' id="extend" class=" blue">
   <span class="txt">Extended Testing</span></a>
-
-  <a href= '/client_status/<%= @client.id -%>' id="history" class=" blue">
-  <span class="txt">Status History</span></a>
-
-  <a href= '/client_assessment/<%= @client.id -%>' id="risk" class=" blue">
-  <span class="txt">Assessment</span></a>
-
 
   <a href= '/referral_consent/<%= @client.id -%>' id="hospital" class=" blue">
     <span class="txt">Referral</span></a>

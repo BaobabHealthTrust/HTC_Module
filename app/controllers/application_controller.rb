@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   before_filter :save_login_state, :only => [:attempt_login, :login]
   
   def next_task(client)
-     htc_tasks = ["IN WAITING","IN SESSION","COUNSELING","ASSESSMENT","HIV TESTING","REFERRAL CONSENT CONFIRMATION","UPDATE HIV STATUS",
+     htc_tasks = ["IN WAITING","IN SESSION","UPDATE HIV STATUS","COUNSELING","ASSESSMENT","HIV TESTING","REFERRAL CONSENT CONFIRMATION",
                           "APPOINTMENT",]
      current_date = session[:datetime].to_date rescue Date.today
      conselled = encounter_done(client.patient_id, "COUNSELING")
@@ -14,6 +14,17 @@ class ApplicationController < ActionController::Base
      
     htc_tasks.each { |encounter|
               case encounter
+                when "UPDATE HIV STATUS"
+                   if encounter_done(client.patient_id, encounter).blank?
+                      if partner.match(/PARTNER OR SPOUSE/i)
+                        link = { "name" =>  "Update Status",
+                        "url" => "/couple/status?client_id=#{client.patient_id}"}
+                      else
+                        link = { "name" =>  "Update Status",
+                        "url" => "/client_status/#{client.patient_id}"}
+                      end
+                      return link
+                    end
                 when "COUNSELING"
                    if encounter_done(client.patient_id, encounter).blank?
                         link = { "name" =>  "Counseling",
@@ -27,6 +38,7 @@ class ApplicationController < ActionController::Base
                         "url" => "/client_assessment/#{client.patient_id}"}
                         return link
                     end
+
                     when "HIV TESTING"
                    if ! conselled.blank?
                         o = ActionView::Base.full_sanitizer.sanitize(conselled.first.to_s).upcase
@@ -55,18 +67,6 @@ class ApplicationController < ActionController::Base
 
                        
                         return link
-                    end
-              when "UPDATE HIV STATUS"
-                   if encounter_done(client.patient_id, encounter).blank?
-                      if partner.match(/PARTNER OR SPOUSE/i)
-                        link = { "name" =>  "Update Status",
-                        "url" => "/couple/status?client_id=#{client.patient_id}"}
-                      else
-                        link = { "name" =>  "Update Status",
-                        "url" => "/client_status/#{client.patient_id}"}
-
-                      end
-                      return link
                     end
 
               when "APPOINTMENT"
