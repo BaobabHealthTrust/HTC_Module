@@ -32,9 +32,8 @@ class ClientsController < ApplicationController
        end
          
       @all_encounters = {}
-      state_encounters = ['IN WAITING','IN SESSION','Counseling','ASSESSMENT',
-												'HIV Testing', 'Referral Consent Confirmation','UPDATE HIV STATUS',
-												'Appointment']
+      state_encounters = ['IN WAITING','IN SESSION','UPDATE HIV STATUS','Counseling','ASSESSMENT',
+												'HIV Testing', 'Referral Consent Confirmation','Appointment']
       state_encounters.each{|encounter|
         @all_encounters[encounter.upcase] = ""
       }
