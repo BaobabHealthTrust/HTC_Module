@@ -11,7 +11,7 @@ class ClientsController < ApplicationController
   end
 
   def show
-    
+      
       @task = next_task(@client)
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
@@ -54,7 +54,6 @@ class ClientsController < ApplicationController
   end
 
   def new
-
 		if ! params[:name_id].blank?
 				@names = PersonName.where("person_id = #{params[:name_id]} AND voided = 0")				
 				@names.each do |name|
@@ -113,10 +112,11 @@ class ClientsController < ApplicationController
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
-
-      if !params[:firstname].blank? || !params[:surname].blank?
+      
+      if !params[:given_name].blank? || !params[:lastname].blank?
+        #raise params[:given_name].inspect
         @new_name = PersonName.create(preferred: '0', person_id: @person.id,
-            given_name: params[:firstname], family_name: params[:surname],
+            given_name: params[:given_name], family_name: params[:lastname],
             creator: current_user.id) if @person
       end
 
@@ -159,8 +159,18 @@ class ClientsController < ApplicationController
 		end
 
 		session[:show_new_client_button] = false
-		redirect_to action: 'search_results', residence: @address.address1, 
+
+
+    if (Settings.full_demographics_at_reception.to_s == 'true') && !params[:save]
+      redirect_to action: 'search', firstname: params[:firstname], lastname: params[:surname], gender: params[:gender]
+    elsif params[:save] 
+      #raise params[:residence].inspect
+      redirect_to action: 'search_results', residence: params[:residence], 
+                      gender: @person.gender, date_of_birth: @person.birthdate, final_save: true
+    else
+		  redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
+    end
   end
 
   def search_couple
@@ -1047,6 +1057,11 @@ class ClientsController < ApplicationController
 	end
 	
 	def search_results
+    if params[:residence] && !params[:final_save]
+      redirect_to action: 'new', given_name: params[:firstname], lastname: params[:surname], gender: params[:gender],
+       residence: params[:residence], ta: params[:ta], address2: params[:address2], dob: params[:date_of_birth], save: true and return
+    end
+    
 
 		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
@@ -1123,35 +1138,50 @@ class ClientsController < ApplicationController
 				
 		 else
 		 		
+      if (Settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
+          firstname = params["firstname"]
+          surname = params["surname"]
 
-			birthdate_estimated = false
+          @clients = Client.find_by_sql("SELECT * FROM patient p
+                          INNER JOIN person pe ON pe.person_id = p.patient_id 
+                          INNER JOIN person_name pn ON pn.person_id = p.patient_id                          
+                          LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+                          WHERE pe.gender = '#{params[:gender]}'
+                          AND pn.given_name = '#{firstname}' AND p.voided = 0
+                          AND pn.family_name = '#{surname}'
+                          AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+                          pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") #rescue []
 
-			birth_date = params[:date_of_birth].split("/")
-			birth_year = birth_date[2]
-			birth_month = birth_date[1]
-			birth_day = birth_date[0]
 
-			birthdate = params[:date_of_birth]
+      else
+    			birthdate_estimated = false
 
-			if birth_month == "?"
-				birthdate_estimated = true
-				birth_month = 7
-			end
-			
-			if birth_day == "?"
-				birthdate_estimated = true
-				birth_day = 1
-			end
-			
-			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
-		 		@clients = Client.find_by_sql("SELECT * FROM patient p
-											INNER JOIN person pe ON pe.person_id = p.patient_id 
-											INNER JOIN person_address pn ON pn.person_id = pe.person_id
-											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
-											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
-											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
-											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
-											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+    			birth_date = params[:date_of_birth].split("/")
+    			birth_year = birth_date[2]
+    			birth_month = birth_date[1]
+    			birth_day = birth_date[0]
+
+    			birthdate = params[:date_of_birth]
+    			if birth_month == "?"
+    				birthdate_estimated = true
+    				birth_month = 7
+    			end
+    			
+    			if birth_day == "?"
+    				birthdate_estimated = true
+    				birth_day = 1
+    			end
+    			
+    			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+    		 		@clients = Client.find_by_sql("SELECT * FROM patient p
+    											INNER JOIN person pe ON pe.person_id = p.patient_id 
+    											INNER JOIN person_address pn ON pn.person_id = pe.person_id
+    											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+    											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
+    											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
+    											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+    											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+        end
 
 				sp = ""
 				@side_panel_date = ""
@@ -1191,8 +1221,7 @@ class ClientsController < ApplicationController
 											days_since_last_visit: '#{days_since_last_visit}',
 											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
 					sp = ','
-				end
-				
+				end      				
      end
      render layout: false
 	end

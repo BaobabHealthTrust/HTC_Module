@@ -9,7 +9,12 @@ class EncountersController < ApplicationController
   end
 
   def new
-# raise params.to_yaml
+    if params["ENCOUNTER"].upcase == "ASSESSMENT"
+      if params[:observations][1]["value_coded_or_text"] == "No"
+        redirect_to "/clients/#{params[:id]}" and return
+      end
+    end
+
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])

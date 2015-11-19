@@ -222,7 +222,7 @@ function createPage(fieldset){
 		document.body.removeChild(__$("__content__"));
 	}
 	
-	var content = document.FcreateElement("div");
+	var content = document.createElement("div");
 	content.id = "__content__";
 	
 	document.body.appendChild(content);
