@@ -88,7 +88,7 @@
                     </fieldset>
 
                    <!-- If params exist do below --> 
-                  <% elsif params[:firstname] %>
+                <% elsif params[:firstname] %>
                     <fieldset>
                       <legend>New Client</legend>
                      <input type="hidden" id="firstname" name="firstname" value="<%= params[:firstname] %>" />
@@ -127,10 +127,9 @@
                                    <input type="text" id="cell_phone_number" name='Cell Phone Number' value="" fieldtype="number"/>
                                    <br />
                     </fieldset>
-                  <% end %>
-
                 <% end %>
-                           <% else %>
+            <%# end %>
+            <% else %>
 
                 <fieldset>
                   <legend>Search Client</legend>
@@ -156,10 +155,10 @@
                                   <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false"
                                          />
                                   <br />
-             </fieldset>
-             <fieldset>
-               <legend>Search Client (cont..)</legend>
-               <br/>              
+              </fieldset>
+              <fieldset>
+                <legend>Search Client (cont..)</legend>
+                  <br/>              
                                   <label for="residence">Residence</label>
                                   <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
                                   <br />
@@ -184,29 +183,17 @@
                                    <label for="cell_phone_number">Cell Phone Number</label>
                                    <input type="text" id="cell_phone_number" name='Cell Phone Number' value="" fieldtype="number"/>
                                    <br />
-
-
-
-             <!-- </fieldset>
-
-             <fieldset>
-              <legend>Search Client (Cont..)</legend>
-              <br />              
-
-                                   
-
-             </fieldset> -->
-
-                
-            <fieldset>
-              <legend>Search Client</legend>
-              <br />
-                                      <label for="scan_accession_number" >Accession Number </label>
-                                      <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" >
-                                            <input id="add_to_session" type="hidden" name="add_to_session" value="true">
-
-            </fieldset>
-    <% end %>
+              </fieldset> 
+            <% end %>
+        <% else %>  
+              <fieldset>
+                <legend>Search Client</legend>
+                <br />
+                                        <label for="scan_accession_number" >Accession Number </label>
+                                        <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" >
+                                              <input id="add_to_session" type="hidden" name="add_to_session" value="true">
+              </fieldset>
+        <% end %>
 
 	<%= submit_tag "Finish" %>
            
