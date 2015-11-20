@@ -144,7 +144,8 @@ class EncountersController < ApplicationController
     high_risk = Settings[:high_risk]
 
     all_risks = low_risk+on_going_risk+high_risk
-    risk_type = "Unknown"
+
+    risk_type = "unknown"
   
 =begin    
     encounter_list = "SELECT e.encounter_id, e.encounter_type, e.encounter_datetime
@@ -163,8 +164,7 @@ class EncountersController < ApplicationController
     @yes_query.each do |record|
       yesAnswers << record.name
     end
-
-    #raise yesAnswers.uniq.inspect
+    
     yesAnswers.each do |yes|
       if high_risk.include? yes
         risk_type = "high"
