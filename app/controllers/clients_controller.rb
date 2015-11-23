@@ -61,10 +61,14 @@ class ClientsController < ApplicationController
 					 name.save! 					
 				end
 
+      if params.post?
 				@new_name = PersonName.create(preferred: '0', person_id: params[:name_id], 
 															given_name: params[:first_name], family_name: params[:surname], 
 															creator: current_user.id)
 				redirect_to "/clients/#{params[:name_id]}" and return
+      else
+        redirect_to "/clients/#{params[:name_id]}" and return
+      end
 
     elsif ! params[:gender].blank? and ! params[:dob].blank?
 

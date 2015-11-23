@@ -113,7 +113,11 @@
 														var covers =  document.getElementById("frame_data");
 														html = '<button class="blue" style="width:120px;" onmousedown="window.location = ' + "'/client_demographics?client_id=<%= @client.id -%>'" + '">';
 														html +=  'Demo..</button>';
-														html += '<button class="blue" style="width:120px;" onmousedown="window.location = ' + "'<%= @task["url"] rescue "" -%>'" + '">';
+                            <% if @task["name"] == "None" %>
+                              html += '<button class="gray" style="width:120px;" onmousedown="window.location = ' + "'<%= @task["url"] rescue "" -%>'" + '">';
+                            <% else %>
+														  html += '<button class="blue" style="width:120px;" onmousedown="window.location = ' + "'<%= @task["url"] rescue "" -%>'" + '">';
+                            <% end %>
 														html += 'Next</button>';
 														html += '<button class="blue"  id="tasks" style="width:120px;"onmousedown="loadTasks()">';
 														html += ' Tasks</button>';
@@ -343,6 +347,20 @@
         background-color: #a7cfdf;
         background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
         border: 1px solid #7eb9d0;
+        border-radius: 3px;
+        color: #ffffff;
+        display: inline-block;
+        font-family: arial,helvetica,sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 10px;
+        text-decoration: none;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+    }
+    .gray {
+        background-color: #ccc;
+        background-image: linear-gradient(to bottom, #ccc, #ccc);
+        border: 1px solid #ccc;
         border-radius: 3px;
         color: #ffffff;
         display: inline-block;
