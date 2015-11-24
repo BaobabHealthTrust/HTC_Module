@@ -43,19 +43,12 @@
  function getDistrictValue(){
     if (__$('textForhome_district')){
       district = __$('textForhome_district').value;
-      updateValueContinuosly(district);
+      __$('ta').setAttribute("ajaxurl", "/locations/ta?district=" + district)
     }
  }
 
-window.setTimeout("getDistrictValue();", 350);
+window.setInterval("getDistrictValue();", 100);
 
-function updateValueContinuosly(district){
-  window.setInterval = (function(){
-      __$('ta').setAttribute("ajaxurl", "/locations/ta?district=" + district)
-      updateValueContinuosly(district)
-    }, 100)
-    
-}
 
 
 	</script>
