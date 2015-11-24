@@ -39,6 +39,24 @@
 
                       setTimeout("doLogin('" + id + "')", 500);
             }
+ 
+ function getDistrictValue(){
+    if (__$('textForhome_district')){
+      district = __$('textForhome_district').value;
+      updateValueContinuosly(district);
+    }
+ }
+
+window.setTimeout("getDistrictValue();", 350);
+
+function updateValueContinuosly(district){
+  window.setInterval = (function(){
+      __$('ta').setAttribute("ajaxurl", "/locations/ta?district=" + district)
+      updateValueContinuosly(district)
+    }, 100)
+    
+}
+
 
 	</script>
           <style>
@@ -112,7 +130,7 @@
 
                                    <label for="ta">Traditional Authority</label>
                                    <input type="text" id="ta" name="ta" value=""
-                                          ajaxURL="/locations/ta"/>
+                                          ajaxURL="/locations/ta?district="/>
 
                                    <label for='occupation'>Occupation</label>
                                    <select id="occupation" name="Occupation">
