@@ -133,7 +133,7 @@ class ClientsController < ApplicationController
       end
 
       @address.save if @person
-
+      #raise params.inspect
       ["Occupation", "Cell Phone Number", "Office Phone Number", "Home Phone Number", "Landmark Or Plot Number"].each do |name|
 
         next if params["#{name}"].blank?
@@ -1308,7 +1308,8 @@ class ClientsController < ApplicationController
      end
      if params[:residence]
        redirect_to action: 'new', given_name: params[:firstname], lastname: params[:surname], gender: params[:gender],
-           residence: params[:residence], ta: params[:ta], address2: params[:address2], dob: params[:date_of_birth] and return
+           residence: params[:residence], ta: params[:ta], address2: params[:address2], dob: params[:date_of_birth],
+           Occupation: params[:Occupation], "Cell Phone Number" => params["Cell Phone Number"]  and return
      end
      render layout: false
 	end
