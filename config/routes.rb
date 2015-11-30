@@ -181,8 +181,11 @@ HTCModule::Application.routes.draw do
 	
 	get "waiting_list" => "clients#waiting_list"
 	#post "unallocated_clients" => "clients#unallocated_clients"
-	
-	
+
+
+  post "search_new" => "clients#search_new"
+  get "search_new" => "clients#search_new"
+
 	post "search_results" => "clients#search_results"
 	get "search_results" => "clients#search_results"
 

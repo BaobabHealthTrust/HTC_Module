@@ -1,0 +1,252 @@
+<html>
+<head>
+  <script>
+      var cancelDestination = "/htcs";
+  </script>
+  <%= stylesheet_link_tag 'panel' %>
+</head>
+<body>
+
+<%= form_tag show_client_path do %>
+    <fieldset>
+      <legend>Search Result</legend>
+
+      <br />
+      <% if @show_counselling_room != true %>
+          <label for="id">  </label>
+
+          <select id="id" name="id">
+
+            <% if @show_new_client_button %>
+                <option><i>New client</i></option>
+            <% end %>
+
+            <%= @clients_info.each do |client| %>
+                <option value="<%= client[:id] %>"> Accession :<%= " #{client[:accession]}" %>;<%= " #{client[:gender]}" %>; DOB :<%= client[:birth] %> </option>
+            <% end %>
+          </select>
+
+          <br />
+      <% else %>
+          <label for="scan_accession_number" >Accession Number </label>
+          <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
+      <% end %>
+
+    </fieldset>
+    <%= submit_tag "Finish" %>
+
+<% end %>
+</body>
+
+<%= javascript_include_tag 'touchscreentoolkitV2/ts' %>
+<script>
+
+    var sidePanelData = {<%= @side_panel_date.html_safe %>};
+
+    //Highlist list object
+    function highlightList(obj) {
+        if(obj.getAttribute("target") != null){
+            if(__$(obj.getAttribute("target"))){
+                var opts = __$(obj.getAttribute("target")).children;
+
+                for(var i = 0; i < opts.length; i++){
+                    if(opts[i].getAttribute("selecttag") != null){
+                        opts[i].removeAttribute("selecttag");
+                        opts[i].style.backgroundColor = (opts[i].getAttribute("tag") == "odd" ? "#eee" : "");
+                    }
+                }
+            }
+
+            obj.setAttribute("selecttag", true);
+            obj.style.backgroundColor = "lightblue";
+            obj.style.color = "black";
+        }
+    }
+
+    function create_new_patient() {
+        <% params[:dob] = params[:date_of_birth]%>
+        window.location = '<%= new_client_path(params) %>'
+    }
+
+    function printAccession(id){
+        window.location = '/clients/print_accession/' + id
+    }
+    function add_to_waiting_list(obj) {
+        window.location = '/clients/' + __$('textForid').value + '/add_to_unallocated';
+    }
+
+    __$("row1").style.display="none";
+    __$("buttons").style.verticalAlign = "bottom";
+    __$("buttons").style.width = "100%";
+    __$("buttons").style.height = "100%";
+
+    //btnNext.style.display = "none";
+
+    btnNext.innerHTML = "Finish";
+    btnNext.style.width = "250px";
+    btnCancel.style.width = "250px";
+
+    var display = "inline-table";
+
+    btnDivs = __$('buttons').children[0].children;
+
+    btnDivs[1].style.display = "none";
+    btnDivs[2].style.display = "none";
+
+    btnDivs[0].style.display  = "inline-table";
+    btnDivs[3].style.display  = "inline-table";
+
+    btnDivs[3].style.cssFloat = "right";
+
+    var dsp = document.createElement("div");
+    dsp.id = "dsp";
+    dsp.style.display = "table-cell";
+    dsp.style.border = "1px solid #3465a4";
+    dsp.style.overflow = "hidden";
+    dsp.style.borderRadius = "10px";
+    dsp.style.width = "46%";
+    dsp.style.height = "100%";
+    dsp.style.verticalAlign = "top";
+    dsp.innerTHML = "none";
+
+    __$('textForid').style.height = "100%";
+    __$('textForid').style.width = "100%";
+
+    var lst = __$('ul1').children;
+
+    if (lst.length == 1){
+        __$('stage').style.display = "none";
+    }
+
+    for (var i=0; i < lst.length ; i++) {
+        lst[i].onmousedown = function() {
+            highlightList(this);
+            __$('textForid').value = this.value;
+
+            dspValue = this.innerHTML.split(';');
+            var obj = sidePanelData[this.value];
+
+            var s = "";
+
+            if (this.innerHTML.trim() != "New client") {
+
+
+                btnNext.style.display = "inline-table";
+
+
+
+                var button = '<a href="#" id="add" ' +
+                        'onmousedown="add_to_waiting_list(this)"' +
+                        ' class="blue" pos="0" section="0"><span class="txt">Add to waiting list</span></a>';
+
+                s += "<table class = 'list-table'>"
+                s += addString("Accession Number", obj.accession_number );
+                s += addString("Gender", obj.gender );
+                s += addString("Age", obj.age );
+                s += addString("Date of Birth", obj.birthDate );
+                s += addString("Residence", obj.residence );
+                s += addString("Last Visit", obj.last_visit );
+
+
+                if (obj.has_booking) {
+                    s += addString("Booking", obj.appointment_date, (obj.days_since_last_visit  + " day(s)") );
+                }
+
+                if (parseInt(obj.days_since_last_visit) > 0) {
+                    s += addString("Period Since Last Visit", obj.last_visit );
+                }
+
+                var accession_number =  '<a href="#" id="print" ' +
+                        'onmousedown="printAccession(' + obj.id + ')"' +
+                        ' class="blue" pos="0" section="0"><span class="txt">Accession</span></a>';
+                if (obj.status.trim()=="") {
+                    s+= "</table>";
+                    s +=  button + accession_number;
+                }else {
+                    s += addString("Work-flow Status", (humanize(obj.status.toLowerCase())) );
+                    s += "</table>";
+                    s += accession_number;
+                }
+
+            }
+            else {
+                s = '<br> <br> <a href="#" id="new" onmousedown="create_new_patient()" ' +
+                ' class="blue" pos="0" section="0"><span class="txt">New client</span></a>'
+            }
+
+            __$('dsp').innerHTML = s;
+        };
+    }
+    __$('textForid').value = -1;
+    row.insertBefore(dsp, row.firstChild);
+    __$("row0").parentNode.appendChild(__$('buttons'));
+
+    btnCancel.parentNode.parentNode.parentNode.style.backgroundColor="grey";
+
+    if (__$('ul1')) {
+        __$('ul1').children[0].onmousedown();
+    }
+
+    function addString(label, value){
+        if (!value)
+            value = "&nbsp";
+
+        return ("<tr>" +
+        "<td style='border: 1px dotted lightgray; color: rgb(50, 50, 50); width: 40%; font-size: 1.2em; font-weight: bold;padding: 10px;'> " + label + "</td>" +
+        "<td style='border: 1px dotted lightgray;width: 40%; font-size: 1.3em; padding: 10px;font-style: italic;'>" + value + "</td>" +
+        "</tr>");
+
+    }
+
+    function humanize(string){
+        return string.replace(/_/g, ' ')
+                .replace(/(\w+)/g, function(match) {
+                    return match.charAt(0).toUpperCase() + match.slice(1);
+                });
+    }
+
+    document.getElementById('btn3').children[0].setAttribute("onclick","eval(window.location='/htcs')");
+</script>
+</html>
+<style>
+    .blue {
+        border-radius: 35px;
+        display: block;
+        float: left;
+        height: 75px;
+        margin-right: 35px;
+        vertical-align: baseline;
+        width: 75px;
+        background-repeat: no-repeat;
+        background-size: 60px 60px;
+    }
+    #add {
+        background-image: url(<%= asset_path 'add_list.png' %>);
+        background-size: cover;
+    }
+    #print {
+        background-image: url(<%= asset_path 'printer2.png' %>);
+        background-size: cover;
+    }
+    #new {
+        background-image: url(<%= asset_path 'add_client.png' %>);
+        background-size: cover;
+    }
+    #deactivate {
+        background-image: url(<%= asset_path 'activate.jpeg' %>);
+        background-size: cover;
+    }
+    .txt {
+        color: #000000;
+        display: block;
+        font-size: 15px;
+        position: relative;
+        text-align: center;
+        top: 85px;
+    }
+
+    .list-table{
+        width: 100%;
+    }
+
+</style>

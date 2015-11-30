@@ -166,11 +166,17 @@ class ClientsController < ApplicationController
 
 
     if (Settings.full_demographics_at_reception.to_s == 'true') && !params[:save]
-      redirect_to action: 'search', firstname: params[:firstname], lastname: params[:surname], gender: params[:gender]
-    elsif params[:save] 
+      if params[:residence]
+        redirect_to action: 'search_new', residence: @address.address1,
+            gender: @person.gender, date_of_birth: @person.birthdate
+      else
+        redirect_to action: 'search', firstname: params[:firstname], lastname: params[:surname], gender: params[:gender]
+      end
+
+    #elsif (Settings.full_demographics_at_reception.to_s == 'true') && params[:residence]
       #raise params[:residence].inspect
-      redirect_to action: 'search_results', residence: params[:residence], 
-                      gender: @person.gender, date_of_birth: @person.birthdate, final_save: true
+      #redirect_to action: 'search_results', residence: params[:residence],
+                      #gender: @person.gender, date_of_birth: @person.birthdate, final_save: true
     else
 		  redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
@@ -1058,13 +1064,86 @@ class ClientsController < ApplicationController
                       "Security guard","Soldier","Student","Teacher","Other","Unknown"]
        @land_mark = ["School","Police","Church","Mosque","Borehole"]
        @reception_demographics = Settings.full_demographics_at_reception
-	end
+  end
+
+  def search_new
+    @show_new_client_button = session[:show_new_client_button] rescue false
+    current_date = session[:datetime].to_date rescue Date.today.to_date
+    identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+
+        birthdate_estimated = false
+
+        birth_date = params[:date_of_birth].split("/")
+        birth_year = birth_date[2]
+        birth_month = birth_date[1]
+        birth_day = birth_date[0]
+
+        birthdate = params[:date_of_birth]
+        if birth_month == "?"
+          birthdate_estimated = true
+          birth_month = 7
+        end
+
+        if birth_day == "?"
+          birthdate_estimated = true
+          birth_day = 1
+        end
+
+        birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+        @clients = Client.find_by_sql("SELECT * FROM patient p
+    											INNER JOIN person pe ON pe.person_id = p.patient_id
+    											INNER JOIN person_address pn ON pn.person_id = pe.person_id
+    											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+    											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
+    											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
+    											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+    											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+
+      sp = ""
+      @side_panel_date = ""
+      @client_list = ""
+      @clients_info = []
+
+      @clients.each do |client|
+        id= client.id
+        accession = client.accession_number
+        age = client.person.age
+        gender = client.person.gender
+        birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
+        residence = PersonAddress.find_by_person_id(id).address1
+
+        status = client.current_state(current_date).name rescue ""
+        last_visit = client.encounters.last.encounter_datetime.to_date
+        .to_formatted_s(:rfc822) rescue nil
+        last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
+        date_today = session[:datetime].to_date rescue Date.today.to_date
+        days_since_last_visit = (date_today - last_visit.to_date).to_i
+
+        has_booking = false
+        appointment_date = client.has_booking.value_datetime rescue nil
+
+        if !appointment_date.blank?
+          has_booking = true
+          appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+        end
+
+        @clients_info << { id: id, accession: accession,
+            birth: birth, gender: gender, residence: residence}
+
+        @side_panel_date += sp + "#{id} : { id: #{id},
+											accession_number: '#{accession}', status: '#{status}',
+											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
+											birthDate: '#{birth}', residence: '#{residence}',
+											days_since_last_visit: '#{days_since_last_visit}',
+											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
+        sp = ','
+      end
+
+    render layout: false
+  end
 	
 	def search_results
-    if params[:residence] && !params[:final_save]
-      redirect_to action: 'new', given_name: params[:firstname], lastname: params[:surname], gender: params[:gender],
-       residence: params[:residence], ta: params[:ta], address2: params[:address2], dob: params[:date_of_birth], save: true and return
-    end
+
     
 
 		 @show_new_client_button = session[:show_new_client_button] rescue false
@@ -1226,6 +1305,10 @@ class ClientsController < ApplicationController
 											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
 					sp = ','
 				end      				
+     end
+     if params[:residence]
+       redirect_to action: 'new', given_name: params[:firstname], lastname: params[:surname], gender: params[:gender],
+           residence: params[:residence], ta: params[:ta], address2: params[:address2], dob: params[:date_of_birth] and return
      end
      render layout: false
 	end
