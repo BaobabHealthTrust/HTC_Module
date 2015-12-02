@@ -69,7 +69,7 @@ window.setInterval("getDistrictValue();", 100);
 <body onload="adjust()">
 
 
-<%= form_tag search_results_path do %>
+<%= form_tag (params[:firstname].blank? ? (search_results_path) : new_client_path) do %>
 <%# raise params.inspect %>
         <% if @show_counselling_room != true %>
 
@@ -169,7 +169,7 @@ window.setInterval("getDistrictValue();", 100);
               </fieldset>
               <fieldset>
                 <legend>Search Client (cont..)</legend>
-                  <br/>              
+                  <br/>
                                   <label for="residence">Residence</label>
                                   <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
                                   <br />
@@ -194,7 +194,7 @@ window.setInterval("getDistrictValue();", 100);
                                    <label for="cell_phone_number">Cell Phone Number</label>
                                    <input type="text" id="cell_phone_number" name='Cell Phone Number' value="" fieldtype="number"/>
                                    <br />
-              </fieldset> 
+              </fieldset>
             <% end %>
         <% else %>  
               <fieldset>

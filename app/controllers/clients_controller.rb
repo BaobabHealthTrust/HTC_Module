@@ -70,8 +70,8 @@ class ClientsController < ApplicationController
         redirect_to "/clients/#{params[:name_id]}" and return
       end
 
-    elsif ! params[:gender].blank? and ! params[:dob].blank?
-
+    elsif ! params[:gender].blank? and (! params[:dob].blank? || !params[:date_of_birth].blank?)
+      params[:dob] = params[:date_of_birth] if params[:dob].blank?
 			current_number = 1
 			current = session[:datetime].to_date rescue Date.today
     
@@ -165,18 +165,13 @@ class ClientsController < ApplicationController
 		session[:show_new_client_button] = false
 
 
-    if (Settings.full_demographics_at_reception.to_s == 'true') && !params[:save]
+    if (Settings.full_demographics_at_reception.to_s == 'true')
       if params[:residence]
         redirect_to action: 'search_new', residence: @address.address1,
             gender: @person.gender, date_of_birth: @person.birthdate
       else
         redirect_to action: 'search', firstname: params[:firstname], lastname: params[:surname], gender: params[:gender]
       end
-
-    #elsif (Settings.full_demographics_at_reception.to_s == 'true') && params[:residence]
-      #raise params[:residence].inspect
-      #redirect_to action: 'search_results', residence: params[:residence],
-                      #gender: @person.gender, date_of_birth: @person.birthdate, final_save: true
     else
 		  redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
@@ -1144,8 +1139,6 @@ class ClientsController < ApplicationController
 	
 	def search_results
 
-    
-
 		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
@@ -1220,7 +1213,6 @@ class ClientsController < ApplicationController
         end
 				
 		 else
-		 		
       if (Settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
           firstname = params["firstname"]
           surname = params["surname"]
@@ -1237,6 +1229,7 @@ class ClientsController < ApplicationController
 
 
       else
+
     			birthdate_estimated = false
 
     			birth_date = params[:date_of_birth].split("/")
@@ -1306,11 +1299,7 @@ class ClientsController < ApplicationController
 					sp = ','
 				end      				
      end
-     if params[:residence]
-       redirect_to action: 'new', given_name: params[:firstname], lastname: params[:surname], gender: params[:gender],
-           residence: params[:residence], ta: params[:ta], address2: params[:address2], dob: params[:date_of_birth],
-           Occupation: params[:Occupation], "Cell Phone Number" => params["Cell Phone Number"]  and return
-     end
+
      render layout: false
 	end
 
