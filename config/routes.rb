@@ -180,6 +180,9 @@ HTCModule::Application.routes.draw do
 	get "total_bookings" => "clients#total_bookings"
 	
 	get "waiting_list" => "clients#waiting_list"
+
+  post "new_client" =>  "clients#new"
+
 	#post "unallocated_clients" => "clients#unallocated_clients"
 
 
