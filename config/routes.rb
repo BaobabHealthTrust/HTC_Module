@@ -183,6 +183,8 @@ HTCModule::Application.routes.draw do
 
   post "new_client" =>  "clients#new"
 
+  get "new_client" => "clients#new"
+
 	#post "unallocated_clients" => "clients#unallocated_clients"
 
 

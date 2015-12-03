@@ -117,10 +117,10 @@ class ClientsController < ApplicationController
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
       
-      if !params[:given_name].blank? || !params[:lastname].blank?
+      if !params[:firstname].blank? || !params[:surname].blank?
         #raise params[:given_name].inspect
         @new_name = PersonName.create(preferred: '0', person_id: @person.id,
-            given_name: params[:given_name], family_name: params[:lastname],
+            given_name: params[:firstname], family_name: params[:surname],
             creator: current_user.id) if @person
       end
 
