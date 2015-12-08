@@ -25,3 +25,4 @@
 .idea/*
 /Gemfile.lock
 nbproject/
+public/touchscreentoolkit/*
