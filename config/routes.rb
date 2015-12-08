@@ -1,4 +1,5 @@
 HTCModule::Application.routes.draw do
+  get "clients/new"
   get "counselor/test_details"
   get "list_tests" => "counselor#list_tests"
   get  "counselor/monthly_details"
@@ -211,7 +212,12 @@ HTCModule::Application.routes.draw do
 
   get "client_printouts" => "clients#printouts"
 
-   get "client_tasks" => "clients#tasks"
+  get "client_tasks" => "clients#tasks"
+
+  ######################### new routes ################################
+  get "people/new"
+  ######################### new routes end ################################
+
 
   get "/encounters/void/:id" => "encounters#void"
 
@@ -236,7 +242,6 @@ HTCModule::Application.routes.draw do
   resources :htcs
 
   resources :clients
-
 
 	post "/users/new" => "users#new"
 	get "/users/destroy/:id" => "users#destroy"

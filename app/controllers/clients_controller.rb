@@ -170,7 +170,9 @@ class ClientsController < ApplicationController
         redirect_to action: 'search_new', residence: @address.address1,
             gender: @person.gender, date_of_birth: @person.birthdate
       else
-        redirect_to action: 'search', firstname: params[:firstname], lastname: params[:surname], gender: params[:gender]
+        redirect_to action: 'new', controller: 'people',
+          firstname: params[:name]['firstname'], lastname: params[:name]['surname'], 
+          gender: params[:gender] and return
       end
     else
 		  redirect_to action: 'search_results', residence: @address.address1, 
@@ -869,7 +871,7 @@ class ClientsController < ApplicationController
 			person = person.map do |locs|
       "#{locs.given_name}"
     end
-    render :text => person.join("\n") and return
+    render :text => "<li>" + person.uniq.map{|n| n } .join("</li><li>") + "</li>"
 	end
 
 	def last_name
@@ -878,7 +880,7 @@ class ClientsController < ApplicationController
 			person = person.map do |locs|
       "#{locs.family_name}"
     end
-    render :text => person.join("\n") and return
+    render :text => "<li>" + person.uniq.map{|n| n } .join("</li><li>") + "</li>"
 	end
 
   def printouts
