@@ -11,23 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20140722145413) do
-=======
-ActiveRecord::Schema.define(version: 20140801091928) do
->>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
-=======
-ActiveRecord::Schema.define(version: 20140822141340) do
->>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
-=======
-ActiveRecord::Schema.define(version: 20140825121028) do
->>>>>>> cc0797c8bf33896dbfeb69636b58bd90a700e9a0
-=======
 ActiveRecord::Schema.define(version: 20141204093047) do
->>>>>>> d5085065ca64e9359af3214550b969893d23410b
 
   create_table "active_list", primary_key: "active_list_id", force: true do |t|
     t.integer  "active_list_type_id",                            null: false
@@ -83,8 +67,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
   add_index "active_list_type", ["creator"], name: "user_who_created_active_list_type", using: :btree
   add_index "active_list_type", ["retired_by"], name: "user_who_retired_active_list_type", using: :btree
 
-<<<<<<< HEAD
-=======
   create_table "child_protocol", primary_key: "child_id", force: true do |t|
     t.integer "protocol_id"
     t.integer "parent_id"
@@ -95,7 +77,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
     t.datetime "updated_at"
   end
 
->>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "clob_datatype_storage", force: true do |t|
     t.string "uuid",  limit: 38,         null: false
     t.text   "value", limit: 2147483647, null: false
@@ -486,10 +467,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
   add_index "concept_word", ["weight"], name: "concept_word_weight_index", using: :btree
   add_index "concept_word", ["word"], name: "word_in_concept_name", using: :btree
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
   create_table "councillor_inventory", force: true do |t|
     t.string   "lot_no"
     t.integer  "councillor_id"
@@ -507,7 +484,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
     t.datetime "updated_at"
   end
 
->>>>>>> d5085065ca64e9359af3214550b969893d23410b
   create_table "counseling_answer", primary_key: "answer_id", force: true do |t|
     t.integer  "question_id"
     t.integer  "patient_id"
@@ -536,7 +512,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
     t.decimal  "position",                precision: 10, scale: 0
   end
 
->>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
   create_table "district", primary_key: "district_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "region_id",     default: 0,     null: false
@@ -1730,21 +1705,10 @@ ActiveRecord::Schema.define(version: 20141204093047) do
   add_index "person_name", ["voided_by"], name: "user_who_voided_name", using: :btree
 
   create_table "person_name_codes", force: true do |t|
-<<<<<<< HEAD
-=======
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-<<<<<<< HEAD
-  create_table "person_names", force: true do |t|
->>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-=======
->>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "privilege", primary_key: "privilege", force: true do |t|
     t.string "description", limit: 250, default: "", null: false
     t.string "uuid",        limit: 38,               null: false
@@ -1875,17 +1839,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
   add_index "provider_attribute_type", ["retired_by"], name: "provider_attribute_type_retired_by_fk", using: :btree
   add_index "provider_attribute_type", ["uuid"], name: "uuid", unique: true, using: :btree
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  create_table "providers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
->>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
-=======
->>>>>>> 9772aa7486f51bb0ec60b125bae4a40006dec4cf
   create_table "region", primary_key: "region_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "creator",       default: 0,     null: false
@@ -2053,10 +2006,6 @@ ActiveRecord::Schema.define(version: 20141204093047) do
   add_index "serialized_object", ["retired_by"], name: "serialized_object_retired_by", using: :btree
   add_index "serialized_object", ["uuid"], name: "serialized_object_uuid_index", unique: true, using: :btree
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
   create_table "test_encounter", force: true do |t|
     t.string   "test_encounter_type"
     t.integer  "creator"
@@ -2094,13 +2043,11 @@ ActiveRecord::Schema.define(version: 20141204093047) do
     t.float    "value_coded"
   end
 
->>>>>>> d5085065ca64e9359af3214550b969893d23410b
   create_table "traditional_authorities", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
->>>>>>> 35118deeffd16ce1b4b17857de7074672c1096aa
   create_table "traditional_authority", primary_key: "traditional_authority_id", force: true do |t|
     t.string   "name",          default: "",    null: false
     t.integer  "district_id",   default: 0,     null: false

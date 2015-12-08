@@ -62,6 +62,8 @@ HTCModule::Application.routes.draw do
 
   #get '/assign_to_unlocated_list/:id', to: 'clients#assign_to_unlocated_list'
   get "client_assessment/:id" => "clients#assessment"
+
+  get "client_risk_assessment" => "clients#risk_assessment"
   
   get "search_couple/:id" => "clients#search_couple"
 
@@ -178,9 +180,17 @@ HTCModule::Application.routes.draw do
 	get "total_bookings" => "clients#total_bookings"
 	
 	get "waiting_list" => "clients#waiting_list"
+
+  post "new_client" =>  "clients#new"
+
+  get "new_client" => "clients#new"
+
 	#post "unallocated_clients" => "clients#unallocated_clients"
-	
-	
+
+
+  post "search_new" => "clients#search_new"
+  get "search_new" => "clients#search_new"
+
 	post "search_results" => "clients#search_results"
 	get "search_results" => "clients#search_results"
 

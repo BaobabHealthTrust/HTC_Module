@@ -8,11 +8,13 @@
 
       function processMultipleElements(){
         testReasons = document.getElementById('textFortest_reason').value;
+        accessionNumber = document.getElementById('textForaccession_number').value;
         form = document.createElement('form');
         document.getElementsByTagName('body')[0].appendChild(form);
         form.action ='/hiv_viral_load';
         form.method='POST'
         createInput(form, 'hidden', 'test_reasons', testReasons)
+        createInput(form, 'hidden', 'accession_number', accessionNumber)
         createInput(form, 'hidden', 'authenticity_token', '<%= form_authenticity_token() %>')
         createInput(form, 'hidden', 'id', '<%= params[:id] %>');
 
@@ -41,6 +43,10 @@
 
       <fieldset >
         <legend>HIV Viral Load</legend>
+        <!-------                         -->
+        <label for="accession_number"> Accession Number</label>
+        <input type="text" id="accession_number" name="accession_number" optional="false" />
+        <!---                     -->
         <label for="test_reason"> Reason for Test (Viral Load)</label>
         <select   id="test_reason" name="test_reason[]" multiple="true">
           <option></option>

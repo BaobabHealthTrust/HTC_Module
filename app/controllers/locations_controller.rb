@@ -96,9 +96,14 @@ class LocationsController < ApplicationController
 
    def ta
       #return if params[:search].blank?
-			location = TraditionalAuthority.where("name LIKE '%#{params[:search]}%'")
-			location = location.map do |locs|
-      "#{locs.name}"
+			# location = TraditionalAuthority.where("name LIKE '%#{params[:search]}%'")
+      location = District.find_by_sql("SELECT d.name as district_name, ta.name as ta_name
+      FROM district d
+      Inner join traditional_authority ta
+      on d.district_id = ta.district_id 
+      where d.name LIKE  '%#{params[:district]}%'")
+      location = location.map do |locs|
+      "#{locs.ta_name}"
     end
     render :text => location.join("\n") and return
 	end

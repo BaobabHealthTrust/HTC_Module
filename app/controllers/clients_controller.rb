@@ -11,7 +11,7 @@ class ClientsController < ApplicationController
   end
 
   def show
-    
+      
       @task = next_task(@client)
 			current_date = session[:datetime].to_date rescue Date.today
 			@accession_number = @client.accession_number
@@ -32,9 +32,8 @@ class ClientsController < ApplicationController
        end
          
       @all_encounters = {}
-      state_encounters = ['IN WAITING', 'IN SESSION','Counseling',
-												'HIV Testing', 'Referral Consent Confirmation','ASSESSMENT',"UPDATE HIV STATUS",
-												'Appointment']
+      state_encounters = ['IN WAITING','IN SESSION','UPDATE HIV STATUS','Counseling','ASSESSMENT',
+												'HIV Testing', 'Referral Consent Confirmation','Appointment']
       state_encounters.each{|encounter|
         @all_encounters[encounter.upcase] = ""
       }
@@ -55,7 +54,6 @@ class ClientsController < ApplicationController
   end
 
   def new
-
 		if ! params[:name_id].blank?
 				@names = PersonName.where("person_id = #{params[:name_id]} AND voided = 0")				
 				@names.each do |name|
@@ -63,13 +61,17 @@ class ClientsController < ApplicationController
 					 name.save! 					
 				end
 
+      if params.post?
 				@new_name = PersonName.create(preferred: '0', person_id: params[:name_id], 
 															given_name: params[:first_name], family_name: params[:surname], 
 															creator: current_user.id)
 				redirect_to "/clients/#{params[:name_id]}" and return
+      else
+        redirect_to "/clients/#{params[:name_id]}" and return
+      end
 
-    elsif ! params[:gender].blank? and ! params[:dob].blank?
-
+    elsif ! params[:gender].blank? and (! params[:dob].blank? || !params[:date_of_birth].blank?)
+      params[:dob] = params[:date_of_birth] if params[:dob].blank?
 			current_number = 1
 			current = session[:datetime].to_date rescue Date.today
     
@@ -114,8 +116,9 @@ class ClientsController < ApplicationController
     	@client = Client.create(patient_id: @person.person_id, creator: current_user.id) if @person
 			@address = PersonAddress.create(person_id: @person.person_id, 
 															address1: params[:residence], creator: current_user.id) if @person
-
+      
       if !params[:firstname].blank? || !params[:surname].blank?
+        #raise params[:given_name].inspect
         @new_name = PersonName.create(preferred: '0', person_id: @person.id,
             given_name: params[:firstname], family_name: params[:surname],
             creator: current_user.id) if @person
@@ -130,7 +133,7 @@ class ClientsController < ApplicationController
       end
 
       @address.save if @person
-
+      #raise params.inspect
       ["Occupation", "Cell Phone Number", "Office Phone Number", "Home Phone Number", "Landmark Or Plot Number"].each do |name|
 
         next if params["#{name}"].blank?
@@ -160,8 +163,19 @@ class ClientsController < ApplicationController
 		end
 
 		session[:show_new_client_button] = false
-		redirect_to action: 'search_results', residence: @address.address1, 
+
+
+    if (Settings.full_demographics_at_reception.to_s == 'true')
+      if params[:residence]
+        redirect_to action: 'search_new', residence: @address.address1,
+            gender: @person.gender, date_of_birth: @person.birthdate
+      else
+        redirect_to action: 'search', firstname: params[:firstname], lastname: params[:surname], gender: params[:gender]
+      end
+    else
+		  redirect_to action: 'search_results', residence: @address.address1, 
 											gender: @person.gender, date_of_birth: @person.birthdate
+    end
   end
 
   def search_couple
@@ -350,24 +364,37 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
   end
 
+  def risk_assessment #risk_assessment_block_for_protocols
+        @client = Client.find(params[:client_id])
+        @protocol = []
+            CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
+            @protocol << protocol
+            ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
+                CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each{|x|
+                    @protocol << x
+                }
+            }
+        }
+        redirect_to client_path(@client.id) if @protocol.blank?
+  end
+
 	def counseling
-			@client = Client.find(params[:client_id])
-      @protocol = []
-			CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
-          @protocol << protocol
-          ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
-             CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each{|x|
-               @protocol << x
-             }
-          }
-      }
-      redirect_to client_path(@client.id) if @protocol.blank?
+		@client = Client.find(params[:client_id])
+        @protocol = []
+		CounselingQuestion.where("retired = 0 AND child = 0").order("position ASC").each {|protocol|
+            @protocol << protocol
+            ChildProtocol.where("parent_id = #{protocol.id}").each{|child|
+                CounselingQuestion.where("question_id = #{child.protocol_id} AND retired = 0").order("position ASC").each {|x|
+                    @protocol << x
+                }
+            }
+        }
+        redirect_to client_path(@client.id) if @protocol.blank?
 	end
 
   def early_infant_diagnosis
     @client = Client.find(params[:id])
     current_date = (session[:datetime].to_date rescue Date.today)
-    #raise User.current.inspect
     if request.post?
       test_reasons = params[:test_reasons].split(";")
       encounter_type = EncounterType.find_by_name("EID VISIT").id
@@ -379,10 +406,12 @@ class ClientsController < ApplicationController
         encounter = @client.encounters.create({:encounter_type => encounter_type, 
             :encounter_datetime => current_date}) if encounter.blank?
 
+        accession_number = params[:accession_number]
         test_reasons.each do |test_reason|
           encounter.observations.create({
               :person_id => @client.id,
               :concept_id => Concept.find_by_name("REASON FOR TEST").id,
+              :accession_number => accession_number,
               :value_text => test_reason,
               :creator => User.current.id
           })
@@ -410,6 +439,7 @@ class ClientsController < ApplicationController
     if request.post?
       test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
       test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
+      accession_number = params[:accession_number]
 
       eid_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
             EncounterType.find_by_name("EID VISIT").id]
@@ -433,6 +463,7 @@ class ClientsController < ApplicationController
             :obs_datetime => current_date,
             :value_modifier => test_modifier,
             :value_text => test_value,
+            :accession_number => accession_number,
             :value_complex => "encounter_id:#{eid_request_enc_id}",
             :creator => User.current.id
         })
@@ -664,6 +695,7 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
     if request.post?
       test_reasons = params[:test_reasons].split(";")
+      accession_number = params[:accession_number]
       encounter_type = EncounterType.find_by_name("REQUEST").id
 
       ActiveRecord::Base.transaction do
@@ -686,6 +718,7 @@ class ClientsController < ApplicationController
               :person_id => @client.id,
               :concept_id => Concept.find_by_name("SAMPLE").id,
               :value_text => params[:type_of_sample],
+              :accession_number => accession_number,
               :creator => User.current.id
           })
       end
@@ -710,7 +743,8 @@ class ClientsController < ApplicationController
     if request.post?
       test_modifier = params[:results].to_s.match(/=|>|</)[0] rescue ''
       test_value = params[:results].to_s.gsub('>','').gsub('<','').gsub('=','')
-
+      accession_number = params[:accession_number]
+      
       vl_request_enc_id = @client.encounters.find(:last, :conditions => ["encounter_type =?", 
             EncounterType.find_by_name("REQUEST").id]
          ).encounter_id
@@ -733,6 +767,7 @@ class ClientsController < ApplicationController
             :obs_datetime => current_date,
             :value_modifier => test_modifier,
             :value_text => test_value,
+            :accession_number => accession_number,
             :value_complex => "encounter_id:#{vl_request_enc_id}",
             :creator => User.current.id
         })
@@ -1024,7 +1059,83 @@ class ClientsController < ApplicationController
                       "Security guard","Soldier","Student","Teacher","Other","Unknown"]
        @land_mark = ["School","Police","Church","Mosque","Borehole"]
        @reception_demographics = Settings.full_demographics_at_reception
-	end
+  end
+
+  def search_new
+    @show_new_client_button = session[:show_new_client_button] rescue false
+    current_date = session[:datetime].to_date rescue Date.today.to_date
+    identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+
+        birthdate_estimated = false
+
+        birth_date = params[:date_of_birth].split("/")
+        birth_year = birth_date[2]
+        birth_month = birth_date[1]
+        birth_day = birth_date[0]
+
+        birthdate = params[:date_of_birth]
+        if birth_month == "?"
+          birthdate_estimated = true
+          birth_month = 7
+        end
+
+        if birth_day == "?"
+          birthdate_estimated = true
+          birth_day = 1
+        end
+
+        birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+        @clients = Client.find_by_sql("SELECT * FROM patient p
+    											INNER JOIN person pe ON pe.person_id = p.patient_id
+    											INNER JOIN person_address pn ON pn.person_id = pe.person_id
+    											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+    											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
+    											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
+    											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+    											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+
+      sp = ""
+      @side_panel_date = ""
+      @client_list = ""
+      @clients_info = []
+
+      @clients.each do |client|
+        id= client.id
+        accession = client.accession_number
+        age = client.person.age
+        gender = client.person.gender
+        birth = client.person.birthdate.to_date.to_formatted_s(:rfc822) rescue "NaN"
+        residence = PersonAddress.find_by_person_id(id).address1
+
+        status = client.current_state(current_date).name rescue ""
+        last_visit = client.encounters.last.encounter_datetime.to_date
+        .to_formatted_s(:rfc822) rescue nil
+        last_visit = Date.today.to_date.to_formatted_s(:rfc822) if last_visit.nil?
+        date_today = session[:datetime].to_date rescue Date.today.to_date
+        days_since_last_visit = (date_today - last_visit.to_date).to_i
+
+        has_booking = false
+        appointment_date = client.has_booking.value_datetime rescue nil
+
+        if !appointment_date.blank?
+          has_booking = true
+          appointment_date = appointment_date.to_date.to_formatted_s(:rfc822)
+        end
+
+        @clients_info << { id: id, accession: accession,
+            birth: birth, gender: gender, residence: residence}
+
+        @side_panel_date += sp + "#{id} : { id: #{id},
+											accession_number: '#{accession}', status: '#{status}',
+											age: #{age}, gender: '#{gender}', last_visit: '#{last_visit}',
+											birthDate: '#{birth}', residence: '#{residence}',
+											days_since_last_visit: '#{days_since_last_visit}',
+											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
+        sp = ','
+      end
+
+    render layout: false
+  end
 	
 	def search_results
 
@@ -1102,36 +1213,51 @@ class ClientsController < ApplicationController
         end
 				
 		 else
-		 		
+      if (Settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
+          firstname = params["firstname"]
+          surname = params["surname"]
 
-			birthdate_estimated = false
+          @clients = Client.find_by_sql("SELECT * FROM patient p
+                          INNER JOIN person pe ON pe.person_id = p.patient_id 
+                          INNER JOIN person_name pn ON pn.person_id = p.patient_id                          
+                          LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+                          WHERE pe.gender = '#{params[:gender]}'
+                          AND pn.given_name = '#{firstname}' AND p.voided = 0
+                          AND pn.family_name = '#{surname}'
+                          AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+                          pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") #rescue []
 
-			birth_date = params[:date_of_birth].split("/")
-			birth_year = birth_date[2]
-			birth_month = birth_date[1]
-			birth_day = birth_date[0]
 
-			birthdate = params[:date_of_birth]
+      else
 
-			if birth_month == "?"
-				birthdate_estimated = true
-				birth_month = 7
-			end
-			
-			if birth_day == "?"
-				birthdate_estimated = true
-				birth_day = 1
-			end
-			
-			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
-		 		@clients = Client.find_by_sql("SELECT * FROM patient p
-											INNER JOIN person pe ON pe.person_id = p.patient_id 
-											INNER JOIN person_address pn ON pn.person_id = pe.person_id
-											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
-											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
-											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
-											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
-											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+    			birthdate_estimated = false
+
+    			birth_date = params[:date_of_birth].split("/")
+    			birth_year = birth_date[2]
+    			birth_month = birth_date[1]
+    			birth_day = birth_date[0]
+
+    			birthdate = params[:date_of_birth]
+    			if birth_month == "?"
+    				birthdate_estimated = true
+    				birth_month = 7
+    			end
+    			
+    			if birth_day == "?"
+    				birthdate_estimated = true
+    				birth_day = 1
+    			end
+    			
+    			birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
+    		 		@clients = Client.find_by_sql("SELECT * FROM patient p
+    											INNER JOIN person pe ON pe.person_id = p.patient_id 
+    											INNER JOIN person_address pn ON pn.person_id = pe.person_id
+    											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+    											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
+    											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
+    											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+    											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+        end
 
 				sp = ""
 				@side_panel_date = ""
@@ -1171,9 +1297,9 @@ class ClientsController < ApplicationController
 											days_since_last_visit: '#{days_since_last_visit}',
 											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
 					sp = ','
-				end
-				
+				end      				
      end
+
      render layout: false
 	end
 
@@ -1231,10 +1357,10 @@ class ClientsController < ApplicationController
 			days_since_last_visit = (date_today - last_visit.to_date).to_i
 			
 		 has_booking = false
-		 appointment_date = c.has_booking.value_datetime rescue nil
+		 appointment_date = c.has_booking.value_datetime.to_s rescue nil
 
 		 if appointment_date.blank?
-			appointment_date = c.latest_booking.value_datetime rescue nil
+			appointment_date = c.latest_booking.value_datetime.to_s.to_date rescue nil
 		end
 		
 		 if !appointment_date.blank?
@@ -1242,7 +1368,7 @@ class ClientsController < ApplicationController
 		 end
 
 		 if appointment_date.blank?
-			appointment_date = c.latedst_booking.value_datetime rescue nil
+			appointment_date = c.latedst_booking.value_datetime.to_s rescue nil
 			has_booking = true if !appointment_date.blank?
 		 end
 			
@@ -1255,7 +1381,7 @@ class ClientsController < ApplicationController
      							 }
      end
      
-     #raise @waiting.to_json 
+     # raise @waiting.to_json 
      @waiting = @waiting.sort!{ |b,a| (a[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) <=> (b[:appointment_date].to_datetime rescue '1901-01-01'.to_datetime) } rescue []
      
      sp = ""

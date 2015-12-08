@@ -39,6 +39,17 @@
 
                       setTimeout("doLogin('" + id + "')", 500);
             }
+ 
+ function getDistrictValue(){
+    if (__$('textForhome_district')){
+      district = __$('textForhome_district').value;
+      __$('ta').setAttribute("ajaxurl", "/locations/ta?district=" + district)
+    }
+ }
+
+window.setInterval("getDistrictValue();", 100);
+
+
 
 	</script>
           <style>
@@ -58,11 +69,78 @@
 <body onload="adjust()">
 
 
-<%= form_tag search_results_path do %>
-
+<%= form_tag (params[:firstname].blank? ? (search_results_path) : new_client_path) do %>
+<%# raise params.inspect %>
         <% if @show_counselling_room != true %>
 
             <% if @reception_demographics.to_s == 'true'%>
+                <% if !params[:firstname] %>
+                    <fieldset>
+                      <legend>Search Client</legend>
+                      <br />
+
+                      <label for="firstname"> First name</label>
+                     <input type="text" id="firstname" name="firstname" value="" ajaxURL="/clients/first_name" optional = "false"/>
+                     <br />
+
+                    <label for="surname"> Surname</label>
+                    <input type="text" id="surname" name="surname" value=""  ajaxURL="/clients/last_name" optional = "false" />
+                       <br />
+
+                      <label for="gender"> Gender </label>
+                      <select id="gender" name="gender" optional = 'false'>
+                        <option></option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                      </select>
+
+                      <br />
+
+                    </fieldset>
+
+                   <!-- If params exist do below --> 
+                <% elsif params[:firstname] %>
+                    <fieldset>
+                      <legend>New Client</legend>
+                     <input type="hidden" id="firstname" name="firstname" value="<%= params[:firstname] %>" />
+                     <br />
+                    <input type="hidden" id="surname" name="surname" value="<%= params[:lastname] %>" />
+                    <br />
+                    <input type="hidden" id="gender" name="gender" value="<%= params[:gender] %>" />
+                    <br />
+
+                                  <label for="date_of_birth">Date Of Birth</label>
+                                  <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false"
+                                         />
+                                  <br />
+                                  <label for="residence">Residence</label>
+                                  <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
+                                  <br />
+
+                                   <label for="home_district">Home District</label>
+                                   <input type="text" id="home_district" name="address2" value=""
+                                   ajaxURL="/locations/village"/>
+
+                                   <label for="ta">Traditional Authority</label>
+                                   <input type="text" id="ta" name="ta" value=""
+                                          ajaxURL="/locations/ta?district="/>
+
+                                   <label for='occupation'>Occupation</label>
+                                   <select id="occupation" name="Occupation">
+                                     <option></option>
+                                     <% @occupation.each{|occupation| %>
+                                         <option value="<%= occupation %>"><%= occupation %></option>
+                                     <% } %>
+                                   </select>
+                                   <br />
+
+                                   <label for="cell_phone_number">Cell Phone Number</label>
+                                   <input type="text" id="cell_phone_number" name='Cell Phone Number' value="" fieldtype="number"/>
+                                   <br />
+                    </fieldset>
+                <% end %>
+            <%# end %>
+            <% else %>
 
                 <fieldset>
                   <legend>Search Client</legend>
@@ -78,31 +156,27 @@
 
                                   <label for="gender"> Gender </label>
 																	<select id="gender" name="gender" optional = 'false'>
-																			<option></option>
-																			<option value="Female">Female</option>
-																			<option value="Male">Male</option>
-																		</select>
-                                 
-																 <br />
-																		
+																	<option></option>
+																	<option value="Female">Female</option>
+																	<option value="Male">Male</option>
+																	</select>                  
+												  				 <br />
+
                                   <label for="date_of_birth">Date Of Birth</label>
                                   <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false"
                                          />
                                   <br />
-
+              </fieldset>
+              <fieldset>
+                <legend>Search Client (cont..)</legend>
+                  <br/>
                                   <label for="residence">Residence</label>
                                   <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
                                   <br />
 
-             </fieldset>
-
-             <fieldset>
-              <legend>Search Client (Cont..)</legend>
-              <br />
-
                                    <label for="home_district">Home District</label>
                                    <input type="text" id="home_district" name="address2" value=""
-                                      ajaxURL="/locations/village"/>
+                                   ajaxURL="/locations/village"/>
 
                                    <label for="ta">Traditional Authority</label>
                                    <input type="text" id="ta" name="ta" value=""
@@ -120,46 +194,17 @@
                                    <label for="cell_phone_number">Cell Phone Number</label>
                                    <input type="text" id="cell_phone_number" name='Cell Phone Number' value="" fieldtype="number"/>
                                    <br />
-
-             </fieldset>
-
-                <% else %>
-
-                    <fieldset>
-                      <legend>Search Client</legend>
-                      <br />
-
-                      <label for="gender"> Gender </label>
-                      <select id="gender" name="gender" optional = 'false'>
-                        <option></option>
-                        <option value="Female">Female</option>
-                        <option value="Male">Male</option>
-                      </select>
-
-                      <br />
-
-                      <label for="date_of_birth">Date Of Birth</label>
-                      <input type="text" id="date_of_birth" name="date_of_birth" fieldtype="age" optional="false" />
-                      <br />
-
-                      <label for="residence">Residence</label>
-                      <input type="text" name="residence" id="residence" value="" optional="false" ajaxURL="/locations/village" />
-                      <br />
-
-                    </fieldset>
-
-                <% end %>
-                           <% else %>
-
-            <fieldset>
-              <legend>Search Client</legend>
-              <br />
-                                      <label for="scan_accession_number" >Accession Number </label>
-                                      <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" >
-                                            <input id="add_to_session" type="hidden" name="add_to_session" value="true">
-
-            </fieldset>
-    <% end %>
+              </fieldset>
+            <% end %>
+        <% else %>  
+              <fieldset>
+                <legend>Search Client</legend>
+                <br />
+                                        <label for="scan_accession_number" >Accession Number </label>
+                                        <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" >
+                                              <input id="add_to_session" type="hidden" name="add_to_session" value="true">
+              </fieldset>
+        <% end %>
 
 	<%= submit_tag "Finish" %>
            

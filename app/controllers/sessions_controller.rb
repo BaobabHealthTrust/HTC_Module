@@ -32,7 +32,7 @@ class SessionsController < ApplicationController
 		
 		if @location
 			if @user
-				flash[:notice] = "You've been logged in."
+				#flash[:notice] = "You've been logged in."
 				session[:user_id] = @user.id
         User.current_user_id = session[:user_id]
 				session[:location_id] = @location.id       

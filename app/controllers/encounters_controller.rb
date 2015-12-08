@@ -9,14 +9,20 @@ class EncountersController < ApplicationController
   end
 
   def new
-#raise params.to_yaml
+    if params["ENCOUNTER"].upcase == "ASSESSMENT"
+      if params[:observations][1]["value_coded_or_text"] == "No"
+        redirect_to "/clients/#{params[:id]}" and return
+      end
+    end
+
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
 
+    #raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
-			  params[:obs].each do |key, value|
+			  (params[:obs] || []).each do |key, value|
 					 type = CounselingQuestion.find(key).data_type rescue []
 					 next if type.blank?
 					 concept_id = nil
@@ -117,8 +123,72 @@ class EncountersController < ApplicationController
         end
     end
 
-    redirect_to next_task(patient)["url"] and return
+    # call risk_type
+    risk_type = risk_assessment_type(patient, current)
+    #raise risk_type
+    url = next_task(patient)["url"]
+    if risk_type.present? && url.match(/\?/)
+      url = url + "&risk_type=" + risk_type
+    elsif risk_type.present? && !url.match(/\?/)
+      url = url + "?risk_type=" + risk_type
+    end
 
+    redirect_to url and return
+
+  end
+
+  def risk_assessment_type(patient, risk_date)
+    # load risk_types from settings
+    low_risk = Settings[:low_risk]
+    on_going_risk = Settings[:on_going_risk]
+    high_risk = Settings[:high_risk]
+
+    all_risks = low_risk+on_going_risk+high_risk
+
+    risk_type = "unknown"
+  
+=begin    
+    encounter_list = "SELECT e.encounter_id, e.encounter_type, e.encounter_datetime
+                      FROM encounter as e
+                      WHERE patient_id = 48 and Date(encounter_datetime) = ? and encounter_type = 149;",current
+=end
+    yes_concept = Concept.find_by_name("YES").id
+    @yes_query = CounselingQuestion.find_by_sql("SELECT cq.question_id, cq.name, ca.patient_id, ca.value_coded
+                 FROM counseling_question as cq 
+                 INNER JOIN counseling_answer as ca
+                 ON cq.question_id = ca.question_id
+                 WHERE value_coded = #{yes_concept} AND ca.patient_id = #{patient.id}")
+    #raise @yes_query.inspect
+
+    yesAnswers = []
+    @yes_query.each do |record|
+      yesAnswers << record.name
+    end
+    
+    yesAnswers.each do |yes|
+      if high_risk.include? yes
+        risk_type = "high"
+        break
+      elsif on_going_risk.include? yes
+        risk_type = "ongoing"
+      elsif low_risk.include? yes
+        if risk_type != "ongoing"
+          risk_type = "low"
+        end       
+      end
+    end
+
+    #raise risk_type.to_yaml
+    
+
+
+
+    # query = "SELECT ca.patient_id, ca.encounter_id FROM counseling_answer as ca "
+
+    # loop
+
+    #raise high_risk[1].to_yaml 
+    return risk_type
   end
 
   def edit
