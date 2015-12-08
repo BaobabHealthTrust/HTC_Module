@@ -14,4 +14,8 @@ module ApplicationHelper
     Time.now.year - 1890
   end
 
+  def ask_ground_phone
+    get_global_property_value("demographics.ground_phone").to_s == "true" rescue false
+  end
+
 end
