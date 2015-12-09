@@ -251,7 +251,7 @@
 	  :tt_requireNextClick => true, :tt_onLoad => "$('nextButton').style.display = 'block';"} %>
 
 
-<%= text_field_tag "person[addresses][address1]",  params[:address1],
+<%#= text_field_tag "person[addresses][address1]",  params[:address1],
 	{	:id => 'address1',
 	 	:helpText => 'Closest Landmark or Plot Number<br /><span style="font-size:0.7em;font-style:italic">(Please do not include these words: Next to, close, in front of, behind)</span>',
 	 	:allowFreeText => true, :ajaxURL => '',
