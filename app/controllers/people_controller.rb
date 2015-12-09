@@ -23,11 +23,12 @@ class PeopleController < ApplicationController
   end
 
   def village
-    location = District.where("name LIKE '%#{params[:search]}%'")
-    location = location.map do |locs|
-      "#{locs.name}"
+    ta_id = TraditionalAuthority.where(:name => params[:value]).first.id
+    villages = Village.where(:traditional_authority_id => ta_id)
+    regions = (villages || []).map do |r|
+      "<li value=\"#{r.name}\">#{r.name}</li>"
     end
-    render :text => location.join("\n") and return
+    render :text => regions.join('')  and return
   end
 
   def districts
@@ -44,17 +45,17 @@ class PeopleController < ApplicationController
   end
 
    def ta
-      #return if params[:search].blank?
-      # location = TraditionalAuthority.where("name LIKE '%#{params[:search]}%'")
-      location = District.find_by_sql("SELECT d.name as district_name, ta.name as ta_name
-      FROM district d
-      Inner join traditional_authority ta
-      on d.district_id = ta.district_id 
-      where d.name LIKE  '%#{params[:district]}%'")
-      location = location.map do |locs|
-      "#{locs.ta_name}"
+    #return if params[:search].blank?
+    # location = TraditionalAuthority.where("name LIKE '%#{params[:search]}%'")
+    location = District.find_by_sql("SELECT d.name as district_name, ta.name as ta_name
+    FROM district d
+    Inner join traditional_authority ta
+    on d.district_id = ta.district_id 
+    where d.name LIKE  '%#{params[:value]}%'")
+    location = location.map do |l|
+        "<li value=\"#{l.ta_name}\">#{l.ta_name}</li>"
     end
-    render :text => location.join("\n") and return
+    render :text => location.join('')  and return
   end
 
 end
