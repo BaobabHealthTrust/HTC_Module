@@ -162,4 +162,10 @@ class Client < ActiveRecord::Base
       type = EncounterType.where("name = ?", encounter).first.encounter_type_id
       return Encounter.where("patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?", patient_id, type, current_date  ).order("encounter_datetime desc")
   end
+
+  def set_htc_number
+    ClientIdentifier.create(identifier: ClientIdentifier.next_htc_number, 
+      patient_id: self.id, identifier_type: ClientIdentifierType.find_by_name("HTC Identifier").id)
+  end
+
 end

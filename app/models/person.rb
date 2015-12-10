@@ -42,4 +42,20 @@ class Person < ActiveRecord::Base
     (years * 12) + months
   end
 
+  def birthdate_for_printing
+    birthdate = self.birthdate
+    if self.birthdate_estimated
+      if birthdate.day == 1 and birthdate.month == 7
+        birth_date_string = birthdate.strftime("??/???/%Y")
+      elsif birthdate.day==15
+        birth_date_string = birthdate.strftime("??/%b/%Y")
+      else
+        birth_date_string = birthdate.strftime("%d/%b/%Y")
+      end
+    else
+      birth_date_string = birthdate.strftime("%d/%b/%Y")
+    end
+    birth_date_string
+  end
+
 end

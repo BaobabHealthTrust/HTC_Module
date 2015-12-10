@@ -6,11 +6,11 @@ class PeopleController < ApplicationController
   def new
     if request.post?
 
-      client = ClientService.create_person(params)
+      person = ClientService.create_person(params)
 
 
-      redirect_to controller: 'clients', action: 'search_new', residence: @address.address1,
-                  gender: @person.gender, date_of_birth: @person.birthdate
+      redirect_to controller: 'clients', action: 'search_new', residence: person.addresses.first.address1,
+                  gender: person.gender, date_of_birth: person.birthdate_for_printing
     end
     
     @occupations = ["","Business", "Craftsman","Domestic worker","Driver","Farmer","Health worker",

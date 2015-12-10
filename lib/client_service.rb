@@ -1,13 +1,11 @@
 module ClientService
 
+
   def self.create_person(params)
     return nil if params.blank?
-    address_params = params["addresses"]
-    names_params = params["names"]
-    patient_params = params["patient"]
-    params_to_process = params.reject{|key,value| key.match(/addresses|patient|names|relation|cell_phone_number|home_phone_number|office_phone_number|agrees_to_be_visited_for_TB_therapy|agrees_phone_text_for_TB_therapy/) }
-    birthday_params = params_to_process.reject{|key,value| key.match(/gender/) }
-    person_params = params_to_process.reject{|key,value| key.match(/birth_|age_estimate|occupation|identifiers/) }
+    person_params = params['person']
+    address_params = params[:person]["addresses"]
+    names_params = params[:person]["names"]
 
     if person_params["gender"].to_s == "Female"
       person_params["gender"] = 'F'
@@ -15,64 +13,73 @@ module ClientService
       person_params["gender"] = 'M'
     end
 
-    person = Person.create(person_params)
-
-    unless birthday_params.empty?
-      if birthday_params["birth_year"] == "Unknown"
-        self.set_birthdate_by_age(person, birthday_params["age_estimate"], person.session_datetime || Date.today)
-      else
-        self.set_birthdate(person, birthday_params["birth_year"], birthday_params["birth_month"], birthday_params["birth_day"])
-      end
+    if person_params["birth_year"] == "Unknown"
+      birthdate_values = self.set_birthdate_by_age(person_params["age_estimate"], Date.today)
+      birthdate = birthdate_values[0]
+      birthdate_estimated = birthdate_values[1]
+    else
+      birthdate_values = self.set_birthdate(person_params["birth_year"], person_params["birth_month"], person_params["birth_day"])
+      birthdate = birthdate_values[0]
+      birthdate_estimated = birthdate_values[1]
     end
 
     unless person_params['birthdate_estimated'].blank?
-       person.birthdate_estimated = person_params['birthdate_estimated'].to_i
+       birthdate_estimated = person_params['birthdate_estimated'].to_i
     end
 
-    person.save
+    person = Person.create(gender: person_params['gender'], birthdate: birthdate, 
+      birthdate_estimated: birthdate_estimated)
 
-    person.names.create(names_params)
-    person.addresses.create(address_params) unless address_params.empty? rescue nil
+    client = Client.create(patient_id: person.id)
+    client.set_htc_number
 
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
-      :value => params["occupation"]) unless params["occupation"].blank? rescue nil
+    PersonName.create(given_name: names_params['given_name'], family_name: names_params['family_name'], person_id: person.id)
+    PersonAddress.create(address1: address_params['state_province'], address2: address_params['city_village'], person_id: person.id) unless address_params.empty? rescue nil
 
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
-      :value => params["cell_phone_number"]) unless params["cell_phone_number"].blank? rescue nil
+    PersonAttribute.create(
+      person_attribute_type_id: PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
+      value: params["occupation"], person_id: person.id) unless params["occupation"].blank? rescue nil
 
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
-      :value => params["office_phone_number"]) unless params["office_phone_number"].blank? rescue nil
+    PersonAttribute.create(
+      person_attribute_type_id: PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
+      value: params["cell_phone_number"], person_id: person.id) unless params["cell_phone_number"].blank? rescue nil
 
-    person.person_attributes.create(
-      :person_attribute_type_id => PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
-      :value => params["home_phone_number"]) unless params["home_phone_number"].blank? rescue nil
+    PersonAttribute.create(
+      person_attribute_type_id: PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
+      value: params["office_phone_number"], person_id: person.id) unless params["office_phone_number"].blank? rescue nil
 
-    # TODO handle the birthplace attribute
-
-    if (!patient_params.nil?)
-      patient = person.create_patient
-       params["identifiers"].each{|identifier_type_name, identifier|
-        next if identifier.blank?
-        identifier_type = PatientIdentifierType.find_by_name(identifier_type_name) || PatientIdentifierType.find_by_name("Unknown id")
-        patient.patient_identifiers.create("identifier" => identifier, "identifier_type" => identifier_type.patient_identifier_type_id)
-      } if params["identifiers"]
-=begin
-      patient_params["identifiers"].each{|identifier_type_name, identifier|
-        next if identifier.blank?
-        identifier_type = PatientIdentifierType.find_by_name(identifier_type_name) || PatientIdentifierType.find_by_name("Unknown id")
-        patient.patient_identifiers.create("identifier" => identifier, "identifier_type" => identifier_type.patient_identifier_type_id)
-      } if patient_params["identifiers"]
-=end
-      # This might actually be a national id, but currently we wouldn't know
-      #patient.patient_identifiers.create("identifier" => patient_params["identifier"], "identifier_type" => PatientIdentifierType.find_by_name("Unknown id")) unless params["identifier"].blank?
-    end
+    PersonAttribute.create(
+      person_attribute_type_id: PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
+      value: params["home_phone_number"], person_id: person.id) unless params["home_phone_number"].blank? rescue nil
 
     return person
 
   end
 
+  def self.set_birthdate(year = nil, month = nil, day = nil)
+    raise "No year passed for estimated birthdate" if year.nil?
+
+    # Handle months by name or number (split this out to a date method)
+    month_i = (month || 0).to_i
+    month_i = Date::MONTHNAMES.index(month) if month_i == 0 || month_i.blank?
+    month_i = Date::ABBR_MONTHNAMES.index(month) if month_i == 0 || month_i.blank?
+
+    if month_i == 0 || month == "Unknown"
+      birthdate = Date.new(year.to_i,7,1)
+      birthdate_estimated = 1
+    elsif day.blank? || day == "Unknown" || day == 0
+      birthdate = Date.new(year.to_i,month_i,15)
+      birthdate_estimated = 1
+    else
+      birthdate = Date.new(year.to_i,month_i,day.to_i)
+      birthdate_estimated = 0
+    end
+    return [birthdate, birthdate_estimated]
+  end
+
+  def self.set_birthdate_by_age(age, today = Date.today)
+    birthdate = Date.new(today.year - age.to_i, 7, 1)
+    return [birthdate, 1]
+  end
 
 end
