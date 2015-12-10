@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
   
   def attempt_login
+    render :layout => 'basic'
   end
 
   def login

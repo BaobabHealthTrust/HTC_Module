@@ -1061,6 +1061,7 @@ class ClientsController < ApplicationController
                       "Security guard","Soldier","Student","Teacher","Other","Unknown"]
        @land_mark = ["School","Police","Church","Mosque","Borehole"]
        @reception_demographics = Settings.full_demographics_at_reception
+    render :layout => 'basic'
   end
 
   def search_new

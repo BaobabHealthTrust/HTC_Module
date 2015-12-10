@@ -10,12 +10,14 @@ class PeopleController < ApplicationController
 
 
       redirect_to controller: 'clients', action: 'search_new', residence: person.addresses.first.address1,
-                  gender: person.gender, date_of_birth: person.birthdate_for_printing
+                  gender: person.gender, date_of_birth: person.birthdate_for_printing and return
     end
     
     @occupations = ["","Business", "Craftsman","Domestic worker","Driver","Farmer","Health worker",
                     "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
                   "Security guard","Soldier","Student","Teacher","Other","Unknown"]
+
+    render :layout => 'basic'
   end
 
 
