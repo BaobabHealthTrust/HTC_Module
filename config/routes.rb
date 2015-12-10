@@ -216,6 +216,8 @@ HTCModule::Application.routes.draw do
 
   ######################### new routes ################################
   get "people/new"
+  post "new" => "people#new"
+
   get "people/region" #region_of_origin
   get "people/districts"
   get "people/ta"

@@ -265,7 +265,8 @@
         :validationRule => "^0\\d{7}$|Unknown|Not Available|N\/A|^0\\d{9}$",
         :validationMessage => "Not a valid phone number",
         :tt_pageStyleClass => "nota",
-        :id => 'cellphone'
+        :id => 'cellphone',
+        :tt_requireNextClick => true, :tt_onLoad => "$('nextButton').style.display = 'block';"
       }
   %>
 
@@ -297,12 +298,13 @@
                     "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
                                       "Security guard","Soldier","Student","Teacher","Other","Unknown"] %>
                                         
-  <%= select_tag("person[occupation]", options_for_select([@occupations ,params[:occupation]]),
+  <%= select_tag("person[occupation]", options_for_select(@occupations ,params[:occupation]),
       :helpText =>"Occupation",
       :id => "occupation",
       :allowFreeText => false, 
       :tt_onLoad => "seen(tstCurrentPage);__$('keyboard').style.display = 'none'",
-      :ttMatchFromBeginning => "true")%>
+      :ttMatchFromBeginning => "true")
+  %>
 
   <%= submit_tag "Create person" %>
   

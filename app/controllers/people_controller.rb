@@ -1,8 +1,12 @@
+require "client_service"
+
 class PeopleController < ApplicationController
+  include ClientService
+
   def new
     if request.post?
 
-      client = ClientService.create(params)
+      client = ClientService.create_person(params)
 
 
       redirect_to controller: 'clients', action: 'search_new', residence: @address.address1,
