@@ -1216,8 +1216,11 @@ class ClientsController < ApplicationController
 				
 		 else
       if (Settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
-          firstname = params["firstname"]
-          surname = params["surname"]
+          firstname = params["firstname"] || params[:name]['firstname']
+          surname = params["surname"] || params[:name]['surname']
+          if params[:gender] == '0' || params[:gender] == '1'
+            params[:gender] = params[:gender] == '0' ? 'M' : 'F'
+          end
 
           @clients = Client.find_by_sql("SELECT * FROM patient p
                           INNER JOIN person pe ON pe.person_id = p.patient_id 
@@ -1228,7 +1231,6 @@ class ClientsController < ApplicationController
                           AND pn.family_name = '#{surname}'
                           AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
                           pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") #rescue []
-
 
       else
 

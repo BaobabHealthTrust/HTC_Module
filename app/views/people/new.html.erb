@@ -62,11 +62,7 @@
 </style>
 
 <script>
-  <% if params[:relation] %>
-  var tt_cancel_destination = "/patients/relationships?patient_id=<%=h params[:relation] -%>"
-  <% else %>
-  var tt_cancel_destination = "/clinic"
-  <% end %>
+  var tt_cancel_destination = "/"
 
   var dob_year = null ; var dob_month = null ; dob_day = null;
   var set_dob = null;
