@@ -153,9 +153,22 @@
 
 <%= form_tag("/new", id: "create-form", method: 'post', enctype: 'multipart/form-data') do %>
 
-  <%= text_field_tag "person[names][given_name]", params[:firstname], {:id => 'given_name', :field_type => 'alpha', :helpText => 'First name', :ajaxURL => '/person_names/given_names?search_string=', :allowFreeText => true, :condition => '$("given_name").value == "" || skipped[tstCurrentPage] == 1', :tt_onLoad => 'seen(tstCurrentPage);' } %>
+  <%= text_field_tag "person[names][given_name]", params[:firstname],
+                     {:id => 'given_name', :field_type => 'alpha',
+                      :helpText => 'First name',
+                      :ajaxURL => '/person_names/given_names?search_string=',
+                      :allowFreeText => true,
+                      :condition => '$("given_name").value == "" || skipped[tstCurrentPage] == 1',
+                      :tt_onLoad => 'seen(tstCurrentPage);' } %>
   
-  <%= text_field_tag "person[names][family_name]", params[:lastname], {:id => 'family_name', :field_type => 'alpha', :helpText => 'Last name', :ajaxURL => '/person_names/family_names?search_string=', :allowFreeText => true, :condition => '$("family_name").value == "" || skipped[tstCurrentPage] == 1', :tt_onLoad => 'seen(tstCurrentPage);' } %>
+  <%= text_field_tag "person[names][family_name]", params[:lastname],
+                     {:id => 'family_name',
+                      :field_type => 'alpha',
+                      :helpText => 'Last name',
+                      :ajaxURL => '/person_names/family_names?search_string=',
+                      :allowFreeText => true,
+                      :condition => '$("family_name").value == "" || skipped[tstCurrentPage] == 1',
+                      :tt_onLoad => 'seen(tstCurrentPage);' } %>
 
   <% #gender = params[:gender] == '0' ? 'Male' : 'Female' %>
   <%= select_tag("person[gender]", options_for_select(['','Male','Female'] ,params[:gender]),
@@ -165,7 +178,6 @@
       :condition => '$("gender").value == "" || skipped[tstCurrentPage] == 1',
       :tt_onLoad => 'seen(tstCurrentPage);')
   %>
-
 
   <%= text_field_tag "person[birth_year]", nil, {:helpText => 'Year of Birth', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :tt_onLoad => 'seen(tstCurrentPage);',:validationJS => "setDOB();" }  %>
 

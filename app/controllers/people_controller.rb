@@ -8,7 +8,8 @@ class PeopleController < ApplicationController
 
       person = ClientService.create_person(params)
 
-
+      current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
+      write_encounter("IN WAITING", person, current)
       redirect_to controller: 'clients', action: 'search_new', residence: person.addresses.first.address1,
                   gender: person.gender, date_of_birth: person.birthdate_for_printing and return
     end
@@ -18,6 +19,16 @@ class PeopleController < ApplicationController
                   "Security guard","Soldier","Student","Teacher","Other","Unknown"]
 
     render :layout => 'basic'
+  end
+
+  def write_encounter(encounter_type, person, current = DateTime.now)
+    current = session[:datetime] if !session[:datetime].blank?
+    type = EncounterType.find_by_name(encounter_type).id
+
+    current_location = @current_location if current_location.nil?
+    encounter = Encounter.create(encounter_type: type, patient_id: person.id,
+                                 encounter_datetime: current.to_datetime.strftime("%Y-%m-%d %H:%M:%S"),
+                                 creator: current_user.id)
   end
 
 
