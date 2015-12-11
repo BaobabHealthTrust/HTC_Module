@@ -8,9 +8,9 @@ module ClientService
     names_params = params[:person]["names"]
 
     if person_params["gender"].to_s == "Female"
-      person_params["gender"] = 'F'
+      person_params["gender"] = 'Female'
     elsif person_params["gender"].to_s == "Male"
-      person_params["gender"] = 'M'
+      person_params["gender"] = 'Male'
     end
 
     if person_params["birth_year"] == "Unknown"
