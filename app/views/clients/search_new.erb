@@ -133,7 +133,13 @@
 
                 btnNext.style.display = "inline-table";
 
-
+                var  gender="";
+                if(obj.gender.trim()=="M".trim()){
+                    gender ="Male";
+                }
+                else if(obj.gender.trim()=="F".trim()){
+                    gender ="Female"
+                }
 
                 var button = '<a href="#" id="add" ' +
                         'onmousedown="add_to_waiting_list(this)"' +
@@ -141,7 +147,7 @@
 
                 s += "<table class = 'list-table'>"
                 s += addString("Accession Number", obj.accession_number );
-                s += addString("Gender", obj.gender );
+                s += addString("Gender", gender );
                 s += addString("Age", obj.age );
                 s += addString("Date of Birth", obj.birthDate );
                 s += addString("Residence", obj.residence );
