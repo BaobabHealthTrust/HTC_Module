@@ -29,7 +29,7 @@ class ClientIdentifier < ActiveRecord::Base
     identifiers = self.where("RIGHT(identifier,4) = ? AND identifier_type = ?",
       Date.today.year,ClientIdentifierType.find_by_name('HTC Identifier').id).map(&:identifier)
     return "1-#{Date.today.year}" if identifiers.blank?
-    return (identifiers.sort.last.sub("-#{Date.today}",'').to_i + 1).to_s + "-#{Date.today.year}"
+    return (identifiers.last.sub("-#{Date.today}",'').to_i + 1).to_s + "-#{Date.today.year}"
   end
 
 end
