@@ -12,25 +12,13 @@
       <legend>New Client Details</legend>
 
       <br />
-      <% if @show_counselling_room != true %>
           <label for="id">  </label>
 
           <select id="id" name="id">
-
-            <% if @show_new_client_button %>
-                <option><i>New client</i></option>
-            <% end %>
-
             <%= @clients_info.each do |client| %>
-                <option value="<%= client[:id] %>"> Accession :<%= " #{client[:accession]}" %>;<%= " #{client[:gender]}" %>; DOB :<%= client[:birth] %> </option>
+                <option value="<%= client[:id] %>"> &nbsp; </option>
             <% end %>
           </select>
-
-          <br />
-      <% else %>
-          <label for="scan_accession_number" >Accession Number </label>
-          <input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
-      <% end %>
 
     </fieldset>
     <%= submit_tag "Finish" %>
@@ -133,13 +121,6 @@
 
                 btnNext.style.display = "inline-table";
 
-                var  gender="";
-                if(obj.gender.trim()=="M".trim()){
-                    gender ="Male";
-                }
-                else if(obj.gender.trim()=="F".trim()){
-                    gender ="Female"
-                }
 
                 var button = '<a href="#" id="add" ' +
                         'onmousedown="add_to_waiting_list(this)"' +
@@ -147,7 +128,7 @@
 
                 s += "<table class = 'list-table'>"
                 s += addString("Accession Number", obj.accession_number );
-                s += addString("Gender", gender );
+                s += addString("Gender", obj.gender );
                 s += addString("Age", obj.age );
                 s += addString("Date of Birth", obj.birthDate );
                 s += addString("Residence", obj.residence );
