@@ -34,23 +34,23 @@ module ClientService
     client.set_htc_number
 
     PersonName.create(given_name: names_params['given_name'], family_name: names_params['family_name'], person_id: person.id)
-    PersonAddress.create(address1: address_params['state_province'], address2: address_params['city_village'], person_id: person.id) unless address_params.empty? rescue nil
+    PersonAddress.create(address1: address_params['state_province'], address2: address_params['city_village'], person_id: person.id, county_district: address_params['county_district']) unless address_params.empty? rescue nil
 
     PersonAttribute.create(
       person_attribute_type_id: PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
-      value: params["occupation"], person_id: person.id) unless params["occupation"].blank? rescue nil
+      value: person_params["occupation"], person_id: person.id) unless person_params["occupation"].blank? rescue nil
 
     PersonAttribute.create(
       person_attribute_type_id: PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
-      value: params["cell_phone_number"], person_id: person.id) unless params["cell_phone_number"].blank? rescue nil
+      value: person_params["cell_phone_number"], person_id: person.id) unless person_params["cell_phone_number"].blank? rescue nil
 
     PersonAttribute.create(
       person_attribute_type_id: PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
-      value: params["office_phone_number"], person_id: person.id) unless params["office_phone_number"].blank? rescue nil
+      value: person_params["office_phone_number"], person_id: person.id) unless person_params["office_phone_number"].blank? rescue nil
 
     PersonAttribute.create(
       person_attribute_type_id: PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
-      value: params["home_phone_number"], person_id: person.id) unless params["home_phone_number"].blank? rescue nil
+      value: person_params["home_phone_number"], person_id: person.id) unless person_params["home_phone_number"].blank? rescue nil
 
     return person
 

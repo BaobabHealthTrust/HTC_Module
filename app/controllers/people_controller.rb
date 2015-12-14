@@ -5,7 +5,6 @@ class PeopleController < ApplicationController
 
   def new
     if request.post?
-
       person = ClientService.create_person(params)
 
       current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
