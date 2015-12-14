@@ -13,6 +13,6 @@
       :helpText => 'Last name', 
       :ajaxURL => '/clients/last_name?search=', 
       :allowFreeText => true })%>
-  <%= select_tag(:gender, options_for_select({"" => "", "Male" => "0", "Female" => "1"}), {:helpText => "Gender"})%>
+  <%= select_tag(:gender, options_for_select(["","Male","Female"]), {:helpText => "Gender"})%>
 
 <% end %>
