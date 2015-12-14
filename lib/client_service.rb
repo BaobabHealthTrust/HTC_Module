@@ -1,7 +1,7 @@
 module ClientService
 
 
-  def self.create_person(params)
+  def self.create_person(params, current_user_id)
     return nil if params.blank?
     person_params = params['person']
     address_params = params[:person]["addresses"]
@@ -30,27 +30,34 @@ module ClientService
     person = Person.create(gender: person_params['gender'], birthdate: birthdate, 
       birthdate_estimated: birthdate_estimated)
 
-    client = Client.create(patient_id: person.id)
-    client.set_htc_number
+    client = Client.create(patient_id: person.id) if person
+    client.set_htc_number if client
 
-    PersonName.create(given_name: names_params['given_name'], family_name: names_params['family_name'], person_id: person.id)
+    PersonName.create(given_name: names_params['given_name'], family_name: names_params['family_name'], person_id: person.id) if person
     PersonAddress.create(address1: address_params['state_province'], address2: address_params['city_village'], person_id: person.id, county_district: address_params['county_district']) unless address_params.empty? rescue nil
 
-    PersonAttribute.create(
-      person_attribute_type_id: PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
-      value: person_params["occupation"], person_id: person.id) unless person_params["occupation"].blank? rescue nil
+    uuid_names = ["Occupation", "Cell Phone Number", "Office Phone Number", "Home Phone Number"]
+    i = 0
+    ["occupation", "cell_phone_number", "office_phone_number", "home_phone_number"].each do |name|
 
-    PersonAttribute.create(
-      person_attribute_type_id: PersonAttributeType.find_by_name("Cell Phone Number").person_attribute_type_id,
-      value: person_params["cell_phone_number"], person_id: person.id) unless person_params["cell_phone_number"].blank? rescue nil
+      next if person_params["#{name}"].blank?
 
-    PersonAttribute.create(
-      person_attribute_type_id: PersonAttributeType.find_by_name("Office Phone Number").person_attribute_type_id,
-      value: person_params["office_phone_number"], person_id: person.id) unless person_params["office_phone_number"].blank? rescue nil
+      uuid =  ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+      value = person_params["#{name}"]
+      type = PersonAttributeType.where("name = ?", uuid_names[i]).first.id
+      i = i+1
 
-    PersonAttribute.create(
-      person_attribute_type_id: PersonAttributeType.find_by_name("Home Phone Number").person_attribute_type_id,
-      value: person_params["home_phone_number"], person_id: person.id) unless person_params["home_phone_number"].blank? rescue nil
+      next if type.blank?
+
+      attribute = PersonAttribute.create(
+          person_id: person.id,
+          value: value,
+          creator: current_user_id,
+          person_attribute_type_id: type,
+          uuid: uuid
+      )
+
+    end if person
 
     return person
 
