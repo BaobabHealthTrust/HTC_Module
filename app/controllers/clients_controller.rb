@@ -391,7 +391,9 @@ class ClientsController < ApplicationController
                 }
             }
         }
+
         redirect_to client_path(@client.id) if @protocol.blank?
+        render layout: 'basic'
 	end
 
   def early_infant_diagnosis

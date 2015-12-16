@@ -22,33 +22,17 @@ class EncountersController < ApplicationController
 
     #raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
-			  (params[:obs] || []).each do |key, value|
-					 type = CounselingQuestion.find(key).data_type rescue []
-					 next if type.blank?
+			  (params[:obs] || []).each do |name|
+          next if name.blank?
 					 concept_id = nil
 					 value_datetime = nil
 					 value_text = nil 
 				   value_numeric = nil
-					 if type.upcase == "BOOLEAN"
-							concept_id = ConceptName.find_by_name(value).concept_id rescue nil
+							concept_id = ConceptName.find_by_name("Yes").concept_id rescue nil
 							value_text = value if concept_id.blank?
-					 elsif type.upcase == "DATETIME"
-							value_datetime = value
-              if value.match(/\?/)
-                value_text = value
-                value_datetime = nil
-              end
-					 elsif type.upcase == "NUMBER"
-							value_numeric = value
-					 elsif type.upcase == "TEXT"
-							value_text = value
-					 elsif type.upcase == "TIME"
-							value_text = value	
-					 elsif type.upcase == "LIST"
-							value_text = value					
-					 end
+          question_id = CounselingQuestion.find_by_name(name).question_id
 					 
-					 answer = CounselingAnswer.create(question_id: key, patient_id: person.id,
+					 answer = CounselingAnswer.create(question_id: question_id, patient_id: person.id,
 									  encounter_id: encounter.encounter_id, value_coded: concept_id, 
 									  creator: current_user.id, value_text: value_text, value_numeric: value_numeric,
 										value_datetime: value_datetime)
