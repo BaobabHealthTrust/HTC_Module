@@ -12,7 +12,7 @@
 		<legend>Search Result</legend>
 
 		<br />
-		<% if @show_counselling_room != true %>
+		<%# if @show_counselling_room == true %>
 		<label for="id">  </label>
 		
 		<select id="id" name="id">
@@ -27,10 +27,12 @@
 		</select>
 		
 		<br />
-		<% else %>
+		<%# else %>
+		<!--
 		<label for="scan_accession_number" >Accession Number </label>
 		<input type="text" id="scan_accession_number" name="accession_number" optional="false" fieldtype="barcode" >
-		<% end %>
+		-->
+		<%# end %>
 		
 	</fieldset>
 	<%= submit_tag "Finish" %>

@@ -1145,6 +1145,9 @@ class ClientsController < ApplicationController
 	def search_results
 
 		 @show_new_client_button = session[:show_new_client_button] rescue false
+     if @show_counselling_room == true
+      @show_new_client_button = false
+     end
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 
@@ -1225,6 +1228,7 @@ class ClientsController < ApplicationController
             params[:gender] = params[:gender] == '0' ? 'M' : 'F'
           end
 
+      if @show_counselling_room != true
           @clients = Client.find_by_sql("SELECT * FROM patient p
                           INNER JOIN person pe ON pe.person_id = p.patient_id 
                           INNER JOIN person_name pn ON pn.person_id = p.patient_id                          
@@ -1234,6 +1238,19 @@ class ClientsController < ApplicationController
                           AND pn.family_name = '#{surname}'
                           AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
                           pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") #rescue []
+
+        else @show_counselling_room == true
+          @clients = Client.find_by_sql("SELECT * FROM patient p
+                          INNER JOIN person pe ON pe.person_id = p.patient_id 
+                          INNER JOIN person_name pn ON pn.person_id = p.patient_id                          
+                          LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
+                          WHERE pe.gender = '#{params[:gender]}'
+                          AND pn.given_name = '#{firstname}' AND p.voided = 0
+                          AND pn.family_name = '#{surname}'
+                          AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
+                          pn.voided = 0 AND pn.date_created = CURDATE() ORDER BY pi.identifier DESC LIMIT 20") #rescue []
+
+        end
 
       else
 
