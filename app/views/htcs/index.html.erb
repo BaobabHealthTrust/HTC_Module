@@ -9,14 +9,20 @@
 			.blank {
 				display: none;			
 			}
-                       <% if !session[:datetime].blank? %>
-                        #uifield2label{
-                                color:#8B0000;
-                        }
-                        <% end %>
+            <% if !session[:datetime].blank? %>
+            #uifield2label{
+                color:#8B0000;
+            }
+            <% end %>
+
 		</style>
 	</head>
-	<body>
+	<body onload="setSearchButton();">
+        <script language="javascript">
+          function setSearchButton(){
+              document.getElementById("uinav").getElementsByTagName("button")[0].setAttribute("class","button green");
+          }
+        </script>
 		<div id="main">
 			
 			<input type="text" id="appname" value="HIV Testing<br/>&<br/>Counselling" />
@@ -32,7 +38,11 @@
 			
 			<div id="buttons">
 				<% if ! is_supervisor %>
-				<button onmousedown="window.location = '<%= search_path %>'">Find or Register Client</button>
+                    <% if @show_counselling_room %>
+				        <button onmousedown="window.location = '<%= search_path %>'">Find Client by Name</button>
+                    <% elsif ! @show_counselling_room %>
+                        <button onmousedown="window.location = '<%= search_path %>'">Find or Register Client</button>
+                    <% end %>
 				<% end %>
 				<button onmousedown="window.location = '<%= log_out_path %>'">Logout</button>
 

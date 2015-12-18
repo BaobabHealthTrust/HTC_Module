@@ -1,13 +1,28 @@
 
 <html>
 	<head>
+      <script type="text/javascript">
+          //function getLocation() {
+              // body...
+              alert("Heello");
+              var barcode = document.getElementById("location");
+              if (barcode == "reception"){
+                  alert("Heello");
+              }
+          else{
+                  barcode.focus();
+              }
+          }
+          //setInterval(function () {
+              //getLocation()}, 1000);
+      </script>
 	</head>
 <body>
-                  
+
 <%=form_tag log_in_path do%>
 <input type="text" id="username" name="username" helpText="Enter username"/>
 <input type="password" id="password" name="password" helpText ="Enter password" />
-<input type="text"  id="location" name="location" helpText="Scan location barcode" />
+<input type="text"  id="location" name="location" helpText="Scan location barcode" onkeyup="getLocation();"/>
 <%end%>
 
 </body>
