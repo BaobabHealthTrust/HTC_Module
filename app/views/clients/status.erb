@@ -25,7 +25,7 @@
                             html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
                             html += "<div id='text'>Partner Available?</div></div><div style='display:table-row;width:100%;'>"
                             html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;"><div id="cancel"><button class="button red_cancel" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">No</button></div>'
-                            html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="loadMessage(' + str + ',' + url+ ')">Yes</button></div>'
+                            html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="lo07adMessage(' + str + ',' + url+ ')">Yes</button></div>'
                             html += "</div></div></div></div></div>"
                             ele.innerHTML =  html;
                             document.body.appendChild(ele);
@@ -134,7 +134,7 @@
 		<input type="hidden" value="Update HIV status" name="ENCOUNTER"/>
 				<fieldset>
 				<legend>Update Status for <%= @client.name.humanize %></legend>
-                                <% if  @client.person.gender.upcase == "FEMALE" %>
+        <% if  @client.person.gender.upcase == "FEMALE" %>
 				<label for="patient">Client Pregnant?</label>
 				<label for="patient.1">Yes</label>
 				<input type="radio" name="patient" id="patient.1" value="YES" >
@@ -160,14 +160,14 @@
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
         <%= hidden_field_tag("observations[][value_datetime]",       "") %>
            <br />
-       <label for="last">Last HIV test</label>
+       <label for="last">Last HIV test Result</label>
 
             <select id="last" name="observations[][value_coded_or_text]">
 					<option></option>
 					<option value="Never Tested">Never tested</option>
 					<option value="Last Negative">Negative</option>
 		       <option value="Last Positive">Last Positive</option>
-		       <!--<option value="Last Exposed Infant">Last Exposed Infant</option>-->
+		       <option value="Last Exposed Infant">Last Exposed Infant</option>
 		       <option value="Last Inconclusive">Last Inconclusive</option>
 				</select>
         <%= hidden_field_tag("observations[][concept_name]",        "Last HIV test") %>
