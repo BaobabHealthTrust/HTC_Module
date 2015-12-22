@@ -1,8 +1,48 @@
 
 <html>
 	<head>
-      <script type="text/javascript">
-          var tt_cancel_destination = "/"
+      <style>
+        .tt_controls_scan_location_barcode .keyboard {
+            display: none !important;
+        }
+        
+      </style>
+      
+
+      <script language="javascript">
+        
+        var tt_cancel_destination = "/";
+        doListSuggestions = false; //speeds up keyboard response
+
+        var setFocusTimeout = 1000;
+        var checkForBarcodeTimeout = 1500;
+       
+        function loadBarcodePage() {
+           focusForBarcodeInput();
+           moveNext();
+        }
+
+        function focusForBarcodeInput(){
+          var barcode = document.getElementById("touchscreenInput2");
+          if (barcode) {
+             barcode.focus();
+             window.setTimeout("focusForBarcodeInput()", setFocusTimeout);
+          }
+        }
+        
+       
+        function moveNext(){
+          usertext = document.getElementById("touchscreenInput2");
+          try {
+          if (usertext.value.match(/.+\$$/i) != null){
+            usertext.value=usertext.value.substring(0,usertext.value.length -1);
+            gotoNextPage();
+          }
+          }catch(e) {};
+          window.setTimeout("moveNext()", checkForBarcodeTimeout);
+        } 
+           
+        window.addEventListener("load", loadBarcodePage, false);
       </script>
 	</head>
 <body>
@@ -10,7 +50,7 @@
 <%=form_tag log_in_path do%>
 <input type="text" id="username" name="username" helpText="Enter username"/>
 <input type="password" id="password" name="password" helpText ="Enter password" />
-<input type="text"  id="location" name="location" helpText="Scan location barcode" />
+<input type="text"  id="location" name="location" helpText="Scan location barcode" tt_pageonload="loadBarcodePage" />
 <%end%>
 
 </body>
