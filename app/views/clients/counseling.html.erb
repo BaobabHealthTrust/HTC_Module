@@ -46,7 +46,7 @@
                      options_for_select(@protocol.collect{ |p|
                                           [p.name, p.name]
                                         }, []),
-                     :helpText => "Counseling Protocols" ,
+                     :helpText => "Counseling Protocols for #{@client.name.humanize}",
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
     </form>
