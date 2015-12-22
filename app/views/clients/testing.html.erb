@@ -434,7 +434,7 @@
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
       <fieldset>
-        <legend>HIV Testing</legend>
+        <legend>HIV Testing For <%= @client.name.humanize %></legend>
               <label for="rapid_lot"><%= @kits[0][1] rescue "" %> Lot Number</label>
               <input type='text' id="rapid_lot" name="observations[][value_text]"
                />
@@ -450,7 +450,7 @@
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
       </fieldset>
       <fieldset custom=true fs_onLoad="loadCustom('timer1');">
-        <legend>HIV Testing</legend>
+        <legend>HIV Testing For <%= @client.name.humanize %></legend>
 
         <input type="hidden" id="give_concent" name="giveconcent" value="" />
         <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
@@ -474,7 +474,7 @@
       </fieldset>
 
       <fieldset custom=true hidden="true" fs_onLoad="loadCustom('timer2');">
-        <legend>HIV Testing</legend>
+        <legend>HIV Testing For <%= @client.name.humanize %></legend>
 
         <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
