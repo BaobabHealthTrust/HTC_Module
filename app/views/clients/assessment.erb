@@ -56,7 +56,7 @@
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="ASSESSMENT" name="ENCOUNTER"/>
 				<fieldset>
-				<legend>Risk Assessment</legend>
+				<legend>Risk Assessment For <%= @client.name.humanize %></legend>
                                <label for="type">Client Risk Category</label>
 
                                 <select id="type" name="observations[][value_coded_or_text]">
@@ -89,7 +89,7 @@
                             <%= hidden_field_tag("observations[][value_datetime]",       "") %>
 </fieldset>
         <fieldset>
-          <legend>Counseling Protocols Page </legend>
+          <legend>Confirm Test </legend>
           <label for="continue_testing">Continue Testing? </label>
           <select name="observations[][value_coded_or_text]" id="continue_testing" >
             <option></option>
