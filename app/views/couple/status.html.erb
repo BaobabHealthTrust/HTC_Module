@@ -9,14 +9,8 @@
             __$('rightframe').height = (screen.height - 60) + "px"
             __$('leftframe').height = (screen.height - 60) + "px"
 
-             __$("img-finish").src = close;
-              __$("img-max-left").src = imgMax;
-              __$("img-min-left").src = imgMin;
-              __$("img-max-right").src = imgMax;
-              __$("img-min-right").src = imgMin;
-
-              __$("img-min-left").style.display = "none";
-              __$("img-min-right").style.display = "none";
+            __$("img-finish").src = close;
+            __$("img-finish").style.visibility = "hidden";
 
               panel1 =  __$("rightpanel");
               panel2 = __$("leftpanel");
@@ -25,33 +19,18 @@
                       window.location = '/htcs'
               }
 
-              __$("img-max-left").onmousedown =  function () {
-                     panel1.style.display = "none";                  
-                     panel2.style.width = "100%";
-                     __$("img-min-left").style.display = "inline";
-                     __$("img-max-left").style.display = "none";
+              __$("leftpanel").onmouseover =  function () {
+                     panel1.style.width = "10%";
+                     panel2.style.width = "90%";
+                  __$("img-finish").style.visibility = "hidden";
                 }
 
-              __$("img-min-left").onmousedown =  function () {
-                     panel1.style.display = "inline";
-                     panel2.style.width = "50%";
-                     __$("img-min-left").style.display = "none";
-                     __$("img-max-left").style.display = "inline";
-                }
+                __$("rightpanel").onmouseover =  function () {
+                     panel2.style.width = "10%";
+                     panel1.style.width = "90%";
+                    __$("img-finish").style.visibility = "visible";
 
-                __$("img-max-right").onmousedown =  function () {
-                     panel2.style.display = "none";
-                     panel1.style.width = "100%";
-                     __$("img-min-right").style.display = "inline";
-                     __$("img-max-right").style.display = "none";
                 }
-
-              __$("img-min-right").onmousedown =  function () {
-                     panel2.style.display = "inline";
-                     panel1.style.width = "50%";
-                     __$("img-min-right").style.display = "none";
-                     __$("img-max-right").style.display = "inline";
-              }
 
           });
 
@@ -63,12 +42,12 @@
       width:100%;
 }
 #leftpanel{
-  width:50%;
+  width: 90%;
  /* height:60% ! important; */
   float: left;
 }
 #rightpanel{
-  width: 50%;
+  width: 10%;
  /* height:60% ! important; */
   float: right;
 }
@@ -101,22 +80,16 @@
   <body>
     <div id="outer">
    
-    <div id="leftpanel">
-      <div id="leftimg">
-        <img id="img-max-left"  width = '45' height='40'></img>
-        <img id="img-min-left"  width = '45' height='40'></img>
-      </div>
-      <iframe id="leftframe" src="/client_status/<%= @partner.person_a %>?config=couple" width="100%" style="overflow:auto;" ></iframe>
-    </div>
-   
-    <div id="rightpanel">
-       <div id="rightimg">
-        <img id="img-max-right"  width = '45' height='40'></img>
-        <img id="img-min-right"  width = '45' height='40'></img>
-        <img id="img-finish"  width = '45' height='40'></img>
-      </div>
-          <iframe id="rightframe" src="/client_status/<%= @partner.person_b %>?config=couple" width="100%"  style="overflow:auto;"></iframe>
-    </div>
+        <div id="leftpanel">
+          <iframe id="leftframe" src="/client_status/<%= @partner.person_a %>?config=couple" width="100%" style="overflow:auto;" ></iframe>
+        </div>
+
+        <div id="rightpanel">
+           <div id="rightimg">
+            <img id="img-finish"  width = '45' height='40'></img>
+          </div>
+              <iframe id="rightframe" src="/client_status/<%= @partner.person_b %>?config=couple" width="100%"  style="overflow:auto;"></iframe>
+        </div>
     </div>
     
   </body>
