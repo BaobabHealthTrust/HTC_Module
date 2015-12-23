@@ -48,8 +48,8 @@
 <body>
 
 <%=form_tag log_in_path do%>
-<input type="text" id="username" name="username" helpText="Enter username" textCase="mixed"/>
-<input type="password" id="password" name="password" helpText ="Enter password" textCase="mixed"/>
+<input type="text" id="username" name="username" helpText="Enter username" textCase="lower"/>
+<input type="password" id="password" name="password" helpText ="Enter password" textCase="lower"/>
 <input type="text"  id="location" name="location" helpText="Scan location barcode" tt_pageonload="loadBarcodePage" />
 <%end%>
 
