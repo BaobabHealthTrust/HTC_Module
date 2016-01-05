@@ -52,13 +52,13 @@
 }
 #leftpanel{
   width: 90%;
- /* height:60% ! important; */
+  height: 500px ! important;
   float: left;
 }
 #rightpanel{
-  width: 10%;
- /* height:60% ! important; */
-  float: right;
+    width: 10%;
+    height: 100% ! important;
+    float: right;
 }
 #bottom{
   width: 100%;
@@ -76,7 +76,9 @@
   z-index: 120;
 }
 #rightimg{
-  float: right;
+    right: 0px;
+    width: 85px;
+    position: absolute;
 }
 #leftimg{
   float:left;
@@ -94,9 +96,9 @@
         </div>
 
         <div id="rightpanel">
-           <div id="rightimg">
-            <img id="img-finish"  width = '45' height='40'></img>
-          </div>
+            <div id="rightimg">
+                <img id="img-finish"  width = '45' height='40'></img>
+            </div>
               <iframe id="rightframe" src="/client_status/<%= @partner.person_b %>?config=couple" width="100%"  style="overflow:auto;"></iframe>
         </div>
     </div>

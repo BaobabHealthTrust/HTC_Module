@@ -15,3 +15,7 @@ Run `bundle install --local`
 From application root directory, run
 
   `./bin/initial_database_setup.sh development|production`
+
+Load Counseling protocols by loading the counseling_protocols.sql, run
+
+  'mysql -u username -rpassword dbName < counseling_protocols.sql'
