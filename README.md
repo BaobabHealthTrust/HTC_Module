@@ -1,10 +1,13 @@
 # HTC_Module
 HIV Testing and Counselling module
 
+clone the application 
+'git clone git@github.com:BaobabHealthTrust/HTC_Module.git'
+
 Setup Settings.
 
 1. Use ruby version 2.1.2 
-2. Use rails 4.1.0 or above
+2. Use rails 4.0.0 or above
 
 Copy config/database.yml.example to config/database.yml
 
