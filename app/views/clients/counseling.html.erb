@@ -27,13 +27,11 @@
   </script>
   <style>
     #parent0{ height: 100%;}
-    #inputFrame0{ height: 100%;}
     #keyboard, .keyboard {
         display: none;
     }
     li{
-        font-size: 2em
-    ;
+        font-size: 2em;
     }
   </style>
 </head>
@@ -46,7 +44,7 @@
                      options_for_select(@protocol.collect{ |p|
                                           [p.name, p.name]
                                         }, []),
-                     :helpText => "Counseling Protocols for #{@client.name.humanize}",
+                     :helpText => "Risk Assessment for #{@client.name.split.map(&:capitalize).join(' ')}",
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
     </form>
