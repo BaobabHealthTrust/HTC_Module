@@ -56,7 +56,7 @@
 		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="ASSESSMENT" name="ENCOUNTER"/>
 				<fieldset>
-				<legend>Risk Assessment For <%= @client.name.humanize %></legend>
+				<legend>Risk Assessment Outcome for <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
                                <label for="type">Client Risk Category</label>
 
                                 <select id="type" name="observations[][value_coded_or_text]">

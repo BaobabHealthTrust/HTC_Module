@@ -26,7 +26,9 @@
           }, 100);
   </script>
   <style>
-    #parent0{ height: 100%;}
+    #parent0{ height: 100%;
+    position: absolute;}
+
     #keyboard, .keyboard {
         display: inline;
     }
@@ -50,7 +52,7 @@
                      options_for_select(@protocol.collect{ |p|
                                           [p.name, p.name]
                                         }, []),
-                     :helpText => "Risk Assessment for #{@client.name.split.map(&:capitalize).join(' ')}",
+                     :helpText => "Risk Assessment for #{@client.name.split.map(&:capitalize).join(' ')} &nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
     </form>
