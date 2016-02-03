@@ -352,7 +352,6 @@ class ClientsController < ApplicationController
   def status
      @client = Client.find(params[:id])
      if @client.partner_present == true #and ! session[:partner].blank?
-       #raise @task.to_yaml
        @task = next_task(@client)
         if @task["name"]== "Update Status"
             @task["url"] = "/client_status/#{@client.patient_id}?config=couple"

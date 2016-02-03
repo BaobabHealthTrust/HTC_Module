@@ -9,6 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
+
     if params["ENCOUNTER"].upcase == "ASSESSMENT"
       if params[:observations][1]["value_coded_or_text"] == "No"
         redirect_to "/clients/#{params[:id]}" and return
@@ -19,7 +20,7 @@ class EncountersController < ApplicationController
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
-
+    url = next_task(patient)["url"]
     #raise params.to_yaml
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  (params[:obs] || []).each do |name|
@@ -36,7 +37,15 @@ class EncountersController < ApplicationController
 									  encounter_id: encounter.encounter_id, value_coded: concept_id, 
 									  creator: current_user.id, value_text: value_text, value_numeric: value_numeric,
 										value_datetime: value_datetime)
-				end
+        end
+      # call risk_type
+      risk_type = risk_assessment_type(patient, current)
+
+      if risk_type.present? && url.match(/\?/)
+       url = url + "&risk_type=" + risk_type
+      elsif risk_type.present? && !url.match(/\?/)
+        url = url + "?risk_type=" + risk_type
+      end
 		end 
 
     test_kit = {}
@@ -96,7 +105,7 @@ class EncountersController < ApplicationController
                 Observation.create(observation) rescue []
               end
               
-            end
+    end
     if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
     		redirect_to waiting_list_path and return
     end
@@ -107,15 +116,15 @@ class EncountersController < ApplicationController
         end
     end
 
+    #url = next_task(patient)["url"]
     # call risk_type
-    risk_type = risk_assessment_type(patient, current)
-    #raise risk_type
-    url = next_task(patient)["url"]
-    if risk_type.present? && url.match(/\?/)
-      url = url + "&risk_type=" + risk_type
-    elsif risk_type.present? && !url.match(/\?/)
-      url = url + "?risk_type=" + risk_type
-    end
+    #risk_type = risk_assessment_type(patient, current)
+
+    #if risk_type.present? && url.match(/\?/)
+    # url = url + "&risk_type=" + risk_type
+    #elsif risk_type.present? && !url.match(/\?/)
+    #  url = url + "?risk_type=" + risk_type
+    #end
 
     redirect_to url and return
 
@@ -141,8 +150,7 @@ class EncountersController < ApplicationController
                  FROM counseling_question as cq 
                  INNER JOIN counseling_answer as ca
                  ON cq.question_id = ca.question_id
-                 WHERE value_coded = #{yes_concept} AND ca.patient_id = #{patient.id}")
-    #raise @yes_query.inspect
+                 WHERE value_coded = #{yes_concept} AND ca.patient_id = #{patient.id} AND ca.date_created = CURDATE()")
 
     yesAnswers = []
     @yes_query.each do |record|
