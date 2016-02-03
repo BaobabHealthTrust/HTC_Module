@@ -3,19 +3,26 @@
         <%= form_tag(controller: "encounters", action: "new", method: "post") do %>
         <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
         <input type="hidden" value="Referral Consent Confirmation" name="ENCOUNTER"/>
-        <input type="hidden" value="YES" name="refer"/>
-        <input type="hidden" value="ART clinic" name="observations[][value_coded_or_text]">
-        <%= hidden_field_tag("observations[][concept_name]",        "Refer to clinic") %>
-        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        <input type="hidden" value="YES" name="refer"/> # refer to ART clinic? YES by default.
+        <input type="hidden" value="ART clinic" name="observations[][value_coded_or_text]"> # referral clinic type, ART Clinic by default.
+        <%= hidden_field_tag("observations[][concept_name]", "Refer to clinic") %>
+        <%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
+        <%= hidden_field_tag("observations[][obs_datetime]", "") %>
+        <%= hidden_field_tag("observations[][value_datetime]", "") %>
         #############################################################################################################
-        <%= select_tag "observations[][value_coded_or_text]", params[:location_id],
+        <%= select_tag "observations[][value_coded_or_text]", params[:id],
                        {:id => 'clinic',
                         :field_type => 'alpha',
                         :helpText => "Referral to ART Clinic for #{@client.name.split.map(&:capitalize).join(' ')}. Choose convenient location.",
                         :ajaxURL => "/clients/locations/#{params[:id]}",
                         :allowFreeText => false } %>
+        <%#= select_tag "observations[][value_coded_or_text]",
+                        options_for_select("None","TB","STI","Other"),
+                       {:id => 'clinic',
+                        :field_type => 'alpha',
+                        :helpText => "Other clinic?",
+                        :allowFreeText => false } %>
+        <%= select_tag("observations[][value_coded_or_text]", options_for_select(["None","TB","STI", "Other"]), {:helpText => "Other clinic?"})%>
         #############################################################################################################
         <%= text_field(:name, 'firstname', {:field_type => 'alpha',
                                             :helpText => 'First name',
@@ -26,8 +33,6 @@
                                           :ajaxURL => '/clients/last_name?search=',
                                           :allowFreeText => true })%>
         <%= select_tag(:gender, options_for_select(["","Male","Female"]), {:helpText => "Gender"})%>
-        <legend>Referral to ART Clinic for <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
-        <br />
 
         <label for="type">Type of Clinic</label>
 
