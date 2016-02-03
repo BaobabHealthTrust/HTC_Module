@@ -833,7 +833,8 @@ class ClientsController < ApplicationController
   end
 	
 	def referral_consent
-					@client = Client.find(params[:id])
+    @client = Client.find(params[:id])
+    render :layout => 'basic'
 	end
 
   def appointment
@@ -852,9 +853,10 @@ class ClientsController < ApplicationController
 	def locations
 			location = Location.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
-      "#{locs.name}"
-    end
-    render :text => location.join("\n") and return
+        "#{locs.name}"
+        "<li value='#{locs.location_id}'>#{locs.name}</li>"
+      end
+    render :text => location.join(" ") and return
 	end
 
 	def village
