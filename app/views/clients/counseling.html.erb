@@ -28,11 +28,17 @@
   <style>
     #parent0{ height: 100%;}
     #keyboard, .keyboard {
-        display: none;
+        display: inline;
     }
     li{
         font-size: 2em;
     }
+          .tip {
+              position: relative;
+              z-index: 1000;
+              top: 80%;
+              left: 5%;
+          }
   </style>
 </head>
 <body >
@@ -48,6 +54,9 @@
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
     </form>
+    <div class="tip">
+      <h2>* Tick if answer is "YES".</h2>
+    </div>
 
 </body>
 </html>
