@@ -22,32 +22,9 @@
                         :field_type => 'alpha',
                         :helpText => "Other clinic?",
                         :allowFreeText => false } %>
-        <%= select_tag("observations[][value_coded_or_text]", options_for_select(["None","TB","STI", "Other"]), {:helpText => "Other clinic?"})%>
+        <%= select_tag("observations[][value_coded_or_text]", options_for_select(["None","TB","STI", "Other"]), {:helpText => "Other clinic?"})%> #other type of clinic
         #############################################################################################################
-        <%= text_field(:name, 'firstname', {:field_type => 'alpha',
-                                            :helpText => 'First name',
-                                            :ajaxURL => '/clients/first_name?search=',
-                                            :allowFreeText => true })%>
-        <%= text_field(:name, 'surname', {:field_type => 'alpha',
-                                          :helpText => 'Last name',
-                                          :ajaxURL => '/clients/last_name?search=',
-                                          :allowFreeText => true })%>
-        <%= select_tag(:gender, options_for_select(["","Male","Female"]), {:helpText => "Gender"})%>
 
-        <label for="type">Type of Clinic</label>
-
-        <select id="type" name="observations[][value_coded_or_text]" condition="__$('1.1').checked">
-          <option></option>
-          <option value="ART clinic">ART</option>
-          <option value="STI clinic">TB</option>
-          <option value="TB clinic">STI</option>
-          <option value="Other">Other</option>
-        </select>
-        <%= hidden_field_tag("observations[][concept_name]",        "Referral clinic") %>
-        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-        <br />
 
         <label for="clinic">Choose convenient clinic location</label>
         <input type='text' id="clinic" name="observations[][value_coded_or_text]"
@@ -62,7 +39,6 @@
         <%= hidden_field_tag("observations[][concept_name]",        "Preferred Clinic Day") %>
         <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        </fieldset>
         <% end %>
     </body>
 </html>
