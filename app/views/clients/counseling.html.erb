@@ -52,12 +52,12 @@
                      options_for_select(@protocol.collect{ |p|
                                           [p.name, p.name]
                                         }, []),
-                     :helpText => "Risk Assessment for #{@client.name.split.map(&:capitalize).join(' ')} &nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
+                     :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')}&nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
     </form>
     <div class="tip">
-      <h2>* Tick if answer is "YES".</h2>
+      <!--<h2>* Tick if answer is "YES".</h2>-->
     </div>
 
 </body>
