@@ -43,8 +43,7 @@
           }
   </style>
 </head>
-<body >
-
+<body>
     <form method = 'post' action = "/encounters/new/<%= params[:client_id] %>">
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
       <input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
@@ -56,9 +55,10 @@
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
     </form>
+    <!--
     <div class="tip">
-      <!--<h2>* Tick if answer is "YES".</h2>-->
+      <h2>* Tick if answer is "YES".</h2>
     </div>
-
+    -->
 </body>
 </html>

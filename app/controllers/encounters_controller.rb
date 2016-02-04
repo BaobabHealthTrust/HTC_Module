@@ -10,101 +10,104 @@ class EncountersController < ApplicationController
 
   def new
 
+    ################ Assessment #######################################
     if params["ENCOUNTER"].upcase == "ASSESSMENT"
       if params[:observations][1]["value_coded_or_text"] == "No"
         redirect_to "/clients/#{params[:id]}" and return
       end
     end
 
+    ################ Global Variables #################################
 		current = session[:datetime].to_datetime rescue DateTime.now
 		person = Person.find(params[:id])
     patient = Client.find(params[:id])
 		encounter = write_encounter(params["ENCOUNTER"], person)
     url = next_task(patient)["url"]
-    #raise params.to_yaml
+
+    ################ Counseling #######################################
 		if params["ENCOUNTER"].upcase == "COUNSELING"
 			  (params[:obs] || []).each do |name|
-          next if name.blank?
-					 concept_id = nil
-					 value_datetime = nil
-					 value_text = nil 
-				   value_numeric = nil
-							concept_id = ConceptName.find_by_name("Yes").concept_id rescue nil
-							value_text = value if concept_id.blank?
-          question_id = CounselingQuestion.find_by_name(name).question_id
+            next if name.blank?
+					  concept_id = nil
+					  value_datetime = nil
+					  value_text = nil
+				    value_numeric = nil
+						concept_id = ConceptName.find_by_name("Yes").concept_id rescue nil
+						value_text = value if concept_id.blank?
+            question_id = CounselingQuestion.find_by_name(name).question_id
 					 
-					 answer = CounselingAnswer.create(question_id: question_id, patient_id: person.id,
+					  CounselingAnswer.create(question_id: question_id, patient_id: person.id,
 									  encounter_id: encounter.encounter_id, value_coded: concept_id, 
 									  creator: current_user.id, value_text: value_text, value_numeric: value_numeric,
 										value_datetime: value_datetime)
         end
-      # call risk_type
-      risk_type = risk_assessment_type(patient, current)
 
-      if risk_type.present? && url.match(/\?/)
-       url = url + "&risk_type=" + risk_type
-      elsif risk_type.present? && !url.match(/\?/)
-        url = url + "?risk_type=" + risk_type
-      end
+        risk_type = risk_assessment_type(patient, current)
+
+        if risk_type.present? && url.match(/\?/)
+          url = url + "&risk_type=" + risk_type
+        elsif risk_type.present? && !url.match(/\?/)
+          url = url + "?risk_type=" + risk_type
+        end
 		end 
 
     test_kit = {}
+    ######################## Observations as Observation #############################################
     (params[:observations] || []).each do |observation|
+        next if observation[:concept_name].blank?
 
-              next if observation[:concept_name].blank?
+        ######################### HIV Testing ########################
+        if params["ENCOUNTER"].upcase == "HIV TESTING"
+          (1..2).each{|i|
+            if observation[:concept_name] ==  "HTC Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
+              used = CouncillorInventory.create_used_testkit(observation[:value_text], params["test#{i} done"], current, current_user)
+            end
+          }
+        end
 
-              if params["ENCOUNTER"].upcase == "HIV TESTING"
-                  (1..2).each{|i|
-                     if observation[:concept_name] ==  "HTC Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
-                        used = CouncillorInventory.create_used_testkit(observation[:value_text], params["test#{i} done"], current, current_user)
-                     end
-                  }
-              end
-              # Check to see if any values are part of this observation
-              # This keeps us from saving empty observations
-              if params["ENCOUNTER"].upcase == "UPDATE HIV STATUS"  and observation[:concept_name].upcase == "PATIENT PREGNANT"
-                    observation[:value_coded_or_text] = params[:patient]
-              end
+        # Check to see if any values are part of this observation
+        # This keeps us from saving empty observations
 
-              if !observation["value_datetime"].blank?
-                 if observation["value_datetime"].match(/\?/)
-                    observation["value_text"] = observation["value_datetime"]
-                    observation["value_datetime"] = nil
+        ######################### HIV Status ##########################
+        if params["ENCOUNTER"].upcase == "UPDATE HIV STATUS"  and observation[:concept_name].upcase == "PATIENT PREGNANT"
+          observation[:value_coded_or_text] = params[:patient]
+        end
 
-                 else
-              		observation["value_datetime"] = observation["value_datetime"].to_time.strftime("%Y-%m-%d %H:%M:%S")
-                 end
-              end
+        if !observation["value_datetime"].blank?
+          if observation["value_datetime"].match(/\?/)
+            observation["value_text"] = observation["value_datetime"]
+            observation["value_datetime"] = nil
+          else
+            observation["value_datetime"] = observation["value_datetime"].to_time.strftime("%Y-%m-%d %H:%M:%S")
+          end
+        end
               
-              values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text', 'complex'].map{|value_name|
-                observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
-              }.compact
+        values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text', 'complex'].map{|value_name|
+          observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
+        }.compact
 
-              next if values.length == 0
-
-              observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
-              observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
-
-							observation[:obs_datetime] = current.strftime("%Y-%m-%d %H:%M:%S")
-							observation[:creator] = current_user.id
-              observation[:encounter_id] = encounter.id
-              observation[:date_created] = DateTime.now.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
-              # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
-              observation[:person_id] ||= encounter.patient_id
+        next if values.length == 0
+        observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
+        observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
+        observation[:obs_datetime] = current.strftime("%Y-%m-%d %H:%M:%S")
+        observation[:creator] = current_user.id
+        observation[:encounter_id] = encounter.id
+        observation[:date_created] = DateTime.now.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
+        observation[:person_id] ||= encounter.patient_id
               
-              # Handle multiple select
-              if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
-                observation[:value_coded_or_text_multiple].compact!
-                observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
-              end
-              if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
-                values = observation.delete(:value_coded_or_text_multiple)
-                values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation);}
-              else
-                observation.delete(:value_coded_or_text_multiple)
-                Observation.create(observation) rescue []
-              end
-              
+        # Handle multiple select
+        if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+          observation[:value_coded_or_text_multiple].compact!
+          observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
+        end
+        if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
+          values = observation.delete(:value_coded_or_text_multiple)
+          values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation);}
+        else
+          observation.delete(:value_coded_or_text_multiple)
+          Observation.create(observation) rescue []
+        end
     end
     if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
     		redirect_to waiting_list_path and return
