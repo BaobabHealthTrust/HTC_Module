@@ -5,34 +5,16 @@
             <input type="hidden" value="Referral Consent Confirmation" name="ENCOUNTER"/>
             <input type="hidden" value="YES" name="refer"/> # refer to ART clinic? YES by default.
             <input type="hidden" value="ART clinic" name="observations[][value_coded_or_text]"> # referral clinic type, ART Clinic by default.
-            <%= hidden_field_tag("observations[][concept_name]", "Refer to clinic") %>
-            <%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
-            <%= hidden_field_tag("observations[][obs_datetime]", "") %>
-            <%= hidden_field_tag("observations[][value_datetime]", "") %>
             <%= select_tag "observations[][value_coded_or_text]", params[:id],
                            {:id => 'clinic',
                             :field_type => 'alpha',
                             :helpText => "Refer to ART Clinic",
                             :ajaxURL => "/clients/locations/#{params[:id]}",
                             :allowFreeText => false } %>
-            <%= text_field_tag "person[birth_year]", nil, {:helpText => 'Choose convenient Clinic date (YEAR)', :field_type => 'number', :absoluteMin => "1890", :min => "1940", :absoluteMax => Date.today.year, :tt_pageStyleClass => "Numeric NumbersOnly", :tt_onLoad => 'seen(tstCurrentPage);',:validationJS => "setDOB();" }  %>
-
-            <%= select_tag "person[birth_month]", month_name_options, {:helpText => 'Choose convenient Clinic date (MONTH)', :condition => '$("person_birth_year").value.toLowerCase() != "unknown"',:validationJS => "validateDOB();",:validationMessage => 'Please enter a valid date', :tt_onLoad => "__$('keyboard').style.display = 'none'"}%>
-
-            <%= text_field_tag "person[birth_day]",  nil,
-                               :field_type => 'number',
-                               :helpText => 'Choose convenient Clinic date (DAY)',
-                               :condition => '($("person_birth_year").value != "Unknown") && ($("person_birth_month").value != "Unknown")',
-                               :tt_onLoad => "getDayOfMonthPicker(
-                                                    $('person_birth_year').value, $('person_birth_month').value
-                                                );
-                                                $('nextButton').style.display = 'block';" ,
-                               :validationJS => "validateDOB()",
-                               :validationMessage => 'Please enter a valid date'%>
-            <%= select_tag("observations[][value_coded_or_text]",
-                           options_for_select(
-                                   ["None","TB","STI", "Other"]
-                           ), {:helpText => "Other clinic?"})%> #other type of clinic
+            <%= hidden_field_tag("observations[][concept_name]", "Refer to clinic") %>
+            <%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
+            <%= hidden_field_tag("observations[][obs_datetime]", "") %>
+            <%= hidden_field_tag("observations[][value_datetime]", "") %>
         <% end %>
     </body>
 </html>

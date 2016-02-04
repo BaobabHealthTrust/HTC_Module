@@ -9,7 +9,11 @@ class EncountersController < ApplicationController
   end
 
   def new
+    #year = params[:person][:birth_year]
+    #month = params[:person][:birth_month]
+    #day = params[:person][:birth_day]
 
+    #raise params[:person][:birth_year].inspect
     ################ Assessment #######################################
     if params["ENCOUNTER"].upcase == "ASSESSMENT"
       if params[:observations][1]["value_coded_or_text"] == "No"
@@ -109,6 +113,8 @@ class EncountersController < ApplicationController
           Observation.create(observation) rescue []
         end
     end
+
+    ################################## Appointment ############################################################
     if params["ENCOUNTER"].upcase == "APPOINTMENT" && !params[:waiting_list].blank?
     		redirect_to waiting_list_path and return
     end
@@ -119,22 +125,12 @@ class EncountersController < ApplicationController
         end
     end
 
-    #url = next_task(patient)["url"]
-    # call risk_type
-    #risk_type = risk_assessment_type(patient, current)
-
-    #if risk_type.present? && url.match(/\?/)
-    # url = url + "&risk_type=" + risk_type
-    #elsif risk_type.present? && !url.match(/\?/)
-    #  url = url + "?risk_type=" + risk_type
-    #end
-
     redirect_to url and return
 
   end
 
   def risk_assessment_type(patient, risk_date)
-    # load risk_types from settings
+    ################ load risk_types from settings  ###########################
     low_risk = Settings[:low_risk]
     on_going_risk = Settings[:on_going_risk]
     high_risk = Settings[:high_risk]
@@ -142,12 +138,8 @@ class EncountersController < ApplicationController
     all_risks = low_risk+on_going_risk+high_risk
 
     risk_type = "unknown"
-  
-=begin    
-    encounter_list = "SELECT e.encounter_id, e.encounter_type, e.encounter_datetime
-                      FROM encounter as e
-                      WHERE patient_id = 48 and Date(encounter_datetime) = ? and encounter_type = 149;",current
-=end
+
+    ######################### Get only the questions answered Yes into an array. ######################################
     yes_concept = Concept.find_by_name("YES").id
     @yes_query = CounselingQuestion.find_by_sql("SELECT cq.question_id, cq.name, ca.patient_id, ca.value_coded
                  FROM counseling_question as cq 
@@ -159,7 +151,8 @@ class EncountersController < ApplicationController
     @yes_query.each do |record|
       yesAnswers << record.name
     end
-    
+
+    ######################### Calculate risk by comparing the answered questions to The questions in all the categories.
     yesAnswers.each do |yes|
       if high_risk.include? yes
         risk_type = "high"
@@ -173,16 +166,6 @@ class EncountersController < ApplicationController
       end
     end
 
-    #raise risk_type.to_yaml
-    
-
-
-
-    # query = "SELECT ca.patient_id, ca.encounter_id FROM counseling_answer as ca "
-
-    # loop
-
-    #raise high_risk[1].to_yaml 
     return risk_type
   end
 

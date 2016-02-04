@@ -19,11 +19,11 @@
       function __$(id){
           return document.getElementById(id);
       }
-          setInterval(function () {
+          /* setInterval(function () {
             document.getElementById('keyboard').style.display = "none";
               document.getElementById('parent0').style.height = "100%";
               document.getElementById('inputFrame0').style.height = "90%";
-          }, 100);
+          }, 100); */
   </script>
   <style>
     #parent0{ height: 100%;
@@ -54,11 +54,20 @@
                      :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')}&nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
+      <%#= select_tag("observations[][value_coded_or_text]", options_for_select(['','Low Risk','On-going Risk','High risk event']),
+                     :helpText =>"Risk Assessment Outcome for #{@client.name.split.map(&:capitalize).join(' ')}",
+                     :allowFreeText => false)%>
+      <%#= text_field_tag :summary, nil,
+                         { :tt_onLoad => "",
+                           :optional => "true",
+                           :tt_pageStyleClass => "NoControls",
+                           :tt_onUnload => 'removeButton();'} %>
     </form>
     <!--
     <div class="tip">
       <h2>* Tick if answer is "YES".</h2>
     </div>
     -->
+
 </body>
 </html>
