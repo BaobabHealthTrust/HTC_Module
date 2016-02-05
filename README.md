@@ -32,6 +32,6 @@ Run the command below:
 
     ./bin/initial_database_setup.sh development|production
 
-Done, Yeay...!!!
-Nothing to do.
+Yeay...!!!
+Done. Nothing to do.
 Run your application.
