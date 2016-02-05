@@ -38,6 +38,8 @@ Using https: (if you use https to clone)
 
 System Requirements
 -------------------
+Verify your system meets the following requirements for a successful application setup.
+
     1. Use ruby version 2.1.2
     2. Use rails 4.1.0 or above
 
