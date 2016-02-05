@@ -23,7 +23,7 @@ Run commands as below:
         cd public/
 
     Using ssh: (if you use ssh to clone)
-        git clone git@github.com:BaobabHealthTrust/touchscreentoolkit.git /public
+        git clone git@github.com:BaobabHealthTrust/touchscreentoolkit.git
 
             --- OR ---
 
