@@ -33,8 +33,7 @@ Copy config/settings.yml.example to config/settings.yml
 Setup database.yml
 ------------------
 Specify your database settings in config/database.yml
-
-    open config/database.yml file and edit where necessary.('name', 'username', and 'password' => recommended)
+Open config/database.yml file and edit where necessary.('name', 'username', and 'password' => recommended)
 
 Initialize system
 -----------------
@@ -42,6 +41,8 @@ Run the command below:
 
     ./bin/initial_database_setup.sh development|production
 
+Summary
+-------
 Yeay...!!!
 Done. Nothing to do.
 Run your application.
