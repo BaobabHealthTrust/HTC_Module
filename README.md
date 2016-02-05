@@ -4,6 +4,7 @@
 ###################################################
 
 Clone the HTC application from the Baobab Health Trust organisation github account as below
+
     Using ssh: (if you use ssh to clone)
         git clone git@github.com:BaobabHealthTrust/HTC_Module.git
 
