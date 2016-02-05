@@ -3,7 +3,7 @@
 # HIV Testing and Counselling module
 ###################################################
 
-System Configuration
+Get Application
 --------------------
 Clone the HTC application from the Baobab Health Trust organisation github account as below
 
