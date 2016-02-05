@@ -20,7 +20,7 @@ Using https: (if you use https to clone)
 Toolkit Integration
 -------------------
 Integrate TouchScreen Toolkit to the application by navigating into the application's public directory and cloning it from github.
-Run commands as below:
+Run command as below:
 
     cd public/
 
