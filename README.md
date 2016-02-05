@@ -24,7 +24,7 @@ Copy the config/database.yml.example to config/database.yml
 
     cp config/database.yml.example to config/database.yml
 
-Setup settings.yml
+Get settings.yml
 ------------------
 Copy config/settings.yml.example to config/settings.yml
 
@@ -32,10 +32,12 @@ Copy config/settings.yml.example to config/settings.yml
 
 Setup database.yml
 ------------------
-    vim config/settings.yml.example to config/settings.yml
+Specify your database settings in config/database.yml
 
-Specify your database settings('name', 'username', and 'password') in config/database.yml
+    open config/database.yml file and edit where necessary.('name', 'username', and 'password' => recommended)
 
+Initialize system
+-----------------
 Run the command below:
 
     ./bin/initial_database_setup.sh development|production
