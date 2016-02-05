@@ -40,12 +40,17 @@ CREATE TABLE `counseling_question` (
 --
 -- Dumping data for table `counseling_question`
 --
-
+/*
 LOCK TABLES `counseling_question` WRITE;
 /*!40000 ALTER TABLE `counseling_question` DISABLE KEYS */;
-INSERT INTO `counseling_question` VALUES (9,'Have you ever tested for HIV?','HTC Protocols',0,'Number','Residence',NULL,NULL,0,3),(10,'Have you ever tested for STIs?','Risk determination',0,'Boolean',NULL,NULL,NULL,0,3),(11,'Have you ever had foot rush?','HTC screening',0,'Boolean',NULL,NULL,NULL,0,3);
+INSERT INTO `counseling_question` VALUES
+(9,'Have you ever tested for HIV?','HTC Protocols',0,'Number','Residence',NULL,NULL,0,3,NULL),
+(10,'Have you ever tested for STIs?','Risk determination',0,'Boolean',NULL,NULL,NULL,0,3,NULL),
+(11,'Have you ever had foot rush?','HTC screening',0,'Boolean',NULL,NULL,NULL,0,3,NULL);
 /*!40000 ALTER TABLE `counseling_question` ENABLE KEYS */;
+
 UNLOCK TABLES;
+*/
 
 --
 -- Table structure for table `counseling_answer`
@@ -76,11 +81,13 @@ CREATE TABLE `counseling_answer` (
 -- Dumping data for table `counseling_answer`
 --
 
+/*
 LOCK TABLES `counseling_answer` WRITE;
 /*!40000 ALTER TABLE `counseling_answer` DISABLE KEYS */;
 INSERT INTO `counseling_answer` VALUES (28,7,49,71,1065,NULL,NULL,NULL,'2014-08-06 08:07:52',NULL,5,3,NULL),(29,8,49,71,NULL,NULL,NULL,'2013-08-06 00:00:00','2014-08-06 08:07:52',NULL,5,3,NULL);
 /*!40000 ALTER TABLE `counseling_answer` ENABLE KEYS */;
 UNLOCK TABLES;
+*/
 
 --
 -- Table structure for table `child_protocol`
@@ -101,6 +108,7 @@ CREATE TABLE `child_protocol` (
 -- Dumping data for table `child_protocol`
 --
 
+/*
 LOCK TABLES `child_protocol` WRITE;
 /*!40000 ALTER TABLE `child_protocol` DISABLE KEYS */;
 /*!40000 ALTER TABLE `child_protocol` ENABLE KEYS */;

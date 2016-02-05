@@ -39,3 +39,22 @@ puts "Loading default inventory types"
   next if !InventoryType.find_by_name(test[0]).blank?
   InventoryType.create(name: test[0], description: test[1], creator: 1)
 }
+
+puts "Loading default counseling protocols"
+[["No Sex/Abstenance", "Abstenance"],
+ ["Consistent and correct Condom useConsistent and correct Condom use", "Proper control"],
+ ["Stable, known HIV-negative partner who does not engage in risky behaviour", "Stable"],
+ ["Stable partner who is taking ART", "Stable positive partner"],
+ ["Stable partner with unknown HIV status", "Stable partner unknown"],
+ ["MSM", "Men seeing other Men"],
+ ["Sex Worker", "Risky business"],
+ ["Injecting drug user", "Drug Abuser"],
+ ["Born/Breastfeeding from HIV-Infected mother", "From infected mother"],
+ ["Occupational Exposure", "Exposed from work"],
+ ["STI", "Sexually Transmitted Infection"],
+ ["Rape", "Regardless of HIV status of perpetrator"],
+ ["Unprotected sex", "With new partner with known positive or unknown HIV status"],
+ ["Shared needles with known HIV infected person" "With known HIV infected person"],
+].each_with_index { |protocol, i|
+  CounselingQuestion.create(name: protocol[0], description: protocol[1], creator: 3)
+}
