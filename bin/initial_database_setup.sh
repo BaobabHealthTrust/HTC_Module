@@ -1,5 +1,5 @@
 #!/bin/bash
-b
+
 usage(){
   echo "Usage: $0 ENVIRONMENT SITE"
   echo
