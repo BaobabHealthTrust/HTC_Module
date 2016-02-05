@@ -24,7 +24,7 @@ Run commands as below:
 
     cd public/
 
-While in public/ directory, clone touchscreentoolkit.
+While in public/ directory, run below commands to clone touchscreentoolkit.
 
 Using ssh: (if you use ssh to clone)
 
