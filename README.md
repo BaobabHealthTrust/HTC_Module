@@ -3,6 +3,8 @@
 # HIV Testing and Counselling module
 ###################################################
 
+System Configuration
+--------------------
 Clone the HTC application from the Baobab Health Trust organisation github account as below
 
     Using ssh: (if you use ssh to clone)
@@ -12,6 +14,11 @@ Clone the HTC application from the Baobab Health Trust organisation github accou
 
     Using https: (if you use https to clone)
         git clone https://github.com/BaobabHealthTrust/HTC_Module.git
+
+Toolkit Integration
+-------------------
+Navigate to the public directory in the /app directory and integrate TouchScreen Toolkit by cloning it form github.
+    cd app
 
 System Requirements
 -------------------
