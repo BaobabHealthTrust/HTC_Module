@@ -24,6 +24,7 @@ Run commands as below:
 
     cd public/
 
+While in public/ directory,
 Using ssh: (if you use ssh to clone)
 
     git clone git@github.com:BaobabHealthTrust/touchscreentoolkit.git
