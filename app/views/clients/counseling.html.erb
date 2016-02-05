@@ -54,6 +54,13 @@
                      :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')}&nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :multiple =>  true %>
+      <%= select_tag 'obs',
+                     options_for_select(@protocol.collect{ |p|
+                                          [p.name, p.name]
+                                        }, []),
+                     :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')}&nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
+                     :tt_onLoad =>"createMultipleSelectControl()",
+                     :multiple =>  true %>
       <%#= select_tag("observations[][value_coded_or_text]", options_for_select(['','Low Risk','On-going Risk','High risk event']),
                      :helpText =>"Risk Assessment Outcome for #{@client.name.split.map(&:capitalize).join(' ')}",
                      :allowFreeText => false)%>
@@ -63,11 +70,6 @@
                            :tt_pageStyleClass => "NoControls",
                            :tt_onUnload => 'removeButton();'} %>
     </form>
-    <!--
-    <div class="tip">
-      <h2>* Tick if answer is "YES".</h2>
-    </div>
-    -->
 
 </body>
 </html>

@@ -176,7 +176,7 @@
         <%= hidden_field_tag("observations[][value_datetime]",       "") %>
         <br />
 
-       <label for="test_date">Last test date (day)</label>
+       <label for="test_date">Last test date</label>
             <input  type='text' name="observations[][value_datetime]" id="test_date"
              fieldtype="date"
              condition="__$('last').value.toUpperCase() != 'NEVER TESTED' && __$('last').value.length > 0" >
