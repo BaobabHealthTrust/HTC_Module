@@ -32,8 +32,7 @@ Copy config/settings.yml.example to config/settings.yml
 
 Setup database.yml
 ------------------
-Specify your database settings in config/database.yml
-Open config/database.yml file and edit where necessary.('name', 'username', and 'password' => recommended)
+Open config/database.yml file using your favourite editor and edit where necessary to specify your database settings.('name', 'username', and 'password' => recommended)
 
 Initialize system
 -----------------
