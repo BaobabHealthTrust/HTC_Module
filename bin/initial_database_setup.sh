@@ -1,5 +1,5 @@
 #!/bin/bash
-
+b
 usage(){
   echo "Usage: $0 ENVIRONMENT SITE"
   echo
@@ -25,6 +25,7 @@ set -e # exit shell script if any one command fails
 # fi
 
 bundle install --local
+bundle exec rake db:drop db:create
 
 USERNAME=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['username']"`
 PASSWORD=`ruby -ryaml -e "puts YAML::load_file('config/database.yml')['${ENV}']['password']"`
