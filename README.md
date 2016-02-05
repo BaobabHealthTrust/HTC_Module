@@ -8,14 +8,14 @@ Setup Settings.
 
 Copy config/database.yml.example to config/database.yml
 
-Specify your database name in config/database.yml
+Copy config/database.yml.example to config/database.yml
 
-Run `bundle install --local`
+Sspecify your database settings('name', 'username', and 'password') in config/database.yml
 
-From application root directory, run
+Run the command below:
 
-  `./bin/initial_database_setup.sh development|production`
+  ./bin/initial_database_setup.sh development|production
 
-Load Counseling protocols by loading the counseling_protocols.sql, run
-
-  'mysql -u username -rpassword dbName < counseling_protocols.sql'
+Done, Yeay...!!!
+Nothing to do.
+Run your application.
