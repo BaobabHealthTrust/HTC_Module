@@ -17,8 +17,18 @@ Clone the HTC application from the Baobab Health Trust organisation github accou
 
 Toolkit Integration
 -------------------
-Navigate to the public directory in the /app directory and integrate TouchScreen Toolkit by cloning it form github.
-    cd app
+Integrate TouchScreen Toolkit to the application by navigating into the application's public directory and cloning it form github.
+Run commands as below:
+
+        cd public/
+
+    Using ssh: (if you use ssh to clone)
+        git clone git@github.com:BaobabHealthTrust/touchscreentoolkit.git /public
+
+            --- OR ---
+
+    Using https: (if you use https to clone)
+        git clone https://github.com/BaobabHealthTrust/touchscreentoolkit.git
 
 System Requirements
 -------------------
