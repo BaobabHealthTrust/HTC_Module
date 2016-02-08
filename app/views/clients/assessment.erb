@@ -2,7 +2,6 @@
 <head>
 		<%= javascript_include_tag 'custom' %>
 		<script>
-			
 			var cancelDestination = addLink(window, <%=params[:id] %>)
 		</script>
   <style>
@@ -51,58 +50,61 @@
   </style>
 </head>
 <body >
-
-		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
-		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+    <%= form_tag(controller: "encounters", action: "new", method: "post") do %>
+	    <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="ASSESSMENT" name="ENCOUNTER"/>
-				<fieldset>
-				<legend>Risk Assessment Outcome for <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
-                               <label for="type">Client Risk Category</label>
-
-                                <select id="type" name="observations[][value_coded_or_text]">
-					<option></option>
-					<option 
-            <% if params["risk_type"]=="low" %>
-                selected
-            <% end %> 
-          value="Low Risk">Low Risk</option>
-					<option 
-            <% if params["risk_type"]=="ongoing" %>
-                selected
-            <% end %> 
-          value="AVD+ or High Risk">On-going Risk</option>
-          <option 
-            <% if params["risk_type"]=="high" %>
-                selected
-            <% end %> 
-          value="High risk event in last 3 months">High risk event</option>
-          <option 
-            <% if params["risk_type"]=="unknown" %>
-                selected
-            <% end %> 
-          value="Risk assessment not done">Risk assessment not done</option>
-
-				</select>
-                            <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
-                            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-                            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-                            <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-</fieldset>
+        <fieldset>
+          <legend>Risk Assessment Outcome for <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
+            <label for="type">Client Risk Category</label>
+            <select id="type" name="observations[][value_coded_or_text]">
+              <option></option>
+              <option
+                <% if params["risk_type"]=="low" %>
+                    selected
+                <% end %>
+                value="Low Risk">
+                    Low Risk
+              </option>
+              <option
+                <% if params["risk_type"]=="ongoing" %>
+                    selected
+                <% end %>
+                value="AVD+ or High Risk">On-going Risk</option>
+              <option
+                <% if params["risk_type"]=="high" %>
+                    selected
+              <% end %>
+                value="High risk event in last 3 months">
+                    High risk event
+              </option>
+              <option
+                <% if params["risk_type"]=="unknown" %>
+                    selected
+                <% end %>
+                value="Risk assessment not done">
+                    Risk assessment not done
+              </option>
+            </select>
+            <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
+            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+            <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+        </fieldset>
         <fieldset>
           <legend>Confirm Test </legend>
-          <label for="continue_testing">Continue Testing <%= @client.name.humanize %>? </label>
-          <select name="observations[][value_coded_or_text]" id="continue_testing" >
-            <option></option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
-        <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
-        <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
-        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+            <label for="continue_testing">Continue Testing <%= @client.name.humanize %>? </label>
+            <select name="observations[][value_coded_or_text]" id="continue_testing" >
+                <option></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+            <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
+            <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
+            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+            <%= hidden_field_tag("observations[][value_datetime]",       "") %>
         </fieldset>
-<%= link_to "Cancel" , "/clients/#{params[:id]}" %>
-<%= submit_tag "Finish" %>
+        <%= link_to "Cancel" , "/clients/#{params[:id]}" %>
+        <%= submit_tag "Finish" %>
 	<%end%>
 </body>
 </html>

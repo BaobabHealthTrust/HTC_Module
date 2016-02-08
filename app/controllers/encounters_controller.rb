@@ -9,24 +9,21 @@ class EncountersController < ApplicationController
   end
 
   def new
-    #year = params[:person][:birth_year]
-    #month = params[:person][:birth_month]
-    #day = params[:person][:birth_day]
+    raise params.inspect
 
-    #raise params[:person][:birth_year].inspect
+    ################ Global Variables #################################
+    current = session[:datetime].to_datetime rescue DateTime.now
+    person = Person.find(params[:id])
+    patient = Client.find(params[:id])
+    encounter = write_encounter(params["ENCOUNTER"], person)
+    url = next_task(patient)["url"]
+
     ################ Assessment #######################################
     if params["ENCOUNTER"].upcase == "ASSESSMENT"
       if params[:observations][1]["value_coded_or_text"] == "No"
         redirect_to "/clients/#{params[:id]}" and return
       end
     end
-
-    ################ Global Variables #################################
-		current = session[:datetime].to_datetime rescue DateTime.now
-		person = Person.find(params[:id])
-    patient = Client.find(params[:id])
-		encounter = write_encounter(params["ENCOUNTER"], person)
-    url = next_task(patient)["url"]
 
     ################ Counseling #######################################
 		if params["ENCOUNTER"].upcase == "COUNSELING"

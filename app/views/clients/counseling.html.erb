@@ -16,31 +16,69 @@
       tt_cancel_destination = '/htcs';
       tt_cancel_show = 'show.html';
 
+      var risk_category;
+
       function __$(id){
           return document.getElementById(id);
       }
-          /* setInterval(function () {
-            document.getElementById('keyboard').style.display = "none";
-              document.getElementById('parent0').style.height = "100%";
-              document.getElementById('inputFrame0').style.height = "90%";
-          }, 100); */
+
+      function setRiskCategory() {
+          <% low_risk = Settings[:low_risk] %>
+          <% on_going_risk = Settings[:on_going_risk] %>
+          <% high_risk = Settings[:high_risk] %>
+
+          var low_risk = "<%= low_risk.to_s.gsub('"', '') %>";
+          var on_going_risk = "<%= on_going_risk.to_s.gsub('"', '') %>";
+          var high_risk = "<%= high_risk.to_s.gsub('"', '') %>";
+
+          var yesAnswers = [];
+          //################# Populate yesAnswers array ####################
+          var checkBoxes = __$('page' + tstCurrentPage).getElementsByTagName("img");
+          for(var i in checkBoxes){
+              var box = checkBoxes[i];
+              if(box.src && !box.src.match(/unticked/)){
+                  var yesAnswer = box.parentNode.parentNode.childNodes[1].innerHTML;
+                  yesAnswers.push(yesAnswer);
+              }
+          }
+          //################# Loop through yesAnswers array to get Risk Category. #####
+          var risk_type = 'Risk assessment not done';
+          for(var yes in yesAnswers){
+              if (high_risk.indexOf(yesAnswers[yes]) > -1){
+                  risk_type = 'High risk event';
+                  break;
+              }
+              else if (on_going_risk.indexOf(yesAnswers[yes]) > -1){
+                  risk_type = 'On-going Risk';
+              }
+              else if (low_risk.indexOf(yesAnswers[yes]) > -1){
+                  if (risk_type != "on_going") {
+                      risk_type = 'Low Risk';
+                  }
+              }
+          }
+          //######### Get Risk Type ###################
+          risk_category = risk_type;
+      }
+
+      function getRiskCategory() {
+          var risk_type = risk_category;
+          __$('touchscreenInput' + tstCurrentPage).value = risk_type;
+          return risk_type;
+      }
   </script>
   <style>
-    #parent0{ height: 100%;
-    position: absolute;}
+    #parent0 {
+        height: 100%;
+        position: absolute;
+    }
 
     #keyboard, .keyboard {
         display: inline;
     }
-    li{
+    li {
         font-size: 2em;
     }
-          .tip {
-              position: relative;
-              z-index: 1000;
-              top: 80%;
-              left: 5%;
-          }
   </style>
 </head>
 <body>
@@ -51,25 +89,23 @@
                      options_for_select(@protocol.collect{ |p|
                                           [p.name, p.name]
                                         }, []),
-                     :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')}&nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
+                     :id => "protocols",
+                     :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')} &nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
                      :tt_onLoad =>"createMultipleSelectControl()",
+                     :tt_onUnLoad => "setRiskCategory();",
                      :multiple =>  true %>
-      <%= select_tag 'obs',
-                     options_for_select(@protocol.collect{ |p|
-                                          [p.name, p.name]
-                                        }, []),
-                     :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')}&nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
-                     :tt_onLoad =>"createMultipleSelectControl()",
-                     :multiple =>  true %>
-      <%#= select_tag("observations[][value_coded_or_text]", options_for_select(['','Low Risk','On-going Risk','High risk event']),
+      <%= select_tag("observations[][value_coded_or_text]",
+                     options_for_select(['',
+                                         ['Low Risk','Low Risk'],
+                                         ['On-going Risk','AVD+ or High Risk'],
+                                         ['High risk event','High risk event in last 3 months'],
+                                         ['Risk assessment not done','Risk assessment not done']
+                                        ],
+                                        nil),
                      :helpText =>"Risk Assessment Outcome for #{@client.name.split.map(&:capitalize).join(' ')}",
-                     :allowFreeText => false)%>
-      <%#= text_field_tag :summary, nil,
-                         { :tt_onLoad => "",
-                           :optional => "true",
-                           :tt_pageStyleClass => "NoControls",
-                           :tt_onUnload => 'removeButton();'} %>
+                     :allowFreeText => false,
+                     :tt_onLoad => "getRiskCategory();")
+      %>
     </form>
-
 </body>
 </html>
