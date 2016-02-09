@@ -817,7 +817,7 @@ class ClientsController < ApplicationController
     @mother_status =  Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
     concept = ConceptName.where("name = 'Client Risk Category'").first.concept_id
     @risk = Observation.where("concept_id = ? AND person_id = ?", concept, params[:client_id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
-
+    #raise @risk.inspect
     unless @risk.blank?
         if @risk.upcase =="AVD+ OR HIGH RISK"
             @message = "#{@risk}<br>Advise re-test every 12 months".to_s.html_safe
