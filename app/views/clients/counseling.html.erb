@@ -13,7 +13,7 @@
   <script language="javascript">
       tstUsername = "";
       tstCurrentDate = "2010/03/12";
-      tt_cancel_destination = '/htcs';
+      tt_cancel_destination = '/';
       tt_cancel_show = 'show.html';
 
       var risk_category;
@@ -94,6 +94,7 @@
                      :tt_onLoad =>"createMultipleSelectControl()",
                      :tt_onUnLoad => "setRiskCategory();",
                      :multiple =>  true %>
+
       <%= select_tag("observations[][value_coded_or_text]",
                      options_for_select(['',
                                          ['Low Risk','Low Risk'],
@@ -104,7 +105,16 @@
                                         nil),
                      :helpText =>"Risk Assessment Outcome for #{@client.name.split.map(&:capitalize).join(' ')}",
                      :allowFreeText => false,
-                     :tt_onLoad => "getRiskCategory();")
+                     :tt_onLoad => "getRiskCategory(); updateTouchscreenInputForSelect(this);")
+      %>
+      <%= select_tag("observations[][value_coded_or_text]",
+                     options_for_select(['',
+                                         ['Yes','Yes'],
+                                         ['No','No']
+                                        ],
+                                        nil),
+                     :helpText =>"Continue Testing #{@client.name.split.map(&:capitalize).join(' ')}?",
+                     :allowFreeText => false)
       %>
     </form>
 </body>

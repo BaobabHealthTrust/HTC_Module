@@ -7,8 +7,8 @@ class ApplicationController < ActionController::Base
   before_filter :save_login_state, :only => [:attempt_login, :login]
   
   def next_task(client)
-     htc_tasks = ["IN WAITING","IN SESSION","UPDATE HIV STATUS","COUNSELING","ASSESSMENT","HIV TESTING","REFERRAL CONSENT CONFIRMATION",
-                          "APPOINTMENT",]
+     htc_tasks = ["IN WAITING","IN SESSION","UPDATE HIV STATUS","COUNSELING","HIV TESTING","REFERRAL CONSENT CONFIRMATION",
+                          "APPOINTMENT",] ### "ASSESSMENT" after COUNSELING
      current_date = session[:datetime].to_date rescue Date.today
      conselled = encounter_done(client.patient_id, "COUNSELING")
      partner = ActionView::Base.full_sanitizer.sanitize(encounter_done(client.patient_id, "IN SESSION").first.to_s.upcase) rescue ""

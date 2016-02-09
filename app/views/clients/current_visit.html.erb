@@ -547,7 +547,7 @@
                                                          <%
                                                             answers = CounselingAnswer.where("encounter_id = ?", encounter.encounter_id)
                                                             ln = encounter.observations.length
-                                                            ln= answers.length if !answers.blank?
+                                                            ln = answers.length if !answers.blank?
                                                             encounter.observations.each_with_index do |obs, ix|%>
                                                             <tr>
                                                               <td style="color: #1f3b5e; border-top: 1px dotted lightgray;

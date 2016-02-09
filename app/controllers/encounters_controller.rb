@@ -9,7 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
-    raise params.inspect
+    #raise params.inspect
 
     ################ Global Variables #################################
     current = session[:datetime].to_datetime rescue DateTime.now
@@ -17,13 +17,6 @@ class EncountersController < ApplicationController
     patient = Client.find(params[:id])
     encounter = write_encounter(params["ENCOUNTER"], person)
     url = next_task(patient)["url"]
-
-    ################ Assessment #######################################
-    if params["ENCOUNTER"].upcase == "ASSESSMENT"
-      if params[:observations][1]["value_coded_or_text"] == "No"
-        redirect_to "/clients/#{params[:id]}" and return
-      end
-    end
 
     ################ Counseling #######################################
 		if params["ENCOUNTER"].upcase == "COUNSELING"
@@ -43,12 +36,10 @@ class EncountersController < ApplicationController
 										value_datetime: value_datetime)
         end
 
-        risk_type = risk_assessment_type(patient, current)
-
-        if risk_type.present? && url.match(/\?/)
-          url = url + "&risk_type=" + risk_type
-        elsif risk_type.present? && !url.match(/\?/)
-          url = url + "?risk_type=" + risk_type
+                  ####### Write Assessment ######
+        encounter = write_encounter("ASSESSMENT", person)
+        if params[:observations][1]["value_coded_or_text"] == "No"
+          redirect_to "/clients/#{params[:id]}" and return
         end
 		end 
 
@@ -124,46 +115,6 @@ class EncountersController < ApplicationController
 
     redirect_to url and return
 
-  end
-
-  def risk_assessment_type(patient, risk_date)
-    ################ load risk_types from settings  ###########################
-    low_risk = Settings[:low_risk]
-    on_going_risk = Settings[:on_going_risk]
-    high_risk = Settings[:high_risk]
-
-    all_risks = low_risk+on_going_risk+high_risk
-
-    risk_type = "unknown"
-
-    ######################### Get only the questions answered Yes into an array. ######################################
-    yes_concept = Concept.find_by_name("YES").id
-    @yes_query = CounselingQuestion.find_by_sql("SELECT cq.question_id, cq.name, ca.patient_id, ca.value_coded
-                 FROM counseling_question as cq 
-                 INNER JOIN counseling_answer as ca
-                 ON cq.question_id = ca.question_id
-                 WHERE value_coded = #{yes_concept} AND ca.patient_id = #{patient.id} AND ca.date_created = CURDATE()")
-
-    yesAnswers = []
-    @yes_query.each do |record|
-      yesAnswers << record.name
-    end
-
-    ######################### Calculate risk by comparing the answered questions to The questions in all the categories.
-    yesAnswers.each do |yes|
-      if high_risk.include? yes
-        risk_type = "high"
-        break
-      elsif on_going_risk.include? yes
-        risk_type = "ongoing"
-      elsif low_risk.include? yes
-        if risk_type != "ongoing"
-          risk_type = "low"
-        end       
-      end
-    end
-
-    return risk_type
   end
 
   def edit
