@@ -107,6 +107,10 @@
                      :allowFreeText => false,
                      :tt_onLoad => "getRiskCategory(); updateTouchscreenInputForSelect(this);")
       %>
+      <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
+      <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+      <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+      <%= hidden_field_tag("observations[][value_datetime]",       "") %>
       <%= select_tag("observations[][value_coded_or_text]",
                      options_for_select(['',
                                          ['Yes','Yes'],

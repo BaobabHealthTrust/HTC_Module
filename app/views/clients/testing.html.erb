@@ -434,7 +434,7 @@
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
       <fieldset>
-        <legend>HIV Testing For <%= @client.name.humanize %></legend>
+        <legend>HIV Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
               <label for="rapid_lot"><%= @kits[0][1] rescue "" %> Lot Number</label>
               <input type='text' id="rapid_lot" name="observations[][value_text]"
                />

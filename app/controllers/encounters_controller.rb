@@ -9,7 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
-    #raise params.inspect
+    #raise params[:observations][0][:value_coded_or_text].inspect
 
     ################ Global Variables #################################
     current = session[:datetime].to_datetime rescue DateTime.now
@@ -74,7 +74,12 @@ class EncountersController < ApplicationController
           end
         end
               
-        values = ['coded_or_text', 'coded_or_text_multiple', 'group_id', 'boolean', 'coded', 'drug', 'datetime', 'numeric', 'modifier', 'text', 'complex'].map{|value_name|
+        values = ['coded_or_text',
+                  'coded_or_text_multiple',
+                  'group_id', 'boolean', 'coded',
+                  'drug', 'datetime', 'numeric',
+                  'modifier', 'text', 'complex'
+        ].map{|value_name|
           observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
         }.compact
 
