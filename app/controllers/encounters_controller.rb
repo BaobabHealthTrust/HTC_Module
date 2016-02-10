@@ -9,7 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
-    #raise params[:observations][0][:value_coded_or_text].inspect
+    #raise params.inspect
 
     ################ Global Variables #################################
     current = session[:datetime].to_datetime rescue DateTime.now
@@ -36,12 +36,8 @@ class EncountersController < ApplicationController
 										value_datetime: value_datetime)
         end
 
-                  ####### Write Assessment ######
-        encounter = write_encounter("ASSESSMENT", person)
-        if params[:observations][1]["value_coded_or_text"] == "No"
-          redirect_to "/clients/#{params[:id]}" and return
-        end
-		end 
+
+		end
 
     test_kit = {}
     ######################## Observations as Observation #############################################
@@ -105,6 +101,15 @@ class EncountersController < ApplicationController
           observation.delete(:value_coded_or_text_multiple)
           Observation.create(observation) rescue []
         end
+
+    end
+
+    ####### Write Assessment ######
+    if params["ENCOUNTER"].upcase == "COUNSELING"
+      write_encounter("ASSESSMENT", person)
+      if params[:observations][1]["value_coded_or_text"] == "No"
+        redirect_to "/clients/#{params[:id]}" and return
+      end
     end
 
     ################################## Appointment ############################################################

@@ -82,7 +82,7 @@
   </style>
 </head>
 <body>
-    <form method = 'post' action = "/encounters/new/<%= params[:client_id] %>">
+    <form method = "post" action = "/encounters/new/<%= params[:client_id] %>">
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
       <input type="hidden" value="COUNSELING" name="ENCOUNTER"/>
       <%= select_tag 'obs',
@@ -108,9 +108,7 @@
                      :tt_onLoad => "getRiskCategory(); updateTouchscreenInputForSelect(this);")
       %>
       <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
-      <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-      <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-      <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+
       <%= select_tag("observations[][value_coded_or_text]",
                      options_for_select(['',
                                          ['Yes','Yes'],
@@ -120,6 +118,10 @@
                      :helpText =>"Continue Testing #{@client.name.split.map(&:capitalize).join(' ')}?",
                      :allowFreeText => false)
       %>
+      <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
+      <%= hidden_field_tag("observations[][patient_id]",         @client.id) %>
+      <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+      <%= hidden_field_tag("observations[][value_datetime]",       "") %>
     </form>
 </body>
 </html>
