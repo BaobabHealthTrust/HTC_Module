@@ -42,6 +42,7 @@
               }
           }
           //################# Loop through yesAnswers array to get Risk Category. #####
+          var risk_type = []
           var risk_type = 'Risk assessment not done';
           for(var yes in yesAnswers){
               if (high_risk.indexOf(yesAnswers[yes]) > -1){
@@ -66,6 +67,8 @@
           __$('touchscreenInput' + tstCurrentPage).value = risk_type;
           return risk_type;
       }
+
+
   </script>
   <style>
     #parent0 {
@@ -74,7 +77,7 @@
     }
 
     #keyboard, .keyboard {
-        display: inline;
+        display: none;
     }
     li {
         font-size: 2em;
@@ -95,7 +98,14 @@
                      :tt_onUnLoad => "setRiskCategory();",
                      :multiple =>  true %>
 
-      <%= select_tag("observations[][value_coded_or_text]",
+      <%= text_field_tag "observations[][value_coded_or_text]", params[:risk_assessment],
+                         {:id => 'risk_assessment', :field_type => 'alpha',
+                          :helpText =>"Risk Assessment Outcome for #{@client.name.split.map(&:capitalize).join(' ')}",
+                          :allowFreeText => false,
+                          :condition => '$("protocols").value == "" || skipped[tstCurrentPage] == 1',
+                          :tt_onLoad => "getRiskCategory(); updateTouchscreenInputForSelect(this);" } %>
+
+      <%#= select_tag("observations[][value_coded_or_text]",
                      options_for_select(['',
                                          ['Low Risk','Low Risk'],
                                          ['On-going Risk','AVD+ or High Risk'],

@@ -9,7 +9,6 @@ class EncountersController < ApplicationController
   end
 
   def new
-    #raise params.inspect
 
     ################ Global Variables #################################
     current = session[:datetime].to_datetime rescue DateTime.now
