@@ -54,7 +54,7 @@ puts "Loading default counseling protocols"
  ["STI", "Sexually Transmitted Infection"],
  ["Rape", "Regardless of HIV status of perpetrator"],
  ["Unprotected sex", "With new partner with known positive or unknown HIV status"],
- ["Shared needles with known HIV infected person" "With known HIV infected person"],
+ ["Shared needles with known HIV infected person", "With known HIV infected person"],
 ].each_with_index { |protocol, i|
   CounselingQuestion.create(name: protocol[0], description: protocol[1], creator: 3)
 }
