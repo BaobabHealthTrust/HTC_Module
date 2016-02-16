@@ -98,7 +98,7 @@
     setDOB();
     curr_date = new Date();
 
-    if (dateCreate(set_dob) == 'Invalid Date') {
+    if (dateCreate(set_dob) == 'Invalid Date') {  
       if (set_dob.split('-')[1] == 'Unknown')
         return true
 
@@ -199,12 +199,6 @@
     :ajaxURL => '', 
     :allowFreeText => false,
     :tt_onLoad => "seen(tstCurrentPage); set_ajaxURL_for_suggestions('/people/districts?value=' ,document.getElementById('region_region_name').value);$('nextButton').style.display = 'none';" } %>  
-
-  <%#= text_field_tag "p['address2_a']" , nil, {:id => 'address2_a',
-    :tt_onUnLoad => '$("address2").value = $("address2_a").value', 
-    :condition => '$("address2").value == "Other"', :id => 'address2_a',:tt_requireNextClick => true, 
-    :ajaxURL => '/person_addresses/address2?search_string=', :allowFreeText => true, 
-    :field_type => 'alpha', :helpText => 'Specify Home District', :tt_onLoad => "$('nextButton').style.display = 'block';" } %>  
 
   <%= text_field "person[addresses]" , 'county_district', 
     :condition => '$("address2").value != "Other"', 
