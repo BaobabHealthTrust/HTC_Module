@@ -60,6 +60,12 @@
           }
           //######### Get Risk Type ###################
           risk_category = risk_type;
+          /*
+              ['Low Risk','Low Risk'],
+              ['On-going Risk','AVD+ or High Risk'],
+              ['High risk event','High risk event in last 3 months'],
+              ['Risk assessment not done','Risk assessment not done']
+          */
       }
 
       function getRiskCategory() {
@@ -105,18 +111,6 @@
                           :condition => '$("protocols").value == "" || skipped[tstCurrentPage] == 1',
                           :tt_onLoad => "getRiskCategory(); updateTouchscreenInputForSelect(this);" } %>
 
-      <%#= select_tag("observations[][value_coded_or_text]",
-                     options_for_select(['',
-                                         ['Low Risk','Low Risk'],
-                                         ['On-going Risk','AVD+ or High Risk'],
-                                         ['High risk event','High risk event in last 3 months'],
-                                         ['Risk assessment not done','Risk assessment not done']
-                                        ],
-                                        nil),
-                     :helpText =>"Risk Assessment Outcome for #{@client.name.split.map(&:capitalize).join(' ')}",
-                     :allowFreeText => false,
-                     :tt_onLoad => "getRiskCategory(); updateTouchscreenInputForSelect(this);")
-      %>
       <%= hidden_field_tag("observations[][concept_name]",        "Client Risk Category") %>
 
       <%= select_tag("observations[][value_coded_or_text]",
