@@ -70,7 +70,10 @@
 
       function getRiskCategory() {
           var risk_type = risk_category;
-          __$('touchscreenInput' + tstCurrentPage).value = risk_type;
+          var keyboard = document.getElementById('keyboard');
+
+          __$('touchscreenInput' + tstCurrentPage).value = risk_type;          
+          keyboard.style.display = 'none';
           return risk_type;
       }
 
