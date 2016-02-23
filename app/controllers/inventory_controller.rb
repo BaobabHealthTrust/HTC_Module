@@ -319,7 +319,7 @@ class InventoryController < ApplicationController
     @users = users.map { |user| [user.username, user.name] rescue nil }.compact
 
     @kit_names = Kit.all.map(&:name) + ["Negative serum", "Positive serum"]
-    @site_name = Settings.facility_name
+    @site_name = settings.facility_name
 
     @years = []
     i = @session_date.year

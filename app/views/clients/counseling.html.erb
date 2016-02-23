@@ -23,9 +23,9 @@
       }
 
       function setRiskCategory() {
-          <% low_risk = Settings[:low_risk] %>
-          <% on_going_risk = Settings[:on_going_risk] %>
-          <% high_risk = Settings[:high_risk] %>
+          <% low_risk = settings[:low_risk] %>
+          <% on_going_risk = settings[:on_going_risk] %>
+          <% high_risk = settings[:high_risk] %>
 
           var low_risk = "<%= low_risk.to_s.gsub('"', '') %>";
           var on_going_risk = "<%= on_going_risk.to_s.gsub('"', '') %>";

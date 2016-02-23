@@ -1,7 +1,11 @@
 module ApplicationHelper
 
+  def settings 
+    OpenStruct.new YAML.load_file("#{Rails.root}/config/settings.yml")
+  end
+
 	def get_global_property_value(property)
-		Settings[property] rescue nil
+		settings[property] rescue nil
 	end
   
   def month_name_options(selected_months = [])

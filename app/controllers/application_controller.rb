@@ -163,6 +163,10 @@ class ApplicationController < ActionController::Base
     Location.joins(:location_tag_maps)
             .where(:location_tag_map => {:location_tag_id => htc_tags})
 	end
+
+  def settings 
+    OpenStruct.new YAML.load_file("#{Rails.root}/config/settings.yml")
+  end
 	
 	protected 
 	

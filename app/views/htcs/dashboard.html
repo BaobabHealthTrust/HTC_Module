@@ -4,7 +4,7 @@
 		<title>Current Visit</title>
 		
 		<script>
-			var refresh_interval = <%= Settings.refresh_dashboard %>;
+			var refresh_interval = <%= settings.refresh_dashboard %>;
 			setInterval(function() {
 						window.location.reload();
 					}, refresh_interval);

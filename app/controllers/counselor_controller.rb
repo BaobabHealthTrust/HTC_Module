@@ -204,7 +204,7 @@ class CounselorController < ApplicationController
     @users = User.find_by_sql("select * from users
                     inner join user_role on users.user_id = user_role.user_id")
 
-    @site_name = Settings.facility_name
+    @site_name = settings.facility_name
 
     @years = []
     i = @session_date.year
