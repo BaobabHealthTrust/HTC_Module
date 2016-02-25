@@ -121,21 +121,22 @@
         __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
         if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus != "YES"){
-          __$("allresults").value = "Positive"
-          clearTimeout("setValues()")
-          confirm("Positive <br> Results")
+            __$("alltimers").value = "YES";
+          __$("allresults").value = "Positive";
+          clearTimeout("setValues()");
+          confirm("Positive <br> Results");
         }
         else if(__$("customresult1").value == "Positive" && __$("customresult2").value == "Positive" && motherStatus == "YES"){
-          __$("allresults").value = "Exposed Infant"
-          clearTimeout("setValues()")
-          confirm("Exposed Infant")
+          __$("allresults").value = "Exposed Infant";
+          clearTimeout("setValues()");
+          confirm("Exposed Infant");
         }
 
         else if((__$("customresult1").value == "Positive" && __$("customresult2").value == "Negative") || (__$("customresult1").value == "Negative" && __$("customresult2").value == "Positive")){
-          __$("alltimers").value = "YES"
-          __$("allresults").value = "Inconclusive"
-          clearTimeout("setValues()")
-          confirm("Inconclusive <br> Results")
+          __$("alltimers").value = "YES";
+          __$("allresults").value = "Inconclusive";
+          clearTimeout("setValues()");
+          confirm("Inconclusive <br> Results");
         }
         else{
           __$("allresults").value = "Negative"
@@ -387,25 +388,15 @@
           combo.style.textAlign = "left";
 
           if(btnClear){
-						
             btnClear.onclick = function(){
-							
               document.getElementById(resultname).value = "";
-							
               document.getElementById(comboname).value = "";
-
-							
               clearUl("ul2");
-							
             }
-						
           }
-          
         }
-                              
       }
-                        
-                     
+
     </script>
 		<style>
 			#error{
@@ -418,8 +409,8 @@
 
     <%= form_tag(controller: "encounters", action: "new", method: "post", id: params[:client_id]) do %>
       <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
-			<input type="hidden" value="" id="valid_rapid" name="test1 done"/>
-			<input type="hidden" value="" id="valid_gold" name="test2 done"/>
+      <input type="hidden" value="" id="valid_rapid" name="test1 done"/>
+      <input type="hidden" value="" id="valid_gold" name="test2 done"/>
       <input type="hidden" value="HIV TESTING" name="ENCOUNTER"/>
       <input type="hidden" value="" name="all timers request" id="alltimers"/>
 
@@ -443,14 +434,13 @@
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 
 	      <label for="gold_lot"><%= @kits[1][1] rescue "" %> Lot Number</label>
-              <input type='text' id="gold_lot" name="observations[][value_text]"
-              />
+              <input type='text' id="gold_lot" name="observations[][value_text]" />
               <%= hidden_field_tag("observations[][concept_name]",        "test 2 lot number") %>
               <%= hidden_field_tag("observations[][patient_id]",         params[:client_id]) %>
               <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
       </fieldset>
       <fieldset custom=true fs_onLoad="loadCustom('timer1');">
-        <legend>HIV Testing For <%= @client.name.humanize %></legend>
+        <legend>HIV Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
 
         <input type="hidden" id="give_concent" name="giveconcent" value="" />
         <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
@@ -460,10 +450,10 @@
 
 
         <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number"  value="" />
-        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" />
-        <input type="hidden" name="observations[][value_complex]" id="rapidrange"/>
+        <input type="hidden" name="observations[][value_complex]" id="rapidrange" />
 
         <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
@@ -474,7 +464,7 @@
       </fieldset>
 
       <fieldset custom=true hidden="true" fs_onLoad="loadCustom('timer2');">
-        <legend>HIV Testing For <%= @client.name.humanize %></legend>
+        <legend>HIV Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
 
         <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
         <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
