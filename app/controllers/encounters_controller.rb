@@ -9,7 +9,6 @@ class EncountersController < ApplicationController
   end
 
   def new
-
     ################ Global Variables #################################
     current = session[:datetime].to_datetime rescue DateTime.now
     person = Person.find(params[:id])

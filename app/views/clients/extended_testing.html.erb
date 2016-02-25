@@ -150,9 +150,9 @@
 
         var ele = document.getElementById('popup')
         ele.style.display = "inline";
-        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>"
-        html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>"
-        html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">'
+        html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>";
+        html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>";
+        html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">';
           if (message == "Enter correct lot numbers"){
           html += '<div id="confirm"><button class="button red" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">Ok</button></div>';
         }else{
