@@ -1,4 +1,7 @@
 <html>
+    <script language="javascript">
+        tt_cancel_destination = '/clients/<%= params[:id] %>';
+    </script>
     <body>
         <%= form_tag(controller: "encounters", action: "new", method: "post") do %>
             <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
