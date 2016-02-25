@@ -174,6 +174,126 @@
         return document.getElementById(id);
       }
 
+            function addData(parent){
+                var tbl = document.createElement("div");
+                tbl.style.display = "table";
+                tbl.style.width = "100%";
+
+                tbl.style.border = "1px solid #3465a4";
+                tbl.style.borderRadius = "5px";
+
+                parent.appendChild(tbl);
+
+                attributes = [["Test 1", __$("HTC Test 1 result").value], ["Test 2", __$("HTC Test 2 result").value],["Risk Assessment", '<%= @message %>']]
+                for (i = 0; i < attributes.length; i ++) {
+                    row = document.createElement("div");
+                    row.style.display = "table-row";
+                    if (i % 2 == 0){
+                        row.style.backgroundColor = '#C1CDCD'
+                    }
+                    else{
+                        row.style.backgroundColor = '#FFF8DC'
+                    }
+
+
+                    tbl.appendChild(row);
+
+                    var cell1 = document.createElement("div");
+                    cell1.style.display = "table-cell";
+                    cell1.style.textAlign = "left";
+                    cell1.style.verticalAlign = "left";
+                    cell1.style.fontSize = "25px";
+                    cell1.innerHTML = attributes[i][0]
+                    row.appendChild(cell1);
+
+                    var cell2 = document.createElement("div");
+                    cell2.style.display = "table-cell";
+                    cell2.style.textAlign = "middle";
+                    cell1.style.fontSize = "25px";
+                    cell2.style.verticalAlign = "right";
+                    cell2.innerHTML = attributes[i][1]
+
+                    row.appendChild(cell2);
+                }
+            }
+
+
+            function adjust(){
+                node =  document.getElementById('row2').childNodes[0].childNodes[0];
+                node.style.width = "6%";
+                node.style.height = "92px";
+                document.getElementById('row2').childNodes[0].style.height = "92px";
+                document.getElementById('row2').style.height = "92px";
+                document.getElementById('row2').childNodes[0].style.backgroundColor = "grey";
+                document.getElementById('row2').childNodes[0].style.MozBorderRadius = '1em';
+                document.getElementById('row2').childNodes[0].style.borderRadius = '1em';
+                button =  document.getElementById('buttons');
+                button.style.removeProperty('border')
+                button.style.backgroundColor = "grey";
+            }
+
+            function fetchSummary(){
+                if(__$("HTC Test 1 result").value != "Reactive" && __$("HTC Test 2 result").value != "Reactive") {
+                    createSummary();
+                }
+                else {
+                    document.forms[0].submit();
+                }
+
+            }
+
+            function createSummary(){
+                __$("main-content-area").innerHTML = "";
+                adjust()
+                var node =  document.getElementById('row2').childNodes[0].childNodes[0];
+                node.style.width = "100%";
+                node.style.height = "92px";
+                // var node =  document.getElementById('row2').childNodes[0].childNodes[0]
+                //node.style.width = "100% ! important";
+                //__$("row0").style.display = "none";
+                __$("stage").style.display = "none";
+                __$("buttons").style.width = "100%";
+                __$("buttons").style.height = "100%";
+
+                btnDivs = __$('buttons').children[0].children;
+
+                btnDivs[0].style.display = "none";
+                btnDivs[1].style.display = "none";
+
+                btnDivs[2].style.display  = "inline-table";
+                btnDivs[3].style.display  = "inline-table";
+
+                btnDivs[3].style.cssFloat = "right";
+
+
+                var table = document.createElement("div");
+                table.style.display = "table";
+                table.style.margin = "auto";
+                table.style.width = "100%";
+                //table.style.backgroundColor = "lightblue"
+                __$("main-content-area").appendChild(table);
+
+                var row1 = document.createElement("div");
+                row1.style.display = "table-row";
+                row1.style.width = "100%"
+                table.appendChild(row1);
+
+
+                var cell1_1 = document.createElement("div");
+                cell1_1.style.display = "table-cell";
+                cell1_1.style.width = "90%"
+                cell1_1.id = "testsummary";
+
+
+                row1.appendChild(cell1_1);
+                addData(cell1_1)
+                btnDivs[3].innerHTML = "Finish"
+                btnDivs[3].setAttribute("class", "button blue")
+                btnDivs[3].onclick = function(){
+                    document.forms[0].submit();
+                }
+            }
+
       function loadCustom(){
 
         if(__$("main-content-area")){
@@ -210,6 +330,7 @@
           var timer2 = addTimer(cell1_2, 10, kits[1][1] + " Test Timer", 0.55);
           timer2.style.marginLeft = "40px";
           timer2.style.marginRight = "40px";
+
         }
       }
   function checkKits(){
@@ -328,6 +449,9 @@
         <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 
+      </fieldset>
+      <fieldset custom=true fs_onLoad="fetchSummary();">
+        <legend>Summary (<%= @client.name.humanize %>):</legend>
       </fieldset>
       <input type="submit" value="Submit" />
 

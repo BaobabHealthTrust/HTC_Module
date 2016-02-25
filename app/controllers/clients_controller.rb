@@ -788,6 +788,24 @@ class ClientsController < ApplicationController
   def extended_testing
       @client = Client.find(params[:id])
       @kits, @remaining, @testing = Kit.kits_available(current_user)
+
+
+      concept = ConceptName.where("name = 'Client Risk Category'").first.concept_id
+      @risk = Observation.where("concept_id = ? AND person_id = ?", concept, params[:id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
+      #raise @risk.inspect
+      unless @risk.blank?
+        if @risk.upcase =="AVD+ OR HIGH RISK" || "On-going Risk"
+          @message = "#{@risk}<br>Advise re-test every 12 months".to_s.html_safe
+          #elsif @risk.upcase == "HIGH RISK EVENT IN LAST 3 MONTHS" || "High risk event"
+          #@message = "#{@risk}<br>Check event in last 72 hours".to_s.html_safe
+        elsif @risk.upcase == "HIGH RISK EVENT IN LAST 3 MONTHS" || "High risk event"
+          @message = "#{@risk}<br>Re-test in 4 weeks to rule out New infection".to_s.html_safe
+        elsif @risk.upcase == "LOW RISK" || "Low risk"
+          @message = "#{@risk}<br>Patient is Negative".to_s.html_safe
+        else
+          @message = "#{@risk}<br>Re-test in 4 weeks to rule out New infection".to_s.html_safe
+        end
+      end
   end
   
   def testing
