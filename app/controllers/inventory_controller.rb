@@ -6,7 +6,7 @@ class InventoryController < ApplicationController
 
   def new_batch
     @kits = Kit.where(status: "active")
-    @kit_names = @kits.map(&:name) + ["Positive serum", "Negative serum"]
+    @kit_names = @kits.map(&:name) + ["Positive serum", "Negative serum", "DTS"]
     @input_controls = [["Date of delivery", {"type" => "date"}],
                        ["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number", "min" => 1}],
@@ -15,7 +15,7 @@ class InventoryController < ApplicationController
   end
 
   def physical_count
-    @kits = Kit.where(status: "active").map(&:name) + ["Positive serum", "Negative serum"]
+    @kits = Kit.where(status: "active").map(&:name) + ["Positive serum", "Negative serum", "DTS"]
 
     if request.post?
       captured_data = params[:data]
@@ -28,7 +28,7 @@ class InventoryController < ApplicationController
         kit_type = Kit.find_by_name(serum_type).id rescue nil
         serum_name = nil
         if kit_type.blank?
-          serum_name = serum_type.match(/Positive|Negative/i)[0] rescue nil
+          serum_name = serum_type.match(/Positive|Negative|DTS/i)[0] rescue nil
         end
 
         opts.each do |value|
@@ -61,7 +61,7 @@ class InventoryController < ApplicationController
   end
 
   def edit
-    @kit_names = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum"]
+    @kit_names = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum", "DTS"]
 
     @input_controls = [["Lot number", {"type" => "text"}],
                        ["Quantity", {"type" => "number"}]]
@@ -92,7 +92,7 @@ class InventoryController < ApplicationController
         Inventory.create(lot_no: lot_number,
                          kit_type: kit_type,
                          value_date: encounter_date,
-                         value_text: (serum_name.match(/Positive|Negative/i)[0] rescue nil),
+                         value_text: (serum_name.match(/Positive|Negative|DTS/i)[0] rescue nil),
                          value_numeric: qty,
                          inventory_type: type,
                          date_of_expiry: exp_date,
@@ -124,7 +124,7 @@ class InventoryController < ApplicationController
           if (!type_name.blank? && !lot_number.blank? && !qty.blank?)
             CouncillorInventory.create(lot_no: lot_number,
                                        value_numeric: qty,
-                                       value_text: ((type_name.match(/Positive|Negative/i)[0] rescue type_name) || type_name),
+                                       value_text: ((type_name.match(/Positive|Negative|DTS/i)[0] rescue type_name) || type_name),
                                        councillor_id: assignee_id,
                                        inventory_type: type,
                                        encounter_date: @session_date,
@@ -142,7 +142,7 @@ class InventoryController < ApplicationController
       user if !user.person.blank?
     }.compact
 
-    @kit_types = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum"]
+    @kit_types = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum", "DTS"]
 
     @input_controls = [["Kit type", {"type" => "list",
                                      "options" => @kit_types}],
@@ -233,14 +233,14 @@ class InventoryController < ApplicationController
       ivs = Inventory.find_by_sql(["SELECT value_numeric, inventory_type FROM inventory
                 WHERE voided = 0 AND (kit_type = ? OR value_text = ?) AND lot_no = ?",
                                    (Kit.find_by_name(kit_name).id rescue nil),
-                                   (kit_name.match(/Positive|Negative/i)[0] rescue nil),
+                                   (kit_name.match(/Positive|Negative|DTS/i)[0] rescue nil),
                                    lot_number])
 
       ivs2 = CouncillorInventory.find_by_sql(["SELECT ci.id, ci.value_numeric, ci.inventory_type FROM councillor_inventory ci
              JOIN inventory iv ON  iv.lot_no = ci.lot_no
           WHERE iv.voided = 0 AND ci.voided =0 AND (iv.kit_type = ? OR iv.value_text = ?) AND iv.lot_no = ? GROUP BY ci.id",
                                               (Kit.find_by_name(kit_name).id rescue nil),
-                                              (kit_name.match(/Positive|Negative/i)[0] rescue nil),
+                                              (kit_name.match(/Positive|Negative|DTS/i)[0] rescue nil),
                                               lot_number])
 
       if ivs.blank?
@@ -278,7 +278,7 @@ class InventoryController < ApplicationController
     captured_data.each do |kit_name, opts|
       kit_text = nil
       kit_type = Kit.where(name: kit_name).first.id rescue nil
-      kit_text = kit_name.match(/Negative|Positive/i)[0] rescue nil if kit_type.blank?
+      kit_text = kit_name.match(/Negative|Positive|DTS/i)[0] rescue nil if kit_type.blank?
       opts.each do |value|
 
         lot_number = value["Lot number"]
@@ -318,7 +318,7 @@ class InventoryController < ApplicationController
     users =  User.all
     @users = users.map { |user| [user.username, user.name] rescue nil }.compact
 
-    @kit_names = Kit.all.map(&:name) + ["Negative serum", "Positive serum"]
+    @kit_names = Kit.all.map(&:name) + ["Negative serum", "Positive serum", "DTS"]
     @site_name = settings.facility_name
 
     @years = []
@@ -353,7 +353,7 @@ class InventoryController < ApplicationController
                                        value_numeric: qty,
                                        councillor_id: @user.id,
                                        inventory_type: type,
-                                       value_text: ((kit_name.match(/Negative|Positive/i)[0] rescue kit_name) || kit_name),
+                                       value_text: ((kit_name.match(/Negative|Positive|DTS/i)[0] rescue kit_name) || kit_name),
                                        comments: reason,
                                        encounter_date: @session_date,
                                        voided: false,
@@ -415,7 +415,7 @@ class InventoryController < ApplicationController
 
       captured_data.each do |key, opts|
         kit_name = key.split(/\-/)[0].strip
-        kit_type = key.split(/\-/)[1].scan(/Positive|Negative/i).first.strip
+        kit_type = key.split(/\-/)[1].scan(/Positive|Negative|DTS/i).first.strip
 
         opts.each do |values|
           values.each do |k, v|
@@ -435,7 +435,7 @@ class InventoryController < ApplicationController
 
     @side_lists = {}
 
-    @serum_types = ["Negative serum", "Positive serum"]
+    @serum_types = ["Negative serum", "Positive serum", "DTS"]
     @input_controls = [["Serum lot number", {"type" => "text"}],
                        ["Testkit lot number", {"type" => "text"}],
                        ["Control line seen", {"type" => "list"}],
