@@ -11,7 +11,7 @@ class ReportsController < ApplicationController
     @users = User.find_by_sql("select * from users
                     inner join user_role on users.user_id = user_role.user_id")
 
-    @site_name = Settings.facility_name
+    @site_name = settings.facility_name
 
     @years = []
     i = @session_date.year
@@ -34,7 +34,7 @@ class ReportsController < ApplicationController
     @users = User.find_by_sql("select * from users
                     inner join user_role on users.user_id = user_role.user_id")
 
-    @site_name = Settings.facility_name
+    @site_name = settings.facility_name
 
     @years = []
     i = @session_date.year
@@ -57,7 +57,7 @@ class ReportsController < ApplicationController
     @users = User.find_by_sql("select * from users
                     inner join user_role on users.user_id = user_role.user_id")
 
-    @site_name = Settings.facility_name
+    @site_name = settings.facility_name
 
     @years = []
     i = @session_date.year
@@ -89,7 +89,7 @@ class ReportsController < ApplicationController
 		users = User.all
 		@users = users.map { |user| [user.username, user.name] rescue nil }.compact
 		@kit_names = Kit.all.map(&:name) + ["All(Kits)", "Positive Serum", "Negative Serum", "All(Serum)"]
-		@site_name = Settings.facility_name
+		@site_name = settings.facility_name
 		@years = []
 		i = @session_date.year
 		min = User.find_by_sql("SELECT min(date_created) e FROM users LIMIT 1")[0][:e].to_date.year - 1 rescue (Date.today.year - 1)

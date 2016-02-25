@@ -64,7 +64,7 @@ class SessionsController < ApplicationController
   def load_location_from_setting
 		htc_rooms_names = all_htc_facility_locations.map{|r|r.name.humanize}
   	
-  	other_htc_rooms = Settings[:other_htc_rooms]  	
+  	other_htc_rooms = settings[:other_htc_rooms]  	
   	location_tag_id = LocationTag.find_by_name("Other HTC Room").location_tag_id 	
   	other_htc_rooms = other_htc_rooms.select do |r|
   											!htc_rooms_names.include?(r.humanize)
@@ -74,7 +74,7 @@ class SessionsController < ApplicationController
 			create_location(name, location_tag_id)
 		end
 		  
-  	counseling_rooms = Settings[:counseling_rooms]
+  	counseling_rooms = settings[:counseling_rooms]
   	location_tag_id = LocationTag.find_by_name("HTC Counseling Room").location_tag_id							
   	counseling_rooms  = counseling_rooms.select do |r|
   												!htc_rooms_names.include?(r.humanize)

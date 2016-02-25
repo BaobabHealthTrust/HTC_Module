@@ -165,7 +165,7 @@ class ClientsController < ApplicationController
 		session[:show_new_client_button] = false
 
 
-    if (Settings.full_demographics_at_reception.to_s == 'true')
+    if (settings.full_demographics_at_reception.to_s == 'true')
       if params[:residence]
         redirect_to action: 'search_new', residence: @address.address1,
             gender: @person.gender, date_of_birth: @person.birthdate
@@ -926,7 +926,7 @@ class ClientsController < ApplicationController
           test_result = ConceptName.find_by_name("RESULT OF HIV TEST").concept_id
           result = Observation.where("encounter_id = ? AND concept_id = ?", confirmed.encounter_id, test_result).first.to_s.split(':')[1].squish
           result = "Test Result : #{result}"
-          test_location = "Facility name: #{Settings.facility_name}"
+          test_location = "Facility name: #{settings.facility_name}"
           date = "Date: #{Date.today.strftime('%d-%m-%Y')}"
           issued_date = "Issued On: #{(session[:datetime].to_date  rescue Date.today).strftime('%d-%m-%Y')}"
           test_date = "Visit Date: #{confirmed.obs_datetime.strftime('%d/%m/%Y') rescue ''}"
@@ -1063,7 +1063,7 @@ class ClientsController < ApplicationController
                       "Housewife","Mechanic","Messenger","Office worker","Police","Preschool child", "Salesperson",
                       "Security guard","Soldier","Student","Teacher","Other","Unknown"]
        @land_mark = ["School","Police","Church","Mosque","Borehole"]
-       @reception_demographics = Settings.full_demographics_at_reception
+       @reception_demographics = settings.full_demographics_at_reception
     render :layout => 'basic'
   end
 
@@ -1222,7 +1222,7 @@ class ClientsController < ApplicationController
         end
 				
 		 else
-      if (Settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
+      if (settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
           firstname = params["firstname"] || params[:name]['firstname']
           surname = params["surname"] || params[:name]['surname']
           if params[:gender] == '0' || params[:gender] == '1'
@@ -1337,7 +1337,7 @@ class ClientsController < ApplicationController
     end
 
     current_date = session[:datetime].to_date rescue Date.today.to_date
-    @reception_demographics = Settings.full_demographics_at_reception
+    @reception_demographics = settings.full_demographics_at_reception
     @current_state = @client.current_state(current_date).name rescue nil
 
     @id = @client.id
