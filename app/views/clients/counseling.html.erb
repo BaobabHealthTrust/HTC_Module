@@ -122,7 +122,7 @@
                                          ['No','No']
                                         ],
                                         nil),
-                     :helpText =>"Continue Testing #{@client.name.split.map(&:capitalize).join(' ')}?",
+                     :helpText =>"Client ready for testing?",
                      :allowFreeText => false)
       %>
       <%= hidden_field_tag("observations[][concept_name]",        "Testing") %>
