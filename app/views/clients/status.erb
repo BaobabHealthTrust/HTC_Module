@@ -135,13 +135,13 @@
 				<fieldset>
 				<legend>Update Status for <%= @client.name.humanize %></legend>
         <% if  @client.person.gender.upcase == "FEMALE" %>
-				<label for="patient">Client Pregnant?</label>
-				<label for="patient.1">Yes</label>
-				<input type="radio" name="patient" id="patient.1" value="YES" >
-				<label for="patient.2">No</label>
-				<input type="radio" name="patient" id="patient.2" value="NO" >
+                      <label for='patient'>Client Pregnant?</label>
+                      <label for='patient.1'>Yes</label>
+                      <input type="radio" name="patient" id="patient.1" value="YES">
+                      <label for='patient.2'>No</label>
+                      <input type='radio' name='patient' id='patient.2' value="NO">
 
-				<%= hidden_field_tag("observations[][concept_name]",        "Patient Pregnant") %>
+                      <%= hidden_field_tag("observations[][concept_name]",        "Patient Pregnant") %>
 				<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
 				<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
