@@ -185,16 +185,15 @@
                 parent.appendChild(tbl);
 
                 attributes = [["Test 1", __$("HTC Test 1 result").value], ["Test 2", __$("HTC Test 2 result").value],["Risk Assessment", '<%= @message %>']]
-                for (i = 0; i < attributes.length; i ++) {
+                for (i = 0; __$("HTC Test 1 result").value != 'Reactive'?i < attributes.length:i < attributes.length-1; i ++) {
                     row = document.createElement("div");
                     row.style.display = "table-row";
                     if (i % 2 == 0){
-                        row.style.backgroundColor = '#C1CDCD'
+                        row.style.backgroundColor = '#C1CDCD';
                     }
                     else{
-                        row.style.backgroundColor = '#FFF8DC'
+                        row.style.backgroundColor = '#FFF8DC';
                     }
-
 
                     tbl.appendChild(row);
 
@@ -379,7 +378,7 @@
       <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
         <fieldset>
-        <legend>HIV Testing (Extended) For <%= @client.name.humanize %></legend>
+        <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
             <label for="rapid_lot"><%= @kits[0][1] rescue ""  %> Lot Number</label>
             <input type='text' id="rapid_lot" name="observations[][value_text]" onload="checkLot()"/>
             <input name="observations[][concept_name]" type="hidden" value="rapid lot number" />
@@ -396,7 +395,7 @@
       </fieldset>
 
       <fieldset custom=true fs_onLoad="loadCustom();">
-        <legend>HIV Testing (Extended) For <%= @client.name.humanize %></legend>
+        <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
 
 
             <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
@@ -426,7 +425,7 @@
       </fieldset>
 
       <fieldset>
-        <legend>HIV Testing (Extended) For <%= @client.name.humanize %></legend>
+        <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
         <% tests = ["HTC Test 1 result", "HTC Test 2 result"]
         results = [["Unknown","Uknown"],["Positive","Reactive"],["Negative","Non-Reactive"]]
         tests.each { |test| %>
@@ -451,7 +450,7 @@
 
       </fieldset>
       <fieldset custom=true fs_onLoad="fetchSummary();">
-        <legend>Summary (<%= @client.name.humanize %>):</legend>
+        <legend>Summary (<%= @client.name.split.map(&:capitalize).join(' ') %>):</legend>
       </fieldset>
       <input type="submit" value="Submit" />
 
