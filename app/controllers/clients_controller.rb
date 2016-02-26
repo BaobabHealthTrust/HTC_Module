@@ -1166,9 +1166,6 @@ class ClientsController < ApplicationController
 	def search_results
 
 		 @show_new_client_button = session[:show_new_client_button] rescue false
-     if @show_counselling_room == true
-      @show_new_client_button = false
-     end
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 
