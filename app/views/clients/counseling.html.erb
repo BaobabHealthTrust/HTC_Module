@@ -103,7 +103,7 @@
                                         }, []),
                      :id => "protocols",
                      :helpText => "Assessment: #{@client.name.split.map(&:capitalize).join(' ')} &nbsp;&nbsp;&nbsp;(Tick if answer is 'YES'.)",
-                     :tt_onLoad =>"createMultipleSelectControl()",
+                     :tt_onLoad =>"createMultipleSelectControl(); __$('clearButton').style.display = 'none';",
                      :tt_onUnLoad => "setRiskCategory();",
                      :multiple =>  true %>
 
