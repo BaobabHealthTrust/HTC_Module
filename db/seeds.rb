@@ -8,9 +8,9 @@
 
 
 #Creating Defaults
-puts "Loading default tesk kits"
+puts "Loading default test kits"
  [
-     ["Determine", "HIV-1/2 rapid test kit", 10, 0, 25],
+     ["Determine", "HIV-1/2 rapid test kit", 15, 0, 25],
      ["UniGold", "HIV Test kit", 10, 0, 25]
  ].each_with_index{|test, i|
    next if !Kit.find_by_name(test[0]).blank?
@@ -52,6 +52,7 @@ puts "Loading default counseling protocols"
  ["Born/Breastfeeding from HIV-Infected mother", "From infected mother"],
  ["Occupational Exposure", "Exposed from work"],
  ["STI", "Sexually Transmitted Infection"],
+ ["TB", "Screening Protocol"],
  ["Rape", "Regardless of HIV status of perpetrator"],
  ["Unprotected sex", "With new partner with known positive or unknown HIV status"],
  ["Shared needles with known HIV infected person", "With known HIV infected person"],
