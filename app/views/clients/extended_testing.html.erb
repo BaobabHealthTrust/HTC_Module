@@ -185,7 +185,7 @@
                 parent.appendChild(tbl);
 
                 attributes = [["Test 1", __$("HTC Test 1 result").value], ["Test 2", __$("HTC Test 2 result").value],["Risk Assessment", '<%= @message %>']]
-                for (i = 0; __$("HTC Test 1 result").value != 'Reactive'?i < attributes.length:i < attributes.length-1; i ++) {
+                for (i = 0; (__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive")?i < attributes.length-1:i < attributes.length; i ++) {
                     row = document.createElement("div");
                     row.style.display = "table-row";
                     if (i % 2 == 0){
@@ -229,16 +229,6 @@
                 button =  document.getElementById('buttons');
                 button.style.removeProperty('border')
                 button.style.backgroundColor = "grey";
-            }
-
-            function fetchSummary(){
-                if(__$("HTC Test 1 result").value != "Reactive" && __$("HTC Test 2 result").value != "Reactive") {
-                    createSummary();
-                }
-                else {
-                    document.forms[0].submit();
-                }
-
             }
 
             function createSummary(){
@@ -407,7 +397,7 @@
             <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden"/>
             <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
             <input type="hidden" name="observations[][obs_datetime]" />
-            <input type="hidden" name="observations[][value_complex]" id="rapidrange"/>
+            <input type="hidden" name="observations[][value_complex]" id="rapidrange" />
 
 
             <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" />
@@ -449,7 +439,7 @@
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
 
       </fieldset>
-      <fieldset custom=true fs_onLoad="fetchSummary();">
+      <fieldset custom=true fs_onLoad="createSummary();">
         <legend>Summary (<%= @client.name.split.map(&:capitalize).join(' ') %>):</legend>
       </fieldset>
       <input type="submit" value="Submit" />
