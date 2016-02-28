@@ -20,21 +20,28 @@ Using https: (if you use https to clone)
 Toolkit Integration
 -------------------
 Integrate TouchScreen Toolkit to the application by navigating into the application's public directory and cloning it from github.
-Run command as below:
+Run command as below to do so:
 
     cd public/
 
 While in public/ directory, run below commands to clone touchscreentoolkit.
 
 Using ssh: (if you use ssh to clone)
+    ------
 
     git clone git@github.com:BaobabHealthTrust/touchscreentoolkit.git
 
             --- OR ---
 
 Using https: (if you use https to clone)
+    --------
 
     git clone https://github.com/BaobabHealthTrust/touchscreentoolkit.git
+
+Navigate back into the applications root directory.
+Run command as below to do so:
+
+    cd ..
 
 System Requirements
 -------------------
