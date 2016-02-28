@@ -68,7 +68,8 @@ class PeopleController < ApplicationController
     FROM district d
     Inner join traditional_authority ta
     on d.district_id = ta.district_id 
-    where d.name LIKE  '%#{params[:value]}%'")
+    where d.name LIKE  '%#{params[:value]}%' AND ta.name LIKE '%#{params[:search_string]}%'")
+
     location = location.map do |l|
         "<li value=\"#{l.ta_name}\">#{l.ta_name}</li>"
     end
