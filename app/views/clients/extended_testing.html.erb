@@ -45,32 +45,30 @@
                          }
       }
 
-      function checkLot() {	
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                        xmlhttp=new XMLHttpRequest();
-                }else{// code for IE6, IE5
-                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                xmlhttp.onreadystatechange=function() {
-                        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                          var results = xmlhttp.responseText;														
-													if (eval(results) == "none"){
-														 __$("valid_rapid").value = "no"
-														}
-													 else {
-														 __$("valid_rapid").value = "yes"
-														}
-                                                                                                         activateNext()
-                          }
-                        }
-
+      function checkLot() {
+          if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+          }else{// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          xmlhttp.onreadystatechange=function() {
+              if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                  var results = xmlhttp.responseText;
+                  if (eval(results) == "none"){
+                      __$("valid_rapid").value = "no"
+                  }
+                  else {
+                      __$("valid_rapid").value = "yes"
+                  }
+                  activateNext()
+              }
+          }
           if (currentPage == 0) {
               xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("rapid_lot").value + "&name=" + kits[0][1], true);
               xmlhttp.send();
           }
-
-                 setTimeout("checkLot()", 500);
-}
+          setTimeout("checkLot()", 500);
+      }
 
 	function checkSecondLot() {
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -185,7 +183,7 @@
                 parent.appendChild(tbl);
 
                 attributes = [["Test 1", __$("HTC Test 1 result").value], ["Test 2", __$("HTC Test 2 result").value],["Risk Assessment", '<%= @message %>']]
-                for (i = 0; (__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive")?i < attributes.length-1:i < attributes.length; i ++) {
+                for (i = 0; i < attributes.length; i ++) {
                     row = document.createElement("div");
                     row.style.display = "table-row";
                     if (i % 2 == 0){
@@ -210,7 +208,13 @@
                     cell2.style.textAlign = "middle";
                     cell1.style.fontSize = "25px";
                     cell2.style.verticalAlign = "right";
-                    cell2.innerHTML = attributes[i][1]
+                    cell2.innerHTML = attributes[i][1];
+                    if( i == 2 && __$("HTC Test 1 result").value != __$("HTC Test 2 result").value ) {
+                        cell2.innerHTML = "Inconclusive Results.<br /> Advise re-test in 4 weeks.";
+                    }
+                    else if( i == 2 && __$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive" ) {
+                        cell2.innerHTML = "Postive Results.<br /> Refer to ART Clinic for treatment.";
+                    }
 
                     row.appendChild(cell2);
                 }
