@@ -868,7 +868,7 @@ class ClientsController < ApplicationController
 			location = Location.where("name LIKE '%#{params[:search]}%'")
 			location = location.map do |locs|
         "#{locs.name}"
-        "<li value='#{locs.location_id}'>#{locs.name}</li>"
+        "<li value='#{locs.name}'>#{locs.name}</li>"
       end
     render :text => location.join(" ") and return
 	end
