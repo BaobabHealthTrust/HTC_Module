@@ -128,81 +128,77 @@
   </style>
 </head>
 <body onload="verify('test_date');checkPartner();" >
-                 
-		<%= form_tag(controller: "encounters", action: "new", method: "post") do %>
-		<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+    <%= form_tag(controller: "encounters", action: "new", method: "post") do %>
+	    <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
 		<input type="hidden" value="Update HIV status" name="ENCOUNTER"/>
-				<fieldset>
-				<legend>Update Status for <%= @client.name.humanize %></legend>
-        <% if  @client.person.gender.upcase == "FEMALE" %>
-                      <label for='patient'>Client Pregnant?</label>
-                      <label for='patient.1'>Yes</label>
-                      <input type="radio" name="patient" id="patient.1" value="YES">
-                      <label for='patient.2'>No</label>
-                      <input type='radio' name='patient' id='patient.2' value="NO">
+        <fieldset>
+          <legend>Update Status for <%= @client.name.humanize %></legend>
+            <% if  @client.person.gender.upcase == "FEMALE" %>
+                <label for='patient'>Client Pregnant?</label>
+                <label for='patient.1'>Yes</label>
+                <input type="radio" name="patient" id="patient.1" value="YES">
+                <label for='patient.2'>No</label>
+                <input type='radio' name='patient' id='patient.2' value="NO">
+                <%= hidden_field_tag("observations[][concept_name]",        "Patient Pregnant") %>
+                <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+                <%= hidden_field_tag("observations[][value_coded_or_text]",       "") %>
+                <br />
 
-                      <%= hidden_field_tag("observations[][concept_name]",        "Patient Pregnant") %>
-				<%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-				<%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-				<%= hidden_field_tag("observations[][value_datetime]",       "") %>
-                                <%= hidden_field_tag("observations[][value_coded_or_text]",       "") %>
-				<br />
-                               <% end %>
-       <label for="type">HTC Access Type</label>
-        <select id="type" name="observations[][value_coded_or_text]">
+            <% end %>
+
+                <label for="type">HTC Access Type</label>
+                <select id="type" name="observations[][value_coded_or_text]">
 					<option></option>
 					<option value="Routine HTC with health service">Routine HTC within health service</option>
 					<option value="Comes with HTC family Ref slip">Comes with HTC family Ref slip</option>
-          <option value="Other">Other</option>
+                    <option value="Other">Other</option>
 				</select>
-        <%= hidden_field_tag("observations[][concept_name]",        "HTC Access Type") %>
-        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-           <br />
-       <label for="last">Last HIV test Result</label>
+                <%= hidden_field_tag("observations[][concept_name]",        "HTC Access Type") %>
+                <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+                <br />
 
-            <select id="last" name="observations[][value_coded_or_text]">
+                <label for="last">Last HIV test Result</label>
+                <select id="last" name="observations[][value_coded_or_text]">
 					<option></option>
 					<option value="Never Tested">Never tested</option>
 					<option value="Last Negative">Negative</option>
-		       <option value="Last Positive">Positive</option>
-		       <option value="Last Exposed Infant">Exposed Infant</option>
-		       <option value="Last Inconclusive">Inconclusive</option>
-				</select>
-        <%= hidden_field_tag("observations[][concept_name]",        "Last HIV test") %>
-        <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-        <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-        <br />
+		            <option value="Last Positive">Positive</option>
+		            <option value="Last Exposed Infant">Exposed Infant</option>
+		            <option value="Last Inconclusive">Inconclusive</option>
+                </select>
+                <%= hidden_field_tag("observations[][concept_name]",        "Last HIV test") %>
+                <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+                <br />
 
-       <label for="test_date">Last test date</label>
-            <input  type='text' name="observations[][value_datetime]" id="test_date"
-             fieldtype="date"
-             condition="__$('last').value.toUpperCase() != 'NEVER TESTED' && __$('last').value.length > 0" >
-            <%= hidden_field_tag("observations[][concept_name]",        "Hiv test date") %>
-            <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-            <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-            
+                <label for="test_date">Last test date</label>
+                <input  type='text' name="observations[][value_datetime]" id="test_date" fieldtype="date" condition="__$('last').value.toUpperCase() != 'NEVER TESTED' && __$('last').value.length > 0" >
+                <%= hidden_field_tag("observations[][concept_name]",        "Hiv test date") %>
+                <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+
             <% if @client.person.age < 1 %>
-                   <label for="mother">Mother HIV positive</label>
-
-                   <select id="mother" name="observations[][value_coded_or_text]" condition="">
-                            <option></option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                    </select>
-                    <%= hidden_field_tag("observations[][concept_name]",        "Mother HIV status") %>
-                    <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
-                    <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-                     <%= hidden_field_tag("observations[][value_datetime]",       "") %>
-                     <% else %>
-                    <input type="hidden" id="mother"  value="" />
-              <% end %>
-                                
-</fieldset>
-<%= link_to "Cancel" , "/clients/#{params[:id]}" %>
-<%= submit_tag "Finish" %>
+                <label for="mother">Mother HIV positive</label>
+                <select id="mother" name="observations[][value_coded_or_text]" condition="">
+                    <option></option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+                <%= hidden_field_tag("observations[][concept_name]",        "Mother HIV status") %>
+                <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
+                <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+                <%= hidden_field_tag("observations[][value_datetime]",       "") %>
+                <% else %>
+                <input type="hidden" id="mother"  value="" />
+            <% end %>
+        </fieldset>
+        <%= link_to "Cancel" , "/clients/#{params[:id]}" %>
+        <%= submit_tag "Finish" %>
 	<%end%>
 </body>
 </html>
