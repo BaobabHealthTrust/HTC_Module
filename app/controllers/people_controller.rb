@@ -40,8 +40,9 @@ class PeopleController < ApplicationController
   end
 
   def village
-    ta_id = TraditionalAuthority.where(:name => params[:value]).first.id
-    villages = Village.where(:traditional_authority_id => ta_id)
+    ta_id = TraditionalAuthority.where(:name => params[:value]).first.id;
+    villages = Village.where("traditional_authority_id = ? AND name LIKE (?)",ta_id, "#{params[:search_string]}%")
+    
     regions = (villages || []).map do |r|
       "<li value=\"#{r.name}\">#{r.name}</li>"
     end
