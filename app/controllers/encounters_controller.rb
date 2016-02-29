@@ -33,8 +33,6 @@ class EncountersController < ApplicationController
 									  creator: current_user.id, value_text: value_text, value_numeric: value_numeric,
 										value_datetime: value_datetime)
         end
-
-
 		end
 
     test_kit = {}
@@ -104,10 +102,61 @@ class EncountersController < ApplicationController
 
     ####### Write Assessment ######
     if params["ENCOUNTER"].upcase == "COUNSELING"
-      write_encounter("ASSESSMENT", person)
-      if params[:observations][1]["value_coded_or_text"] == "No"
-        redirect_to "/clients/#{params[:id]}" and return
-      end
+        encounter = write_encounter("ASSESSMENT", person)
+        if params[:observations][1]["value_coded_or_text"] == "No"
+            redirect_to "/clients/#{params[:id]}" and return
+        end
+        ##############################################
+        ######################## Observations as Observation #############################################
+        (params[:observations] || []).each do |observation|
+          next if observation[:concept_name].blank?
+
+          # Check to see if any values are part of this observation
+          # This keeps us from saving empty observations
+
+          if !observation["value_datetime"].blank?
+            if observation["value_datetime"].match(/\?/)
+              observation["value_text"] = observation["value_datetime"]
+              observation["value_datetime"] = nil
+            else
+              observation["value_datetime"] = observation["value_datetime"].to_time.strftime("%Y-%m-%d %H:%M:%S")
+            end
+          end
+
+          values = ['coded_or_text',
+                    'coded_or_text_multiple',
+                    'group_id', 'boolean', 'coded',
+                    'drug', 'datetime', 'numeric',
+                    'modifier', 'text', 'complex'
+          ].map{|value_name|
+            observation["value_#{value_name}"] unless observation["value_#{value_name}"].blank? rescue nil
+          }.compact
+
+          next if values.length == 0
+          observation[:value_text] = observation[:value_text].join(", ") if observation[:value_text].present? && observation[:value_text].is_a?(Array)
+          observation.delete(:value_text) unless observation[:value_coded_or_text].blank?
+          observation[:obs_datetime] = current.strftime("%Y-%m-%d %H:%M:%S")
+          observation[:creator] = current_user.id
+          observation[:encounter_id] = encounter.id
+          observation[:date_created] = DateTime.now.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
+          # observation[:obs_datetime] = encounter.encounter_datetime || Time.now()
+          observation[:person_id] ||= encounter.patient_id
+
+          # Handle multiple select
+          if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array)
+            observation[:value_coded_or_text_multiple].compact!
+            observation[:value_coded_or_text_multiple].reject!{|value| value.blank?}
+          end
+          if observation[:value_coded_or_text_multiple] && observation[:value_coded_or_text_multiple].is_a?(Array) && !observation[:value_coded_or_text_multiple].blank?
+            values = observation.delete(:value_coded_or_text_multiple)
+            values.each{|value| observation[:value_coded_or_text] = value; Observation.create(observation);}
+          else
+            observation.delete(:value_coded_or_text_multiple)
+            Observation.create(observation) rescue []
+          end
+
+        end
+        ##############################################
     end
 
     ################################## Appointment ############################################################
@@ -175,7 +224,7 @@ class EncountersController < ApplicationController
 			else
 				@observations << obs
 			end
-			child_obs = ObservDation.where("obs_group_id = ?", obs.obs_id)
+			child_obs = Observation.where("obs_group_id = ?", obs.obs_id)
 			if child_obs
 				@child_obs[obs.obs_id] = child_obs
 			end
