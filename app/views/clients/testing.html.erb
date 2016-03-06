@@ -511,7 +511,8 @@ function checkKits(){
      __$("customresult2").value = "";
      reset();
       if (testing == 0){
-                loadMessage('You do not have one of the test kits ', addLink(window, <%=params[:client_id] %>), 1500);
+                loadMessage('You do not have one of the test kits ', addLink(window, <%=params[:client_id] %>), 5000);
+                
       }
       
   }
