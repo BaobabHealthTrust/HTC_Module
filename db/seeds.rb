@@ -41,16 +41,16 @@ puts "Loading default inventory types"
 }
 
 puts "Loading default counseling protocols"
-[["No Sex/Abstenance", "Abstenance"],
- ["Consistent and correct Condom use", "Proper control"],
+[["No Sex (Abstinence)", "Abstinence"],
+ ["Consistent and correct condom use", "Proper control"],
  ["Stable, known HIV-negative partner who does not engage in risky behaviour", "Stable"],
  ["Stable partner who is taking ART", "Stable positive partner"],
  ["Stable partner with unknown HIV status", "Stable partner unknown"],
  ["MSM", "Men seeing other Men"],
- ["Sex Worker", "Risky business"],
+ ["Sex worker", "Risky business"],
  ["Injecting drug user", "Drug Abuser"],
  ["Born/Breastfeeding from HIV-Infected mother", "From infected mother"],
- ["Occupational Exposure", "Exposed from work"],
+ ["Occupational exposure", "Exposed from work"],
  ["STI", "Sexually Transmitted Infection"],
  ["TB", "Screening Protocol"],
  ["Rape", "Regardless of HIV status of perpetrator"],
