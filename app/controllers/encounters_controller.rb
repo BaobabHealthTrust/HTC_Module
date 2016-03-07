@@ -44,7 +44,7 @@ class EncountersController < ApplicationController
         ######################### HIV Testing ########################
         if params["ENCOUNTER"].upcase == "HIV TESTING"
           (1..2).each{|i|
-            if observation[:concept_name] ==  "Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
+            if observation[:concept_name] ==  "HTC Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
               used = CouncillorInventory.create_used_testkit(observation[:value_text], params["test#{i} done"], current, current_user)
             end
           }

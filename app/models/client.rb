@@ -6,6 +6,14 @@ class Client < ActiveRecord::Base
 	has_one :person, -> {where voided: 0}, foreign_key: "person_id"
 	has_many :encounters, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
 
+  def hiv_status(date = Date.today)
+    type = EncounterType.where("name = ?", "HIV TESTING").first.id
+    result_concept = ConceptName.where(:name => "Result Of HIV Test").first.concept_id
+    encounter = Encounter.where("encounter_type <= ? AND DATE(encounter_datetime) = ?",
+                                type, date).order(encounter_datetime: :desc).first rescue []
+    answer_obs = encounter.observations.where(:concept_id => result_concept).last.answer_string.strip rescue nil
+  end
+
   def tested(date = Date.today)
      type = EncounterType.where("name = ?", "HIV TESTING").first.id
     encounter = Encounter.where("encounter_type = ? AND DATE(encounter_datetime) = ?",
@@ -157,7 +165,7 @@ class Client < ActiveRecord::Base
      return present
   end
 
-    def encounter_done(patient_id, encounter)
+  def encounter_done(patient_id, encounter)
       current_date = session[:datetime].to_date rescue Date.today
       type = EncounterType.where("name = ?", encounter).first.encounter_type_id
       return Encounter.where("patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?", patient_id, type, current_date  ).order("encounter_datetime desc")

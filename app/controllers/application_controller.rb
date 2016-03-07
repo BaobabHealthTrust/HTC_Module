@@ -33,14 +33,14 @@ class ApplicationController < ActionController::Base
                    
                         return link
                     end
-                    when "ASSESSMENT"
+                when "ASSESSMENT"
                    if encounter_done(client.patient_id, encounter).blank?
                         link = { "name" =>  "Assessment",
                         "url" => "/client_assessment/#{client.patient_id}"}
                         return link
                     end
 
-                    when "HIV TESTING"
+                when "HIV TESTING"
                    if ! conselled.blank?
                         o = ActionView::Base.full_sanitizer.sanitize(conselled.first.to_s).upcase
                         if o.match(/TEST CONCEPT: NO/i)
@@ -54,7 +54,11 @@ class ApplicationController < ActionController::Base
                     
                         return link
                     end
-                    when "REFERRAL CONSENT CONFIRMATION"
+                when "REFERRAL CONSENT CONFIRMATION"
+                  if client.hiv_status != 'Reactive'
+                    next
+                  end
+
                    if ! conselled.blank?
                         o = ActionView::Base.full_sanitizer.sanitize(conselled.first.to_s).upcase
                         if o.match(/TEST CONCEPT: NO/i)
@@ -66,7 +70,6 @@ class ApplicationController < ActionController::Base
                         link = { "name" =>  "Referral",
                         "url" => "/referral_consent/#{client.patient_id}"}
 
-                       
                         return link
                     end
 

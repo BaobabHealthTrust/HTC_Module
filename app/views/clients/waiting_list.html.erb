@@ -85,10 +85,11 @@
 	__$("buttons").style.width = "100%";
 	__$("buttons").style.height = "100%";
 
-	btnNext.innerHTML = "Remove client from waiting list";
-	btnNext.style.width = "400px"; 
-	btnCancel.style.width = "250px";
-	btnNext.style.display = "none";
+	//btnNext.innerHTML = "Remove client from waiting list";
+	btnNext.style.width = "200px";
+	btnCancel.style.width = "200px";
+
+	//btnNext.style.display = "none";
 
 	var display = "inline-table";
 
@@ -190,6 +191,10 @@
                 "</tr>");
 
     }
+
+    btnNext.onmousedown = function(){
+        window.location = "/htcs";
+    };
 
 </script>
 </html>
