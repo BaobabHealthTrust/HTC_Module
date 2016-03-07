@@ -14,6 +14,9 @@ HTCModule::Application.routes.draw do
   get "monthly" => "reports#monthly_report"
   get "moh_report" => "reports#moh_report"
 
+  get "clients/choose_sample"
+  post "clients/choose_sample"
+
   get "mohquartery_report" => "reports#mohquartery_report"
 
   get "couple/appointment"

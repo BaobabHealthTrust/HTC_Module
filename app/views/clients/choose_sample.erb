@@ -1,0 +1,8 @@
+<script>
+  tt_cancel_destination = '/htcs';
+</script>
+<body>
+    <%= form_tag(:method => 'post', :controller => 'clients', :action => 'choose_sample') do %>
+        <%= select_tag("sample_type", options_for_select(['','Serum','DTS'], nil), :helpText => 'Choose Sample Type for QC Tests') %>
+    <% end %>
+</body>

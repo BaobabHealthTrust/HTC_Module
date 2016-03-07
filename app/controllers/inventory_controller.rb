@@ -391,6 +391,7 @@ class InventoryController < ApplicationController
     @user = current_user
     @location = Location.current_location
     @kits = Kit.where(status: "active")
+    sample_type = params[:sample_type]
 
     kmap = {}
     
@@ -435,7 +436,8 @@ class InventoryController < ApplicationController
 
     @side_lists = {}
 
-    @serum_types = ["Negative serum", "Positive serum", "Positive DTS", "Negative DTS"]
+    @serum_types = ["Positive DTS", "Negative DTS"] if sample_type == 'DTS'
+    @serum_types = ["Negative serum", "Positive serum" ] if sample_type == 'Serum'
     @input_controls = [["Serum lot number", {"type" => "text"}],
                        ["Testkit lot number", {"type" => "text"}],
                        ["Control line seen", {"type" => "list"}],
