@@ -799,7 +799,7 @@ class ClientsController < ApplicationController
         elsif @risk.upcase == "LOW RISK" || @risk == "Low risk"
           @message = "#{@risk}<br>Patient is Negative".to_s.html_safe
         else
-          @message = "#{@risk}<br>Re-test in 4 weeks to rule out New infection".to_s.html_safe
+          #@message = "#{@risk}<br>Re-test in 4 weeks to rule out New infection".to_s.html_safe
         end
       end
   end

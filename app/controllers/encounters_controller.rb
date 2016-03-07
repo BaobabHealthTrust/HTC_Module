@@ -9,6 +9,7 @@ class EncountersController < ApplicationController
   end
 
   def new
+    #raise params.inspect
     ################ Global Variables #################################
     current = session[:datetime].to_datetime rescue DateTime.now
     person = Person.find(params[:id])
@@ -43,7 +44,7 @@ class EncountersController < ApplicationController
         ######################### HIV Testing ########################
         if params["ENCOUNTER"].upcase == "HIV TESTING"
           (1..2).each{|i|
-            if observation[:concept_name] ==  "HTC Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
+            if observation[:concept_name] ==  "Test #{i} result" && (!observation[:value_text].blank? || !observation[:value_coded_or_text].blank?)
               used = CouncillorInventory.create_used_testkit(observation[:value_text], params["test#{i} done"], current, current_user)
             end
           }
@@ -170,6 +171,7 @@ class EncountersController < ApplicationController
         end
     end
 
+    #url = next_task(patient)["url"]
     redirect_to url and return
 
   end

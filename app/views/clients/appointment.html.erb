@@ -344,32 +344,29 @@
         </script>
     </head>
     <body>
-					<div id="cover">
-					</div>
-    			<div id='content'>
-                <form  action='/encounters/new/<%= params[:id] %>' method='post' >
-									<input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
-									<fieldset>
-										<input type="hidden" value="Appointment" name="ENCOUNTER"/>
-										<input type="hidden" id="appoint_date" name="observations[][value_datetime]"/>
+        <div id="cover"></div>
+        <div id='content'>
+            <form  action='/encounters/new/<%= params[:id] %>' method='post' >
+                <input type="hidden" value="<%= form_authenticity_token() %>" name="authenticity_token"/>
+                <fieldset>
+                <input type="hidden" value="Appointment" name="ENCOUNTER"/>
+                <input type="hidden" id="appoint_date" name="observations[][value_datetime]"/>
 																	
-										<%= hidden_field_tag("observations[][concept_name]", "Appointment date") %>
-										<%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
+                <%= hidden_field_tag("observations[][concept_name]", "Appointment date") %>
+                <%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
 
-										<% if !@waiting_list.blank? %>
-												<%= hidden_field_tag("waiting_list", true) %>
-										<% end %>
+                <% if !@waiting_list.blank? %>
+                      <%= hidden_field_tag("waiting_list", true) %>
+                <% end %>
 
-										<legend> Calendar </legend>
-
+                <legend> Calendar </legend>
                     <label for="initial_date"> Calendar </label>
-                    <input type='text' field_type='calendar' name='initial_date' id='initial_date' 
+                    <input type='text' field_type='calendar' name='initial_date' id='initial_date'
                            helptext='Appointment' value="<%= @initial_date -%>"
                            ajaxCalendarUrl="/total_bookings?date="
                            startweekdate="<%=@start_week_date -%>" endweekdate="<%= @end_week_date -%>" />
-									</fieldset>
-                </form>
-       
+                </fieldset>
+            </form>
         </div>
     </body>
     

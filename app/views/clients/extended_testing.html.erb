@@ -123,13 +123,13 @@
         }
         __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
-        if(__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive"){
-          __$("allresults").value = "Positive"
+        if(__$("Test 1 result").value == "Reactive" && __$("Test 2 result").value == "Reactive"){
+          __$("allresults").value = "Reactive"
           clearTimeout("setValues()")
          // confirm("HIV positive")
         }
 
-        else if((__$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Negative") || (__$("HTC Test 1 result").value == "Negative" && __$("HTC Test 2 result").value == "Positive")){
+        else if((__$("Test 1 result").value == "Reactive" && __$("Test 2 result").value == "Non-Reactive") || (__$("Test 1 result").value == "Non-Reactive" && __$("HTC Test 2 result").value == "Reactive")){
           __$("allresults").value = "Inconclusive"
           clearTimeout("setValues()")
           //confirm("Inconclusive")
@@ -182,7 +182,7 @@
 
                 parent.appendChild(tbl);
 
-                attributes = [["Test 1", __$("HTC Test 1 result").value], ["Test 2", __$("HTC Test 2 result").value],["Risk Assessment", '<%= @message %>']]
+                attributes = [["Test 1", __$("Test 1 result").value], ["Test 2", __$("Test 2 result").value],["Risk Assessment", '<%= @message %>']]
                 for (i = 0; i < attributes.length; i ++) {
                     row = document.createElement("div");
                     row.style.display = "table-row";
@@ -192,7 +192,6 @@
                     else{
                         row.style.backgroundColor = '#FFF8DC';
                     }
-
                     tbl.appendChild(row);
 
                     var cell1 = document.createElement("div");
@@ -209,10 +208,10 @@
                     cell1.style.fontSize = "25px";
                     cell2.style.verticalAlign = "right";
                     cell2.innerHTML = attributes[i][1];
-                    if( i == 2 && __$("HTC Test 1 result").value != __$("HTC Test 2 result").value ) {
+                    if( i == 2 && __$("Test 1 result").value != __$("Test 2 result").value ) {
                         cell2.innerHTML = "Inconclusive Results.<br /> Advise re-test in 4 weeks.";
                     }
-                    else if( i == 2 && __$("HTC Test 1 result").value == "Positive" && __$("HTC Test 2 result").value == "Positive" ) {
+                    else if( i == 2 && __$("Test 1 result").value == "Reactive" && __$("Test 2 result").value == "Reactive" ) {
                         cell2.innerHTML = "Postive Results.<br /> Refer to ART Clinic for treatment.";
                     }
 
@@ -309,7 +308,8 @@
           row1.appendChild(cell1_1);
 
           cell1_1.setAttribute("targetID", 'rapidrange');
-          var timer1 = addTimer(cell1_1, 15, kits[0][1] + " Test Timer", 0.55)
+          //var timer1 = addTimer(cell1_1, 15, kits[0][1] + " Test Timer", 0.55)
+          var timer1 = addTimer(cell1_1, 15, " Test 1 Timer", 0.55)
           timer1.style.marginLeft = "40px";
           timer1.style.marginRight = "40px";
 
@@ -320,7 +320,8 @@
           row1.appendChild(cell1_2);
 
           cell1_2.setAttribute("targetID", 'goldrange');
-          var timer2 = addTimer(cell1_2, 10, kits[1][1] + " Test Timer", 0.55);
+          //var timer2 = addTimer(cell1_2, 10, kits[1][1] + " Test Timer", 0.55);
+          var timer2 = addTimer(cell1_2, 10, " Test 2 Timer", 0.55);
           timer2.style.marginLeft = "40px";
           timer2.style.marginRight = "40px";
 
@@ -373,14 +374,14 @@
 
         <fieldset>
         <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
-            <label for="rapid_lot"><%= @kits[0][1] rescue ""  %> Lot Number</label>
+            <label for="rapid_lot">(Test 1) <%= @kits[0][1] rescue ""  %> Lot Number</label>
             <input type='text' id="rapid_lot" name="observations[][value_text]" onload="checkLot()"/>
             <input name="observations[][concept_name]" type="hidden" value="rapid lot number" />
             <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
             <input name="observations[][obs_datetime]" type="hidden" value="" />
 
 
-            <label for="gold_lot"><%= @kits[1][1] rescue ""  %> Lot Number</label>
+            <label for="gold_lot">(Test 2) <%= @kits[1][1] rescue ""  %> Lot Number</label>
             <input type='text' id="gold_lot" name="observations[][value_text]" onload="checkSecondLot()"/>
             <input name="observations[][concept_name]" type="hidden" value="gold lot number" />
             <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
@@ -393,7 +394,7 @@
 
 
             <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
-            <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
+            <input type="hidden" name="observations[][concept_name]" value="Test 1 result" />
             <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
             <input type="hidden" name="observations[][obs_datetime]" value="" />
 
@@ -420,8 +421,8 @@
 
       <fieldset>
         <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
-        <% tests = ["HTC Test 1 result", "HTC Test 2 result"]
-        results = [["Unknown","Uknown"],["Positive","Reactive"],["Negative","Non-Reactive"]]
+        <% tests = ["Test 1 result", "Test 2 result"]
+        results = [["Unknown","Unknown"],["Reactive","Reactive"],["Non-Reactive","Non-Reactive"]]
         tests.each { |test| %>
           <label for="<%= test %>"><%= test %></label>
 
