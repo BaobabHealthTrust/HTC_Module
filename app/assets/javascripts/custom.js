@@ -22,8 +22,12 @@ function loadMessage(message, location, delay){
       }
       html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>";
       html += "<div id='text'>" + message + "</div></div></div>";
+
+      html += "<div id='btn'><button class='button blue' onmousedown='reset()' style='margin: 3px; font-size: 20px; height: 55px;'>Ok</button></div>";
+
       ele.innerHTML =  html;
       document.body.appendChild(ele);
+
 
       setTimeout('redirect("' + location + '")', delay);
 }
