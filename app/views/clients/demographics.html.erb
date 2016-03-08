@@ -64,208 +64,208 @@
 
 					var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Firstname"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Firstname";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @client.person.names.first.given_name.humanize rescue "" %>';
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'firstname' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                         var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Surname"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Surname";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @client.person.names.first.family_name.humanize rescue "" %>';
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
                                         cell3.id = "links"
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'surname' + "' class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                         var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Gender"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Gender";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @client.person.gender rescue "" %>';
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'gender' + "' class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Date of birth"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Date of birth";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = day + '/' + month + '/' + year ;
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'date_of_birth' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Home District"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Current Residence";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @home_district rescue "" %>' ;
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'home_district' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
+                                        cell1.id = "texts";
                                         cell1.innerHTML = "Traditional Authority"
-                                        row1.appendChild(cell1)
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @ta rescue "" %>' ;
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'traditional_authority' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Occupation"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Occupation";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @occupation rescue "" %>' ;
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'occupation' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
-                                        cell1.id = "texts"
-                                        cell1.innerHTML = "Current Residence"
-                                        row1.appendChild(cell1)
+                                        cell1.id = "texts";
+                                        cell1.innerHTML = "Home District";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
                                         cell2.id = "values"
                                         cell2.innerHTML = '<%= @residence %>' ;
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'residence' + "'  class='navigation'>Edit</a>";
-                                        row1.appendChild(cell3)
+                                        row1.appendChild(cell3);
 
                                          var row1 = document.createElement("div");
 					row1.style.display = "table-row";
-                                        row1.id = "demographics"
+                                        row1.id = "demographics";
 					table.appendChild(row1);
 
                                         var cell1 = document.createElement("div");
 					cell1.style.display = "table-cell";
                                         cell1.id = "texts"
-                                        cell1.innerHTML = "Cell Phone Number"
-                                        row1.appendChild(cell1)
+                                        cell1.innerHTML = "Cell Phone Number";
+                                        row1.appendChild(cell1);
 
                                         var cell2 = document.createElement("div");
 					cell2.style.display = "table-cell";
-                                        cell2.id = "values"
+                                        cell2.id = "values";
                                         cell2.innerHTML = '<%= @cell_phone_number rescue "" %>' ;
-                                        row1.appendChild(cell2)
+                                        row1.appendChild(cell2);
 
                                          var cell3 = document.createElement("div");
 					cell3.style.display = "table-cell";
-                                        cell3.id = "links"
+                                        cell3.id = "links";
                                         cell3.innerHTML = "<a href='/clients/demographics_edit/" + <%= @id %>+ "?ref=" + 'cell_phone_number' + "'  class='navigation'>Edit</a>";
                                         row1.appendChild(cell3)
                                 }
