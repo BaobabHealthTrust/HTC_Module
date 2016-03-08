@@ -10,6 +10,14 @@ class ClientsController < ApplicationController
     #@clients = Client.all
   end
 
+  def choose_sample
+    if request.post?
+      redirect_to controller: 'inventory', action: 'quality_control_tests', sample_type: params[:sample_type]  and return
+      #raise params.inspect
+    end
+    render :layout => 'basic'
+  end
+
   def show
       
       @task = next_task(@client)

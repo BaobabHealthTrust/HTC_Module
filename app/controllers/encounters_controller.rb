@@ -15,7 +15,7 @@ class EncountersController < ApplicationController
     person = Person.find(params[:id])
     patient = Client.find(params[:id])
     encounter = write_encounter(params["ENCOUNTER"], person)
-    url = next_task(patient)["url"]
+    #url = next_task(patient)["url"]
 
     ################ Counseling #######################################
 		if params["ENCOUNTER"].upcase == "COUNSELING"
@@ -171,7 +171,7 @@ class EncountersController < ApplicationController
         end
     end
 
-    #url = next_task(patient)["url"]
+    url = next_task(patient)["url"]
     redirect_to url and return
 
   end

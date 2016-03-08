@@ -14,7 +14,7 @@
                            :id => 'clinic',
                            :helpText => "Refer to ART Clinic",
                            :field_type => 'alpha',
-                           :ajaxURL => "/clients/locations/#{params[:id]}")
+                           :ajaxURL => "/clients/locations/#{params[:id]}?search=")
             %>
             <%= hidden_field_tag("observations[][concept_name]", "Refer to clinic") %>
             <%= hidden_field_tag("observations[][patient_id]", params[:id]) %>
