@@ -123,13 +123,13 @@
         }
         __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
-        if(__$("Test 1 result").value == "Reactive" && __$("Test 2 result").value == "Reactive"){
+        if(__$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Reactive"){
           __$("allresults").value = "Reactive"
           clearTimeout("setValues()")
          // confirm("HIV positive")
         }
 
-        else if((__$("Test 1 result").value == "Reactive" && __$("Test 2 result").value == "Non-Reactive") || (__$("Test 1 result").value == "Non-Reactive" && __$("HTC Test 2 result").value == "Reactive")){
+        else if((__$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Non-Reactive") || (__$("HTC Test 1 result").value == "Non-Reactive" && __$("HTC Test 2 result").value == "Reactive")){
           __$("allresults").value = "Inconclusive"
           clearTimeout("setValues()")
           //confirm("Inconclusive")
@@ -182,7 +182,7 @@
 
                 parent.appendChild(tbl);
 
-                attributes = [["Test 1", __$("Test 1 result").value], ["Test 2", __$("Test 2 result").value],["Risk Assessment", '<%= @message %>']]
+                attributes = [["Test 1", __$("HTC Test 1 result").value], ["Test 2", __$("HTC Test 2 result").value],["Risk Assessment", '<%= @message %>']]
                 for (i = 0; i < attributes.length; i ++) {
                     row = document.createElement("div");
                     row.style.display = "table-row";
@@ -208,10 +208,10 @@
                     cell1.style.fontSize = "25px";
                     cell2.style.verticalAlign = "right";
                     cell2.innerHTML = attributes[i][1];
-                    if( i == 2 && __$("Test 1 result").value != __$("Test 2 result").value ) {
+                    if( i == 2 && __$("HTC Test 1 result").value != __$("HTC Test 2 result").value ) {
                         cell2.innerHTML = "Inconclusive Results.<br /> Advise re-test in 4 weeks.";
                     }
-                    else if( i == 2 && __$("Test 1 result").value == "Reactive" && __$("Test 2 result").value == "Reactive" ) {
+                    else if( i == 2 && __$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Reactive" ) {
                         cell2.innerHTML = "Postive Results.<br /> Refer to ART Clinic for treatment.";
                     }
 
@@ -394,7 +394,7 @@
 
 
             <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
-            <input type="hidden" name="observations[][concept_name]" value="Test 1 result" />
+            <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
             <input type="hidden" name="observations[][patient_id]" value="<%= params[:id] %>" />
             <input type="hidden" name="observations[][obs_datetime]" value="" />
 
@@ -421,7 +421,7 @@
 
       <fieldset>
         <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
-        <% tests = ["Test 1 result", "Test 2 result"]
+        <% tests = ["HTC Test 1 result", "HTC Test 2 result"]
         results = [["Unknown","Unknown"],["Reactive","Reactive"],["Non-Reactive","Non-Reactive"]]
         tests.each { |test| %>
           <label for="<%= test %>"><%= test %></label>
@@ -438,10 +438,11 @@
         <% } %>
 
         <label for="scan_accession_number" >Acknowledging Counselor Accession Number </label>
-        <input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />
+
         <%= hidden_field_tag("observations[][concept_name]",        'Provider') %>
         <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
+        <input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />
 
       </fieldset>
       <fieldset custom=true fs_onLoad="createSummary();">
