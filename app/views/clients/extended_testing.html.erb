@@ -116,12 +116,12 @@
           rapidValue = __$('timetimer1').innerHTML.toString();
           redRapidColor =  (__$('timetimer1').style.color == 'red') ? true : false;
         }
-        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"), redRapidColor);
+        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "15:00".split(":"), redRapidColor);
         if(__$('timetimer2')){
           goldValue = __$('timetimer2').innerHTML.toString();
             redGoldColor =  (__$('timetimer2').style.color == 'red') ? true : false;
         }
-        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
+        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "10:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
         if(__$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Reactive"){
           __$("allresults").value = "Reactive"

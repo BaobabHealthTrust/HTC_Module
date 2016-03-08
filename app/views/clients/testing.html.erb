@@ -110,13 +110,13 @@
           redRapidColor =  (__$('timetimer1').style.color == 'red') ? true : false;
         }
 
-        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "10:00".split(":"), redRapidColor);
+        __$('rapidtimer').value = subtractMinutes(rapidValue.split(":"), "15:00".split(":"), redRapidColor);
         if(__$('timetimer2')){
           goldValue = __$('timetimer2').innerHTML.toString();
           redGoldColor =  (__$('timetimer2').style.color == 'red') ? true : false;
         }
 
-        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "15:00".split(":"), redGoldColor);
+        __$('goldtimer').value =  subtractMinutes(goldValue.split(":"), "10:00".split(":"), redGoldColor);
         __$("allresults").value  = "";
         if(__$("customresult1").value == "Reactive" && __$("customresult2").value == "Reactive" && motherStatus != "YES"){
             __$("alltimers").value = "YES";
