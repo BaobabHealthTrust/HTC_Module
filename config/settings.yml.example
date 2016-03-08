@@ -19,3 +19,5 @@ high_risk: ["Occupational Exposure ", "STI", "Rape", "Unprotected sex", "Shared 
 
 
 full_demographics_at_reception: true
+
+kits_assigned_to: rooms #rooms / couns
