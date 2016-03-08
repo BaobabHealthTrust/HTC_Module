@@ -98,9 +98,7 @@
             xmlhttp.open("GET", "/inventory/batch_available?lot_number=" + __$("gold_lot").value + "&name=" + kits[1][1], true);
             xmlhttp.send();
         }
-
         setTimeout("checkSecondLots()", 100);
-
 }	
 
       function setValues(){
@@ -337,7 +335,6 @@
             timer2.style.marginLeft = "40px";
 					
             timer2.style.marginRight = "40px";
-
           }
           var row2 = document.createElement("div");
           row2.style.display = "table-row";
@@ -444,19 +441,19 @@
 
         <input type="hidden" id="give_concent" name="giveconcent" value="" />
         <input id="customresult1" name="observations[][value_text]" type="hidden" value="" />
-        <input type="hidden" name="observations[][concept_name]" value="Test 1 result" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 result" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" value="" />
 
 
         <input type="hidden" name="observations[][value_text]" id="rapidtimer" fieldtype="number"  value="" />
-        <input type="hidden" name="observations[][concept_name]" value="Test 1 Time frame" id="hidden" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 Time frame" id="hidden" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" />
         <input type="hidden" name="observations[][value_complex]" id="rapidrange" />
 
         <input type="hidden" name="observations[][value_text]" id="rapidname" fieldtype="number" value="<%= @kits[0][1] rescue "" %>" />
-        <input type="hidden" name="observations[][concept_name]" value="Test 1 name" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 1 name" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
@@ -467,18 +464,18 @@
         <legend>HIV Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
 
         <input id="customresult2" name="observations[][value_text]" type="hidden" value="" />
-        <input type="hidden" name="observations[][concept_name]" value="Test 2 result" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 result" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]" value="" />
 
         <input type="hidden" name="observations[][value_text]" id="goldtimer" fieldtype="number" value="" />
-        <input type="hidden" name="observations[][concept_name]" value="Test 2 Time frame" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 Time frame" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
         <input type="hidden" name="observations[][value_complex]" id="goldrange"/>
 
         <input type="hidden" name="observations[][value_text]" id="goldname" fieldtype="number" value="<%= @kits[1][1] rescue "" %>" />
-        <input type="hidden" name="observations[][concept_name]" value="Test 2 name" />
+        <input type="hidden" name="observations[][concept_name]" value="HTC Test 2 name" />
         <input type="hidden" name="observations[][patient_id]" value="<%= params[:client_id] %>" />
         <input type="hidden" name="observations[][obs_datetime]"  value="" />
 
