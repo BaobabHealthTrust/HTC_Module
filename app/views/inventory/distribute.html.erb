@@ -21,8 +21,13 @@
       <label for="id"> </label>
       <select id="id" name="id">
         <option></option>
-        <%= @users.each do |user| %>
-            <option id="<%= user.username%>" value="<%= user.username %>"> <%= user.name %></option>
+        <% @assignee.each do |asn|
+            shortname = asn.username if (asn.username rescue false)
+            shortname = asn.name if shortname.blank?
+
+            name = asn.name
+            %>
+            <option id="<%= shortname%>" value="<%= shortname %>"> <%= name %></option>
         <% end %>
       </select>
       <br/>
@@ -127,8 +132,11 @@
     var kit_types = [];
     var checkTime = 0
 
-    <%  @users.each do |kit|%>
-    kit_names.push("<%= kit.username%>");
+    <%  @assignee.each do |asn|
+            shortname = asn.username if (asn.username rescue false)
+            shortname = asn.name if shortname.blank?
+    %>
+    kit_names.push("<%= shortname%>");
     <% end %>
 
     <%  @kit_types.each do |kit|%>

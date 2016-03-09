@@ -28,7 +28,7 @@ class InventoryController < ApplicationController
         kit_type = Kit.find_by_name(serum_type).id rescue nil
         serum_name = nil
         if kit_type.blank?
-          serum_name = serum_type.match(/Positive|Negative|positive|negative/i)[0] rescue nil
+          serum_name = serum_type
         end
 
         opts.each do |value|
@@ -92,7 +92,7 @@ class InventoryController < ApplicationController
         Inventory.create(lot_no: lot_number,
                          kit_type: kit_type,
                          value_date: encounter_date,
-                         value_text: (serum_name.match(/Positive|Negative|positive|negative/i)[0] rescue nil),
+                         value_text: serum_name,
                          value_numeric: qty,
                          inventory_type: type,
                          date_of_expiry: exp_date,
@@ -106,26 +106,34 @@ class InventoryController < ApplicationController
   end
 
   def distribute
+
     @session_date = session[:datetime].to_date rescue Date.today
 
     if request.post?
       captured_data = params[:data] || []
       type = InventoryType.find_by_name("Distribution").id
 
-      captured_data.each do |username, opts|
-
-        assignee_id = User.find_by_username(username).id;
+      captured_data.each do |assignee_name, opts|
 
         opts.each do |value|
           type_name = value["Kit type"]
           lot_number = value["Lot number"]
           qty = value["Quantity"].blank? ? "" : value["Quantity"].to_i
 
+          assignee_id = nil
+          room_id = nil
+          if settings[:kits_assigned_to] == 'rooms'
+            room_id = Location.find_by_name(assignee_name).id ;
+          elsif settings[:kits_assigned_to] == 'couns'
+            assignee_id = User.find_by_username(username).id
+          end
+
           if (!type_name.blank? && !lot_number.blank? && !qty.blank?)
             CouncillorInventory.create(lot_no: lot_number,
                                        value_numeric: qty,
-                                       value_text: ((type_name.match(/Positive|Negative|positive|negative/i)[0] rescue type_name) || type_name),
+                                       value_text: type_name,
                                        councillor_id: assignee_id,
+                                       room_id: room_id,
                                        inventory_type: type,
                                        encounter_date: @session_date,
                                        voided: false,
@@ -138,11 +146,21 @@ class InventoryController < ApplicationController
       redirect_to '/htcs?tab=admin' and return
     end
 
-    @users = User.all.collect { |user|
-      user if !user.person.blank?
-    }.compact
+    @assignee = []
+    if settings[:kits_assigned_to] == 'rooms'
+      htc_tags = ["HTC Counseling Room"]
+      htc_tags = htc_tags.map{|l| LocationTag.find_by_name(l).location_tag_id}
+      @assignee = Location.joins(:location_tag_maps)
+      .where(:location_tag_map => {:location_tag_id => htc_tags})
+      Location.joins(:location_tag_maps)
+      .where(:location_tag_map => {:location_tag_id => htc_tags})
+    elsif settings[:kits_assigned_to] == 'couns'
+      @assignee = User.all.collect { |user|
+        user if !user.person.blank?
+      }.compact
+    end
 
-    @kit_types = Kit.find_all_by_status("active").map(&:name) + ["Positive serum", "Negative serum", "Positive DTS", "Negative DTS"]
+    @kit_types = Kit.find_all_by_status("active").map(&:name) + ["Positive Serum", "Negative Serum", "Positive DTS", "Negative DTS"]
 
     @input_controls = [["Kit type", {"type" => "list",
                                      "options" => @kit_types}],
@@ -156,10 +174,17 @@ class InventoryController < ApplicationController
 
   def batch_available
      lot = params[:lot_number]
-     user = current_user.id
      name = params[:name]
-     lot_no = CouncillorInventory.where("councillor_id = ? AND lot_no = ? AND value_text = ? ",
-                                                   user, lot, name).first.lot_no rescue "none"
+
+     lot_no = nil
+     if settings.kits_assigned_to == 'rooms'
+      lot_no = CouncillorInventory.where("room_id = ? AND lot_no = ? AND value_text = ? ",
+                                                   Location.current_location.id, lot, name).first.lot_no rescue "none"
+     elsif settings.kits_assigned_to == 'couns'
+       lot_no = CouncillorInventory.where("councillor_id_id = ? AND lot_no = ? AND value_text = ? ",
+                                          Location.current_location.id, lot, name).first.lot_no rescue "none"
+     end
+
     render text: lot_no.to_json
   end
 
@@ -207,7 +232,13 @@ class InventoryController < ApplicationController
     plus_types = ["Delivery", "Serum Delivery"].collect { |iv_name| InventoryType.find_by_name(iv_name).id }
     minus_types = ["Distribution", "Expires", "Losses", "Usage",].collect { |iv_name| InventoryType.find_by_name(iv_name).id }
 
-    user = User.find_by_username(params[:username]) rescue nil
+    if settings.kits_assigned_to == 'couns'
+      assignee = User.find_by_username(params[:username]) rescue nil
+      assignee_name = assignee.username
+    elsif settings.kits_assigned_to == 'rooms'
+      assignee =  Location.find_by_name(params[:username]) rescue nil
+      assignee_name = assignee.name
+    end
     session_date = session[:datetime].to_date rescue Date.today
     kit_name = params[:kit_type]
     lot_number = params[:lot_number]
@@ -216,16 +247,15 @@ class InventoryController < ApplicationController
     ui_sum_exc = ui_sum - qty
     qty_sum = 0
     user_sum = 0
-
-    if !user.blank?
-      user_sum = user.remaining_stock_by_type(kit_name, session_date) rescue 0
+    if !assignee.blank?
+      user_sum = assignee.remaining_stock_by_type(kit_name, session_date) rescue 0
     end
     result["Kit type"]["warning"] = ""
 
     if user_sum.to_i > 0
-      result["Kit type"]["info"] = " #{user.username rescue ''} already has <span style='color: blue; font-weight: bold; '>#{user_sum}</span> #{kit_name.downcase} kits in stock"
+      result["Kit type"]["info"] = " #{assignee_name} already has <span style='color: blue; font-weight: bold; '>#{user_sum}</span> #{kit_name} kits in stock"
     else
-      result["Kit type"]["info"] = " #{user.username rescue ''} has <span style='color: blue; font-weight: bold; '> no </span> assigned  #{kit_name.downcase} stock"
+      result["Kit type"]["info"] = " #{assignee_name} has <span style='color: blue; font-weight: bold; '> no </span> assigned  #{kit_name} stock"
     end
 
     if !params[:kit_type].blank? && !params[:lot_number].blank?
@@ -233,14 +263,14 @@ class InventoryController < ApplicationController
       ivs = Inventory.find_by_sql(["SELECT value_numeric, inventory_type FROM inventory
                 WHERE voided = 0 AND (kit_type = ? OR value_text = ?) AND lot_no = ?",
                                    (Kit.find_by_name(kit_name).id rescue nil),
-                                   (kit_name.match(/Positive|Negative|positive|negative/i)[0] rescue nil),
+                                   (kit_name),
                                    lot_number])
 
       ivs2 = CouncillorInventory.find_by_sql(["SELECT ci.id, ci.value_numeric, ci.inventory_type FROM councillor_inventory ci
              JOIN inventory iv ON  iv.lot_no = ci.lot_no
           WHERE iv.voided = 0 AND ci.voided =0 AND (iv.kit_type = ? OR iv.value_text = ?) AND iv.lot_no = ? GROUP BY ci.id",
                                               (Kit.find_by_name(kit_name).id rescue nil),
-                                              (kit_name.match(/Positive|Negative|positive|negative/i)[0] rescue nil),
+                                              (kit_name),
                                               lot_number])
 
       if ivs.blank?
@@ -278,7 +308,7 @@ class InventoryController < ApplicationController
     captured_data.each do |kit_name, opts|
       kit_text = nil
       kit_type = Kit.where(name: kit_name).first.id rescue nil
-      kit_text = kit_name.match(/Negative|Positive|positive|negative/i)[0] rescue nil if kit_type.blank?
+      kit_text = kit_name
       opts.each do |value|
 
         lot_number = value["Lot number"]
@@ -313,10 +343,10 @@ class InventoryController < ApplicationController
 
     @current_location = Location.current_location
     locs = all_htc_facility_locations
-    @locations = [["", "All"]] + locs.map { |l| [l.id, l.name] }
+    @locations = locs.map { |l| [l.id, l.name] }
     @user = current_user
     users =  User.all
-    @users = users.map { |user| [user.username, user.name] rescue nil }.compact
+    @users = [['-', "All"]] + users.map { |user| [user.username, user.name] rescue nil }.compact
 
     @kit_names = Kit.all.map(&:name) + ["Negative serum", "Positive serum", "Positive DTS", "Negative DTS"]
     @site_name = settings.facility_name
@@ -353,7 +383,7 @@ class InventoryController < ApplicationController
                                        value_numeric: qty,
                                        councillor_id: @user.id,
                                        inventory_type: type,
-                                       value_text: ((kit_name.match(/Negative|Positive|positive|negative/i)[0] rescue kit_name) || kit_name),
+                                       value_text: kit_name,
                                        comments: reason,
                                        encounter_date: @session_date,
                                        voided: false,
@@ -474,7 +504,13 @@ class InventoryController < ApplicationController
 
   def ajax_stock_levels
     result = {}
-    user = User.find_by_username(params[:user])
+    assignee = nil
+    if settings.kits_assigned_to == "rooms"
+      assignee = Location.find(params[:location])
+    elsif settings.kits_assigned_to == "couns"
+      assignee = User.find_by_username(params[:user])
+    end
+
     date = Date.new(params[:year].to_i, params[:month].to_i)
     session_date = (session[:datetime].to_date rescue Date.today)
 
@@ -486,9 +522,9 @@ class InventoryController < ApplicationController
     while i >= date.beginning_of_month
       unless i.to_date > session_date
         dates << i.to_date.strftime("%d %B")
-        opening_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date,
+        opening_stock[i.strftime("%d %B")] = assignee.remaining_stock_by_type(params[:kit_name], i.to_date,
                                                              [], "opening", [params[:location].to_i])
-        closing_stock[i.strftime("%d %B")] = user.remaining_stock_by_type(params[:kit_name], i.to_date, [],
+        closing_stock[i.strftime("%d %B")] = assignee.remaining_stock_by_type(params[:kit_name], i.to_date, [],
                                                            "closing", [params[:location].to_i])
       end
       i -= 1.day
@@ -499,13 +535,13 @@ class InventoryController < ApplicationController
     result["opening_stock"] = opening_stock
     result["closing_stock"] = closing_stock
 
-    result["receipts"] = user.receipts(params[:kit_name], date.beginning_of_month, date.end_of_month,
+    result["receipts"] = assignee.receipts(params[:kit_name], date.beginning_of_month, date.end_of_month,
                                        [params[:location].to_i])
-    result["damaged"] = user.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
+    result["damaged"] = assignee.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
                                    [params[:location].to_i], ["Damaged"])
-    result["other_use"] = user.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
+    result["other_use"] = assignee.losses(params[:kit_name], date.beginning_of_month, date.end_of_month,
                                            [params[:location].to_i], ["Other use"])
-    result["client_tests"] =  user.client_tests(params[:kit_name], date.beginning_of_month, date.end_of_month,
+    result["client_tests"] =  assignee.client_tests(params[:kit_name], date.beginning_of_month, date.end_of_month,
                                           [params[:location].to_i])
 
     result['totals'] = result.reject{|k, v| k == "dates"}.inject({}){|r, h| r[h[0]] = h[1].values.sum; r}

@@ -50,7 +50,7 @@ class Inventory < ActiveRecord::Base
     kit_typesB = []
     if kit.blank?
       kit_typesA = Kit.all.map(&:id)
-      kit_typesB = ["Negative", "Positive"]
+      kit_typesB = ["Negative Serum", "Positive Serum", "Negative DTS", "Positive DTS"]
     else
       kit.each do |k|
         kk = Kit.where(name: k).first rescue nil
@@ -77,7 +77,7 @@ class Inventory < ActiveRecord::Base
     kit_typesB = []
     if kit.blank?
       kit_typesA = Kit.all.map(&:id)
-      kit_typesB = ["Negative", "Positive"]
+      kit_typesB = ["Negative Serum", "Positive Serum", "Negative DTS", "Positive DTS"]
     else
       kit.each do |k|
         kk = Kit.where(name: k).first rescue nil

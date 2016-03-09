@@ -795,7 +795,15 @@ class ClientsController < ApplicationController
   
   def extended_testing
       @client = Client.find(params[:id])
-      @kits, @remaining, @testing = Kit.kits_available(current_user)
+
+      if settings.kits_assigned_to == 'rooms'
+        assignee = Location.current_location
+      elsif settings.kits_assigned_to == 'couns'
+        assignee = current_user
+      end
+
+      @kits, @remaining, @testing = Kit.kits_available(assignee)
+
       concept = ConceptName.where("name = 'Client Risk Category'").first.concept_id
       @risk = Observation.where("concept_id = ? AND person_id = ?", concept, params[:id]).order(obs_datetime: :desc).first.to_s.split(':')[1].squish rescue ""
       #raise @risk.inspect
@@ -813,7 +821,15 @@ class ClientsController < ApplicationController
   end
   
   def testing
-     @kits, @remaining, @testing = Kit.kits_available(current_user)
+
+      if settings.kits_assigned_to == 'rooms'
+        assignee = Location.current_location
+      elsif settings.kits_assigned_to == 'couns'
+        assignee = current_user
+      end
+
+      @kits, @remaining, @testing = Kit.kits_available(assignee)
+
       current_date = (session[:datetime].to_date rescue Date.today)
   		@client = Client.find(params[:client_id])
       type = EncounterType.find_by_name("HIV testing").encounter_type_id

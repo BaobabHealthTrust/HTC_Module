@@ -3,6 +3,7 @@ class CouncillorInventory < ActiveRecord::Migration
     create_table :councillor_inventory do |t|
       t.string :lot_no
       t.integer :councillor_id
+      t.integer :room_id
       t.string :value_text
       t.integer :value_numeric
       t.datetime :value_date

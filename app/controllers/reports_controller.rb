@@ -88,7 +88,7 @@ class ReportsController < ApplicationController
 		@user = current_user
 		users = User.all
 		@users = users.map { |user| [user.username, user.name] rescue nil }.compact
-		@kit_names = Kit.all.map(&:name) + ["All(Kits)", "Positive Serum", "Negative Serum", "All(Serum)"]
+		@kit_names = Kit.all.map(&:name) + ["All(Kits)", "Positive Serum", "Negative Serum", "All(Serum)", "Positive DTS", "Negative DTS", "All(DTS)"]
 		@site_name = settings.facility_name
 		@years = []
 		i = @session_date.year
@@ -120,9 +120,11 @@ class ReportsController < ApplicationController
 		when "All(Kits)"
       kits = ["Determine", "UniGold"]
 		when "All(Serum)"
-      kits = ["Positive", "Negative"]
+      kits = ["Positive Serum", "Negative Serum"]
+    when "All(DTS)"
+      kits = ["Positive DTS", "Negative DTS"]
 		else
-      kits = [params[:kit_name].gsub(/Serum/i, "").strip]
+      kits = [params[:kit_name].strip]
 		end
 		receipts = Inventory.transaction_sums(kits, ["Delivery", "Serum Delivery"], start_date, end_date)
 		losses = Inventory.transaction_sums(kits, ["Losses"], start_date, end_date)

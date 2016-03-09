@@ -470,6 +470,7 @@ ActiveRecord::Schema.define(version: 20141204093047) do
   create_table "councillor_inventory", force: true do |t|
     t.string   "lot_no"
     t.integer  "councillor_id"
+    t.integer  "room_id"
     t.string   "value_text"
     t.integer  "value_numeric"
     t.datetime "value_date"

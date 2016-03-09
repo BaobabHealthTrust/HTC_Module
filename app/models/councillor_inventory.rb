@@ -9,12 +9,19 @@ class CouncillorInventory < ActiveRecord::Base
     self.voided = 0
   end
 
-  def self.create_used_testkit(name, lot, date, user)
+  def self.create_used_testkit(name, lot, date, user, setting)
      type = InventoryType.find_by_name("Usage").id
 
-     inventory = self.create(lot_no: lot, councillor_id: user.id,
+     if setting == 'couns'
+      inventory = self.create(lot_no: lot, councillor_id: user.id,
                         value_text: name, value_numeric: 1, encounter_date: date,
                         inventory_type: type, creator: user.id)
+     elsif setting == 'rooms'
+       inventory = self.create(lot_no: lot, room_id: Location.current_location.id,
+                               value_text: name, value_numeric: 1, encounter_date: date,
+                               inventory_type: type, creator: user.id)
+     end
+
   end
 
   def self.transaction_sums(kit, inv_types, start_date, end_date)
@@ -25,7 +32,7 @@ class CouncillorInventory < ActiveRecord::Base
     kit_typesB = []
     if kit.blank?
       kit_typesA = Kit.all.map(&:id)
-      kit_typesB = ["Negative", "Positive"]
+      kit_typesB = ["Negative Serum", "Positive Serum", "Negative DTS", "Positive DTS"]
     end
 
     kit_sum = Inventory.find_by_sql(["(SELECT SUM(ci.value_numeric) AS total, DATE(ci.encounter_date) AS date, ci.lot_no,
