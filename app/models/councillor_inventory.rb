@@ -33,8 +33,17 @@ class CouncillorInventory < ActiveRecord::Base
     if kit.blank?
       kit_typesA = Kit.all.map(&:id)
       kit_typesB = ["Negative Serum", "Positive Serum", "Negative DTS", "Positive DTS"]
-    end
+    else
+      kit.each do |k|
+        kt = Kit.find_by_name(k)
+        if kt.blank?
+          kit_typesB << k
+        else
+          kit_typesA << kt.id
+        end
 
+      end
+    end
     kit_sum = Inventory.find_by_sql(["(SELECT SUM(ci.value_numeric) AS total, DATE(ci.encounter_date) AS date, ci.lot_no,
                             iv.kit_type AS type, DATE(iv.date_of_expiry) AS exp_date FROM councillor_inventory ci
                           INNER JOIN  inventory iv ON iv.lot_no = ci.lot_no AND iv.inventory_type = ?

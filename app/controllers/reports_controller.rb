@@ -125,7 +125,8 @@ class ReportsController < ApplicationController
       kits = ["Positive DTS", "Negative DTS"]
 		else
       kits = [params[:kit_name].strip]
-		end
+    end
+
 		receipts = Inventory.transaction_sums(kits, ["Delivery", "Serum Delivery"], start_date, end_date)
 		losses = Inventory.transaction_sums(kits, ["Losses"], start_date, end_date)
 
