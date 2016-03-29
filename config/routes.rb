@@ -32,8 +32,8 @@ HTCModule::Application.routes.draw do
   get "people/traditional_authority"
   get "people/village"
   get "people/landmark"
-	get "search" => "clients#search"
-	post "search" => "clients#search"
+	get "search" => "dde#search"
+	post "search" => "dde#search"
 
   get "ajax_search" => "dde#ajax_search"
   post "ajax_search" => "dde#ajax_search"
@@ -44,6 +44,7 @@ HTCModule::Application.routes.draw do
   post "dde/process_confirmation"
   post "dde/process_scan_data"
   post "dde/process_result"
+  get  "dde/process_result"
 
   get 'new_patient' => 'dde#new_patient'
 	get "client_demographics" => "clients#demographics"
@@ -239,6 +240,8 @@ HTCModule::Application.routes.draw do
   get "people/districts"
   get "people/ta"
   get "people/village"
+  get "people/static_nationalities"
+  get "people/static_countries"
   ######################### new routes end ################################
 
 

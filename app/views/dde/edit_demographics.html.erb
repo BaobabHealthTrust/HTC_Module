@@ -92,7 +92,7 @@
 
 </script>
 
-<% form_for :person, @person, :url => { :action => "update_demographics" } do |f| %>
+<%= form_for :client, :action => "dde/update_demographics" do |f| %>
   <%
   case @field
   when 'given_name'

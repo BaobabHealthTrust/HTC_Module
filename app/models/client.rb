@@ -3,9 +3,24 @@ class Client < ActiveRecord::Base
 	include Openmrs
 
 	before_save :before_create
-	has_one :person, -> {where voided: 0}, foreign_key: "person_id"
+	has_one :person, -> {where voided: 0}, foreign_key: "person_id", dependent: :destroy
 	has_many :encounters, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
   has_many :client_identifiers, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
+
+  def assignAccessionNumber(date = Date.today)
+
+    identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
+
+    return nil if self.client_identifiers.last(:conditions => ["DATE(date_created) = ? AND identifier_type = ?",
+                                         date.to_date, identifier_type]).present?
+
+    ClientIdentifier.create(:identifier_type => identifier_type,
+                            :patient_id => self.id,
+                            :identifier => ClientIdentifier.next_htc_number,
+                            :creator => User.current.user_id
+    )
+
+  end
 
   def hiv_status(date = Date.today)
     type = EncounterType.where("name = ?", "HIV TESTING").first.id

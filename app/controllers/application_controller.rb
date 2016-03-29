@@ -5,7 +5,16 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user, :except => [:attempt_login, :login, :logout]
   before_filter :save_login_state, :only => [:attempt_login, :login]
-  
+
+  def print_and_redirect(print_url, redirect_url, message = "Printing, please wait...", show_next_button = false, patient_id = nil)
+    @print_url = print_url
+    @redirect_url = redirect_url
+    @message = message
+    @show_next_button = show_next_button
+    @patient_id = patient_id
+    render :template => 'print/print', :layout => nil
+  end
+
   def next_task(client)
      htc_tasks = ["IN WAITING","IN SESSION","UPDATE HIV STATUS","COUNSELING","HIV TESTING","REFERRAL CONSENT CONFIRMATION",
                           "APPOINTMENT",] ### "ASSESSMENT" after COUNSELING

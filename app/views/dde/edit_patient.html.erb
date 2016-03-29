@@ -161,7 +161,7 @@
 </style>
 
 <script type="text/javascript">
-  tt_cancel_destination = "/patients/show?id=<%= @person.patient.patient_id%>";
+  tt_cancel_destination = "/patients/show?id=<%= @person.client.patient_id%>";
 </script>
   </head>
 <body>
@@ -178,7 +178,7 @@
               <%= @person.names.first.given_name rescue nil %>
             </td>
 		        <td class='data-top'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=given_name">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=given_name">
 		            <div class="button button_blue top-corner">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -193,7 +193,7 @@
               <%= @person.names.first.family_name rescue nil %>
             </td>
             <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=family_name">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=family_name">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -209,7 +209,7 @@
               <%= @person.birthdate.to_date.strftime("%d/%b/%Y") rescue nil %>
             </td>
             <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=birthdate">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=birthdate">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -224,7 +224,7 @@
               <%= ((@person.gender rescue nil).to_s.length > 0 ? ((@person.gender rescue nil).to_s.downcase == "m" ? "Male" : "Female") : "") %>
             </td>
             <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=gender">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=gender">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -239,7 +239,7 @@
               <%= @person.addresses.last.address2 rescue nil %>
             </td>
 		        <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=address2">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=address2">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -254,7 +254,7 @@
               <%= @person.addresses.last.county_district rescue nil %>
             </td>
 		        <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=address2">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=address2">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -269,7 +269,7 @@
               <%= @person.addresses.last.neighborhood_cell rescue nil %>
             </td>
 		        <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=address2">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=address2">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -284,7 +284,7 @@
               <%= @person.addresses.last.state_province rescue nil   %>
             </td>
 		        <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=state_province">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=state_province">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -299,7 +299,7 @@
               <%= @person.addresses.last.address1 rescue nil %>
             </td>
 	          <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=state_province">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=state_province">
                 <div class="button button_blue">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
                 </div>  
@@ -315,7 +315,7 @@
               <%= @person.addresses.last.city_village rescue nil %>
             </td>
 		        <td class='data'>
-	            <a href="/dde/edit_demographics?id=<%= @person.patient.patient_id %>&field=state_province">
+	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=state_province">
                 <div class="button button_blue bottom-corner">
 		              <img src="/touchscreentoolkit/lib/images/pencil.png" alt="Edit" />
 		            </div>
@@ -329,11 +329,11 @@
   <!--/div-->
 
   <div id="footer" style="background-color: #333; height: 90px; margin-top: 10px;">
-    <button class="green" style="float: right; margin-right: 30px;" onclick="window.location = '/patients/show/<%= @person.patient.patient_id rescue nil %>'">
+    <button class="green" style="float: right; margin-right: 30px;" onclick="window.location = '/patients/show/<%= @person.client.patient_id rescue nil %>'">
       <span>Finish</span>
     </button>
 
-    <button class="blue" style="float: right; margin-right: 30px;" onclick="window.location = '/patients/national_id_label?patient_id=<%= @person.patient.patient_id%>&route_back=true'">
+    <button class="blue" style="float: right; margin-right: 30px;" onclick="window.location = '/patients/national_id_label?patient_id=<%= @person.client.patient_id%>&route_back=true'">
       <span>Print Registration</span>
     </button>
   </div>

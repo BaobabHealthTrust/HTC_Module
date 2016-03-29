@@ -1,4 +1,4 @@
-class DDE
+module DDE
     def self.search_and_or_create(json)
 
       raise "Argument expected to be a JSON Object" if (JSON.parse(json) rescue nil).nil?
@@ -43,16 +43,15 @@ class DDE
         
       # Check if this patient exists locally
       result = ClientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
-         
+
       if result.blank?
         # if patient does not exist locally, first verify if the patient is similar
         # to an existing one by national_id so you can update else create one
-        
         (person["patient"]["identifiers"] rescue []).each do |identifier|
           
           result = ClientIdentifier.find_by_identifier(identifier[identifier.keys[0]], 
               :conditions => ["identifier_type = ?", 
-              ClientIdentifierType.find_by_name("National id").id]) rescue nil
+              ClientIdentifierType.find_by_name("National id").id])
           
           break if !result.blank?
           
@@ -68,11 +67,11 @@ class DDE
           current_national_id.void("National ID version change")
         
         elsif person["patient_id"].blank?     
-        
+
           self.create_from_form(passed["person"])
-          
+
           result = ClientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
-          
+
         else
         
           result = Client.find(person["patient_id"]) rescue nil
@@ -81,10 +80,10 @@ class DDE
         
       else
       
-        patient = result.patient 
+        patient = result.client
       
         address = patient.person.addresses.last rescue nil
-        
+
         local = {
             "gender"=>(patient.person.gender rescue nil), 
             "birthdate_estimated"=>(patient.person.birthdate_estimated rescue nil), 
@@ -118,6 +117,7 @@ class DDE
             }
           }
       
+
         if (local["gender"].downcase.strip != person["gender"].downcase.strip) or 
               (local["birthdate"].strip != person["birthdate"].strip) or 
               (local["birthdate_estimated"] != person["birthdate_estimated"])
@@ -186,12 +186,14 @@ class DDE
             
             else
             
+							uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
               PersonAttribute.create(
                   "person_id" => patient.person.person_id, 
                   "value" => (person["person_attributes"][field.keys[0]] rescue nil),
                   "person_attribute_type_id" => PersonAttributeType.find_by_name(field[field.keys[0]]).id,
-                  "uuid" => (PersonAttribute.find_by_sql("SELECT UUID() uuid").first.uuid)
-                )
+									"creator" => User.current.id,
+                  "uuid" => uuid
+                ) 
             
             end
             
@@ -217,8 +219,8 @@ class DDE
                 "city_village" => (person["addresses"]["current_village"] rescue nil),
                 "state_province" => (person["addresses"]["current_district"] rescue nil),
                 "county_district" => (person["addresses"]["home_ta"] rescue nil),
-                "neighborhood_cell" => (person["addresses"]["home_village"] rescue nil),
-                "township_division" => (person["addresses"]["current_ta"] rescue nil)
+                "address3" => (person["addresses"]["home_village"] rescue nil),
+                "address4" => (person["addresses"]["current_ta"] rescue nil)
               )
           
           else 
@@ -230,8 +232,8 @@ class DDE
                 "city_village" => (person["addresses"]["current_village"] rescue nil),
                 "state_province" => (person["addresses"]["current_district"] rescue nil),
                 "county_district" => (person["addresses"]["home_ta"] rescue nil),
-                "neighborhood_cell" => (person["addresses"]["home_village"] rescue nil),
-                "township_division" => (person["addresses"]["current_ta"] rescue nil),
+                "address3" => (person["addresses"]["home_village"] rescue nil),
+                "address4" => (person["addresses"]["current_ta"] rescue nil),
                 "uuid" => (PersonAddress.find_by_sql("SELECT UUID() uuid").first.uuid)
               )
           
@@ -286,7 +288,12 @@ class DDE
 		  person.save
 
 		  person.names.create(names_params)
-		  person.addresses.create(address_params) unless address_params.empty? rescue nil
+			[['neighborhood_cell', 'address3'], ['township_division', 'address4']].each  do |arr|
+				address_params["#{arr[1]}"] = address_params["#{arr[0]}"]
+				address_params.delete(arr[0])
+			end
+
+		  person.addresses.create(address_params) unless address_params.empty? #rescue nil
 
 		  person.person_attributes.create(
 		    :person_attribute_type_id => PersonAttributeType.find_by_name("Occupation").person_attribute_type_id,
@@ -319,16 +326,21 @@ class DDE
       # TODO handle the birthplace attribute
 
 		  if (!patient_params.nil?)
-		    patient = person.create_client
+
+				patient = Client.new(:creator => User.current.id)
+				patient.patient_id = person.person_id
+				patient.save!
 
 		    patient_params["identifiers"].each{|identifier_type_name, identifier|
           next if identifier.blank?
           identifier_type = ClientIdentifierType.find_by_name(identifier_type_name) || ClientIdentifierType.find_by_name("Unknown id")
-          obj = ClientIdentifier.new
-          obj.patient_id = patient.id
-          obj.identifier_type = identifier_type
-          obj.identifier = identifier_type.patient_identifier_type_id
-          obj.identifier_type = identifier_type.patient_identifier_type_id
+
+          ClientIdentifier.create(
+            :patient_id => patient.patient_id,
+            :identifier => identifier,
+            :creator => User.current.id,
+            :identifier_type => identifier_type.patient_identifier_type_id
+          )
         }
 		    # This might actually be a national id, but currently we wouldn't know
 		    #patient.patient_identifiers.create("identifier" => patient_params["identifier"], "identifier_type" => ClientIdentifierType.find_by_name("Unknown id")) unless params["identifier"].blank?

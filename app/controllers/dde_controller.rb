@@ -47,23 +47,40 @@ class DdeController < ApplicationController
 
     end
 
-    patient_id = DDE.search_and_or_create(json.to_json)# rescue nil
+    patient_id = DDE.search_and_or_create(json.to_json)
 
     json = JSON.parse(params["person"]) rescue {}
 
-    patient = Patient.find(patient_id) rescue nil
+    person = Person.find(patient_id)
 
-    print_and_redirect("/patients/national_id_label?patient_id=#{patient_id}", next_task(patient)) and return if !patient.blank? and (json["print_barcode"] rescue false)
+		address = person.addresses.last rescue nil
 
-    # redirect_to "/encounters/new/registration?patient_id=#{patient_id}" and return if !patient_id.blank?
+    current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
 
-    redirect_to next_task(patient) and return if !patient.blank?
+    if person.client.assignAccessionNumber
+      write_encounter("IN WAITING", person, current)
+    end
+		
+    redirect_to "/waiting_list" and return
+
+
+    #redirect_to next_task(patient) and return if !patient.blank?
 
     flash["error"] = "Sorry! Something went wrong. Failed to process properly!"
 
-    redirect_to "/
-" and return
+    redirect_to "/" and return
 
+  end
+
+  def write_encounter(encounter_type, person, current = DateTime.now)
+    current = session[:datetime] if !session[:datetime].blank?
+    type = EncounterType.find_by_name(encounter_type).id
+    current_location = Location.current_location
+
+    encounter = Encounter.create(encounter_type: type, patient_id: person.id,
+                                 location_id: current_location,
+                                 encounter_datetime: current.to_datetime.strftime("%Y-%m-%d %H:%M:%S"),
+                                 creator: current_user.id)
   end
 
   def process_data
@@ -189,11 +206,8 @@ class DdeController < ApplicationController
   end
 
   def edit_patient
-    if params[:id].blank?
-      person_id = params[:patient_id]
-    else
-      person_id = params[:id]
-    end
+    
+    person_id = params[:client_id]   
 
     @person = Person.find(person_id)
   end
@@ -201,14 +215,11 @@ class DdeController < ApplicationController
   def edit_demographics
     @field = params[:field]
 
-    if params[:id].blank?
-      person_id = params[:patient_id]
-    else
-      person_id = params[:id]
-    end
+    person_id = params[:client_id] || params[:id]
+   
     @person = Person.find(person_id)
 
-    @patient = @person.patient rescue nil
+    @patient = @person.client rescue nil
   end
 
   def update_demographics
@@ -324,7 +335,12 @@ class DdeController < ApplicationController
 
     patient = Patient.find(patient_id) rescue nil
 
-    print_and_redirect("/patients/national_id_label?patient_id=#{patient_id}", "/dde/edit_patient/id=#{patient_id}") and return if !patient.blank? and (json["print_barcode"] rescue false)
+    #----------------------------------Assign HTC accession number to client--------------------------
+    #----------------------------------By Kenneth Kapundi---------------------------------------------
+    patient.client.assignAccessionNumber
+    #----------------end assignment---------------------------------------------------------------------------
+
+    print_and_redirect("/clients/print_accession?id=#{patient_id}", "/dde/edit_patient/id=#{patient_id}") and return if !patient.blank? and (json["print_barcode"] rescue false)
 
     redirect_to "/dde/edit_patient/#{patient_id}" and return if !patient_id.blank?
 

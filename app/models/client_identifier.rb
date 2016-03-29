@@ -1,9 +1,11 @@
 class ClientIdentifier < ActiveRecord::Base
 	self.table_name = 'patient_identifier'
 	self.primary_key = 'patient_identifier_id'
-	include Openmrs
+  include Openmrs
 
-	before_save :before_create
+	before_save :check_defaults
+  has_one :person, -> {where voided: 0}, foreign_key: "person_id"
+	belongs_to :client, -> {where voided: 0}, foreign_key: "patient_id"
 
   def self.calculate_checkdigit(number)
     # This is Luhn's algorithm for checksums
@@ -23,6 +25,12 @@ class ClientIdentifier < ActiveRecord::Base
     checkdigit = 0
     checkdigit = checkdigit +1 while ((sum+(checkdigit))%10)!=0
     return checkdigit
+  end
+
+  def check_defaults
+    self.creator = User.current.id if !(self.has_attribute?('creator') && self.creator != 0)
+    self.date_created = DateTime.now.to_datetime.strftime("%Y-%m-%d") if self.date_created.blank?
+    self.uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid'] if self.uuid.blank?
   end
 
   def self.next_htc_number

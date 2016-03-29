@@ -3,7 +3,6 @@ require "client_service"
 class PeopleController < ApplicationController
   include ClientService
 
-
   def new
     if request.post?
 
@@ -62,6 +61,31 @@ class PeopleController < ApplicationController
     end
 
     render :text => (districts + ["Other"]).join('|')  and return
+  end
+
+  def static_nationalities
+    search_string = (params[:search_string] || "").upcase
+
+    nationalities = []
+    File.open("public/data/nationalities.txt", "r").each{ |nat|
+      nationalities << nat if nat.upcase.strip.match(search_string)
+    }
+
+    render :text => "<li></li><li " + nationalities.map{|nationality| "value=\"#{nationality}\">#{nationality}" }.join("</li><li ") + "</li>"
+
+  end
+
+  def static_countries
+    search_string = (params[:search_string] || "").upcase
+
+    nationalities = []
+
+    File.open("public/data/countries.txt", "r").each{ ||
+      nationalities << c if c.upcase.strip.match(search_string)
+    }
+
+    render :text => "<li></li><li " + nationalities.map{|ctry| "value=\"#{ctry}\">#{ctry}" }.join("</li><li ") + "</li>"
+
   end
 
   def traditional_authority

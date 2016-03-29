@@ -294,7 +294,7 @@
       
 </div>
 
-<% form_tag("/dde/process_result", "method" => 'post', "enctype" => 'multipart/form-data', 
+<%= form_tag("/dde/process_result", "method" => 'post', "enctype" => 'multipart/form-data',
           "id" => 'form', "class" => "form-horizontal", "autocomplete" => "off", "role" => "form", "novalidate" => "novalidate") do %>
              
        <textarea id="json" name="person" ></textarea>   
@@ -347,7 +347,6 @@
         if(__$("json")){
           __$("json").innerHTML = result;
         }
-        
         if(__$("form")){
           __$("form").submit();
         }

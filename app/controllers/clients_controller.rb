@@ -1257,6 +1257,7 @@ class ClientsController < ApplicationController
         end
 				
 		 else
+
       if (settings.full_demographics_at_reception.to_s == "true") && !params[:final_save]
           firstname = params["firstname"] || params[:name]['firstname']
           surname = params["surname"] || params[:name]['surname']
