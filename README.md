@@ -3,6 +3,13 @@
 # HIV Testing and Counselling module
 ###################################################
 
+System Requirements
+-------------------
+Verify your system meets the following requirements for a successful application setup.
+
+    1. Use ruby version 2.1.2
+    2. Use rails 4.1.0 or above
+
 Get Application
 --------------------
 Clone the HTC application from the Baobab Health Trust organisation github account as below
@@ -42,13 +49,6 @@ Navigate back into the applications root directory.
 Run command as below to do so:
 
     cd ..
-
-System Requirements
--------------------
-Verify your system meets the following requirements for a successful application setup.
-
-    1. Use ruby version 2.1.2
-    2. Use rails 4.1.0 or above
 
 Get database.yml
 ------------------
