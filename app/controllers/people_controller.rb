@@ -3,6 +3,7 @@ require "client_service"
 class PeopleController < ApplicationController
   include ClientService
 
+
   def new
     if request.post?
 
@@ -39,8 +40,55 @@ class PeopleController < ApplicationController
     render :text => regions.join('')  and return
   end
 
+  def districts_for
+
+    region_id = Region.find_by_name("#{params[:filter_value]}").id rescue nil
+    region_conditions = ["name LIKE (?) AND region_id = ? ", "%#{params[:search_string]}%", region_id]
+
+    districts = District.find(:all,:conditions => region_conditions, :order => 'name') rescue []
+    districts = districts.map do |d|
+      d.name
+    end
+
+    if region_id.blank?
+      countries= []
+      File.open(RAILS_ROOT + "/public/data/countries.txt", "r").each{ |ctry|
+        countries << ctry.strip
+      }
+      if countries.length > 0
+        countries = (["Mozambique", "Zambia", "Tanzania", "Zimbabwe", "Nigeria", "Namibia"] + countries).uniq
+      end
+      districts = countries
+    end
+
+    render :text => (districts + ["Other"]).join('|')  and return
+  end
+
+  def traditional_authority
+    district_id = District.find_by_name("#{params[:filter_value]}").id rescue nil
+    traditional_authority_conditions = ["name LIKE (?) AND district_id = ?", "%#{params[:search_string]}%", district_id]
+
+    traditional_authorities = TraditionalAuthority.find(:all,:conditions => traditional_authority_conditions, :order => 'name') rescue []
+    traditional_authorities = traditional_authorities.map do |t_a|
+      "<li value='#{t_a.name}'>#{t_a.name}</li>"
+    end
+    render :text => traditional_authorities.join('') + "<li value='Other'>Other</li>" and return
+  end
+
+  def traditional_authority_for
+    district_id = District.find_by_name("#{params[:filter_value]}").id
+    traditional_authority_conditions = ["name LIKE (?) AND district_id = ?", "%#{params[:search_string]}%", district_id]
+
+    traditional_authorities = TraditionalAuthority.find(:all,:conditions => traditional_authority_conditions, :order => 'name')
+    traditional_authorities = traditional_authorities.map do |t_a|
+      t_a.name
+    end
+    render :text => (traditional_authorities + ["Other"]).join('|') and return
+  end
+
   def village
-    ta_id = TraditionalAuthority.where(:name => params[:value]).first.id;
+    ta = params[:value] || params[:filter_value]
+    ta_id = TraditionalAuthority.where(:name => ta).first.id
     villages = Village.where("traditional_authority_id = ? AND name LIKE (?)",ta_id, "#{params[:search_string]}%")
     
     regions = (villages || []).map do |r|
@@ -60,6 +108,14 @@ class PeopleController < ApplicationController
       "<li value=\"#{r.name}\">#{r.name}</li>"
     end
     render :text => regions.join('')  and return
+  end
+
+  def landmark
+    landmarks = ["", "Market", "School", "Police", "Church", "Borehole", "Graveyard"]
+    landmarks = landmarks.map do |v|
+      "<li value='#{v}'>#{v}</li>"
+    end
+    render :text => landmarks.join('') + "<li value='Other'>Other</li>" and return
   end
 
    def ta

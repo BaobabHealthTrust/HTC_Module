@@ -5,7 +5,7 @@ class Person < ActiveRecord::Base
 		before_save :before_create
 		has_one :client, -> {where voided: 0}, foreign_key: :patient_id, dependent: :destroy
 		has_one :provider, foreign_key: :provider_id
-
+		has_one :patient, -> {where voided: 0}, foreign_key: :patient_id, dependent: :destroy
 	  has_one :client, -> {where voided: 0}, foreign_key: :patient_id, dependent: :destroy
   has_many :names, -> {where voided: 0}, class_name: 'PersonName', foreign_key: :person_id, dependent: :destroy
   has_many :addresses, -> {where voided: 0}, class_name: 'PersonAddress', foreign_key: :person_id, dependent: :destroy

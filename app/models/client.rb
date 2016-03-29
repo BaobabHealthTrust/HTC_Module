@@ -5,6 +5,7 @@ class Client < ActiveRecord::Base
 	before_save :before_create
 	has_one :person, -> {where voided: 0}, foreign_key: "person_id"
 	has_many :encounters, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
+  has_many :client_identifiers, -> { where voided: 0}, foreign_key: "patient_id", dependent: :destroy
 
   def hiv_status(date = Date.today)
     type = EncounterType.where("name = ?", "HIV TESTING").first.id

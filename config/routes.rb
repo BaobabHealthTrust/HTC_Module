@@ -28,10 +28,24 @@ HTCModule::Application.routes.draw do
 	get "/login" => "sessions#attempt_login"
 	post "/login" => "sessions#login", as: :log_in
 	get "/logout" => "sessions#logout", as: :log_out
-
+  get "people/districts_for"
+  get "people/traditional_authority"
+  get "people/village"
+  get "people/landmark"
 	get "search" => "clients#search"
 	post "search" => "clients#search"
 
+  get "ajax_search" => "dde#ajax_search"
+  post "ajax_search" => "dde#ajax_search"
+  post "process_result" => "dde#process_result"
+
+  post "dde/send_to_dde"
+  post "dde/ajax_process_data"
+  post "dde/process_confirmation"
+  post "dde/process_scan_data"
+  post "dde/process_result"
+
+  get 'new_patient' => 'dde#new_patient'
 	get "client_demographics" => "clients#demographics"
 	post "client_demographics" => "clients#demographics"
 

@@ -1,0 +1,16 @@
+default: &default
+  application_name: ANC
+  dde_server: 192.168.12.70:9000
+  dde_username: admin
+  dde_password: password
+  site_code: MLS
+  secure_connection: false 
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
