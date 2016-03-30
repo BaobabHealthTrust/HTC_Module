@@ -18,6 +18,13 @@
 		</style>
 	</head>
 	<body onload="setSearchButton();">
+        <%= form_tag("/dde/process_scan_data", "method" => 'post', "enctype" => 'multipart/form-data',
+                    "id" => 'dde-home', "class" => "form-horizontal", "autocomplete" => "off", "role" => "form", "novalidate" => "novalidate") do %>
+
+            <textarea id="person" name="person" style="display: none;" condition="false"></textarea>
+
+        <% end %>
+
         <script language="javascript">
           function setSearchButton(){
               document.getElementById("uinav").getElementsByTagName("button")[0].setAttribute("class","button green");
@@ -114,4 +121,6 @@
   }
   }
   <% params[:tab] = ""  %>
+</script>
+    //-->
 </script>

@@ -1192,7 +1192,7 @@ class ClientsController < ApplicationController
 				accession = params[:barcode] if  ! params[:barcode].blank?
 				accession = params[:accession_number] if ! params[:accession_number].blank?
 
-			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
+        @accession = ClientIdentifier.where("identifier = '#{accession}'
 											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
 
 				if @accession.blank?

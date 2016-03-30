@@ -43,8 +43,13 @@ HTCModule::Application.routes.draw do
   post "dde/ajax_process_data"
   post "dde/process_confirmation"
   post "dde/process_scan_data"
+
   post "dde/process_result"
   get  "dde/process_result"
+
+  get  "dde/process_data"
+  get "patient_not_found/:id" => "dde#patient_not_found"
+  post "patient_not_found/:id" => "dde#patient_not_found"
 
   get 'new_patient' => 'dde#new_patient'
 	get "client_demographics" => "dde#edit_patient"
@@ -222,6 +227,7 @@ HTCModule::Application.routes.draw do
 	post "admins/set_date" => "admins#set_date"
 	
 	get "htcs/dashboard" => "htcs#dashboard"
+  get "people" => "htcs#index"
   get "htcs/account" => "users#my_account"
 
 	get "locations/destroy/:id" => "locations#destroy"

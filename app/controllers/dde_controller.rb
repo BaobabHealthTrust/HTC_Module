@@ -117,7 +117,9 @@ class DdeController < ApplicationController
       },
       "birthdate" => (patient.person.birthdate rescue nil),
       "patient" => {
-          "identifiers" => (patient.patient_identifiers.collect{|id| {id.type.name => id.identifier} if id.type.name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
+          "identifiers" => (patient.patient_identifiers.collect{|id| {
+              ClientIdentifierType.find(id.identifier_type).name => id.identifier
+          } if ClientIdentifierType.find(id.identifier_type).name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
       },
       "birthdate_estimated" => nil,
       "addresses" => {
@@ -157,7 +159,7 @@ class DdeController < ApplicationController
           {
             "identifier" => (id.identifier rescue "Unknown"),
             "identifierType" => {
-              "display" => (id.type.name rescue "Unknown")
+              "display" => (ClientIdentifierType.find(id.identifier_type).name rescue "Unknown")
             }
           }
         }
@@ -367,7 +369,6 @@ class DdeController < ApplicationController
     if JSON.parse(@results).length == 1
 
       result = JSON.parse(JSON.parse(@results)[0])
-
       checked = DDE.compare_people(result, @json) # rescue false
 
       if checked
@@ -430,7 +431,8 @@ class DdeController < ApplicationController
               },
               "birthdate" => (patient.person.birthdate rescue nil),
               "patient" => {
-                  "identifiers" => (patient.patient_identifiers.collect{|id| {id.type.name => id.identifier} if id.type.name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
+                  "identifiers" => (patient.patient_identifiers.collect{|id| {ClientIdentifierType.find(id.identifier_type).name => id.identifier
+                  } if ClientIdentifierType.find(id.identifier_type).name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
               },
               "birthdate_estimated" => nil,
               "addresses" => {
@@ -500,7 +502,8 @@ class DdeController < ApplicationController
             },
             "birthdate" => (patient.person.birthdate rescue nil),
             "patient" => {
-                "identifiers" => (patient.patient_identifiers.collect{|id| {id.type.name => id.identifier} if id.type.name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
+                "identifiers" => (patient.patient_identifiers.collect{|id| {ClientIdentifierType.find(id.identifier_type).name => id.identifier
+                } if ClientIdentifierType.find(id.identifier_type).name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
             },
             "birthdate_estimated" => nil,
             "addresses" => {
@@ -570,7 +573,9 @@ class DdeController < ApplicationController
             },
             "birthdate" => (patient.person.birthdate rescue nil),
             "patient" => {
-                "identifiers" => (patient.patient_identifiers.collect{|id| {id.type.name => id.identifier} if id.type.name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
+                "identifiers" => (patient.patient_identifiers.collect{|id|
+                  {ClientIdentifierType.find(id.identifier_type).name => id.identifier
+                  } if ClientIdentifierType.find(id.identifier_type).name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
             },
             "birthdate_estimated" => nil,
             "addresses" => {
@@ -612,9 +617,18 @@ class DdeController < ApplicationController
   end
 
   def patient_not_found
+
+    values = ['','Driver','Housewife','Messenger','Business','Farmer','Salesperson','Teacher',
+              'Student','Security guard','Domestic worker', 'Police','Office worker',
+              'Mechanic','Prisoner','Craftsman','Healthcare Worker','Soldier'].sort.concat(["Other"])
+    values.concat(["Unknown"]) if !session[:datetime].blank?
+    @occupations = values
+
     @id = params[:id]
 
     redirect_to "/" and return if !params[:create].blank? and params[:create] == "false"
+
+    render :layout => 'basic'
   end
 
   def ajax_search
@@ -710,7 +724,9 @@ class DdeController < ApplicationController
         },
         "birthdate" => (patient.person.birthdate rescue nil),
         "patient" => {
-            "identifiers" => (patient.patient_identifiers.collect{|id| {id.type.name => id.identifier} if id.type.name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
+            "identifiers" => (patient.patient_identifiers.collect{|id| {
+                ClientIdentifierType.find(id.identifier_type).name => id.identifier
+            } if ClientIdentifierType.find(id.identifier_type).name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
         },
         "birthdate_estimated" => nil,
         "addresses" => {
@@ -764,13 +780,13 @@ class DdeController < ApplicationController
 
       person.person.patient.patient_identifiers.each do |ids|
 
-        if record["National ID"].nil? and (ids.type.name.downcase == "national id" rescue false)
+        if record["National ID"].nil? and (ClientIdentifierType.find(id.identifier_type).name.downcase == "national id" rescue false)
 
           record["National ID"] = ids.identifier rescue nil
 
         else
 
-          record["patient"]["identifiers"] << {ids.type.name => ids.identifier} rescue nil
+          record["patient"]["identifiers"] << {ClientIdentifierType.find(id.identifier_type).name => ids.identifier} rescue nil
 
         end
 
@@ -844,13 +860,13 @@ class DdeController < ApplicationController
 
       identifier.patient.patient_identifiers.each do |ids|
 
-        if record["National ID"].nil? and (ids.type.name.downcase == "national id" rescue false)
+        if record["National ID"].nil? and (ClientIdentifierType.find(id.identifier_type).name.downcase == "national id" rescue false)
 
           record["National ID"] = ids.identifier rescue nil
 
         else
 
-          record["patient"]["identifiers"] << {ids.type.name => ids.identifier} rescue nil
+          record["patient"]["identifiers"] << {ClientIdentifierType.find(id.identifier_type).name => ids.identifier} rescue nil
 
         end
 

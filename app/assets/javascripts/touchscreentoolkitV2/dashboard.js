@@ -1592,13 +1592,46 @@ function triggerPost(id, vid){
 	if(__$(id) && __$(vid) && __$(vid).value.trim().match(/\$/)){
 		
 		__$(vid).value = __$(vid).value.trim().replace(/\$/, "");
-		
-		__$(id).submit();
-		
+
+        if(__$(vid).value.match(/\d+\-\d+/)){
+            __$(id).submit();
+        }else {
+            ajaxCusRequest(__$(vid).value);
+        }
+
 	}
 	
 	setTimeout("triggerPost('" + id + "', '" + vid + "')", 500);
 	
+}
+
+function ajaxCusRequest(id){
+    var url = "/dde/process_data?id=" + id;
+
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        handleAjaxRequest(httpRequest);
+    };
+    try {
+        httpRequest.open("GET", url, true);
+        httpRequest.send(null);
+    } catch(e){
+    }
+}
+
+function handleAjaxRequest(aXMLHttpRequest){
+    if (!aXMLHttpRequest) return;
+
+    if (aXMLHttpRequest.readyState == 4 && (aXMLHttpRequest.status == 200 ||
+        aXMLHttpRequest.status == 304)) {
+
+        var result = aXMLHttpRequest.responseText;
+
+        __$("person").innerHTML = result;
+
+        document.getElementById("dde-home").submit();
+
+    }
 }
 
 function init(){

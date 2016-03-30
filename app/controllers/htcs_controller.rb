@@ -13,8 +13,9 @@ class HtcsController < ApplicationController
                                          encounter_type = TestEncounterType.where(name: 'Temperature Quality Control').first,
     ConceptName.where(name: 'Temperature').first.concept_id, @date, @current_location.id]).last
 
-    
-		if session[:location_id].nil?
+    @settings = YAML.load_file("#{Rails.root}/config/dde_connection.yml")[Rails.env] rescue {}
+
+    if session[:location_id].nil?
 			session[:user_id] = nil
 			redirect_to "/login" and return
 		end
