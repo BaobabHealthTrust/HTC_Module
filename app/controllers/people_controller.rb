@@ -94,9 +94,9 @@ class PeopleController < ApplicationController
 
     traditional_authorities = TraditionalAuthority.find(:all,:conditions => traditional_authority_conditions, :order => 'name') rescue []
     traditional_authorities = traditional_authorities.map do |t_a|
-      "<li value='#{t_a.name}'>#{t_a.name}</li>"
+      "<li value=\"#{t_a.name}\">#{t_a.name}</li>"
     end
-    render :text => traditional_authorities.join('') + "<li value='Other'>Other</li>" and return
+    render :text => traditional_authorities.join("") + "<li value='Other'>Other</li>" and return
   end
 
   def traditional_authority_for
@@ -122,10 +122,11 @@ class PeopleController < ApplicationController
   end
 
   def districts
+    filter = params[:value] || params[:filter_value]
     if params[:search_string].blank?
-      districts = District.where(:region_id => Region.where(:name => params[:value]).first.id)
+      districts = District.where(:region_id => Region.where(:name => filter).first.id)
     else
-      region_id = Region.where(:name => params[:value]).first.id
+      region_id = Region.where(:name => filter).first.id
       districts = District.where("region_id = ? AND name LIKE (?)",region_id, "#{params[:search_string]}%")
     end
     regions = (districts || []).map do |r|

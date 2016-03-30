@@ -1212,7 +1212,7 @@ class ClientsController < ApplicationController
             redirect_to "/clients/confirm/#{@accession.patient_id}" and return if @current_location.name.match(/reception/i)
 
             flash[:notice] = "Client not on waiting list"
-						redirect_to "/search" and return
+						redirect_to "/" and return
 					end
 				end
 

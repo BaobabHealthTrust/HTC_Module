@@ -207,9 +207,10 @@ class DdeController < ApplicationController
 
   def edit_patient
     
-    person_id = params[:client_id]   
+    person_id = params[:client_id]  || params[:id]
 
     @person = Person.find(person_id)
+    render :layout => 'basic'
   end
 
   def edit_demographics
@@ -220,12 +221,16 @@ class DdeController < ApplicationController
     @person = Person.find(person_id)
 
     @patient = @person.client rescue nil
+
+    render :layout => 'basic'
+
   end
 
   def update_demographics
+
     @settings = YAML.load_file("#{Rails.root}/config/dde_connection.yml")[Rails.env] rescue {}
 
-    patient = Person.find(params[:person_id]).patient rescue nil
+    patient = Person.find(params[:person_id]).client rescue nil
 
     if patient.blank?
 
@@ -235,7 +240,7 @@ class DdeController < ApplicationController
 
     end
 
-    national_id = ((patient.patient_identifiers.find_by_identifier_type(PatientIdentifierType.find_by_name("National id").id).identifier rescue nil) || params[:id])
+    national_id = ((patient.client_identifiers.find_by_identifier_type(ClientIdentifierType.find_by_name("National id").id).identifier rescue nil) || params[:id])
 
     name = patient.person.names.last rescue nil
 
@@ -267,8 +272,9 @@ class DdeController < ApplicationController
 
     identifiers = []
 
-    patient.patient_identifiers.each{|id|
-      identifiers << {id.type.name => id.identifier} if id.type.name.downcase != "national id"
+    patient.client_identifiers.each{|id|
+      type = ClientIdentifierType.find(id.identifier_type)
+      identifiers << {type.name => id.identifier} if type.name.downcase != "national id"
     }
 
     # raise identifiers.inspect
@@ -303,9 +309,9 @@ class DdeController < ApplicationController
       "addresses" => {
           "current_residence" => (!(params[:person][:addresses][:address1] rescue nil).blank? ? (params[:person][:addresses][:address1] rescue nil) : (address.address1 rescue nil)),
           "current_village" => (!(params[:person][:addresses][:city_village] rescue nil).blank? ? (params[:person][:addresses][:city_village] rescue nil) : (address.city_village rescue nil)),
-          "current_ta" => (!(params[:person][:addresses][:township_division] rescue nil).blank? ? (params[:person][:addresses][:township_division] rescue nil) : (address.township_division rescue nil)),
+          "current_ta" => (!(params[:person][:addresses][:township_division] rescue nil).blank? ? (params[:person][:addresses][:township_division] rescue nil) : (address.address4 rescue nil)),
           "current_district" => (!(params[:person][:addresses][:state_province] rescue nil).blank? ? (params[:person][:addresses][:state_province] rescue nil) : (address.state_province rescue nil)),
-          "home_village" => (!(params[:person][:addresses][:neighborhood_cell] rescue nil).blank? ? (params[:person][:addresses][:neighborhood_cell] rescue nil) : (address.neighborhood_cell rescue nil)),
+          "home_village" => (!(params[:person][:addresses][:neighborhood_cell] rescue nil).blank? ? (params[:person][:addresses][:neighborhood_cell] rescue nil) : (address.address3 rescue nil)),
           "home_ta" => (!(params[:person][:addresses][:county_district] rescue nil).blank? ? (params[:person][:addresses][:county_district] rescue nil) : (address.county_district rescue nil)),
           "home_district" => (!(params[:person][:addresses][:address2] rescue nil).blank? ? (params[:person][:addresses][:address2] rescue nil) : (address.address2 rescue nil))
       }
@@ -335,14 +341,7 @@ class DdeController < ApplicationController
 
     patient = Patient.find(patient_id) rescue nil
 
-    #----------------------------------Assign HTC accession number to client--------------------------
-    #----------------------------------By Kenneth Kapundi---------------------------------------------
-    patient.client.assignAccessionNumber
-    #----------------end assignment---------------------------------------------------------------------------
-
-    print_and_redirect("/clients/print_accession?id=#{patient_id}", "/dde/edit_patient/id=#{patient_id}") and return if !patient.blank? and (json["print_barcode"] rescue false)
-
-    redirect_to "/dde/edit_patient/#{patient_id}" and return if !patient_id.blank?
+    redirect_to "/dde/edit_patient?client_id=#{patient_id}" and return if !patient_id.blank?
 
     flash["error"] = "Sorry! Something went wrong. Failed to process properly!"
 

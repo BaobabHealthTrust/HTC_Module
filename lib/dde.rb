@@ -25,7 +25,7 @@ module DDE
                 "address2"=>(person["addresses"]["home_district"] rescue nil),
                 "city_village"=>(person["addresses"]["current_village"] rescue nil),
                 "state_province"=>(person["addresses"]["current_district"] rescue nil),
-                "neighborhood_cell"=>(person["addresses"]["home_village"] rescue nil),
+                "address3"=>(person["addresses"]["home_village"] rescue nil),
                 "township_division"=>(person["addresses"]["current_ta"] rescue nil),
                 "county_district"=>(person["addresses"]["home_ta"] rescue nil)},
            "gender"=> gender ,
@@ -40,7 +40,7 @@ module DDE
            "t_a"=>""},
            "relation"=>""
         }
-        
+
       # Check if this patient exists locally
       result = ClientIdentifier.find_by_identifier((person["national_id"] || person["_id"]))
 
@@ -92,9 +92,9 @@ module DDE
             "addresses"=>{
               "current_residence" => (address.address1 rescue nil),
               "current_village" => (address.city_village rescue nil),
-              "current_ta" => (address.township_division rescue nil),
+              "current_ta" => (address.address4 rescue nil),
               "current_district" => (address.state_province rescue nil),
-              "home_village" => (address.neighborhood_cell rescue nil),
+              "home_village" => (address.address3 rescue nil),
               "home_ta" => (address.county_district rescue nil),
               "home_district" => (address.address2 rescue nil)
             }, 
@@ -108,7 +108,8 @@ module DDE
                 "citizenship" => (patient.person.person_attributes.find_by_person_attribute_type_id(PersonAttributeType.find_by_name("Citizenship").id).value rescue nil)
             }, 
             "patient"=>{
-              "identifiers"=>(patient.patient_identifiers.collect{|id| {id.type.name => id.identifier} if id.type.name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
+              "identifiers"=>(patient.patient_identifiers.collect{|id| {ClientIdentifierType.find(id.identifier_type).name => id.identifier
+              } if ClientIdentifierType.find(id.identifier_type).name.downcase != "national id"}.delete_if{|x| x.nil?} rescue [])
             }, 
             "birthdate"=>(patient.person.birthdate.strftime("%Y-%m-%d") rescue nil), 
             "names"=>{
@@ -141,24 +142,24 @@ module DDE
         end
       
         defidtype = ClientIdentifierType.find_by_name("Unknown ID").id rescue nil
-        
+
         (person["patient"]["identifiers"] rescue []).each do |identifier|
         
           if !local["patient"]["identifiers"].include?(identifier)
-          
+
             idtype = ClientIdentifierType.find_by_name(identifier.keys[0]).id rescue nil
-            
+
             if !defidtype.blank?
-            
-              uuid = ClientIdentifier.find_by_sql("SELECT UUID() uuid")
-              
-              ClientIdentifier.create(
-                  "patient_id" => patient.id, 
-                  "identifier" => identifier[identifier.keys[0]], 
-                  "identifier_type" => (idtype || defidtype), 
-                  "uuid" => uuid                
-                )
-            
+
+              uuid = ActiveRecord::Base.connection.select_one("SELECT UUID() as uuid")['uuid']
+              id = ClientIdentifier.new
+              id.patient_id = patient.id
+              id.identifier =  identifier[identifier.keys[0]]
+              id.identifier_type = (idtype || defidtype)
+              id.creator = User.current.id
+              id.uuid = uuid
+              id.save
+
             end
           
           end
@@ -244,7 +245,7 @@ module DDE
         # raise local.inspect
       
       end
-       
+
       return result.patient_id rescue nil
         
     end

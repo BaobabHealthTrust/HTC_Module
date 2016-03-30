@@ -3,14 +3,13 @@
 <style type="text/css">
 
   table {
-    vertical-align:center;
+    vertical-align:middle;
     width: 98%;
     -moz-user-select:none;
     border-style: solid;
     border-width: 1px;
     border-radius: 0px 20px 20px 0px;
   }
-  
 
   .title {
     font-size: 25px;
@@ -161,7 +160,7 @@
 </style>
 
 <script type="text/javascript">
-  tt_cancel_destination = "/patients/show?id=<%= @person.client.patient_id%>";
+  tt_cancel_destination = "/clients/<%= @person.client.patient_id%>";
 </script>
   </head>
 <body>
@@ -266,7 +265,7 @@
               H<span class="therest">OME VILLAGE</span>
             </td>
             <td class='data'> 
-              <%= @person.addresses.last.neighborhood_cell rescue nil %>
+              <%= @person.addresses.last.address3 rescue nil %>
             </td>
 		        <td class='data'>
 	            <a href="/dde/edit_demographics?id=<%= @person.client.patient_id %>&field=address2">
@@ -329,11 +328,11 @@
   <!--/div-->
 
   <div id="footer" style="background-color: #333; height: 90px; margin-top: 10px;">
-    <button class="green" style="float: right; margin-right: 30px;" onclick="window.location = '/patients/show/<%= @person.client.patient_id rescue nil %>'">
+    <button class="green" style="float: right; margin-right: 30px;" onclick="window.location = '/clients/<%= @person.client.patient_id rescue nil %>'">
       <span>Finish</span>
     </button>
 
-    <button class="blue" style="float: right; margin-right: 30px;" onclick="window.location = '/patients/national_id_label?patient_id=<%= @person.client.patient_id%>&route_back=true'">
+    <button class="blue" style="float: right; margin-right: 30px;" onclick="window.location = '/clients/national_id_label?patient_id=<%= @person.client.patient_id%>&route_back=true'">
       <span>Print Registration</span>
     </button>
   </div>

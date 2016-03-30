@@ -6,6 +6,8 @@ class ClientIdentifier < ActiveRecord::Base
 	before_save :check_defaults
   has_one :person, -> {where voided: 0}, foreign_key: "person_id"
 	belongs_to :client, -> {where voided: 0}, foreign_key: "patient_id"
+  has_one :type, class_name: 'ClientIdentifierType', foreign_key: :patient_identifier_type_id
+
 
   def self.calculate_checkdigit(number)
     # This is Luhn's algorithm for checksums

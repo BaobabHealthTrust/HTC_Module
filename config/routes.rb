@@ -47,8 +47,11 @@ HTCModule::Application.routes.draw do
   get  "dde/process_result"
 
   get 'new_patient' => 'dde#new_patient'
-	get "client_demographics" => "clients#demographics"
-	post "client_demographics" => "clients#demographics"
+	get "client_demographics" => "dde#edit_patient"
+	post "client_demographics" => "dde#edit_patient"
+
+  get "dde/edit_demographics"
+  get "dde/edit_patient"
 
   get "clients/demographics_edit/:id" => "clients#demographics_edit"
 
@@ -123,6 +126,8 @@ HTCModule::Application.routes.draw do
   get "select_caregiver/" => "clients#select_caregiver"
 
 	post "show_client" => "clients#show"
+
+  get "dde/update_demographics"
 
 	get "protocols" => "admins#protocols"
   get "tests" => "admins#tests"
