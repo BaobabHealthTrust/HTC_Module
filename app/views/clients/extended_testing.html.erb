@@ -144,17 +144,18 @@
       function confirm(message){
         var ele = document.getElementById('cover')
         ele.style.display = "inline";
+        ele.style.background = 'rgba(34,34,34,0.75)';
         document.body.appendChild(ele);
-
         var ele = document.getElementById('popup')
         ele.style.display = "inline";
         html = "<div style='display:table;width:100%;'><div style='display:table-row;width:100%;'>";
         html += "<div id='text'>" + message + "</div></div><div style='display:table-row;width:100%;'>";
         html += '<div style="display:table-cell;width:100%;"><div style="display:table;width:100%;"><div style="display:table-row;width:100%;">';
-          if (message == "Enter correct lot numbers"){
-          html += '<div id="confirm"><button class="button red" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">Ok</button></div>';
-        }else{
-          html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>';
+        if (message == "Enter correct lot numbers"|| message == 'Send DBS to HIV National Reference Lab'){
+            html += '<div id="confirm"><button class="button red" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="reset()">Ok</button></div>';
+        }
+        else{
+            html += '<div id="confirm"><button class="button blue" style="margin: 3px; font-size: 20px; height: 60px;" onmousedown="allow()">Ok</button></div>';
         }
         html += "</div></div></div></div></div>"
         ele.innerHTML =  html;
@@ -208,13 +209,14 @@
                     cell1.style.fontSize = "25px";
                     cell2.style.verticalAlign = "right";
                     cell2.innerHTML = attributes[i][1];
-                    if( i == 2 && __$("HTC Test 1 result").value != __$("HTC Test 2 result").value ) {
-                        cell2.innerHTML = "Inconclusive Results.<br /> Advise re-test in 4 weeks.";
+                    if( i == 2) {
+                        if (__$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Reactive") {
+                            cell2.innerHTML = "Postive Results.<br /> Refer to ART Clinic for treatment.";
+                        }
+                        else {
+                            cell2.innerHTML = "Inconclusive Results.<br /> <span style='color: darkred'><%= @message %></span>";
+                        }
                     }
-                    else if( i == 2 && __$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Reactive" ) {
-                        cell2.innerHTML = "Postive Results.<br /> Refer to ART Clinic for treatment.";
-                    }
-
                     row.appendChild(cell2);
                 }
             }
@@ -240,9 +242,6 @@
                 var node =  document.getElementById('row2').childNodes[0].childNodes[0];
                 node.style.width = "100%";
                 node.style.height = "92px";
-                // var node =  document.getElementById('row2').childNodes[0].childNodes[0]
-                //node.style.width = "100% ! important";
-                //__$("row0").style.display = "none";
                 __$("stage").style.display = "none";
                 __$("buttons").style.width = "100%";
                 __$("buttons").style.height = "100%";
@@ -262,7 +261,6 @@
                 table.style.display = "table";
                 table.style.margin = "auto";
                 table.style.width = "100%";
-                //table.style.backgroundColor = "lightblue"
                 __$("main-content-area").appendChild(table);
 
                 var row1 = document.createElement("div");
@@ -295,7 +293,6 @@
           var table = document.createElement("div");
           table.style.display = "table";
           table.style.margin = "auto";
-          // table.style.border = "1px solid #000";
           __$("main-content-area").appendChild(table);
 
           var row1 = document.createElement("div");
@@ -308,7 +305,6 @@
           row1.appendChild(cell1_1);
 
           cell1_1.setAttribute("targetID", 'rapidrange');
-          //var timer1 = addTimer(cell1_1, 15, kits[0][1] + " Test Timer", 0.55)
           var timer1 = addTimer(cell1_1, 15, " Test 1 Timer", 0.55)
           timer1.style.marginLeft = "40px";
           timer1.style.marginRight = "40px";
@@ -320,7 +316,6 @@
           row1.appendChild(cell1_2);
 
           cell1_2.setAttribute("targetID", 'goldrange');
-          //var timer2 = addTimer(cell1_2, 10, kits[1][1] + " Test Timer", 0.55);
           var timer2 = addTimer(cell1_2, 10, " Test 2 Timer", 0.55);
           timer2.style.marginLeft = "40px";
           timer2.style.marginRight = "40px";
@@ -337,7 +332,9 @@
                 loadMessage('You do not have one of the test kits ',addLink(window, <%=params[:id] %>), 1500);
       }
   }
-
+    function sendToDBS() {
+        confirm('Send DBS to HIV National Reference Lab');
+    }
 
     function updateServerTime(){
         now.setSeconds(now.getSeconds() + 1);
@@ -375,14 +372,14 @@
         <fieldset>
         <legend>HIV Confirmatory Testing For <%= @client.name.split.map(&:capitalize).join(' ') %></legend>
             <label for="rapid_lot">(Test 1) <%= @kits[0][1] rescue ""  %> Lot Number</label>
-            <input type='text' id="rapid_lot" name="observations[][value_text]" onload="checkLot()"/>
+            <input type='text' id="rapid_lot" name="observations[][value_text]" />
             <input name="observations[][concept_name]" type="hidden" value="rapid lot number" />
             <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
             <input name="observations[][obs_datetime]" type="hidden" value="" />
 
 
             <label for="gold_lot">(Test 2) <%= @kits[1][1] rescue ""  %> Lot Number</label>
-            <input type='text' id="gold_lot" name="observations[][value_text]" onload="checkSecondLot()"/>
+            <input type='text' id="gold_lot" name="observations[][value_text]" />
             <input name="observations[][concept_name]" type="hidden" value="gold lot number" />
             <input name="observations[][patient_id]" type="hidden" value="<%= params[:id]%>" />
             <input name="observations[][obs_datetime]" type="hidden" value="" />
@@ -445,7 +442,7 @@
         <input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />
 
       </fieldset>
-      <fieldset custom=true fs_onLoad="createSummary();">
+      <fieldset custom=true fs_onLoad="sendToDBS();createSummary();">
         <legend>Summary (<%= @client.name.split.map(&:capitalize).join(' ') %>):</legend>
       </fieldset>
       <input type="submit" value="Submit" />
