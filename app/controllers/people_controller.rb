@@ -1,11 +1,49 @@
 require "client_service"
+require "rest-client"
 
 class PeopleController < ApplicationController
   include ClientService
 
   def new
     if request.post?
+      new_params = params["person"]
 
+      demographics = {
+      "person" => {
+        "birth_day" => "#{new_params[:birth_day]}",
+        "birth_month" => "#{new_params[:birth_month]}",
+        "birth_year" => "#{new_params[:birth_year]}",
+        "gender" => "#{new_params[:gender]}",
+        "age_estimate" => "#{new_params[:age_estimate].to_i}",
+        "names" => {
+          "given_name" => "#{new_params[:names][:given_name]}",
+          "family_name" => "#{new_params[:names][:family_name]}",
+          "family_name2" => "#{new_params[:names][:family_name2]}"
+        },
+
+        "addresses" => {
+          "address1" => "#{new_params[:addresses][:address1]}",
+          "address2" => "#{new_params[:addresses][:address2]}",
+          "city_village" => "#{new_params[:addresses][:city_village]}",
+          "county_district" => "#{new_params[:addresses][:county_district]}"
+        },
+
+        "occupation" => "#{new_params[:occupation]}",
+        "cell_phone_number" => "#{new_params[:cell_phone_number]}",
+        "office_phone_number" => "#{new_params[:office_phone_number]}",
+        "home_phone_number" => "#{new_params[:home_phone_number]}",
+        "patient" => ""
+      }
+    }
+
+      create_from_remote = settings.create_from_remote
+      bart_ip_address_and_port = settings.bart2_address
+      if create_from_remote.to_s == 'true'
+        uri = "http://#{bart_ip_address_and_port}/people/create_person_from_dmht"
+        remote_patient_national_id =  RestClient.post(uri,demographics)
+        params["patient"] = {"national_id" => remote_patient_national_id}
+      end
+      
       person = ClientService.create_person(params, current_user.id)
 
       current = session[:datetime].to_datetime.strftime("%Y-%m-%d %H:%M:%S") rescue DateTime.now.strftime("%Y-%m-%d %H:%M:%S")

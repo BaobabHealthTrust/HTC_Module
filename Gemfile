@@ -60,6 +60,8 @@ gem 'passenger', '5.0.6'
 
 gem 'zebra_printer'
 
+gem 'rest-client', '1.6.3'
+
 #Easiest way to add multi-environment yaml settings to Rails
 #RailsConfig helps you easily manage environment specific Rails
 #settings in an easy and usable manner

@@ -59,6 +59,11 @@ module ClientService
 
     end if person
 
+    national_id = params["patient"]["national_id"] rescue nil
+    ClientIdentifier.create(identifier: national_id, 
+      patient_id: person.person_id, identifier_type: ClientIdentifierType.find_by_name("National ID").id
+    ) if national_id
+      
     return person
 
   end

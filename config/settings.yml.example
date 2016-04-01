@@ -21,3 +21,6 @@ high_risk: ["Occupational Exposure ", "STI", "Rape", "Unprotected sex", "Shared 
 full_demographics_at_reception: true
 
 kits_assigned_to: rooms #rooms / couns
+
+create_from_remote: true
+bart2_address: localhost:5000
