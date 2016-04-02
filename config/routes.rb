@@ -201,6 +201,9 @@ HTCModule::Application.routes.draw do
 	get "admins/set_date" => "admins#set_date" 
 	post "admins/set_date" => "admins#set_date"
 	
+	post "create_remote_person" => "people#create_remote_person"
+	get "create_remote_person" => "people#create_remote_person"
+	
 	get "htcs/dashboard" => "htcs#dashboard"
   get "htcs/account" => "users#my_account"
 

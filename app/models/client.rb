@@ -1,3 +1,4 @@
+require "rest-client"
 class Client < ActiveRecord::Base
 	self.table_name = 'patient'
 	include Openmrs
@@ -176,4 +177,13 @@ class Client < ActiveRecord::Base
       patient_id: self.id, identifier_type: ClientIdentifierType.find_by_name("HTC Identifier").id)
   end
 
+  def self.find_remote_patients(identifier)
+    settings = OpenStruct.new YAML.load_file("#{Rails.root}/config/settings.yml")
+    bart_ip_address_and_port = settings.bart2_address
+    known_demographics = {:identifier => "#{identifier}"}
+    uri = "http://#{bart_ip_address_and_port}/people/find_person_from_dmht"
+    remote_results =  JSON.parse(RestClient.post(uri,known_demographics))
+    return remote_results
+  end
+  
 end

@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <script language="javascript" type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+    <script language="javascript" defer="true">
+      <!--
+      tstUsername = "<%= "" %>";
+      tstUserKeyboardPref = "<%= "abc" %>";
+      var remotePeople = <%= raw (@remote_people).to_json %>;
+      var remotePeopleWithKeys = <%= raw (@remote_people_with_keys).to_json %>;
+      function processFormData(key){
+        console.log(remotePeople[key].to_json)
+        body = document.getElementsByTagName("body")[0];
+        form = document.createElement("form");
+        form.method = 'POST';
+        form.action = '/create_remote_person';
+        body.appendChild(form);
+        input = document.createElement("textArea");
+        input.type = "hidden";
+        input.value = JSON.stringify(remotePeopleWithKeys[key]);
+        input.name = 'person'
+        form.appendChild(input);
+        form.submit();
+      }
+
+    </script>
+
+
+    <style type="text/css">
+      .link {
+        border-width: 0 1px 4px;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 8px 12px 7px;
+        text-transform: uppercase;
+      }
+      .btn-danger {
+        background-color: gray;
+        border-color: #ff291c;
+        color: #ffffff;
+      }
+      .link {
+        -moz-user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: bolder;
+        line-height: 2.429;
+        margin-bottom: 0;
+        padding: 6px 18px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        width: 86%;
+      }
+
+      a {
+        color: #158cba;
+        text-decoration: none;
+      }
+      a {
+        background: transparent none repeat scroll 0 0;
+      }
+
+      table tbody td{
+        border-bottom-width: 2px !important;
+        border: 1px solid #dddddd;
+      }
+
+      .alert {
+        border-width: 0 1px 4px;
+      }
+      .alert-info {
+        background-color: #75caeb;
+        border-color: #40b5e3;
+        color: #ffffff;
+      }
+      .alert {
+        border: 1px solid transparent;
+        margin-bottom: 20px;
+        padding: 15px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <div class="alert alert-info">
+        <center>Remote People <i>(<%= @remote_people.keys.count %> found)</i></center>
+      </div>
+      <table style="padding-left: 5%; width: 96%;">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>City Village</th>
+            <th>Occupation</th>
+            <th style="width: 20%;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @remote_people.each  do |key, values|%>
+            <tr>
+              <td><%= values["first_name"] %></td>
+              <td><%= values["last_name"] %></td>
+              <td><%= values["gender"] %></td>
+              <td><%= values["city_village"] %></td>
+              <td><%= values["occupation"] %></td>
+              <td>
+                <a onclick="processFormData('<%= key %>')" href="#" class="link btn-danger">
+                  Select Person
+                </a>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div id="buttons" class="buttonsDiv">
+        <button onmousedown="window.location = '/htcs';" id="cancelButton" class="button navButton red"><span>Cancel</span></button>
+      </div>
+    </div>
+  </body>
+</html>

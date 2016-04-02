@@ -1171,23 +1171,61 @@ class ClientsController < ApplicationController
   end
 	
 	def search_results
-
 		 @show_new_client_button = session[:show_new_client_button] rescue false
 		 current_date = session[:datetime].to_date rescue Date.today.to_date
 		 identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
-
+     national_identifier_type = ClientIdentifierType.find_by_name("National ID").id
 		 if !params[:accession_number].blank? || !params[:barcode].blank?
 
 				accession = params[:barcode] if  ! params[:barcode].blank?
 				accession = params[:accession_number] if ! params[:accession_number].blank?
 
-			  @accession = ClientIdentifier.where("identifier = '#{accession}' 
-											AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
+        @remote_people = []
+        @accession = ClientIdentifier.where("identifier = '#{accession}' 
+                      AND identifier_type = #{identifier_type} AND voided = 0").last rescue []
+        
+        local_person = ClientIdentifier.where("identifier = '#{accession}' 
+                      AND identifier_type = #{national_identifier_type} AND voided = 0").last rescue [] if @accession.blank?
+        if local_person
+          redirect_to("/client_demographics?client_id=#{local_person.patient_id}") and return
+        end         
+        @remote_people_with_keys = []
+        if @accession.blank?
+          result = {}
+          remote_people = Client.find_remote_patients(accession)
+          count = 1
+          remote_people.each do |person_obj|
+            birth_year = person_obj["person"]["birth_year"]
+            birth_month = person_obj["person"]["birth_month"]
+            birth_day = person_obj["person"]["birth_day"]
+            b_date = "#{birth_day}-#{birth_month}-#{birth_year}"
+            birth_date = b_date.to_date rescue b_date
+            result[count] = {}
+            result[count]["first_name"] = person_obj["person"]["names"]["given_name"]
+            result[count]["last_name"] = person_obj["person"]["names"]["family_name"]
+            result[count]["gender"]  = person_obj["person"]["gender"]
+            result[count]["birth_date"] = birth_date
+            result[count]["cell_phone_number"] = person_obj["person"]["cell_phone_number"]
+            result[count]["occupation"] = person_obj["person"]["attributes"]["occupation"]
+            result[count]["city_village"] = person_obj["person"]["addresses"]["city_village"]
+            result[count]["address1"] = person_obj["person"]["addresses"]["address1"]
+            result[count]["address2"] = person_obj["person"]["addresses"]["address2"]
+            result[count]["state_province"] = person_obj["person"]["addresses"]["state_province"]
+            result[count]["national_id"] = person_obj["person"]["patient"]["identifiers"]["National id"]
+            @remote_people_with_keys[count] = person_obj
+            count = count + 1
+          end
+          @remote_people = result
+          unless @remote_people.blank?
+            render :template => "/clients/remote_people", :layout => false and return
+          end
+        end 
 
-				if @accession.blank?
-					flash[:notice] = "Invalid accession number..."
-					redirect_to "/htcs" and return
-				end
+			    if @accession.blank?
+					 flash[:notice] = "Invalid accession number..."
+					 redirect_to "/htcs" and return
+				  end
+				
 				@residence = PersonAddress.find_by_person_id(@accession.patient_id).address1
 				@scanned = Client.find(@accession.patient_id)
 

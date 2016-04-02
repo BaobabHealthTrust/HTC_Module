@@ -4,8 +4,8 @@ module ClientService
   def self.create_person(params, current_user_id)
     return nil if params.blank?
     person_params = params['person']
-    address_params = params[:person]["addresses"]
-    names_params = params[:person]["names"]
+    address_params = params[:person]["addresses"] rescue params["person"]["addresses"]
+    names_params = params[:person]["names"] rescue params["person"]["names"]
 
     if person_params["gender"].to_s == "Female"
       person_params["gender"] = 'Female'
@@ -59,7 +59,7 @@ module ClientService
 
     end if person
 
-    national_id = params["patient"]["national_id"] rescue nil
+    national_id = params["patient"]["national_id"] rescue params["person"]["patient"]["national_id"] rescue nil
     ClientIdentifier.create(identifier: national_id, 
       patient_id: person.person_id, identifier_type: ClientIdentifierType.find_by_name("National ID").id
     ) if national_id

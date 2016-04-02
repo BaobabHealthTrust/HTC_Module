@@ -2,6 +2,7 @@ require "client_service"
 require "rest-client"
 
 class PeopleController < ApplicationController
+  skip_before_action :verify_authenticity_token
   include ClientService
 
   def new
@@ -59,6 +60,13 @@ class PeopleController < ApplicationController
     render :layout => 'basic'
   end
 
+  def create_remote_person
+    person_obj = JSON.parse(params["person"])
+    person_obj["person"]["patient"] = {"national_id" => person_obj["person"]["patient"]["identifiers"]["National id"]}
+    person = ClientService.create_person(person_obj, current_user.id)
+    redirect_to("/client_demographics?client_id=#{person.person_id}") and return
+  end
+  
   def write_encounter(encounter_type, person, current = DateTime.now)
     current = session[:datetime] if !session[:datetime].blank?
     type = EncounterType.find_by_name(encounter_type).id
