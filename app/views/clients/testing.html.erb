@@ -239,9 +239,6 @@
         var node =  document.getElementById('row2').childNodes[0].childNodes[0];
         node.style.width = "100%";
         node.style.height = "92px";
-        // var node =  document.getElementById('row2').childNodes[0].childNodes[0]
-        //node.style.width = "100% ! important";
-        //__$("row0").style.display = "none";
         __$("stage").style.display = "none";
         __$("buttons").style.width = "100%";
         __$("buttons").style.height = "100%";
@@ -261,7 +258,6 @@
         table.style.display = "table";
         table.style.margin = "auto";
         table.style.width = "100%";
-        //table.style.backgroundColor = "lightblue"
         __$("main-content-area").appendChild(table);
 
         var row1 = document.createElement("div");
@@ -286,111 +282,116 @@
       }
 
       function loadCustom(message){
-        if(__$("main-content-area")){
-          if (message == "timer2"){
-            if (__$("customresult1").value != "Reactive"){
-              createSummary()
-              return
+        if (__$("main-content-area")) {
+            if (message == "timer2") {
+                if (__$("customresult1").value != "Reactive") {
+                    createSummary()
+                    return
+                }
             }
-          }
-          __$("main-content-area").innerHTML = "";
-					
-          var table = document.createElement("div");
-          table.style.display = "table";
-          table.style.margin = "auto";
-          // table.style.border = "1px solid #000";
-					
-          __$("main-content-area").appendChild(table);
-				
-          var row1 = document.createElement("div");
-          row1.style.display = "table-row";
-					
-          table.appendChild(row1);
+            __$("main-content-area").innerHTML = "";
 
-          if (message == "timer1"){
+            var table = document.createElement("div");
+            table.style.display = "table";
+            table.style.margin = "auto";
+            // table.style.border = "1px solid #000";
 
-            var cell1_1 = document.createElement("div");
-            cell1_1.style.display = "table-cell";
-            cell1_1.id = "timer1";
-					
-            row1.appendChild(cell1_1);
-            cell1_1.setAttribute("targetID", 'rapidrange');
-            //var timer1 = addTimer(cell1_1, 15, kits[0][1] + " Test Timer", 0.55)
-            var timer1 = addTimer(cell1_1, 15," Test 1 Timer", 0.55)
-            timer1.style.marginLeft = "40px";
-					
-            timer1.style.marginRight = "40px";
+            __$("main-content-area").appendChild(table);
 
-          }else{
-            var cell1_2 = document.createElement("div");
-            cell1_2.style.display = "table-cell";
-            cell1_2.id = "timer2";
-            cell1_2.style.textAlign = "right";
-					
-            row1.appendChild(cell1_2);
+            var row1 = document.createElement("div");
+            row1.style.display = "table-row";
 
-            cell1_2.setAttribute("targetID", 'goldrange');
-            //var timer2 = addTimer(cell1_2, 10, kits[1][1] + "  Test Timer", 0.55);
-            var timer2 = addTimer(cell1_2, 10, "  Test 2 Timer", 0.55);
-            timer2.style.marginLeft = "40px";
-					
-            timer2.style.marginRight = "40px";
-          }
-          var row2 = document.createElement("div");
-          row2.style.display = "table-row";
-					
-          table.appendChild(row2);
-					
-          var cell2_1 = document.createElement("div");
-          cell2_1.style.display = "table-cell";
-          cell2_1.id = "label1";
-          cell2_1.style.textAlign = "right";
-          cell2_1.style.padding = "10px";
-					
-          row2.appendChild(cell2_1);
-					
-          addLabel(cell2_1, "Result", "32px", "black");
-					
-          var cell2_2 = document.createElement("div");
-          cell2_2.style.display = "table-cell";
-          cell2_2.id = "text1";
-          cell2_2.style.padding = "10px";
-					
-          row2.appendChild(cell2_2);
+            table.appendChild(row1);
 
-          if (message == "timer1"){
-            resultname = "resultdisplay1"
-            comboname = "customresult1"
-            var text = addTextbox(cell2_2, "text", document.getElementById("customresult1"));
-            text.id = "resultdisplay1"
-          }else{
-            resultname = "resultdisplay2"
-            comboname = "customresult2"
-            var text = addTextbox(cell2_2, "text", document.getElementById("customresult2"));
-            text.id = "resultdisplay2";
-          }
+            if (message == "timer1") {
 
-					
-          text.style.fontSize = "28px";
-					
-          var div = document.createElement("div");
-          div.style.width = "100%";
-          div.style.height = "100%";
-          div.style.overflow = "auto";
-					
-          var combo = addCombo(__$("stage"), {"Unknown":"Uknown","Reactive":"Reactive","Non-Reactive":"Non-Reactive"}, "single", document.getElementById(resultname), document.getElementById(comboname));
-					
-          combo.style.fontSize = "28px";
+                var cell1_1 = document.createElement("div");
+                cell1_1.style.display = "table-cell";
+                cell1_1.id = "timer1";
 
-          combo.style.textAlign = "left";
+                row1.appendChild(cell1_1);
+                cell1_1.setAttribute("targetID", 'rapidrange');
+                //var timer1 = addTimer(cell1_1, 15, kits[0][1] + " Test Timer", 0.55)
+                var timer1 = addTimer(cell1_1, 15, " Test 1 Timer", 0.55)
+                timer1.style.marginLeft = "40px";
 
-          if(btnClear){
-            btnClear.onclick = function(){
-              document.getElementById(resultname).value = "";
-              document.getElementById(comboname).value = "";
-              clearUl("ul2");
+                timer1.style.marginRight = "40px";
+
+            } else {
+                var cell1_2 = document.createElement("div");
+                cell1_2.style.display = "table-cell";
+                cell1_2.id = "timer2";
+                cell1_2.style.textAlign = "right";
+
+                row1.appendChild(cell1_2);
+
+                cell1_2.setAttribute("targetID", 'goldrange');
+                //var timer2 = addTimer(cell1_2, 10, kits[1][1] + "  Test Timer", 0.55);
+                var timer2 = addTimer(cell1_2, 10, "  Test 2 Timer", 0.55);
+                timer2.style.marginLeft = "40px";
+
+                timer2.style.marginRight = "40px";
             }
-          }
+            var row2 = document.createElement("div");
+            row2.style.display = "table-row";
+
+            table.appendChild(row2);
+
+            var cell2_1 = document.createElement("div");
+            cell2_1.style.display = "table-cell";
+            cell2_1.id = "label1";
+            cell2_1.style.textAlign = "right";
+            cell2_1.style.padding = "10px";
+
+            row2.appendChild(cell2_1);
+
+            addLabel(cell2_1, "Result", "32px", "black");
+
+            var cell2_2 = document.createElement("div");
+            cell2_2.style.display = "table-cell";
+            cell2_2.id = "text1";
+            cell2_2.style.padding = "10px";
+
+            row2.appendChild(cell2_2);
+
+            if (message == "timer1") {
+                resultname = "resultdisplay1"
+                comboname = "customresult1"
+                var text = addTextbox(cell2_2, "text", document.getElementById("customresult1"));
+                text.id = "resultdisplay1"
+            } else {
+                resultname = "resultdisplay2"
+                comboname = "customresult2"
+                var text = addTextbox(cell2_2, "text", document.getElementById("customresult2"));
+                text.id = "resultdisplay2";
+            }
+
+
+            text.style.fontSize = "28px";
+
+            var div = document.createElement("div");
+            div.style.width = "100%";
+            div.style.height = "100%";
+            div.style.overflow = "auto";
+
+            var combo = addCombo(__$("stage"), {
+                        "Unknown": "Uknown",
+                        "Reactive": "Reactive",
+                        "Non-Reactive": "Non-Reactive"
+                    },
+                    "single", document.getElementById(resultname), document.getElementById(comboname));
+
+            combo.style.fontSize = "28px";
+
+            combo.style.textAlign = "left";
+
+            if (btnClear) {
+                btnClear.onclick = function () {
+                    document.getElementById(resultname).value = "";
+                    document.getElementById(comboname).value = "";
+                    clearUl("ul2");
+                }
+            }
         }
       }
 

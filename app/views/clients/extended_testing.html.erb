@@ -333,7 +333,9 @@
       }
   }
     function sendToDBS() {
-        confirm('Send DBS to HIV National Reference Lab');
+        if (!(__$("HTC Test 1 result").value == "Reactive" && __$("HTC Test 2 result").value == "Reactive")) {
+            confirm('Send DBS to HIV National Reference Lab');
+        }
     }
 
     function updateServerTime(){
