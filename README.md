@@ -64,7 +64,16 @@ Copy config/settings.yml.example to config/settings.yml
 
 Setup database.yml
 ------------------
-Open config/database.yml file using your favourite editor and modify where necessary to specify your database settings.('name', 'username', and 'password' => possible recommendations)
+Open config/database.yml file using your favourite editor and modify where necessary to specify your database settings.
+('name', 'username', and 'password' => possible recommendations)
+
+Setup settings.yml
+------------------
+NB: Make sure BART application is running on your server and take note of the port number.
+
+Open config/database.yml file using your favourite editor and modify the below settings.
+    create_from_remote: true
+    bart2_address: localhost:port, where port is the port number BART is running on. The one you noted earlier above.
 
 Initialize system
 -----------------
