@@ -441,7 +441,8 @@
         <%= hidden_field_tag("observations[][concept_name]",        'Provider') %>
         <%= hidden_field_tag("observations[][patient_id]",         params[:id]) %>
         <%= hidden_field_tag("observations[][obs_datetime]",       "") %>
-        <input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />
+        <!--<input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" fieldtype="barcode" callback="doLogin('scan_accession_number')" />-->
+        <input type="text" id="scan_accession_number" name="observations[][value_coded_or_text]" optional="false" />
 
       </fieldset>
       <fieldset custom=true fs_onLoad="sendToDBS();createSummary();">
