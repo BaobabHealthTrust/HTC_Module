@@ -939,34 +939,47 @@ class ClientsController < ApplicationController
     send_data(print_string,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{params[:id]}#{rand(10000)}.lbl", :disposition => "inline")
   end
 
-    def get_confirmation_label(client)
+  def get_confirmation_label(client)
     test_type = ConceptName.find_by_name("HIV TEST TYPE").concept_id
     confirmed = Observation.where("concept_id = ? AND person_id = ?", test_type, client.patient_id).order("encounter_id DESC").first rescue []
+    acc_num = client.accession_number
 
-     label = ZebraPrinter::StandardLabel.new
-     label.draw_barcode(300,30,0,1,4,8,50,false,"#{client.accession_number}")
-     label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
-     label.draw_line(25,120,800,5)
     if ! confirmed.blank?
-          test_result = ConceptName.find_by_name("RESULT OF HIV TEST").concept_id
-          result = Observation.where("encounter_id = ? AND concept_id = ?", confirmed.encounter_id, test_result).first.to_s.split(':')[1].squish
-          result = "Test Result : #{result}"
-          test_location = "Facility name: #{settings.facility_name}"
-          date = "Date: #{Date.today.strftime('%d-%m-%Y')}"
-          issued_date = "Issued On: #{(session[:datetime].to_date  rescue Date.today).strftime('%d-%m-%Y')}"
-          test_date = "Visit Date: #{confirmed.obs_datetime.strftime('%d/%m/%Y') rescue ''}"
-          user = "Confirmed by #{User.find(confirmed.creator).username}"
-  
-          label.draw_text(test_location,75, 130, 0, 3, 1, 1, false)        
-          label.draw_text(result,75, 160, 0, 3, 1, 1, false)
-          label.draw_text(user,75, 190, 0, 3, 1, 1, false)
-          label.draw_text(test_date,75, 220, 0, 3, 1, 1, false)
+      test_result = ConceptName.find_by_name("RESULT OF HIV TEST").concept_id
+      result = Observation.where("encounter_id = ? AND concept_id = ?", confirmed.encounter_id, test_result).first.to_s.split(':')[1].squish
+      result = "Test Result : #{result}"
+      test_location = "Facility name: #{settings.facility_name}"
+      date = "Date: #{Date.today.strftime('%d-%m-%Y')}"
+      issued_date = "Issued On: #{(session[:datetime].to_date  rescue Date.today).strftime('%d-%m-%Y')}"
+      test_date = "Visit Date: #{confirmed.obs_datetime.strftime('%d/%m/%Y') rescue ''}"
+      user = "Confirmed by #{User.find(confirmed.creator).username}"
+
+      label = "\nN
+q801
+Q329,026
+ZT
+B300,30,0,1,4,8,50,N,'#{acc_num}'
+A75,30,0,3,1,1,N,'#{acc_num}'
+LO25,120,800,5
+A75,130,0,3,1,1,N,'#{test_location}'
+A75,160,0,3,1,1,N,'#{result}'
+A75,190,0,3,1,1,N,'#{user}'
+A75,220,0,3,1,1,N,'#{test_date}'
+P1\n"
     else
-       label.draw_text("Never Tested",75, 130, 0, 3, 1, 1, false)
+       label = "\nN
+q801
+Q329,026
+ZT
+B300,30,0,1,4,8,50,N,'#{acc_num}'
+A75,30,0,3,1,1,N,'#{acc_num}'
+LO25,120,800,5
+A75,130,0,3,1,1,N,'Never Tested'
+P1\n"
     end
-      label.print(1)
-    end
-    def get_summary_label(client)
+    label
+  end
+  def get_summary_label(client)
     current = session[:datetime].to_date rescue Date.today
     return unless client.patient_id
     coulnsel = "No"
@@ -983,32 +996,37 @@ class ClientsController < ApplicationController
      end
     answer = "No"
     answer = "Yes" if ! tested.blank?
-    label = ZebraPrinter::StandardLabel.new
-   # label.draw_text("#{current.strftime('%d/%m/%Y')}",575, 30, 0, 2, 1, 2, false)
-     label.draw_barcode(300,30,0,1,4,8,50,false,"#{client.accession_number}")
-    label.draw_line(25,120,800,5)
-    label.draw_text("#{client.accession_number}",75, 30, 0, 3, 1, 1, false)
-    label.draw_text("Tested : #{answer}",75, 130, 0, 3, 1, 1, false)
-    label.draw_text("Counselled : #{counsel}",300, 130, 0, 3, 1, 1, false)
-    label.draw_text("Referred : #{refer}",75, 150, 0, 3, 1, 1, false)
-    label.draw_text("Appointment : #{appointment}",75, 180, 0, 3, 1, 1, false)
-    if appointment == "Yes"
-      label.draw_text("  #{date}",300, 180, 0, 3, 1, 1, false)
-    end
-    label.print(1)
+    acc_num = client.accession_number
 
+      label = "\nN
+q801
+Q329,026
+ZT
+B300,30,0,1,4,8,50,N,'#{acc_num}'
+LO25,120,800,5
+A75,30,0,3,1,1,N,'#{acc_num}'
+A75,130,0,3,1,1,N,'Tested : #{answer}'
+A300,130,0,3,1,1,N,'Counselled : #{counsel}'
+A75,150,0,3,1,1,N,'Referred : #{refer}'
+A75,180,0,3,1,1,N,'Appointment : #{appointment}'\n"
+    if appointment == "Yes"
+      label += "A300,180,0,3,1,1,N, '#{date}'\n"
+    end
+    label += "P1\n"
+    label
   end
 
   def get_accession_label(client)
     return unless client.patient_id
-    label = ZebraPrinter::StandardLabel.new
-    label.font_size = 2
-    label.font_horizontal_multiplier = 2
-    label.font_vertical_multiplier = 2
-    label.left_margin = 50
-    label.draw_barcode(50,180,0,1,5,15,120,false,"#{client.accession_number rescue ''}")
-    label.draw_multi_text("Accession Number     #{client.accession_number}")
-    label.print(1)
+    acc_num = client.accession_number
+    label = "\nN
+q801
+Q329,026
+ZT
+B50,180,0,1,5,15,120,N,'#{acc_num}'
+A35,30,0,2,2,2,N,'Accession Number #{acc_num}'
+P1\n"
+    label
   end
 
 	def current_visit

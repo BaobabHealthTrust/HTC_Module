@@ -117,14 +117,16 @@ class LocationsController < ApplicationController
 	
 	def get_location_label(location)
     return unless location.location_id
-    label = ZebraPrinter::StandardLabel.new
-    label.font_size = 2
-    label.font_horizontal_multiplier = 2
-    label.font_vertical_multiplier = 2
-    label.left_margin = 50
-    label.draw_barcode(50,180,0,1,5,15,120,false,"#{location.name}")
-    label.draw_multi_text("#{location.name}")
-    label.print(1)
+    location_name = location.name
+
+    label = "\nN
+q801
+Q329,026
+ZT
+B50,180,0,1,5,15,120,N,'#{location_name}'
+A35,30,0,2,2,2,N,'#{location_name}'
+P1\n"
+    label
   end
 
   private

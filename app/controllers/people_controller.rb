@@ -40,7 +40,12 @@ class PeopleController < ApplicationController
       create_from_remote = settings.create_from_remote
       bart_ip_address_and_port = settings.bart2_address
       if create_from_remote.to_s == 'true'
-        uri = "http://#{bart_ip_address_and_port}/people/create_person_from_dmht"
+        if bart_ip_address_and_port.match(/^http/)
+          uri = "#{bart_ip_address_and_port}/people/create_person_from_dmht"
+        else
+          uri = "http://#{bart_ip_address_and_port}/people/create_person_from_dmht"
+        end
+
         remote_patient_national_id =  RestClient.post(uri,demographics)
         params["patient"] = {"national_id" => remote_patient_national_id}
       end

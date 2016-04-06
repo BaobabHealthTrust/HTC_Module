@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user, :except => [:attempt_login, :login, :logout]
   before_filter :save_login_state, :only => [:attempt_login, :login]
-  
+
   def next_task(client)
      htc_tasks = ["IN WAITING","IN SESSION","UPDATE HIV STATUS","COUNSELING","HIV TESTING","REFERRAL CONSENT CONFIRMATION",
                           "APPOINTMENT",] ### "ASSESSMENT" after COUNSELING

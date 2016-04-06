@@ -181,7 +181,13 @@ class Client < ActiveRecord::Base
     settings = OpenStruct.new YAML.load_file("#{Rails.root}/config/settings.yml")
     bart_ip_address_and_port = settings.bart2_address
     known_demographics = {:identifier => "#{identifier}"}
-    uri = "http://#{bart_ip_address_and_port}/people/find_person_from_dmht"
+
+    if bart_ip_address_and_port.match(/^http/)
+      uri = "#{bart_ip_address_and_port}/people/find_person_from_dmht"
+    else
+      uri = "http://#{bart_ip_address_and_port}/people/find_person_from_dmht"
+    end
+
     remote_results =  JSON.parse(RestClient.post(uri,known_demographics))
     return remote_results
   end
