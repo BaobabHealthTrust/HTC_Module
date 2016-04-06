@@ -58,7 +58,7 @@ gem 'composite_primary_keys'
 
 gem 'passenger', '5.0.6'
 
-gem 'zebra_printer'
+#gem 'zebra_printer'
 
 gem 'rest-client', '1.6.3'
 
