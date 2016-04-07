@@ -56,7 +56,7 @@ gem 'composite_primary_keys'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'passenger', '5.0.6'
+gem 'passenger', '4.0.60'
 
 #gem 'zebra_printer'
 
