@@ -1023,7 +1023,7 @@ A75,180,0,3,1,1,N,\"Appointment : #{appointment}\"\n"
 q801
 Q329,026
 ZT
-B50,180,0,1,5,15,120,N,\"#{acc_num}\"
+B50,130,0,1,5,15,120,N,\"#{acc_num}\"
 A35,30,0,2,2,2,N,\"Accession Number #{acc_num}\"
 P1\n"
     label
