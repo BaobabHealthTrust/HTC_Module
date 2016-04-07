@@ -958,23 +958,23 @@ class ClientsController < ApplicationController
 q801
 Q329,026
 ZT
-B300,30,0,1,4,8,50,N,'#{acc_num}'
-A75,30,0,3,1,1,N,'#{acc_num}'
+B300,30,0,1,4,8,50,N,\"#{acc_num}\"
+A75,30,0,3,1,1,N,\"#{acc_num}\"
 LO25,120,800,5
-A75,130,0,3,1,1,N,'#{test_location}'
-A75,160,0,3,1,1,N,'#{result}'
-A75,190,0,3,1,1,N,'#{user}'
-A75,220,0,3,1,1,N,'#{test_date}'
+A75,130,0,3,1,1,N,\"#{test_location}\"
+A75,160,0,3,1,1,N,\"#{result}\"
+A75,190,0,3,1,1,N,\"#{user}\"
+A75,220,0,3,1,1,N,\"#{test_date}\"
 P1\n"
     else
        label = "\nN
 q801
 Q329,026
 ZT
-B300,30,0,1,4,8,50,N,'#{acc_num}'
-A75,30,0,3,1,1,N,'#{acc_num}'
+B300,30,0,1,4,8,50,N,\"#{acc_num}\"
+A75,30,0,3,1,1,N,\"#{acc_num}\"
 LO25,120,800,5
-A75,130,0,3,1,1,N,'Never Tested'
+A75,130,0,3,1,1,N,\"Never Tested\"
 P1\n"
     end
     label
@@ -1002,15 +1002,15 @@ P1\n"
 q801
 Q329,026
 ZT
-B300,30,0,1,4,8,50,N,'#{acc_num}'
+B300,30,0,1,4,8,50,N,\"#{acc_num}\"
 LO25,120,800,5
-A75,30,0,3,1,1,N,'#{acc_num}'
-A75,130,0,3,1,1,N,'Tested : #{answer}'
-A300,130,0,3,1,1,N,'Counselled : #{counsel}'
-A75,150,0,3,1,1,N,'Referred : #{refer}'
-A75,180,0,3,1,1,N,'Appointment : #{appointment}'\n"
+A75,30,0,3,1,1,N,\"#{acc_num}\"
+A75,130,0,3,1,1,N,\"Tested : #{answer}\"
+A300,130,0,3,1,1,N,\"Counselled : #{counsel}\"
+A75,150,0,3,1,1,N,\"Referred : #{refer}\"
+A75,180,0,3,1,1,N,\"Appointment : #{appointment}\"\n"
     if appointment == "Yes"
-      label += "A300,180,0,3,1,1,N, '#{date}'\n"
+      label += "A300,180,0,3,1,1,N, \"#{date}\"\n"
     end
     label += "P1\n"
     label
@@ -1023,8 +1023,8 @@ A75,180,0,3,1,1,N,'Appointment : #{appointment}'\n"
 q801
 Q329,026
 ZT
-B50,180,0,1,5,15,120,N,'#{acc_num}'
-A35,30,0,2,2,2,N,'Accession Number #{acc_num}'
+B50,180,0,1,5,15,120,N,\"#{acc_num}\"
+A35,30,0,2,2,2,N,\"Accession Number #{acc_num}\"
 P1\n"
     label
   end
