@@ -1138,7 +1138,7 @@ P1\n"
     											INNER JOIN person pe ON pe.person_id = p.patient_id
     											INNER JOIN person_address pn ON pn.person_id = pe.person_id
     											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
-    											WHERE pn.address1 = '#{params[:residence]}' AND pe.gender = '#{params[:gender]}'
+    											WHERE pn.address1 = \"#{params[:residence]}\" AND pe.gender = '#{params[:gender]}'
     											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
     											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
     											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
@@ -1312,9 +1312,9 @@ P1\n"
                           INNER JOIN person pe ON pe.person_id = p.patient_id 
                           INNER JOIN person_name pn ON pn.person_id = p.patient_id                          
                           LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
-                          WHERE pe.gender = '#{params[:gender]}'
-                          AND pn.given_name = '#{firstname}' AND p.voided = 0
-                          AND pn.family_name = '#{surname}'
+                          WHERE pe.gender = \"#{params[:gender]}\"
+                          AND pn.given_name = \"#{firstname}\" AND p.voided = 0
+                          AND pn.family_name = \"#{surname}\"
                           AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
                           pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") #rescue []
 
@@ -1323,9 +1323,9 @@ P1\n"
                           INNER JOIN person pe ON pe.person_id = p.patient_id 
                           INNER JOIN person_name pn ON pn.person_id = p.patient_id                          
                           LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
-                          WHERE pe.gender = '#{params[:gender]}'
-                          AND pn.given_name = '#{firstname}' AND p.voided = 0
-                          AND pn.family_name = '#{surname}'
+                          WHERE pe.gender = \"#{params[:gender]}\"
+                          AND pn.given_name = \"#{firstname}\" AND p.voided = 0
+                          AND pn.family_name = \"#{surname}\"
                           AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
                           pn.voided = 0 AND pn.date_created = CURDATE() ORDER BY pi.identifier DESC LIMIT 20") #rescue []
 
