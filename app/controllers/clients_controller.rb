@@ -1111,7 +1111,6 @@ P1\n"
   end
 
   def search_new
-    @show_new_client_button = session[:show_new_client_button] rescue false
     current_date = session[:datetime].to_date rescue Date.today.to_date
     identifier_type = ClientIdentifierType.find_by_name("HTC Identifier").id
 
@@ -1134,21 +1133,22 @@ P1\n"
         end
 
         birthdate = "#{birth_day}/#{birth_month}/#{birth_year}" if birthdate_estimated == true
-        @clients = Client.find_by_sql("SELECT * FROM patient p
+        client = Client.find_by_sql("SELECT * FROM patient p
     											INNER JOIN person pe ON pe.person_id = p.patient_id
     											INNER JOIN person_address pn ON pn.person_id = pe.person_id
     											LEFT JOIN patient_identifier pi ON pi.patient_id = p.patient_id
-    											WHERE pn.address1 = \"#{params[:residence]}\" AND pe.gender = '#{params[:gender]}'
-    											AND DATE(pe.birthdate) = '#{birthdate.to_date}' AND p.voided = 0
-    											AND pi.identifier_type = #{identifier_type} AND pi.voided = 0 AND
-    											pn.voided = 0 ORDER BY pi.identifier DESC LIMIT 20") rescue []
+    											WHERE pn.address1 = \"#{params[:residence]}\" AND pe.gender = \"#{params[:gender]}\"
+    											AND DATE(pe.birthdate) = \"#{birthdate.to_date}\" AND p.voided = 0
+    											AND pi.identifier_type = \"#{identifier_type}\" AND pi.voided = 0 AND
+    											pn.voided = 0 ORDER BY pi.patient_id DESC LIMIT 20").first rescue []
+    #raise client.inspect
 
       sp = ""
       @side_panel_date = ""
       @client_list = ""
       @clients_info = []
 
-      @clients.each do |client|
+      #@clients.each do |client|
         id= client.id
         accession = client.accession_number
         age = client.person.age
@@ -1181,7 +1181,7 @@ P1\n"
 											days_since_last_visit: '#{days_since_last_visit}',
 											has_booking: #{has_booking}, appointment_date: '#{appointment_date}'}"
         sp = ','
-      end
+      #end
 
     render layout: false
   end
